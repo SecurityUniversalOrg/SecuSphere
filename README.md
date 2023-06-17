@@ -79,27 +79,27 @@ $ python run.py
 Build and run the Dockerfile in the cicd directory:
 
 ```bash
-$ cd cicd/
+$ # From repository root
 $ docker build -t secusphere:latest .
 $ docker run secusphere:latest
 ```
 
 ### Docker Compose
 
-Use Docker Compose in the cicd directory:
+Use Docker Compose in the `ci_cd/iac/` directory:
 
 ```bash
 $ cd ci_cd/iac/
-$ docker-compose secusphere up
+$ docker-compose -f secusphere.yml up
 ```
 
 ### Pull from Docker Hub
 
-Pull the latest version of the vulnerability manager from Docker Hub and run it:
+Pull the latest version of SecuSphere from [Docker Hub](https://hub.docker.com/r/securityuniversal/secusphere) and run it:
 
 ```bash
 $ docker pull securityuniversal/secusphere:latest
-$ docker run secusphere:latest
+$ docker run -p 8081:80 -d secusphere:latest
 ```
 
 ## 💡 Feedback and Support
