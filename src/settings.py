@@ -2,7 +2,7 @@
 SET_AUTH_TYPE = 'local'  # options: local, ldap, saml
 SET_INSECURE_OAUTH = True
 SET_AZURE_KEYVAULT_NAME = 'BkDevSecOpsKeyVault'
-SET_ENV = 'prod'  # options: test, prod
+SET_ENV = 'test'  # options: test, prod
 
 ##
 ## Email Variables ##
