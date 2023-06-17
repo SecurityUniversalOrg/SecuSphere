@@ -1,0 +1,106 @@
+{% extends 'base_no_auth.html' %}
+
+{% block app_content %}
+
+<div class="login_form_container">
+  <div class="login_form">
+  <section class="login_wrapper">
+    
+    <div class="logo_placeholder">
+		 
+    </div>
+    
+    <form id="login" method="POST" action="{{ url_for('admin.login') }}">
+
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    
+    {% if warnmsg %}
+      <div class="warnmsg_{{ warnmsg[1] }}">
+      {% if warnmsg[0] == 'lockedout' %}
+        This account is currently locked.
+      {% elif warnmsg[0] == 'failedlogin' %}
+        Invalid username or password. Please try again.
+      {% elif warnmsg[0] == 'pwresetemail' %}
+        Request successful. If the provided Email is verified, please check your email for next steps.
+      {% elif warnmsg[0] == 'pwresetconf' %}
+        Successfully changed password.
+      {% elif warnmsg[0] == 'regconf' %}
+        Check your email for the registration instructions.
+      {% elif warnmsg[0] == 'regfail' %}
+        Error: You have already registered!
+      {% elif warnmsg[0] == 'regsuccess' %}
+        Success: Account Registration Completed
+      {% elif warnmsg[0] == 'regauthfail' %}
+        Error: Invalid Registration Link
+      {% elif warnmsg[0] == 'regincomplete' %}
+        Error: Registration not Verified
+      {% endif %}
+      </div>
+      <br>
+    {% endif %}
+      <label for="username" style="color:white;">Username</label>
+      <input id="login[username]" required name="login[username]" type="text" autocapitalize="off" autocorrect="off"/>
+      
+      <label for="password" style="color:white;">Password</label>
+      
+      <input class="password" required name="login[password]" type="password" />
+
+      
+      <div id="mfa_container" style="display: none;">
+
+        <label for="password">Second Password</label>
+
+        <input class="password" required id="login[password2]" name="login[password2]" type="password" />
+
+      </div>
+
+      <div class="bottom1">Forgot <a href="{{ url_for('admin.forgotun') }}" class="hovertest">Username</a> / <a href="{{ url_for('admin.forgotpw') }}" class="hovertest">Password</a>?</div>
+      
+
+      <button class="cancel" onclick="checkAuth();">Login</button><br><br><br><br>
+      
+
+    </form>
+    
+  </section>
+  </div>
+</div>  
+<script src='{{ url_for('static', filename='js/jquery.min.js') }}'></script>
+
+  
+
+    <script  src="js/index.js"></script>
+
+<script>
+function checkAuth() {
+  var username = document.getElementById('login[username]').value;
+  var mfa_password = document.getElementById('login[password2]').value;
+  checkIfMfa(username, mfa_password);
+}
+function checkIfMfa(username, mfa_password) {
+  var csrf_token = "{{ csrf_token() }}";
+  if (mfa_password == '') {
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        var response = JSON.parse(this.responseText)
+        if (response['answer'] == 'active') {
+          document.getElementById('mfa_container').style.display = 'block'
+        } else {
+          document.getElementById('login').submit()
+        }
+      }
+    };
+    xhttp.open("POST", 'check_if_mfa', true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("username=" + username);
+  } else {
+    document.getElementById('login').submit()
+  }
+}
+</script>
+
+
+{% endblock %}

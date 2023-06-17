@@ -1,0 +1,24 @@
+<div class="panel panel-default">
+                            <table id="error_notes" class="table-striped table table-condensed table-hover centered" aria-describedby="Component Table">
+                                <tbody>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Line Number</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>
+                                            {% if details.RepoURL %}<a href="{{ details.RepoURL.split('.git')[0] }}/blob/release/12-2022/Test-1/{{ details.VulnerableFilePath }}"  target="_blank" rel="noopener" title="{{ details.VulnerableFilePath }}">{% endif %}{{ details.VulnerableFilePath }}{% if details.RepoURL %}</a>{% endif %}
+                                            <div class="fa fa-copy fa-align-right copytoclipboard" title="copy to clipboard"
+                                               data-clipboard-text="{{ details.VulnerableFilePath }}"></div>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span>
+                                            {{ details.SourceCodeFileStartLine }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>

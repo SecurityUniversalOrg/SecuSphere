@@ -1,0 +1,45 @@
+{% extends 'base_no_auth.html' %}
+ 
+{% block app_content %}
+
+<div class="login_form_container">
+  <div class="login_form">
+  <section class="login_wrapper">
+    
+    <div class="logo">
+		 
+    </div>
+    
+    <form id="login" method="POST" action="{{ url_for('admin.forgotpw') }}">
+     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      
+
+      <h1 class="page_title">Recover Password</h1>
+      <p class="page_subtitle">Please enter your email address below to recover password.</p>
+      <hr>
+      <br>
+
+      <label for="username">Email Address</label>
+      <input  required name="email" type="text" autocapitalize="off" autocorrect="off"/>
+      
+    
+      
+
+      <button type="submit">Submit</button><br><br><br><br>
+      
+    </form>
+    
+  </section>
+  </div>
+</div>
+
+<script src='{{ url_for('static', filename='js/jquery.min.js') }}'></script>
+
+  
+
+    <script  src="js/index.js"></script>
+
+
+
+
+{% endblock %}

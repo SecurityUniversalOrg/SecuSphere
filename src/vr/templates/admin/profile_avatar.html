@@ -1,0 +1,2540 @@
+{% block style %}
+<head>
+<style>
+	@import url("https://fonts.googleapis.com/css?family=B612+Mono&display=swap");
+/******************no SelectAndCrop styles*****************/
+.container {
+  margin: 100px auto;
+  text-align: center;
+  width: calc(100% - 1rem);
+  margin-top: 0 !important;
+  position: relative;
+}
+.title {
+  font-family: 'exo_2regular', sans-serif;
+  text-align: center;
+  margin-top: 10px !important;
+  margin-bottom: 16px !important;
+}
+.responsive-img {
+  width: 100%;
+}
+.error-message {
+  color: #dc3545;
+  font-weight: bold;
+}
+.remove-image {
+  margin-bottom: 20px;
+}
+form {
+  display: inline-block;
+  margin-bottom: 20px;
+  background: inherit !important;
+}
+/******************no SelectAndCrop end styles*****************/
+/******************SelectAndCrop styles*****************/
+.resize-move-crop-container {
+  position: relative;
+  user-select: none;
+  width: auto !important;
+  margin: 0 auto 20px;
+}
+.resize-move-crop-container img {
+  width: 100%;
+  display: block;
+}
+.overlay-n, .overlay-e, .overlay-s, .overlay-w {
+  position: absolute;
+  background-color: #000;
+  opacity: 0.7;
+}
+.overlay-n {
+  top: 0;
+}
+.overlay-e {
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+.overlay-s {
+  bottom: 0;
+}
+.overlay-w {
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+.resizable {
+  background: transparent;
+  position: absolute;
+  cursor: all-scroll;
+}
+.resizable .resizers {
+  width: 100%;
+  height: 100%;
+  border: 1px dashed #dc3545;
+  box-sizing: border-box;
+  touch-action: none;
+}
+.resizable .resizers .resizer {
+  width: 10px;
+  height: 10px;
+  background: #dc3545;
+  border: 1px solid #dc3545;
+  position: absolute;
+  z-index: 10;
+}
+.resizable .resizers .resizer.top-left {
+  left: 0px;
+  top: 0px;
+  cursor: nwse-resize;
+  /*resizer cursor*/
+  transform: translate(-30%, -30%);
+}
+.resizable .resizers .resizer.top-right {
+  right: 0px;
+  top: 0px;
+  cursor: nesw-resize;
+  transform: translate(30%, -30%);
+}
+.resizable .resizers .resizer.bottom-left {
+  left: 0px;
+  bottom: 0px;
+  cursor: nesw-resize;
+  transform: translate(-30%, 30%);
+}
+.resizable .resizers .resizer.bottom-right {
+  right: 0px;
+  bottom: 0px;
+  cursor: nwse-resize;
+  transform: translate(30%, 30%);
+}
+/******************SelectAndCrop end styles*****************/
+/******************SelectAndCropControls styles*****************/
+.controls-wrapper {
+  width: calc(100% - 1rem);
+  max-width: 638px;
+  margin: 0 auto;
+}
+.controls-wrapper .controls {
+  margin: 0 -0.5rem;
+}
+.controls-wrapper .controls .control-col {
+  display: inline-block;
+  padding: 0 0.25rem;
+}
+.controls-wrapper .controls .btn-group {
+  margin: 0 0 0.5rem 0;
+  display: inline-flex;
+}
+.controls-wrapper .controls .btn-group input {
+  display: none;
+}
+.controls-wrapper .controls .btn-group input:checked + label.btn-primary {
+  background-color: #0062cc;
+}
+.controls-wrapper .controls .btn-group .btn:nth-of-type(1) {
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+.controls-wrapper .controls .btn-group .btn:last-child {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+.controls-wrapper .on-top::after {
+  content: attr(data-tool-tip);
+  position: absolute;
+  color: #fff;
+  text-transform: capitalize;
+  background-color: #171616;
+  padding: 10px 9px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  display: none;
+  top: -47px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.controls-wrapper .on-top::before {
+  content: "";
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 8px solid #171616;
+  height: 0;
+  width: 0;
+  margin: auto;
+  position: absolute;
+  top: -6px;
+  right: 50%;
+  transform: translate(50%, -50%);
+  display: none;
+}
+.controls-wrapper .on-top:hover::before, .controls-wrapper .on-top:hover::after {
+  display: inline-block;
+  z-index: 1;
+}
+@media (min-width: 650px) {
+  .controls-wrapper .controls-row {
+    flex-direction: row;
+  }
+}
+/******************SelectAndCropControls end styles*****************/
+/******************CropImage styles*****************/
+.crop-image-component-wrapper {
+  text-align: center;
+  margin: 20px 0;
+}
+/******************CropImage end styles*****************/
+/******************Loader styles*****************/
+.loader {
+  width: 100px;
+  height: 50px;
+  border-radius: 100%;
+  position: relative;
+  margin: 0 auto;
+}
+.loader span {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  background-color: #3498db;
+  margin: 35px 5px;
+}
+.loader span:nth-child(1) {
+  animation: bounce 1s ease-in-out infinite;
+}
+.loader span:nth-child(2) {
+  animation: bounce 1s ease-in-out 0.33s infinite;
+}
+.loader span:nth-child(3) {
+  animation: bounce 1s ease-in-out 0.66s infinite;
+}
+@keyframes bounce {
+  0%, 75%, 100% {
+    -webkit-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0);
+  }
+  25% {
+    -webkit-transform: translateY(-20px);
+    -ms-transform: translateY(-20px);
+    -o-transform: translateY(-20px);
+    transform: translateY(-20px);
+  }
+}
+/******************Loader end styles*****************/
+/******************buttons styles*****************/
+.btn {
+  text-align: center;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.375rem 0.25rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  cursor: pointer;
+  min-width: 42px;
+  position: relative;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.btn.btn-danger {
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+  border-radius: 0.25rem;
+}
+.btn.btn-danger:hover {
+  background-color: #bd2130;
+  border-color: #b9202f;
+}
+.btn.btn-primary {
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.btn.btn-primary:hover {
+  background-color: #0062cc;
+  border-color: #0060c7;
+}
+.btn.btn-primary:disabled, .btn.btn-primary[disabled] {
+  color: #d0cece;
+  cursor: not-allowed;
+  background-color: #1a88ff;
+}
+.btn.btn-primary:disabled:hover, .btn.btn-primary[disabled]:hover {
+  background-color: #1a88ff;
+  border-color: transparent;
+}
+#pic_upload {
+  background-color: rgb(255, 255, 255, 0.75);
+  border-radius: 8px;
+  box-shadow: none;
+border: 1px solid rgb(227, 227, 227, 0.5);
+}
+#pic_upload form {
+  width: 100%;
+position: relative;
+padding: unset !important;
+}
+.submit {
+/*  padding-top: 16px !important;
+padding-bottom: 24px !important;*/
+padding-bottom: 6px !important;
+padding-top: 6px !important;
+left: 33%;
+}
+.submit:hover {
+  background-color: rgb(23, 156, 38, 0.3333);
+}
+.pic_container {
+  padding-bottom: 42px;
+}
+#submit_btn {
+  margin-bottom: 24px;
+}
+/******************buttons end styles*****************/
+
+</style>
+</head>
+{% endblock%}
+
+{% extends 'base_auth.html' %}
+ 
+{% block app_content %}
+
+    {{ super() }}
+
+<div id="pic_upload" class="settings_col_m8_center">
+  <div class="row">
+    <div id="app"></div>
+  </div>
+</div>
+
+<!-- End Page Container -->
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<!-- page-specific scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.8.0/umd/react.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.8.0/umd/react-dom.development.js"></script>
+
+<script>
+var resizeImage = function (settings) {
+    var file = settings.file;
+    var maxSize = settings.maxSize;
+    var reader = new FileReader();
+    var image = new Image();
+    var canvas = document.createElement('canvas');
+    var dataURItoBlob = function (dataURI) {
+        var bytes = dataURI.split(',')[0].indexOf('base64') >= 0 ?
+            atob(dataURI.split(',')[1]) :
+            unescape(dataURI.split(',')[1]);
+        var mime = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        var max = bytes.length;
+        var ia = new Uint8Array(max);
+        for (var i = 0; i < max; i++)
+            ia[i] = bytes.charCodeAt(i);
+        return new Blob([ia], { type: mime });
+    };
+    var resize = function () {
+        var width = image.width;
+        var height = image.height;
+        if (width > height) {
+            if (width > maxSize) {
+                height *= maxSize / width;
+                width = maxSize;
+            }
+        } else {
+            if (height > maxSize) {
+                width *= maxSize / height;
+                height = maxSize;
+            }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+        var dataUrl = canvas.toDataURL('image/jpeg');
+        return dataURItoBlob(dataUrl);
+    };
+    return new Promise(function (ok, no) {
+        if (!file.type.match(/image.*/)) {
+            no(new Error("Not an image"));
+            return;
+        }
+        reader.onload = function (readerEvent) {
+            image.onload = function () { return ok(resize()); };
+            image.src = readerEvent.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+};
+</script>
+
+<script>
+"use strict";
+
+function _instanceof(left, right) {
+    if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) {
+        return !!right[Symbol.hasInstance](left);
+    }
+    else {
+        return left instanceof right;
+    }
+}
+
+function _typeof(obj) {
+    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+        _typeof = function _typeof(obj) { return typeof obj; };
+    }
+    else {
+        _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+    }
+    return _typeof(obj);
+}
+
+function _classCallCheck(instance, Constructor) {
+    if (!_instanceof(instance, Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+    }
+}
+
+function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+    }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+}
+
+function _possibleConstructorReturn(self, call) {
+    if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self);
+}
+
+function _getPrototypeOf(o) {
+    _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); };
+    return _getPrototypeOf(o);
+}
+
+function _assertThisInitialized(self) {
+    if (self === void 0) {
+        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+    return self;
+}
+
+function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function");
+    }
+    subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } });
+    if (superClass) _setPrototypeOf(subClass, superClass);
+}
+
+function _setPrototypeOf(o, p) {
+    _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; };
+    return _setPrototypeOf(o, p);
+}
+
+function _defineProperty(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });
+    }
+    else {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+
+var _React = React,
+    Component = _React.Component,
+    PureComponent = _React.PureComponent,
+    createRef = _React.createRef,
+    Fragment = _React.Fragment; // loader component
+
+var Loader = function Loader() {
+  return React.createElement("div", {
+    className: "loader"
+  }, React.createElement("span", null), React.createElement("span", null), React.createElement("span", null));
+}; // crop image component
+
+
+var CropImage =
+/*#__PURE__*/
+function (_PureComponent) {
+  _inherits(CropImage, _PureComponent);
+
+  function CropImage() {
+    var _getPrototypeOf2;
+
+    var _this;
+
+    _classCallCheck(this, CropImage);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(CropImage)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _defineProperty(_assertThisInitialized(_this), "imageObject", new Image());
+
+    _defineProperty(_assertThisInitialized(_this), "getImagePortion", function (imgObject, newWidth, newHeight, startX, startY) {
+      // setIsCropped => a method to set a flag whether image is cropped or not
+      var _this$props = _this.props,
+          setIsCropped = _this$props.setIsCropped,
+          getCroppedImg = _this$props.getCroppedImg,
+          isFlippedHor = _this$props.isFlippedHor,
+          isFlippedVer = _this$props.isFlippedVer,
+          cropCanvas = document.createElement("canvas"),
+          cropCanvasContext = cropCanvas.getContext("2d"),
+          originalImage = document.createElement('canvas'),
+          originalImageContext = originalImage.getContext('2d'),
+          imageWidth = imgObject.width,
+          imageHeight = imgObject.height,
+          scaleH = isFlippedHor ? -1 : 1,
+          scaleV = isFlippedVer ? -1 : 1,
+          posX = isFlippedHor ? imageWidth * -1 : 0,
+          posY = isFlippedVer ? imageHeight * -1 : 0; // Set y position to -100% if flip vertical
+
+      var scale = 1;
+      cropCanvas.width = newWidth;
+      cropCanvas.height = newHeight;
+
+      if (imageWidth > document.documentElement.offsetWidth) {
+        scale = imageWidth / document.documentElement.offsetWidth;
+      } // canvas of original image
+
+
+      originalImage.width = imageWidth;
+      originalImage.height = imageHeight;
+      originalImageContext.drawImage(imgObject, 0, 0);
+      originalImageContext.save(); // Save the current state
+
+      originalImageContext.scale(scaleH, scaleV); // Set scale to flip the image
+
+      originalImageContext.drawImage(imgObject, posX, posY, imageWidth, imageHeight); // draw the image
+
+      originalImageContext.restore(); // Restore the last saved state
+
+      cropCanvasContext.drawImage(originalImage, startX * scale, startY * scale, newWidth * scale, newHeight * scale, 0, 0, newWidth, newHeight);
+      var croppedSrc = cropCanvas.toDataURL();
+      setIsCropped(true);
+      getCroppedImg(croppedSrc);
+    });
+
+    return _this;
+  }
+
+  _createClass(CropImage, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var imageSrc = this.props.imageSrc;
+      this.imageObject.src = imageSrc;
+      this.imageObject.setAttribute("crossOrigin", "anonymous");
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      var _this$props2 = this.props,
+          width = _this$props2.width,
+          height = _this$props2.height,
+          x = _this$props2.x,
+          y = _this$props2.y;
+      return React.createElement("div", {
+        className: "crop-image-component-wrapper"
+      }, React.createElement("button", {
+        id: "crop_btn",
+        className: "btn btn-danger",
+        onClick: function onClick() {
+          addAndRemoveClass("submit_btn", "unhide_div", "hide_div");
+          return _this2.getImagePortion(_this2.imageObject, width, height, x, y);
+        }
+      }, "Crop"));
+    }
+  }]);
+
+  return CropImage;
+}(PureComponent); // SelectAndCropControls component
+
+
+var SelectAndCropControls = function SelectAndCropControls(_ref) {
+  var isLeftDisabled = _ref.isLeftDisabled,
+      isRightDisabled = _ref.isRightDisabled,
+      isTopDisabled = _ref.isTopDisabled,
+      isBottomDisabled = _ref.isBottomDisabled,
+      flipImageVertically = _ref.flipImageVertically,
+      flipImageHorizontally = _ref.flipImageHorizontally,
+      pushResizableToLeft = _ref.pushResizableToLeft,
+      pushResizableToRight = _ref.pushResizableToRight,
+      pushResizableToTop = _ref.pushResizableToTop,
+      pushResizableToBottom = _ref.pushResizableToBottom,
+      resetData = _ref.resetData,
+      onRatioChange = _ref.onRatioChange,
+      ratioValue = _ref.ratioValue;
+  return React.createElement("div", {
+    className: "controls-wrapper"
+  }, React.createElement("div", {
+    className: "controls"
+  }, React.createElement("div", {
+    className: "control-col"
+  }, React.createElement("div", {
+    className: "btn-group"
+  }, React.createElement("input", {
+    type: "radio",
+    name: "aspect-ratio",
+    value: "1:1",
+    id: "firstRatio",
+    checked: ratioValue === "1:1",
+    onChange: onRatioChange
+  }), React.createElement("label", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "Ratio 1 / 1",
+    htmlFor: "firstRatio"
+  }, "1:1"), React.createElement("input", {
+    type: "radio",
+    name: "aspect-ratio",
+    value: "3:2",
+    id: "secondRatio",
+    checked: ratioValue === "3:2",
+    onChange: onRatioChange
+  }), React.createElement("label", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "Ratio 3 / 2",
+    htmlFor: "secondRatio"
+  }, "3:2"), React.createElement("input", {
+    type: "radio",
+    name: "aspect-ratio",
+    value: "4:3",
+    id: "thirdRatio",
+    checked: ratioValue === "4:3",
+    onChange: onRatioChange
+  }), React.createElement("label", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "Ratio 4 / 3",
+    htmlFor: "thirdRatio"
+  }, "4:3"), React.createElement("input", {
+    type: "radio",
+    name: "aspect-ratio",
+    value: "16:9",
+    id: "forthRatio",
+    checked: ratioValue === "16:9",
+    onChange: onRatioChange
+  }), React.createElement("label", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "Ratio 16 / 9",
+    htmlFor: "forthRatio"
+  }, "16:9"), React.createElement("input", {
+    type: "radio",
+    name: "aspect-ratio",
+    value: "16:10",
+    id: "fifthRatio",
+    checked: ratioValue === "16:10",
+    onChange: onRatioChange
+  }), React.createElement("label", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "Ratio 16 / 10",
+    htmlFor: "fifthRatio"
+  }, "16:10"), React.createElement("input", {
+    type: "radio",
+    name: "aspect-ratio",
+    value: "free",
+    id: "sixthRatio",
+    checked: ratioValue === "free",
+    onChange: onRatioChange
+  }), React.createElement("label", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "Free ratio",
+    htmlFor: "sixthRatio"
+  }, "Free"))), React.createElement("div", {
+    className: "control-col"
+  }, React.createElement("div", {
+    className: "btn-group"
+  }, React.createElement("button", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "To left",
+    disabled: isLeftDisabled,
+    onClick: pushResizableToLeft
+  }, React.createElement("i", {
+    className: "fas fa-arrow-left"
+  })), React.createElement("button", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "To right",
+    disabled: isRightDisabled,
+    onClick: pushResizableToRight
+  }, React.createElement("i", {
+    className: "fas fa-arrow-right"
+  })), React.createElement("button", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "To top",
+    disabled: isTopDisabled,
+    onClick: pushResizableToTop
+  }, React.createElement("i", {
+    className: "fas fa-arrow-up"
+  })), React.createElement("button", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "To bottom",
+    disabled: isBottomDisabled,
+    onClick: pushResizableToBottom
+  }, React.createElement("i", {
+    className: "fas fa-arrow-down"
+  })))), React.createElement("div", {
+    className: "control-col"
+  }, React.createElement("div", {
+    className: "btn-group"
+  }, React.createElement("button", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "Flip horizontally",
+    onClick: flipImageHorizontally
+  }, React.createElement("i", {
+    className: "fas fa-arrows-alt-h"
+  })), React.createElement("button", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "Flip vertically",
+    onClick: flipImageVertically
+  }, React.createElement("i", {
+    className: "fas fa-arrows-alt-v"
+  })))), React.createElement("div", {
+    className: "control-col"
+  }, React.createElement("div", {
+    className: "btn-group"
+  }, React.createElement("button", {
+    className: "btn btn-primary on-top",
+    "data-tool-tip": "Reset",
+    onClick: resetData
+  }, React.createElement("i", {
+    className: "fas fa-sync-alt"
+  }))))));
+};
+
+var SelectAndCrop =
+/*#__PURE__*/
+function (_PureComponent2) {
+  _inherits(SelectAndCrop, _PureComponent2);
+
+  function SelectAndCrop() {
+    var _getPrototypeOf3;
+
+    var _this3;
+
+    _classCallCheck(this, SelectAndCrop);
+
+    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    _this3 = _possibleConstructorReturn(this, (_getPrototypeOf3 = _getPrototypeOf(SelectAndCrop)).call.apply(_getPrototypeOf3, [this].concat(args)));
+
+    _defineProperty(_assertThisInitialized(_this3), "state", {
+      isMouseDown: false,
+      // to decide which action to make "resize or move" on "mousemove or touchmove"
+      isMoveDiv: false,
+      // to move div or not
+      isResizeDiv: false,
+      // to resize div or not
+      ratioValue: "1:1",
+      // resize div based on this value if user controls enabled
+      isRatio: false,
+      // enable/disable ratio resizing
+      widthFromRatio: 0,
+      // width ratio value
+      heightFromRatio: 0,
+      // height ratio value
+      minimum_size: 20,
+      // this is the minimum size of the div so that nodes will not stay on top of each other
+      original: {
+        // used to set the original values on any interaction
+        width: 0,
+        height: 0,
+        x: 0,
+        y: 0,
+        mouse_x: 0,
+        mouse_y: 0
+      },
+      final: {
+        // used to set the final data which is used to set the dimensions and the position of the resizable div and will be used for cropping the image as well
+        width: 80,
+        height: 80,
+        x: 0,
+        y: 0
+      },
+      overlayN: {
+        // north overlay styles
+        right: 0,
+        height: 0,
+        left: 0
+      },
+      overlayE: {
+        // east overlay styles
+        left: 0
+      },
+      overlayS: {
+        // south overlay styles
+        right: 0,
+        top: 0,
+        left: 0
+      },
+      overlayW: {
+        // west overlay styles
+        width: 0
+      },
+      offset: [0, 0],
+      // will be used to move the resizable div
+      containerMaxWidth: 0,
+      // width of the image container
+      isImg: false,
+      // show loader or image with resizers
+      isLeftEnabled: false,
+      // enable/disable to left button
+      isRightEnabled: true,
+      // enable/disable to right button
+      isTopEnabled: false,
+      // enable/disable to top button
+      isBottomEnabled: true,
+      // enable/disable to bottom button
+      isFlippedVer: false,
+      // flip image vertically
+      isFlippedHor: false,
+      // flip image horizontally
+      isCropped: false,
+      // show cropped image or original image with controls
+      isTopLeftResize: false,
+      // resize or not using the top left node
+      isTopRightResize: false,
+      // resize or not using the top right node
+      isBottomLeftResize: false,
+      // resize or not using the bottom left node
+      isBottomRightResize: false,
+      // resize or not using the bottom right node
+      croppedSrc: "" // source of the cropped image so that we can send it to the parent component
+
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "loadTimer", void 0);
+
+    _defineProperty(_assertThisInitialized(_this3), "img", new Image());
+
+    _defineProperty(_assertThisInitialized(_this3), "resizeMoveCropContainer", createRef());
+
+    _defineProperty(_assertThisInitialized(_this3), "resizable", createRef());
+
+    _defineProperty(_assertThisInitialized(_this3), "element", void 0);
+
+    _defineProperty(_assertThisInitialized(_this3), "parentWidth", void 0);
+
+    _defineProperty(_assertThisInitialized(_this3), "parentHeight", void 0);
+
+    _defineProperty(_assertThisInitialized(_this3), "parentY", void 0);
+
+    _defineProperty(_assertThisInitialized(_this3), "parentX", void 0);
+
+    _defineProperty(_assertThisInitialized(_this3), "handleMouseMove", function (e) {
+      if (_this3.state.isMouseDown) {
+        if (_this3.state.isResizeDiv) {
+          //resize logic
+          _this3.resize(e);
+        }
+
+        if (_this3.state.isMoveDiv) {
+          //move logic
+          _this3.move(e);
+        }
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "handleResizerClick", function () {
+      _this3.setState({
+        isMouseDown: true,
+        isResizeDiv: true,
+        isMoveDiv: false
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "handleNodeResize", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      _this3.getDimensionsAndPosition(e);
+
+      _this3.handleResizerClick();
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "onTopLeftResize", function (e) {
+      _this3.handleNodeResize(e);
+
+      _this3.setState({
+        isTopLeftResize: true,
+        isTopRightResize: false,
+        isBottomLeftResize: false,
+        isBottomRightResize: false
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "onTopRightResize", function (e) {
+      _this3.handleNodeResize(e);
+
+      _this3.setState({
+        isTopLeftResize: false,
+        isTopRightResize: true,
+        isBottomLeftResize: false,
+        isBottomRightResize: false
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "onBottomLeftResize", function (e) {
+      _this3.handleNodeResize(e);
+
+      _this3.setState({
+        isTopLeftResize: false,
+        isTopRightResize: false,
+        isBottomLeftResize: true,
+        isBottomRightResize: false
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "onBottomRightResize", function (e) {
+      _this3.handleNodeResize(e);
+
+      _this3.setState({
+        isTopLeftResize: false,
+        isTopRightResize: false,
+        isBottomLeftResize: false,
+        isBottomRightResize: true
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "handleMoveClick", function (e) {
+      var newMouseX = e.clientX || e.pageX || e.touches && e.touches[0].clientX;
+      var newMouseY = e.clientY || e.pageY || e.touches && e.touches[0].clientY;
+
+      _this3.setState({
+        isMouseDown: true,
+        isResizeDiv: false,
+        isMoveDiv: true,
+        offset: [_this3.element.offsetLeft - newMouseX, _this3.element.offsetTop - newMouseY]
+      });
+
+      _this3.getDimensionsAndPosition(e);
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "handleMouseUp", function () {
+      _this3.setState({
+        isMouseDown: false,
+        isResizeDiv: false,
+        isMoveDiv: false
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "getDimensionsAndPosition", function (e) {
+      _this3.setState({
+        original: {
+          width: _this3.element.offsetWidth,
+          height: _this3.element.offsetHeight,
+          x: _this3.element.offsetLeft,
+          y: _this3.element.offsetTop,
+          mouse_x: e.clientX || e.pageX || e.touches && e.touches[0].clientX,
+          mouse_y: e.clientY || e.pageY || e.touches && e.touches[0].clientY
+        }
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "onImgLoaded", function () {
+      if (_this3.loadTimer !== null) {
+        clearTimeout(_this3.loadTimer);
+      } // if image is not completed call the current method recursively
+
+
+      if (!_this3.img.complete) {
+        _this3.loadTimer = setTimeout(function () {
+          _this3.onImgLoaded();
+        }, 3);
+      } else {
+        _this3.updateWrapperWidth();
+
+        _this3.setState({
+          isImg: true
+        });
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "updateWrapperWidth", function () {
+      var containerMaxWidth = document.documentElement.clientWidth <= _this3.img.width ? "100%" : _this3.img.width + "px";
+
+      _this3.setState({
+        containerMaxWidth: containerMaxWidth
+      }); // get data
+
+
+      _this3.parentWidth = _this3.element.parentNode.getBoundingClientRect().width;
+      _this3.parentHeight = _this3.element.parentNode.getBoundingClientRect().height;
+      _this3.parentY = _this3.element.parentNode.getBoundingClientRect().y;
+      _this3.parentX = _this3.element.parentNode.getBoundingClientRect().x;
+
+      _this3.repositionOverlay();
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "repositionOverlay", function () {
+      var _this3$state$final = _this3.state.final,
+          width = _this3$state$final.width,
+          height = _this3$state$final.height,
+          x = _this3$state$final.x,
+          y = _this3$state$final.y;
+
+      if (_this3.parentWidth) {
+        _this3.setState({
+          overlayN: {
+            right: _this3.parentWidth - x - width,
+            height: y,
+            left: x
+          },
+          overlayE: {
+            left: x + width
+          },
+          overlayS: {
+            right: _this3.parentWidth - x - width,
+            top: y + height,
+            left: x
+          },
+          overlayW: {
+            width: x
+          }
+        });
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "repositionOverlayUserControls", function (width, height, x, y) {
+      if (_this3.parentWidth) {
+        _this3.setState({
+          overlayN: {
+            right: _this3.parentWidth - x - width,
+            height: y,
+            left: x
+          },
+          overlayE: {
+            left: x + width
+          },
+          overlayS: {
+            right: _this3.parentWidth - x - width,
+            top: y + height,
+            left: x
+          },
+          overlayW: {
+            width: x
+          }
+        });
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "setRatio", function (rValue) {
+      var width = _this3.state.final.width,
+          _this3$props = _this3.props,
+          ratioWidth = _this3$props.ratioWidth,
+          ratioHeight = _this3$props.ratioHeight,
+          allowUserControls = _this3$props.allowUserControls; // if (developer ratio and not user controls) => use props data to set ratio
+
+      if (ratioWidth && ratioHeight && !allowUserControls) {
+        var updatedFinal = { ..._this3.state.final,
+          height: width * (ratioHeight / ratioWidth)
+        };
+
+        _this3.setState({
+          final: updatedFinal,
+          isRatio: true,
+          widthFromRatio: ratioWidth / ratioHeight,
+          heightFromRatio: ratioHeight / ratioWidth
+        });
+      } // if (developer ratio and user controls || user controls) => user user controls to set ratio
+      else if (ratioWidth && ratioHeight && allowUserControls || allowUserControls) {
+          switch (rValue) {
+            case "1:1":
+              _this3.updateWidthHeightRatio(true, 1, 1);
+
+              break;
+
+            case "3:2":
+              _this3.updateWidthHeightRatio(true, 3, 2);
+
+              break;
+
+            case "4:3":
+              _this3.updateWidthHeightRatio(true, 4, 3);
+
+              break;
+
+            case "16:9":
+              _this3.updateWidthHeightRatio(true, 16, 9);
+
+              break;
+
+            case "16:10":
+              _this3.updateWidthHeightRatio(true, 16, 10);
+
+              break;
+
+            default:
+              _this3.setState({
+                isRatio: false
+              });
+
+              break;
+          }
+        }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "updateWidthHeightRatio", function (isRatio, width, height) {
+      var _this3$state$final2 = _this3.state.final,
+          x = _this3$state$final2.x,
+          y = _this3$state$final2.y,
+          rWidth = width,
+          rHeight = height,
+          finalWidth = _this3.state.final.width,
+          finalHeight = finalWidth * (height / width),
+          updatedFinal = { ..._this3.state.final,
+        height: finalHeight
+      };
+
+      _this3.setState({
+        final: updatedFinal,
+        isRatio: isRatio,
+        widthFromRatio: rWidth / rHeight,
+        heightFromRatio: rHeight / rWidth
+      });
+
+      _this3.repositionOverlayUserControls(finalWidth, finalHeight, x, y);
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "setFullWidthToRight", function (_ref2) {
+      var width = _ref2.width,
+          final = _ref2.final;
+
+      // if current x + current width is less than parent width (means we are in the parent div) => set width to the coming width
+      if (final.x + width <= _this3.parentWidth) {
+        var updatedFinal = { ..._this3.state.final,
+          width: width
+        }; // enable/disable (push to right) button
+
+        _this3.enableRightButton(final.x, width);
+
+        _this3.setState({
+          final: updatedFinal
+        });
+      } else {
+        // opposite => set width to parent width - current x
+        var newWidth = _this3.parentWidth - final.x,
+            _updatedFinal = { ..._this3.state.final,
+          width: newWidth
+        }; // enable/disable (push to right) button
+
+        _this3.enableRightButton(final.x, newWidth);
+
+        _this3.setState({
+          final: _updatedFinal
+        });
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "setFullWidthToLeft", function (_ref3) {
+      var width = _ref3.width,
+          newMouseX = _ref3.newMouseX,
+          original = _ref3.original,
+          final = _ref3.final;
+
+      // if initial x + (current mouse x - initial mouse x) is greater than 0 (means we are in the parent div) => set "width to comming width" and "x to initial x + (current mouse x - initial mouse x)"
+      if (original.x + (newMouseX - original.mouse_x) >= 0) {
+        var newX = original.x + (newMouseX - original.mouse_x),
+            updatedFinal = { ..._this3.state.final,
+          width: width,
+          x: newX
+        }; // enable/disable (push to left) button
+
+        _this3.enableLeftButton(newX); // enable/disable (push to right) button
+
+
+        _this3.enableRightButton(newX, width);
+
+        _this3.setState({
+          final: updatedFinal
+        });
+      } else {
+        // opposite => set "width to current width + current x of current element" and "x to 0"
+        var newWidth = final.width + final.x,
+            _updatedFinal2 = { ..._this3.state.final,
+          width: newWidth,
+          x: 0
+        }; // enable/disable (push to left) button
+
+        _this3.enableLeftButton(0); // enable/disable (push to right) button
+
+
+        _this3.enableRightButton(0, newWidth);
+
+        _this3.setState({
+          final: _updatedFinal2
+        });
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "setFullHeightToTop", function (_ref4) {
+      var height = _ref4.height,
+          newMouseY = _ref4.newMouseY,
+          original = _ref4.original,
+          final = _ref4.final;
+
+      // if initial y + (current mouse y - initial mouse y) is greater than 0 (means we are in the parent div) => set "height to coming height" and "y to initial y + (current mouse y - initial mouse y)"
+      if (original.y + (newMouseY - original.mouse_y) >= 0) {
+        var newY = original.y + (newMouseY - original.mouse_y),
+            updatedFinal = { ..._this3.state.final,
+          height: height,
+          y: newY
+        }; // enable/disable (push to top) button
+
+        _this3.enableTopButton(newY);
+
+        _this3.setState({
+          final: updatedFinal
+        });
+      } else {
+        // opposite => set "height to current height + current y of current element" and "y to 0"
+        var newHeight = final.height + final.y,
+            _updatedFinal3 = { ..._this3.state.final,
+          height: newHeight,
+          y: 0
+        }; // enable/disable (push to top) button
+
+        _this3.enableTopButton(0);
+
+        _this3.setState({
+          final: _updatedFinal3
+        });
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "setFullHeightToBottom", function (_ref5) {
+      var height = _ref5.height,
+          final = _ref5.final;
+
+      // if current y + current height is less than parent height (means we are in the parent div) => set height to the comming height
+      if (final.y + height <= _this3.parentHeight) {
+        var updatedFinal = { ..._this3.state.final,
+          height: height
+        }; // enable/disable (push to bottom) button
+
+        _this3.enableBottomButton(final.y, height);
+
+        _this3.setState({
+          final: updatedFinal
+        });
+      } else {
+        // opposite => set height to parent height - current y
+        var newHeight = _this3.parentHeight - final.y,
+            _updatedFinal4 = { ..._this3.state.final,
+          height: newHeight
+        }; // enable/disable (push to bottom) button
+
+        _this3.enableBottomButton(final.y, newHeight);
+
+        _this3.setState({
+          final: _updatedFinal4
+        });
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "setRatioToBottomLeft", function (_ref6) {
+      var width = _ref6.width,
+          newMouseX = _ref6.newMouseX,
+          minimum_size = _ref6.minimum_size,
+          original = _ref6.original,
+          final = _ref6.final;
+      var _this3$state = _this3.state,
+          widthFromRatio = _this3$state.widthFromRatio,
+          heightFromRatio = _this3$state.heightFromRatio,
+          newHeight = heightFromRatio * width; // if initial x + (current mouse x - initial mouse x) is greater than 0 (means we are in the parent div)
+
+      if (original.x + (newMouseX - original.mouse_x) >= 0) {
+        /* if (new height > minimum size) and (new height + current y <= parent div height)
+        * set "width to coming width", "height to ratio height" and "x to initial x + (current mouse x - initial mouse x)*/
+        if (newHeight > minimum_size && newHeight + final.y <= _this3.parentHeight) {
+          var newX = original.x + (newMouseX - original.mouse_x),
+              finalHeight = heightFromRatio * width,
+              updatedFinal = { ..._this3.state.final,
+            width: width,
+            height: finalHeight,
+            x: newX
+          }; // enable/disable (push to left) button
+
+          _this3.enableLeftButton(newX); // enable/disable (push to right) button
+
+
+          _this3.enableRightButton(newX, width); // enable/disable (push to bottom) button
+
+
+          _this3.enableBottomButton(final.y, finalHeight);
+
+          _this3.setState({
+            final: updatedFinal
+          });
+        } else if (newHeight + final.y >= _this3.parentHeight) {
+          /*if ratio height + current y is greater than parent div height =>
+          * set "width to (parent div height - current y) * ratio", "height to parent div height - current y" and "x to (old x + old width) - new width" */
+          var oldOccupiedSpaceX = final.x + final.width,
+              newWidth = (_this3.parentHeight - final.y) * widthFromRatio,
+              _newX = oldOccupiedSpaceX - newWidth,
+              _finalHeight = _this3.parentHeight - final.y,
+              _updatedFinal5 = { ..._this3.state.final,
+            width: newWidth,
+            height: _finalHeight,
+            x: _newX
+          }; // enable/disable (push to left) button
+
+
+          _this3.enableLeftButton(_newX); // enable/disable (push to right) button
+
+
+          _this3.enableRightButton(_newX, newWidth); // enable/disable (push to bottom) button
+
+
+          _this3.enableBottomButton(final.y, _finalHeight);
+
+          _this3.setState({
+            final: _updatedFinal5
+          });
+        }
+      } else if (newHeight + final.y <= _this3.parentHeight) {
+        /*if new height + current y <= parent div height
+         * set "width to current width + current x", "height to ratio height" and "x to 0" */
+        var _newWidth = final.width + final.x,
+            _finalHeight2 = heightFromRatio * _newWidth,
+            _updatedFinal6 = { ..._this3.state.final,
+          width: _newWidth,
+          height: _finalHeight2,
+          x: 0
+        }; // enable/disable (push to left) button
+
+
+        _this3.enableLeftButton(0); // enable/disable (push to right) button
+
+
+        _this3.enableRightButton(0, _newWidth); // enable/disable (push to bottom) button
+
+
+        _this3.enableBottomButton(final.y, _finalHeight2);
+
+        _this3.setState({
+          final: _updatedFinal6
+        });
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "setRatioToBottomRight", function (_ref7) {
+      var width = _ref7.width,
+          minimum_size = _ref7.minimum_size,
+          final = _ref7.final;
+      var _this3$state2 = _this3.state,
+          widthFromRatio = _this3$state2.widthFromRatio,
+          heightFromRatio = _this3$state2.heightFromRatio;
+      /* if current x + new width is less than parent width (means we are in the parent div) =>
+      * set "width to the new width" and "height to ratio height" */
+
+      if (final.x + width <= _this3.parentWidth) {
+        var newHeight = heightFromRatio * width;
+
+        if (newHeight > minimum_size && newHeight + final.y <= _this3.parentHeight) {
+          var updatedFinal = { ..._this3.state.final,
+            width: width,
+            height: newHeight
+          }; // enable/disable (push to right) button
+
+          _this3.enableRightButton(final.x, width); // enable/disable (push to bottom) button
+
+
+          _this3.enableBottomButton(final.y, newHeight);
+
+          _this3.setState({
+            final: updatedFinal
+          });
+        } else if (newHeight + final.y >= _this3.parentHeight) {
+          /* if ratio height + current y >= parent div height =>
+          * set "width to (parent div height - current y) * width ratio value" and "height to parent div height - current y" */
+          var newWidth = (_this3.parentHeight - final.y) * widthFromRatio,
+              finalHeight = _this3.parentHeight - final.y,
+              _updatedFinal7 = { ..._this3.state.final,
+            width: newWidth,
+            height: finalHeight
+          }; // enable/disable (push to right) button
+
+          _this3.enableRightButton(final.x, newWidth); // enable/disable (push to bottom) button
+
+
+          _this3.enableBottomButton(final.y, finalHeight);
+
+          _this3.setState({
+            final: _updatedFinal7
+          });
+        }
+      } else {
+        var _newHeight = heightFromRatio * (_this3.parentWidth - final.x);
+
+        if (_newHeight + final.y <= _this3.parentHeight) {
+          /* if new height + current y <= parent div height =>
+          * set "width to parent div width - current x" and "height to new height" */
+          var _newWidth2 = _this3.parentWidth - final.x,
+              _updatedFinal8 = { ..._this3.state.final,
+            width: _newWidth2,
+            height: _newHeight
+          }; // enable/disable (push to right) button
+
+
+          _this3.enableRightButton(final.x, _newWidth2); // enable/disable (push to bottom) button
+
+
+          _this3.enableBottomButton(final.y, _newHeight);
+
+          _this3.setState({
+            final: _updatedFinal8
+          });
+        }
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "setRatioToTopRight", function (_ref8) {
+      var height = _ref8.height,
+          newMouseY = _ref8.newMouseY,
+          minimum_size = _ref8.minimum_size,
+          original = _ref8.original,
+          final = _ref8.final;
+      var _this3$state3 = _this3.state,
+          widthFromRatio = _this3$state3.widthFromRatio,
+          heightFromRatio = _this3$state3.heightFromRatio,
+          newWidth = widthFromRatio * height; // if inside div on y
+
+      if (original.y + (newMouseY - original.mouse_y) >= 0) {
+        if (newWidth + final.x <= _this3.parentWidth && height > minimum_size) {
+          /* if (new width + current x <= parent div width) && (height is less than minimum size) =>
+          * set "width to new width", "height to coming height" and "y to (initial y + (new mouse y - initial mouse y))"*/
+          var newY = original.y + (newMouseY - original.mouse_y),
+              updatedFinal = { ..._this3.state.final,
+            width: newWidth,
+            height: height,
+            y: newY
+          }; // enable/disable (push to right) button
+
+          _this3.enableRightButton(final.x, newWidth); // enable/disable (push to top) button
+
+
+          _this3.enableTopButton(newY); // enable/disable (push to bottom) button
+
+
+          _this3.enableBottomButton(newY, height);
+
+          _this3.setState({
+            final: updatedFinal
+          });
+        } else {
+          /*opposite =>
+          * set "width to parent div width - current x", "height to ratio height based on new width" and "y to (old height + old y) - new height" */
+          if (height > minimum_size) {
+            var oldOccupiedSpace = final.height + final.y,
+                newHeight = heightFromRatio * (_this3.parentWidth - final.x),
+                _newY = oldOccupiedSpace - newHeight,
+                finalWidth = _this3.parentWidth - final.x,
+                _updatedFinal9 = { ..._this3.state.final,
+              width: finalWidth,
+              height: newHeight,
+              y: _newY
+            }; // enable/disable (push to right) button
+
+
+            _this3.enableRightButton(final.x, finalWidth); // enable/disable (push to top) button
+
+
+            _this3.enableTopButton(_newY); // enable/disable (push to bottom) button
+
+
+            _this3.enableBottomButton(_newY, newHeight);
+
+            _this3.setState({
+              final: _updatedFinal9
+            });
+          }
+        }
+      } else {
+        if (newWidth + final.x <= _this3.parentWidth) {
+          /* if new width + current x <= parent div width =>
+          * set "width to width based on new height", "height to current height + current y" and "y to 0" */
+          var _finalWidth = widthFromRatio * (final.height + final.y),
+              finalHeight = final.height + final.y,
+              _updatedFinal10 = { ..._this3.state.final,
+            width: _finalWidth,
+            height: finalHeight,
+            y: 0
+          }; // enable/disable (push to right) button
+
+
+          _this3.enableRightButton(final.x, _finalWidth); // enable/disable (push to top) button
+
+
+          _this3.enableTopButton(0); // enable/disable (push to bottom) button
+
+
+          _this3.enableBottomButton(0, finalHeight);
+
+          _this3.setState({
+            final: _updatedFinal10
+          });
+        }
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "setRatioToTopLeft", function (_ref9) {
+      var height = _ref9.height,
+          newMouseY = _ref9.newMouseY,
+          newMouseX = _ref9.newMouseX,
+          minimum_size = _ref9.minimum_size,
+          original = _ref9.original,
+          final = _ref9.final;
+      var _this3$state4 = _this3.state,
+          widthFromRatio = _this3$state4.widthFromRatio,
+          heightFromRatio = _this3$state4.heightFromRatio,
+          newWidth = widthFromRatio * height,
+          oldOccupiedSpaceX = final.x + final.width; // if initial y + (current mouse y - initial mouse y) is greater than 0
+
+      if (original.y + (newMouseY - original.mouse_y) >= 0) {
+        var newX = oldOccupiedSpaceX - newWidth;
+
+        if (newX >= 0 && original.x + (newMouseX - original.mouse_x) >= 0 && height > minimum_size) {
+          /* if (new x >= 0) && (initial x + (new mouse x - initial mouse x) >= 0) && (height > minimum size) =>
+           * set "width to ratio width", "x to (old x + old width) - new width", "height to coming height" and "y to initial y + (new mouse y - initial mouse y)" */
+          var newY = original.y + (newMouseY - original.mouse_y),
+              updatedFinal = { ..._this3.state.final,
+            width: newWidth,
+            x: newX,
+            height: height,
+            y: newY
+          }; // enable/disable (push to left) button
+
+          _this3.enableLeftButton(newX); // enable/disable (push to right) button
+
+
+          _this3.enableRightButton(newX, newWidth); // enable/disable (push to top) button
+
+
+          _this3.enableTopButton(newY); // enable/disable (push to bottom) button
+
+
+          _this3.enableBottomButton(newY, height);
+
+          _this3.setState({
+            final: updatedFinal
+          });
+        } else {
+          // opposite
+          var newHeight = heightFromRatio * (final.width + final.x),
+              oldOccupiedSpaceY = final.y + final.height,
+              _newY2 = oldOccupiedSpaceY - newHeight;
+
+          if (_newY2 >= 0 && newHeight + final.y <= _this3.parentHeight && height > minimum_size) {
+            /* if (new y >= 0) && (new height + current y <= parent div height) && (height > minimum size) =>
+             * set "width to current width + current x", "height to new height", "x to 0" and "y to new y" */
+            var finalWidth = final.width + final.x,
+                _updatedFinal11 = { ..._this3.state.final,
+              width: finalWidth,
+              height: newHeight,
+              x: 0,
+              y: _newY2
+            }; // enable/disable (push to left) button
+
+            _this3.enableLeftButton(0); // enable/disable (push to right) button
+
+
+            _this3.enableRightButton(0, finalWidth); // enable/disable (push to top) button
+
+
+            _this3.enableTopButton(_newY2); // enable/disable (push to bottom) button
+
+
+            _this3.enableBottomButton(_newY2, newHeight);
+
+            _this3.setState({
+              final: _updatedFinal11
+            });
+          }
+        }
+      } else {
+        // opposite
+        var _newX2 = oldOccupiedSpaceX - widthFromRatio * (final.height + final.y);
+
+        if (_newX2 >= 0 && newWidth + final.x <= _this3.parentWidth) {
+          /* if (new x >= 0) && (new width + current x <= prent div width) =>
+           * set "width to ratio width", "x to new x", "height to current height + current y", "y to 0" */
+          var _finalWidth2 = widthFromRatio * (final.height + final.y),
+              finalHeight = final.height + final.y,
+              _updatedFinal12 = { ..._this3.state.final,
+            width: _finalWidth2,
+            x: _newX2,
+            height: finalHeight,
+            y: 0
+          }; // enable/disable (push to left) button
+
+
+          _this3.enableLeftButton(_newX2); // enable/disable (push to right) button
+
+
+          _this3.enableRightButton(_newX2, _finalWidth2); // enable/disable (push to top) button
+
+
+          _this3.enableTopButton(0); // enable/disable (push to bottom) button
+
+
+          _this3.enableBottomButton(0, finalHeight);
+
+          _this3.setState({
+            final: _updatedFinal12
+          });
+        }
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "resize", function (e) {
+      var _this3$state5 = _this3.state,
+          original = _this3$state5.original,
+          final = _this3$state5.final,
+          minimum_size = _this3$state5.minimum_size,
+          isResizeDiv = _this3$state5.isResizeDiv,
+          isRatio = _this3$state5.isRatio,
+          isTopLeftResize = _this3$state5.isTopLeftResize,
+          isTopRightResize = _this3$state5.isTopRightResize,
+          isBottomLeftResize = _this3$state5.isBottomLeftResize,
+          isBottomRightResize = _this3$state5.isBottomRightResize;
+      var newMouseX = e.clientX || e.pageX || e.touches && e.touches[0].clientX,
+          newMouseY = e.clientY || e.pageY || e.touches && e.touches[0].clientY,
+          width = 0,
+          height = 0;
+
+      if (isResizeDiv) {
+        if (isBottomRightResize) {
+          width = original.width + (newMouseX - original.mouse_x);
+          height = original.height + (newMouseY - original.mouse_y);
+
+          if (width > minimum_size) {
+            if (isRatio) {
+              _this3.setRatioToBottomRight({
+                width: width,
+                minimum_size: minimum_size,
+                final: final
+              });
+            } else {
+              _this3.setFullWidthToRight({
+                width: width,
+                final: final
+              });
+            }
+          }
+
+          if (height > minimum_size) {
+            if (isRatio) {
+              _this3.setRatioToBottomRight({
+                width: width,
+                minimum_size: minimum_size,
+                final: final
+              });
+            } else {
+              _this3.setFullHeightToBottom({
+                height: height,
+                final: final
+              });
+            }
+          }
+        } else if (isBottomLeftResize) {
+          height = original.height + (newMouseY - original.mouse_y);
+          width = original.width - (newMouseX - original.mouse_x);
+
+          if (height > minimum_size) {
+            if (isRatio) {
+              _this3.setRatioToBottomLeft({
+                width: width,
+                newMouseX: newMouseX,
+                minimum_size: minimum_size,
+                original: original,
+                final: final
+              });
+            } else {
+              _this3.setFullHeightToBottom({
+                height: height,
+                final: final
+              });
+            }
+          }
+
+          if (width > minimum_size) {
+            if (isRatio) {
+              _this3.setRatioToBottomLeft({
+                width: width,
+                newMouseX: newMouseX,
+                minimum_size: minimum_size,
+                original: original,
+                final: final
+              });
+            } else {
+              _this3.setFullWidthToLeft({
+                width: width,
+                newMouseX: newMouseX,
+                original: original,
+                final: final
+              });
+            }
+          }
+        } else if (isTopRightResize) {
+          width = original.width + (newMouseX - original.mouse_x);
+          height = original.height - (newMouseY - original.mouse_y);
+
+          if (width > minimum_size) {
+            if (isRatio) {
+              _this3.setRatioToTopRight({
+                height: height,
+                newMouseY: newMouseY,
+                minimum_size: minimum_size,
+                original: original,
+                final: final
+              });
+            } else {
+              _this3.setFullWidthToRight({
+                width: width,
+                final: final
+              });
+            }
+          }
+
+          if (height > minimum_size) {
+            if (isRatio) {
+              _this3.setRatioToTopRight({
+                height: height,
+                newMouseY: newMouseY,
+                minimum_size: minimum_size,
+                original: original,
+                final: final
+              });
+            } else {
+              _this3.setFullHeightToTop({
+                height: height,
+                newMouseY: newMouseY,
+                original: original,
+                final: final
+              });
+            }
+          }
+        } else if (isTopLeftResize) {
+          width = original.width - (newMouseX - original.mouse_x);
+          height = original.height - (newMouseY - original.mouse_y);
+
+          if (width > minimum_size) {
+            if (isRatio) {
+              _this3.setRatioToTopLeft({
+                height: height,
+                newMouseY: newMouseY,
+                newMouseX: newMouseX,
+                minimum_size: minimum_size,
+                original: original,
+                final: final
+              });
+            } else {
+              _this3.setFullWidthToLeft({
+                width: width,
+                newMouseX: newMouseX,
+                original: original,
+                final: final
+              });
+            }
+          }
+
+          if (height > minimum_size) {
+            if (isRatio) {
+              _this3.setRatioToTopLeft({
+                height: height,
+                newMouseY: newMouseY,
+                newMouseX: newMouseX,
+                minimum_size: minimum_size,
+                original: original,
+                final: final
+              });
+            } else {
+              _this3.setFullHeightToTop({
+                height: height,
+                newMouseY: newMouseY,
+                original: original,
+                final: final
+              });
+            }
+          }
+        }
+      }
+
+      _this3.repositionOverlay();
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "move", function (e) {
+      var _this3$state6 = _this3.state,
+          offset = _this3$state6.offset,
+          original = _this3$state6.original,
+          final = _this3$state6.final;
+      var newMouseX = e.clientX || e.pageX || e.touches && e.touches[0].clientX,
+          newMouseY = e.clientY || e.pageY || e.touches && e.touches[0].clientY;
+
+      if (_this3.state.isMoveDiv) {
+        // if (mouse is inside parent div on y) and (current y + offset y + current div height <= parent height) set y
+        if (original.y + (newMouseY - original.mouse_y) >= 0 && newMouseY + offset[1] + final.height <= _this3.parentHeight) {
+          var newY = newMouseY + offset[1],
+              updatedFinal = { ..._this3.state.final,
+            y: newY
+          }; // enable/disable (push to top) button
+
+          _this3.enableTopButton(newY); // enable/disable (push to bottom) button
+
+
+          _this3.enableBottomButton(newY, final.height);
+
+          _this3.setState({
+            final: updatedFinal
+          });
+        } else if (original.y + (newMouseY - original.mouse_y) <= 0) {
+          // if mouse is outside parent div on y => set y to 0
+          var _updatedFinal13 = { ..._this3.state.final,
+            y: 0
+          }; // enable/disable (push to top) button
+
+          _this3.enableTopButton(0); // enable/disable (push to bottom) button
+
+
+          _this3.enableBottomButton(0, final.height);
+
+          _this3.setState({
+            final: _updatedFinal13
+          });
+        } else if (newMouseY + offset[1] + final.height >= _this3.parentHeight) {
+          // if current y + offset y + current height >= parent height => set y parent height - current height
+          var _newY3 = _this3.parentHeight - final.height,
+              _updatedFinal14 = { ..._this3.state.final,
+            y: _newY3
+          }; // enable/disable (push to top) button
+
+
+          _this3.enableTopButton(_newY3); // enable/disable (push to bottom) button
+
+
+          _this3.enableBottomButton(_newY3, final.height);
+
+          _this3.setState({
+            final: _updatedFinal14
+          });
+        } // if (mouse is inside parent div on x) and (current x + offset x + current div width <= parent width) set x
+
+
+        if (original.x + (newMouseX - original.mouse_x) >= 0 && newMouseX + offset[0] + final.width <= _this3.parentWidth) {
+          var newX = newMouseX + offset[0];
+          var _updatedFinal15 = { ..._this3.state.final,
+            x: newX
+          }; // enable/disable (push to left) button
+
+          _this3.enableLeftButton(newX); // enable/disable (push to right) button
+
+
+          _this3.enableRightButton(newX, final.width);
+
+          _this3.setState({
+            final: _updatedFinal15
+          });
+        } else if (original.x + (newMouseX - original.mouse_x) <= 0) {
+          // if mouse is outside parent div on x => set x to 0
+          var _updatedFinal16 = { ..._this3.state.final,
+            x: 0
+          }; // enable/disable (push to left) button
+
+          _this3.enableLeftButton(0); // enable/disable (push to right) button
+
+
+          _this3.enableRightButton(0, final.width);
+
+          _this3.setState({
+            final: _updatedFinal16
+          });
+        } else if (newMouseX + offset[0] + final.width >= _this3.parentWidth) {
+          // if current x + initial x + current width >= parent width => set x to parent width - current width
+          var _newX3 = _this3.parentWidth - final.width,
+              _updatedFinal17 = { ..._this3.state.final,
+            x: _newX3
+          }; // enable/disable (push to left) button
+
+
+          _this3.enableLeftButton(_newX3); // enable/disable (push to right) button
+
+
+          _this3.enableRightButton(_newX3, final.width);
+
+          _this3.setState({
+            final: _updatedFinal17
+          });
+        }
+      }
+
+      _this3.repositionOverlay();
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "enableLeftButton", function (x) {
+      var isEnabled = x > 0;
+
+      _this3.setState({
+        isLeftEnabled: isEnabled
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "enableRightButton", function (x, width) {
+      var isEnabled = x + width < _this3.parentWidth;
+
+      _this3.setState({
+        isRightEnabled: isEnabled
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "enableTopButton", function (y) {
+      var isEnabled = y > 0;
+
+      _this3.setState({
+        isTopEnabled: isEnabled
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "enableBottomButton", function (y, height) {
+      var isEnabled = y + height < _this3.parentHeight;
+
+      _this3.setState({
+        isBottomEnabled: isEnabled
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "pushResizableToLeft", function () {
+      var _this3$state7 = _this3.state,
+          isLeftEnabled = _this3$state7.isLeftEnabled,
+          isRightEnabled = _this3$state7.isRightEnabled,
+          _this3$state7$final = _this3$state7.final,
+          width = _this3$state7$final.width,
+          height = _this3$state7$final.height,
+          x = _this3$state7$final.x,
+          y = _this3$state7$final.y;
+
+      if (isLeftEnabled) {
+        _this3.setState(function (prevState) {
+          return {
+            final: { ..._this3.state.final,
+              x: prevState.final.x - 1
+            },
+            isLeftEnabled: prevState.final.x - 1 === 0 ? false : true
+          };
+        });
+      }
+
+      if (!isRightEnabled) {
+        _this3.setState({
+          isRightEnabled: true
+        });
+      }
+
+      _this3.repositionOverlayUserControls(width, height, x - 1, y);
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "pushResizableToRight", function () {
+      var _this3$state8 = _this3.state,
+          isRightEnabled = _this3$state8.isRightEnabled,
+          isLeftEnabled = _this3$state8.isLeftEnabled,
+          _this3$state8$final = _this3$state8.final,
+          width = _this3$state8$final.width,
+          height = _this3$state8$final.height,
+          x = _this3$state8$final.x,
+          y = _this3$state8$final.y;
+
+      if (isRightEnabled) {
+        _this3.setState(function (prevState) {
+          return {
+            final: { ..._this3.state.final,
+              x: prevState.final.x + 1
+            },
+            isRightEnabled: prevState.final.x + 1 + prevState.final.width === _this3.parentWidth ? false : true
+          };
+        });
+      }
+
+      if (!isLeftEnabled) {
+        _this3.setState({
+          isLeftEnabled: true
+        });
+      }
+
+      _this3.repositionOverlayUserControls(width, height, x + 1, y);
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "pushResizableToTop", function () {
+      var _this3$state9 = _this3.state,
+          isTopEnabled = _this3$state9.isTopEnabled,
+          isBottomEnabled = _this3$state9.isBottomEnabled,
+          _this3$state9$final = _this3$state9.final,
+          width = _this3$state9$final.width,
+          height = _this3$state9$final.height,
+          x = _this3$state9$final.x,
+          y = _this3$state9$final.y;
+
+      if (isTopEnabled) {
+        _this3.setState(function (prevState) {
+          return {
+            final: { ..._this3.state.final,
+              y: prevState.final.y - 1
+            },
+            isTopEnabled: prevState.final.y - 1 === 0 ? false : true
+          };
+        });
+      }
+
+      if (!isBottomEnabled) {
+        _this3.setState({
+          isBottomEnabled: true
+        });
+      }
+
+      _this3.repositionOverlayUserControls(width, height, x, y - 1);
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "pushResizableToBottom", function () {
+      var _this3$state10 = _this3.state,
+          isBottomEnabled = _this3$state10.isBottomEnabled,
+          isTopEnabled = _this3$state10.isTopEnabled,
+          _this3$state10$final = _this3$state10.final,
+          width = _this3$state10$final.width,
+          height = _this3$state10$final.height,
+          x = _this3$state10$final.x,
+          y = _this3$state10$final.y;
+
+      if (isBottomEnabled) {
+        _this3.setState(function (prevState) {
+          return {
+            final: { ..._this3.state.final,
+              y: prevState.final.y + 1
+            },
+            isBottomEnabled: prevState.final.y + 1 + prevState.final.height === _this3.parentHeight ? false : true
+          };
+        });
+      }
+
+      if (!isTopEnabled) {
+        _this3.setState({
+          isTopEnabled: true
+        });
+      }
+
+      _this3.repositionOverlayUserControls(width, height, x, y + 1);
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "flipImageVertically", function () {
+      _this3.setState(function (prevState) {
+        return {
+          isFlippedVer: !prevState.isFlippedVer
+        };
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "flipImageHorizontally", function () {
+      _this3.setState(function (prevState) {
+        return {
+          isFlippedHor: !prevState.isFlippedHor
+        };
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "resetData", function () {
+      _this3.setState({ ..._this3.state,
+        isMouseDown: false,
+        isMoveDiv: false,
+        isResizeDiv: false,
+        ratioValue: "1:1",
+        isRatio: true,
+        widthFromRatio: 1,
+        heightFromRatio: 1,
+        minimum_size: 20,
+        original: {
+          width: 0,
+          height: 0,
+          x: 0,
+          y: 0,
+          mouse_x: 0,
+          mouse_y: 0
+        },
+        final: {
+          width: 80,
+          height: 80,
+          x: 0,
+          y: 0
+        },
+        offset: [0, 0],
+        isLeftEnabled: false,
+        isRightEnabled: true,
+        isTopEnabled: false,
+        isBottomEnabled: true,
+        isFlippedVer: false,
+        isFlippedHor: false,
+        isCropped: false,
+        croppedSrc: ""
+      });
+
+      _this3.repositionOverlayUserControls(80, 80, 0, 0);
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "onRatioChange", function (_ref10) {
+      var value = _ref10.target.value;
+
+      _this3.setState({
+        ratioValue: value
+      });
+
+      _this3.setRatio(value);
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "setIsCropped", function (cropped) {
+      _this3.setState({
+        isCropped: cropped
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this3), "getCroppedImg", function (croppedSrc) {
+      _this3.setState({
+        croppedSrc: croppedSrc
+      });
+
+      _this3.props.getCroppedImg(croppedSrc);
+    });
+
+    return _this3;
+  }
+
+  _createClass(SelectAndCrop, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      // access resizable div
+      this.element = this.resizable.current; // check whether to resize based on ratio or no
+
+      this.setRatio(this.state.ratioValue); // solve race condition issue
+
+      var image = this.props.image;
+      this.img.src = image;
+      this.img.addEventListener("load", this.onImgLoaded); // attach event listeners
+
+      window.addEventListener("mousemove", this.handleMouseMove);
+      window.addEventListener("touchmove", this.handleMouseMove);
+      window.addEventListener("mouseup", this.handleMouseUp);
+      window.addEventListener("touchend", this.handleMouseUp);
+      window.addEventListener("resize", this.updateWrapperWidth);
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      // remove event listeners
+      window.removeEventListener("mousemove", this.handleMouseMove);
+      window.removeEventListener("touchmove", this.handleMouseMove);
+      window.removeEventListener("mouseup", this.handleMouseUp);
+      window.removeEventListener("touchend", this.handleMouseUp);
+      window.removeEventListener("resize", this.updateWrapperWidth);
+    } // if mousedown is true check which action to make (resize or move)
+
+  }, {
+    key: "render",
+    value: function render() {
+      var _this$state = this.state,
+          _this$state$final = _this$state.final,
+          width = _this$state$final.width,
+          height = _this$state$final.height,
+          x = _this$state$final.x,
+          y = _this$state$final.y,
+          containerMaxWidth = _this$state.containerMaxWidth,
+          isImg = _this$state.isImg,
+          isLeftEnabled = _this$state.isLeftEnabled,
+          isRightEnabled = _this$state.isRightEnabled,
+          isTopEnabled = _this$state.isTopEnabled,
+          isBottomEnabled = _this$state.isBottomEnabled,
+          isFlippedHor = _this$state.isFlippedHor,
+          isFlippedVer = _this$state.isFlippedVer,
+          ratioValue = _this$state.ratioValue,
+          isCropped = _this$state.isCropped,
+          overlayN = _this$state.overlayN,
+          overlayE = _this$state.overlayE,
+          overlayS = _this$state.overlayS,
+          overlayW = _this$state.overlayW,
+          croppedSrc = _this$state.croppedSrc,
+          _this$props3 = this.props,
+          image = _this$props3.image,
+          allowUserControls = _this$props3.allowUserControls;
+      return React.createElement(Fragment, null, !isImg && React.createElement(Loader, null), !isCropped ? React.createElement(Fragment, null, React.createElement("div", {
+        className: "resize-move-crop-container",
+        style: {
+          width: containerMaxWidth,
+          visibility: isImg ? "visible" : "hidden"
+        },
+        ref: this.resizeMoveCropContainer
+      }, React.createElement("img", {
+        src: image,
+        alt: "image",
+        style: {
+          transform: "scale(".concat(isFlippedHor ? "-1" : "1", ", ").concat(isFlippedVer ? "-1" : "1", ")")
+        }
+      }), React.createElement("div", {
+        className: "overlay-n",
+        style: {
+          right: overlayN.right,
+          height: overlayN.height,
+          left: overlayN.left
+        }
+      }), React.createElement("div", {
+        className: "overlay-e",
+        style: {
+          left: overlayE.left
+        }
+      }), React.createElement("div", {
+        className: "overlay-s",
+        style: {
+          right: overlayS.right,
+          top: overlayS.top,
+          left: overlayS.left
+        }
+      }), React.createElement("div", {
+        className: "overlay-w",
+        style: {
+          width: overlayW.width
+        }
+      }), React.createElement("div", {
+        className: "resizable",
+        ref: this.resizable,
+        onMouseDown: this.handleMoveClick,
+        onTouchStart: this.handleMoveClick,
+        style: {
+          width: width,
+          height: height,
+          left: x,
+          top: y
+        }
+      }, React.createElement("div", {
+        className: "resizers"
+      }, React.createElement("div", {
+        className: "resizer top-left",
+        onMouseDown: this.onTopLeftResize,
+        onTouchStart: this.onTopLeftResize
+      }), React.createElement("div", {
+        className: "resizer top-right",
+        onMouseDown: this.onTopRightResize,
+        onTouchStart: this.onTopRightResize
+      }), React.createElement("div", {
+        className: "resizer bottom-left",
+        onMouseDown: this.onBottomLeftResize,
+        onTouchStart: this.onBottomLeftResize
+      }), React.createElement("div", {
+        className: "resizer bottom-right",
+        onMouseDown: this.onBottomRightResize,
+        onTouchStart: this.onBottomRightResize
+      })))), allowUserControls && React.createElement(SelectAndCropControls, {
+        isLeftDisabled: !isLeftEnabled,
+        isRightDisabled: !isRightEnabled,
+        isTopDisabled: !isTopEnabled,
+        isBottomDisabled: !isBottomEnabled,
+        flipImageVertically: this.flipImageVertically,
+        flipImageHorizontally: this.flipImageHorizontally,
+        pushResizableToLeft: this.pushResizableToLeft,
+        pushResizableToRight: this.pushResizableToRight,
+        pushResizableToTop: this.pushResizableToTop,
+        pushResizableToBottom: this.pushResizableToBottom,
+        resetData: this.resetData,
+        onRatioChange: this.onRatioChange,
+        ratioValue: ratioValue
+      }), React.createElement(CropImage, {
+        imageSrc: image,
+        width: width,
+        height: height,
+        x: x,
+        y: y,
+        setIsCropped: this.setIsCropped,
+        getCroppedImg: this.getCroppedImg,
+        isFlippedVer: isFlippedVer,
+        isFlippedHor: isFlippedHor
+      })) : React.createElement("div", null, React.createElement("img", {
+        src: croppedSrc,
+        alt: "cropped image"
+      })));
+    }
+  }]);
+
+  return SelectAndCrop;
+}(PureComponent);
+
+var App =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(App, _Component);
+
+  function App() {
+    var _getPrototypeOf4;
+
+    var _this4;
+
+    _classCallCheck(this, App);
+
+    for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      args[_key3] = arguments[_key3];
+    }
+
+    _this4 = _possibleConstructorReturn(this, (_getPrototypeOf4 = _getPrototypeOf(App)).call.apply(_getPrototypeOf4, [this].concat(args)));
+
+    _defineProperty(_assertThisInitialized(_this4), "state", {
+      fileInputImage: "",
+      isError: false,
+      croppedImgSrc: "",
+      croppedImgSrc2: "",
+      croppedImgSrc3: "",
+      croppedImgSrc4: ""
+    });
+
+    _defineProperty(_assertThisInitialized(_this4), "form", createRef());
+
+    _defineProperty(_assertThisInitialized(_this4), "onSelectImage", function (event) {
+      var file = event.target.files[0];
+
+      if (file.type === "image/jpeg" || file.type === "image/jpg" || file.type === "image/png") {
+        var resized = resizeImage({
+            file: event.target.files[0],
+            maxSize: 300
+        }).then(function (resizedImage) {
+            console.log("upload resized image")
+            console.log(resizedImage)
+            file = resizedImage
+            _this4.setState({
+              fileInputImage: URL.createObjectURL(file),
+              isError: false
+            })
+        }).catch(function (err) {
+            console.error(err);
+            _this4.setState({
+              isError: true
+            })
+        });
+      } else {
+        _this4.setState({
+          isError: true
+        });
+      }
+    });
+
+    _defineProperty(_assertThisInitialized(_this4), "removeImg", function () {
+      _this4.form.current.reset();
+
+      _this4.setState({
+        fileInputImage: ""
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this4), "getCroppedImg", function (croppedSrc) {
+      _this4.setState({
+        croppedImgSrc: croppedSrc
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this4), "getCroppedImgSecond", function (croppedSrc) {
+      _this4.setState({
+        croppedImgSrc2: croppedSrc
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this4), "getCroppedImgThird", function (croppedSrc) {
+      _this4.setState({
+        croppedImgSrc3: croppedSrc
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this4), "getCroppedImgForth", function (croppedSrc) {
+      _this4.setState({
+        croppedImgSrc4: croppedSrc
+      });
+    });
+
+    return _this4;
+  }
+
+  _createClass(App, [{
+    key: "render",
+    value: function render() {
+      var _this$state2 = this.state,
+          fileInputImage = _this$state2.fileInputImage,
+          isError = _this$state2.isError;
+      return React.createElement(
+        "div",
+        {
+          className: "settings_col_m8_center"
+        }, 
+        React.createElement(
+          "div", 
+          {
+            className: "row"
+          }, 
+          React.createElement(
+            "h3", 
+            {
+              className: "title"
+            }, 
+            "Please Upload an Image",
+          )
+        ), 
+        React.createElement(
+          "div", 
+          {
+            className: "row"
+          },
+          React.createElement(
+            "form", 
+            {
+              ref: this.form
+            }, 
+            React.createElement(
+              "input", 
+              {
+                type: "file",
+                multiple: false,
+                accept: "image/png, image/jpeg",
+                disabled: fileInputImage,
+                onChange: this.onSelectImage
+              }
+            )
+          )
+        ),
+        React.createElement(
+          "div", 
+          {
+            className: "row hide_div",
+            id: "submit_btn"
+          },
+          React.createElement(
+            "button", 
+            {
+              className: "btn submit settings_col_m4_center",
+              onClick: function onClick() {
+                updateAvatar();
+              }
+            },
+            "Submit"
+          )
+        ),
+        React.createElement(
+          "div", 
+          {
+            className: "pic_container row"
+          },
+          fileInputImage && React.createElement(
+            Fragment, 
+            null,
+            React.createElement(
+              "div", 
+              {
+                className: "row"
+              },
+              React.createElement(
+                "button", 
+                {
+                  className: "btn btn-danger remove-image",
+                  onClick: this.removeImg
+                }, 
+                "Remove image"
+              )
+            ),
+            React.createElement(
+              "div", 
+              {
+                className: "row"
+              },  
+              React.createElement(
+                SelectAndCrop, 
+                {
+                  getCroppedImg: this.getCroppedImg,
+                  image: fileInputImage,
+                  allowUserControls: true
+                }
+              )
+            )
+          )
+        ),
+        
+        isError && React.createElement(
+          "p", 
+          {
+            className: "error-message"
+          }, 
+          "Please select an image type of: (.png, .jpg, .jpeg)."
+        ) 
+      );
+    }
+  }]);
+
+  return App;
+}(Component);
+
+ReactDOM.render(React.createElement(App, null), document.querySelector("#app"));
+</script>
+<script type="text/javascript">
+function getImagesByAlt(alt) {
+    var allImages = document.getElementsByTagName("img");
+    var images = [];
+    for (var i = 0, len = allImages.length; i < len; ++i) {
+        if (allImages[i].alt == alt) {
+            images.push(allImages[i]);
+        }
+    }
+    return images;
+}
+
+// var myImage = getImagesByAlt("Myimage")[0];
+function updateAvatar() {
+  var pic_el = getImagesByAlt("cropped image")[0];
+  var img_data = pic_el.getAttribute('src');
+  // alert(img_data);
+  var xhttp = new XMLHttpRequest();
+  var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      window.location.replace = "/profile";
+
+    }
+  };
+
+  xhttp.open("POST", "update_avatar", true);
+  xhttp.setRequestHeader("Content-type", "application/upload");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send(img_data); 
+};
+</script>
+
+<script>
+const resizeFile = (file) => new Promise(resolve => {
+    Resizer.imageFileResizer(file, 300, 300, 'JPEG', 100, 0,
+    uri => {
+      resolve(uri);
+    }, 'base64' );
+});
+const onChange = async (event) => {
+  const file = event.target.files[0];
+  const image = await resizeFile(file);
+  console.log(image);
+}
+
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+<div class="panel panel-default">
+                        <table id="error_notes" class="table-striped table table-condensed table-hover centered" aria-describedby="Components Table">
+                            <tbody>
+                            <tr>
+                                <th>Package</th>
+                                <th>Version</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span>
+                                        <a href="/component/{{ app_data.ID }}/{{ details.ImportedCodeID }}" title="{{ details.VulnerableFileName.split(':')[0] }}">{{ details.VulnerableFileName.split(':')[0] }}</a>
+                                        <div class="fa fa-copy fa-align-right copytoclipboard" title="copy to clipboard"
+                                           data-clipboard-text="{{ details.VulnerableFileName.split(':')[0] }}"></div>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span>
+                                        {{ details.VulnerableFileName.split(':')[1] }}
+                                    </span>
+                                </td>
+
+
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>

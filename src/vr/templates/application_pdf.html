@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+        h1 {
+            font-size: 18px;
+        }
+        h2 {
+            font-size: 16px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Application Report: {{ app_data['ApplicationName'] }}</h1>
+    <h2>Report Date: {{ now }} (UTC)</h2>
+
+    <h2>Vulnerabilities By Severity</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Severity</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Total</td>
+                <td>{{ vuln_data['total'] }}</td>
+            </tr>
+            <tr>
+                <td>Critical</td>
+                <td>{{ vuln_data['critical'] }}</td>
+            </tr>
+            <tr>
+                <td>High</td>
+                <td>{{ vuln_data['high'] }}</td>
+            </tr>
+            <tr>
+                <td>Medium</td>
+                <td>{{ vuln_data['medium'] }}</td>
+            </tr>
+            <tr>
+                <td>Low</td>
+                <td>{{ vuln_data['low'] }}</td>
+            </tr>
+            <tr>
+                <td>Informational</td>
+                <td>{{ vuln_data['informational'] }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Vulnerability Details Section -->
+    <h2>Vulnerabilities By Assessment Type</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Severity</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Secret Scanning</td>
+                <td>{{ vuln_data['secrets'] }}</td>
+            </tr>
+            <tr>
+                <td>Software Composition Analysis (SCA)</td>
+                <td>{{ vuln_data['sca'] }}</td>
+            </tr>
+            <tr>
+                <td>Static Application Security Testing (SAST)</td>
+                <td>{{ vuln_data['sast'] }}</td>
+            </tr>
+            <tr>
+                <td>Infrastructure-as-Code (IaC) Security Scanning</td>
+                <td>{{ vuln_data['iac'] }}</td>
+            </tr>
+            <tr>
+                <td>Container Security Scanning</td>
+                <td>{{ vuln_data['container'] }}</td>
+            </tr>
+            <tr>
+                <td>Dynamic Application Security Testing (DAST)</td>
+                <td>{{ vuln_data['dast'] }}</td>
+            </tr>
+            {% if 'dastapi' in vuln_data %}
+            <tr>
+                <td>Dynamic API Security Testing (DAST API)</td>
+                <td>{{ vuln_data['dastapi'] }}</td>
+            </tr>
+            {% endif %}
+            {% if 'infrastructure' in vuln_data %}
+            <tr>
+                <td>Infrastructure Security Testing</td>
+                <td>{{ vuln_data['infrastructure'] }}</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    <!-- Benchmark Assessments Section -->
+    <h2>Benchmark Assessments</h2>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Version</th>
+            <th>Score</th>
+        </tr>
+        {% for assessment in bm_assessments %}
+        <tr>
+            <td>{{ assessment['AddDate'] }}</td>
+            <td>{{ assessment['Type'] }}</td>
+            <td>{{ assessment['Name'] }}</td>
+            <td>{{ assessment['Version'] }}</td>
+            <td>{{ assessment['findings_cnt'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
+
+
+    <!-- Add more sections for other data, such as regs_all, sla_data, ld, contacts, dependency_map, and bm_assessments -->
+</body>
+</html>

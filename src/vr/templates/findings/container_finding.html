@@ -1,0 +1,32 @@
+<div class="panel panel-default">
+                        <table id="error_notes" class="table-striped table table-condensed table-hover centered" aria-describedby="Components Table">
+                            <tbody>
+                            <tr>
+                                <th>Container Image</th>
+                                <th>Package</th>
+                                <th>Path</th>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span>
+                                        <a href="/dockerimage/{{ app_data.ID }}/{{ details.DockerImageId }}" title="{{ details.ImageName }}:{{ details.ImageTag }}">{{ details.ImageName }}:{{ details.ImageTag }}</a>
+                                        <div class="fa fa-copy fa-align-right copytoclipboard" title="copy to clipboard"
+                                           data-clipboard-text="{{ details.ImageName }}:{{ details.ImageTag }}"></div>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span>
+                                        {{ details.VulnerablePackage }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span>
+                                        {{ details.VulnerableFilePath }}
+                                    </span>
+                                </td>
+
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>

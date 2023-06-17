@@ -1,0 +1,100 @@
+<!-- bulkadd modal -->
+<div id="bulkadd_modal" class="modal">
+  <!-- Modal content -->
+  <div class="settings_container">
+    
+    <div class="settings_row">
+      
+      <div class="settings_col_m8_center">
+    
+        <div class="settings_card">
+      
+          <div class="settings_card_header">
+            <span class="close" onclick="hideModal('bulkadd_modal')"><div class="fas fa-times" style="font-size: 3rem;"></div></span>
+            <h4 class="settings_card_title">Upload</h4>
+          </div>
+      
+          <div class="settings_card_body">
+      
+            <div class="settings_form">
+
+              <div id="aim_warn_content"></div>
+
+              <div class="settings_card_row">
+
+                <div class="settings_card_form_group">
+                  <label id="label_instructions" class="settings_card_form_label">1. Download the Upload Template using the link below.<br>2. Add you data to the appropriate column(s)<br>3. Upload the template using the link below.</label>
+                  <label id="label_dynamic_val" class="settings_card_form_label" style="width: 100%;"></label>
+                </div>
+
+              </div>
+          
+        
+              <a class="settings_card_text_center">
+                <button id="bu_button" class="update_button settings_update_button">Upload Template</button><input class="chatbox-footer_upload_input" id="wc-upload-input" type="file" tableindex="-1" multiple="" role="button" onchange="submitTemplate()" hidden/>
+                <a href="ip_assets_template_dl" style="text-decoration: none;"><button id="download_btn" class="update_button settings_update_button cancel">Download Template</button></a>
+                <button class="update_button settings_update_button cancel" onclick="hideModal('bulkadd_modal')">Cancel</button>
+              </div>
+        
+              <div class="settings_card_clearfix"></div>
+        
+            </div>
+      
+          </div>
+      
+        </div>
+    
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<!-- loading_modal -->
+  <div id="loading_modal" class="modal">
+    {% include "loading_modal.html" %}
+  </div>
+  <!-- end loading_modal -->
+
+<script src='../static/js/jquery.min.js'></script>
+<script src='../static/js/bootstrap.min.js'></script>
+<script src='../static/js/bootstrap-datepicker.min.js'></script>
+<script>
+document.getElementById('bu_button').addEventListener('click', openDialog);
+
+function openDialog() {
+  document.getElementById('wc-upload-input').click();
+}
+
+function submitTemplate() {
+    hideModal('bulkadd_modal');
+    showModal('loading_modal');
+    var form_data = new FormData();
+    var templatefile = document.getElementById('wc-upload-input');
+    form_data.append("template_file", templatefile.files[0]);
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            location.reload();
+            hideModal('loading_modal');
+        } else {
+            var warn_msg = 'Error: Please try again'
+            document.getElementById('aim_warn_content').innerHTML = `<div class="settings_card_form_group"><label class="settings_card_form_label" style="color:red">${warn_msg}</label></div>`;
+        }
+    };
+    xhttp.open("POST", "ip_assets_template_ul", true);
+    xhttp.send(form_data);
+}
+
+</script>
+<script>
+// flask section
+var addToDb_url = 'add_ipasset';
+var addToDb_reload = 'true';
+var addToDb_new_page = 'new_page';
+// end flask section
+
+
+</script>
+<!-- end add modal -->

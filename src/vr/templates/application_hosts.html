@@ -1,0 +1,679 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+
+
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">
+                    {{ app_data.ApplicationName }}
+
+                </h3>
+                {% include "application_horizontal_bar.html" %}
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li><a data-toggle="tooltip" data-placement="top" title="Endpoints" href="/endpoint?product=4">Endpoints</a>
+                        </li>
+
+
+                        <li class="breadcrumb-item active" aria-current="page">All Hosts</li>
+
+                    </ol>
+                </nav>
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading tight">
+                                <h3 class="has-filters">
+                                    All Hosts
+                                    <div class="dropdown pull-right">
+                                        <button id="show-filters" data-toggle="collapse" data-target="#the-filters"
+                                                class="btn btn-primary toggle-filters"><div class="fa fa-filter"></div> <div
+                                                class="caret"></div></button>
+
+                                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
+                                                data-toggle="dropdown" aria-expanded="true">
+                                            <span class="fa fa-wrench"></span>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-right" role="menu"
+                                            aria-labelledby="dropdownMenu1">
+                                            <li role="presentation">
+
+                                                <a href="/endpoints/4/add">
+
+                                                    <div class="fa fa-plus"></div> New Endpoint
+                                                </a>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+                                </h3>
+                            </div>
+                            <div id="the-filters" class="is-filters panel-body collapse">
+
+
+                                <link rel="stylesheet" href="/static/chosen-bootstrap/chosen.bootstrap.min.css">
+
+
+                                <link href="/static/tagulous/lib/select2-4/css/select2.min.css" type="text/css"
+                                      media="all" rel="stylesheet">
+
+
+                                <script src="/static/tagulous/lib/select2-4/js/select2.full.min.js"></script>
+                                <script src="/static/tagulous/tagulous.js"></script>
+                                <script src="/static/tagulous/adaptor/select2-4.js"></script>
+
+                                <div class="filter-set">
+                                    <form method="get" class="endpointhost-filters form-inline dojo-filter-set">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                                        <div class="filter-form-group">
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_protocol" style="display: block;">Protocol
+                                                    contains</label>
+
+                                                <input type="text" name="protocol" placeholder="Protocol contains"
+                                                       class=" form-control filter-form-control" id="id_protocol">
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_userinfo" style="display: block;">Userinfo
+                                                    contains</label>
+
+                                                <input type="text" name="userinfo" placeholder="Userinfo contains"
+                                                       class=" form-control filter-form-control" id="id_userinfo">
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_host" style="display: block;">Host contains</label>
+
+                                                <input type="text" name="host" placeholder="Host contains"
+                                                       class=" form-control filter-form-control" id="id_host">
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_port" style="display: block;">Port</label>
+
+                                                <input type="number" name="port" step="any" placeholder="Port"
+                                                       class=" form-control filter-form-control" id="id_port">
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_path" style="display: block;">Path contains</label>
+
+                                                <input type="text" name="path" placeholder="Path contains"
+                                                       class=" form-control filter-form-control" id="id_path">
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_query" style="display: block;">Query contains</label>
+
+                                                <input type="text" name="query" placeholder="Query contains"
+                                                       class=" form-control filter-form-control" id="id_query">
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_fragment" style="display: block;">Fragment
+                                                    contains</label>
+
+                                                <input type="text" name="fragment" placeholder="Fragment contains"
+                                                       class=" form-control filter-form-control" id="id_fragment">
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_product" style="display: block;">Product</label>
+
+                                                <div class="dropdown bootstrap-select show-tick form-control filter-form-control bs3">
+                                                    <select name="product" placeholder="Product"
+                                                            class="form-control filter-form-control selectpicker"
+                                                            id="id_product" multiple="" data-live-search="true"
+                                                            data-container="body" style="width: 70%;">
+                                                        <option value="3">Apple Accounting Software</option>
+
+                                                        <option value="1">BodgeIt</option>
+
+                                                        <option value="4" selected="">GitLab pipeline demo</option>
+
+                                                        <option value="2">Internal CRM App</option>
+
+                                                    </select>
+                                                    <button type="button" tabindex="-1"
+                                                            class="btn dropdown-toggle btn-default"
+                                                            data-toggle="dropdown" role="combobox"
+                                                            aria-owns="bs-select-1" aria-haspopup="listbox"
+                                                            aria-expanded="false" data-id="id_product"
+                                                            title="GitLab pipeline demo">
+                                                        <div class="filter-option">
+                                                            <div class="filter-option-inner">
+                                                                <div class="filter-option-inner-inner">GitLab pipeline
+                                                                    demo
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <span class="bs-caret"><span class="caret"></span></span>
+                                                    </button>
+                                                    <div class="dropdown-menu open">
+                                                        <div class="bs-searchbox"><input type="search"
+                                                                                         class="form-control"
+                                                                                         autocomplete="off"
+                                                                                         role="combobox"
+                                                                                         aria-label="Search"
+                                                                                         aria-controls="bs-select-1"
+                                                                                         aria-autocomplete="list"></div>
+                                                        <div class="inner open" role="listbox" id="bs-select-1"
+                                                             tabindex="-1" aria-multiselectable="true">
+                                                            <ul class="dropdown-menu inner " role="presentation"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_endpoint_params" style="display: block;">Endpoint
+                                                    params</label>
+
+                                                <div class="dropdown bootstrap-select show-tick form-control filter-form-control bs3">
+                                                    <select name="endpoint_params" placeholder="Endpoint params"
+                                                            class="form-control filter-form-control selectpicker"
+                                                            id="id_endpoint_params" multiple="" data-live-search="true"
+                                                            data-container="body" style="width: 70%;">
+                                                    </select>
+                                                    <button type="button" tabindex="-1"
+                                                            class="btn dropdown-toggle btn-default bs-placeholder"
+                                                            data-toggle="dropdown" role="combobox"
+                                                            aria-owns="bs-select-2" aria-haspopup="listbox"
+                                                            aria-expanded="false" data-id="id_endpoint_params"
+                                                            title="Nothing selected">
+                                                        <div class="filter-option">
+                                                            <div class="filter-option-inner">
+                                                                <div class="filter-option-inner-inner">Nothing
+                                                                    selected
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <span class="bs-caret"><span class="caret"></span></span>
+                                                    </button>
+                                                    <div class="dropdown-menu open">
+                                                        <div class="bs-searchbox"><input type="search"
+                                                                                         class="form-control"
+                                                                                         autocomplete="off"
+                                                                                         role="combobox"
+                                                                                         aria-label="Search"
+                                                                                         aria-controls="bs-select-2"
+                                                                                         aria-autocomplete="list"></div>
+                                                        <div class="inner open" role="listbox" id="bs-select-2"
+                                                             tabindex="-1" aria-multiselectable="true">
+                                                            <ul class="dropdown-menu inner " role="presentation"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_tags" style="display: block;">Tags</label>
+
+                                                <input type="text" name="tags" placeholder="Tags"
+                                                       class=" form-control filter-form-control" id="id_tags"
+                                                       data-tag-list="[]"
+                                                       data-tag-options="{&quot;force_lowercase&quot;: true, &quot;autocomplete_settings&quot;: {&quot;placeholder&quot;: &quot;Enter some tags (comma separated, use enter to select / create a new tag)&quot;, &quot;width&quot;: &quot;200px&quot;, &quot;defer&quot;: true}, &quot;required&quot;: false}"
+                                                       data-tagulous="true" autocomplete="off"
+                                                       style="display: none;"><select style="width: 0px;"
+                                                                                      data-select2-id="select2-data-1-amuv"
+                                                                                      multiple="" tabindex="-1"
+                                                                                      class="select2-hidden-accessible"
+                                                                                      aria-hidden="true"></select><span
+                                                    class="select2 select2-container select2-container--default"
+                                                    dir="ltr" data-select2-id="select2-data-2-t9xx"
+                                                    style="width: 200px;"><span class="selection"><span
+                                                    class="select2-selection select2-selection--multiple"
+                                                    role="combobox" aria-haspopup="true" aria-expanded="false"
+                                                    tabindex="-1" aria-disabled="false"><ul
+                                                    class="select2-selection__rendered"
+                                                    id="select2-fowe-container"></ul><span
+                                                    class="select2-search select2-search--inline"><textarea
+                                                    class="select2-search__field" type="search" tabindex="0"
+                                                    autocorrect="off" autocapitalize="none" spellcheck="false"
+                                                    role="searchbox" aria-autocomplete="list" autocomplete="off"
+                                                    aria-label="Search" aria-describedby="select2-fowe-container"
+                                                    placeholder="Enter some tags (comma separated, use enter to select / create a new tag)"
+                                                    style="width: 100%;"></textarea></span></span></span><span
+                                                    class="dropdown-wrapper" aria-hidden="true"></span></span>
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_test__tags" style="display: block;">Tags (Test)</label>
+
+                                                <input type="text" name="test__tags" placeholder="Tags (Test)"
+                                                       class=" form-control filter-form-control" id="id_test__tags"
+                                                       data-tag-list="[]"
+                                                       data-tag-options="{&quot;force_lowercase&quot;: true, &quot;autocomplete_settings&quot;: {&quot;placeholder&quot;: &quot;Enter some tags (comma separated, use enter to select / create a new tag)&quot;, &quot;width&quot;: &quot;200px&quot;, &quot;defer&quot;: true}, &quot;required&quot;: false}"
+                                                       data-tagulous="true" autocomplete="off"
+                                                       style="display: none;"><select style="width: 0px;"
+                                                                                      data-select2-id="select2-data-3-jbs4"
+                                                                                      multiple="" tabindex="-1"
+                                                                                      class="select2-hidden-accessible"
+                                                                                      aria-hidden="true"></select><span
+                                                    class="select2 select2-container select2-container--default"
+                                                    dir="ltr" data-select2-id="select2-data-4-ihm0"
+                                                    style="width: 200px;"><span class="selection"><span
+                                                    class="select2-selection select2-selection--multiple"
+                                                    role="combobox" aria-haspopup="true" aria-expanded="false"
+                                                    tabindex="-1" aria-disabled="false"><ul
+                                                    class="select2-selection__rendered"
+                                                    id="select2-zkgo-container"></ul><span
+                                                    class="select2-search select2-search--inline"><textarea
+                                                    class="select2-search__field" type="search" tabindex="0"
+                                                    autocorrect="off" autocapitalize="none" spellcheck="false"
+                                                    role="searchbox" aria-autocomplete="list" autocomplete="off"
+                                                    aria-label="Search" aria-describedby="select2-zkgo-container"
+                                                    placeholder="Enter some tags (comma separated, use enter to select / create a new tag)"
+                                                    style="width: 100%;"></textarea></span></span></span><span
+                                                    class="dropdown-wrapper" aria-hidden="true"></span></span>
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_test__engagement__tags" style="display: block;">Tags
+                                                    (Engagement)</label>
+
+                                                <input type="text" name="test__engagement__tags"
+                                                       placeholder="Tags (Engagement)"
+                                                       class=" form-control filter-form-control"
+                                                       id="id_test__engagement__tags" data-tag-list="[&quot;pci&quot;]"
+                                                       data-tag-options="{&quot;force_lowercase&quot;: true, &quot;autocomplete_settings&quot;: {&quot;placeholder&quot;: &quot;Enter some tags (comma separated, use enter to select / create a new tag)&quot;, &quot;width&quot;: &quot;200px&quot;, &quot;defer&quot;: true}, &quot;required&quot;: false}"
+                                                       data-tagulous="true" autocomplete="off"
+                                                       style="display: none;"><select style="width: 0px;"
+                                                                                      data-select2-id="select2-data-5-ey0w"
+                                                                                      multiple="" tabindex="-1"
+                                                                                      class="select2-hidden-accessible"
+                                                                                      aria-hidden="true">
+                                                <option value="pci" data-select2-id="select2-data-7-rzkc">pci</option>
+                                            </select><span class="select2 select2-container select2-container--default"
+                                                           dir="ltr" data-select2-id="select2-data-6-mb5o"
+                                                           style="width: 200px;"><span class="selection"><span
+                                                    class="select2-selection select2-selection--multiple"
+                                                    role="combobox" aria-haspopup="true" aria-expanded="false"
+                                                    tabindex="-1" aria-disabled="false"><ul
+                                                    class="select2-selection__rendered"
+                                                    id="select2-u1x7-container"></ul><span
+                                                    class="select2-search select2-search--inline"><textarea
+                                                    class="select2-search__field" type="search" tabindex="0"
+                                                    autocorrect="off" autocapitalize="none" spellcheck="false"
+                                                    role="searchbox" aria-autocomplete="list" autocomplete="off"
+                                                    aria-label="Search" aria-describedby="select2-u1x7-container"
+                                                    placeholder="Enter some tags (comma separated, use enter to select / create a new tag)"
+                                                    style="width: 100%;"></textarea></span></span></span><span
+                                                    class="dropdown-wrapper" aria-hidden="true"></span></span>
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_test__engagement__product__tags" style="display: block;">Tags
+                                                    (Product)</label>
+
+                                                <input type="text" name="test__engagement__product__tags"
+                                                       placeholder="Tags (Product)"
+                                                       class=" form-control filter-form-control"
+                                                       id="id_test__engagement__product__tags"
+                                                       data-tag-list="[&quot;retire&quot;]"
+                                                       data-tag-options="{&quot;force_lowercase&quot;: true, &quot;autocomplete_settings&quot;: {&quot;placeholder&quot;: &quot;Enter some tags (comma separated, use enter to select / create a new tag)&quot;, &quot;width&quot;: &quot;200px&quot;, &quot;defer&quot;: true}, &quot;required&quot;: false}"
+                                                       data-tagulous="true" autocomplete="off"
+                                                       style="display: none;"><select style="width: 0px;"
+                                                                                      data-select2-id="select2-data-8-4oq1"
+                                                                                      multiple="" tabindex="-1"
+                                                                                      class="select2-hidden-accessible"
+                                                                                      aria-hidden="true">
+                                                <option value="retire" data-select2-id="select2-data-10-hze4">retire
+                                                </option>
+                                            </select><span class="select2 select2-container select2-container--default"
+                                                           dir="ltr" data-select2-id="select2-data-9-0ceq"
+                                                           style="width: 200px;"><span class="selection"><span
+                                                    class="select2-selection select2-selection--multiple"
+                                                    role="combobox" aria-haspopup="true" aria-expanded="false"
+                                                    tabindex="-1" aria-disabled="false"><ul
+                                                    class="select2-selection__rendered"
+                                                    id="select2-qn3l-container"></ul><span
+                                                    class="select2-search select2-search--inline"><textarea
+                                                    class="select2-search__field" type="search" tabindex="0"
+                                                    autocorrect="off" autocapitalize="none" spellcheck="false"
+                                                    role="searchbox" aria-autocomplete="list" autocomplete="off"
+                                                    aria-label="Search" aria-describedby="select2-qn3l-container"
+                                                    placeholder="Enter some tags (comma separated, use enter to select / create a new tag)"
+                                                    style="width: 100%;"></textarea></span></span></span><span
+                                                    class="dropdown-wrapper" aria-hidden="true"></span></span>
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_tag" style="display: block;">Tag name contains</label>
+
+                                                <input type="text" name="tag" placeholder="Tag name contains"
+                                                       class=" form-control filter-form-control" id="id_tag">
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_not_tags" style="display: block;">Not Tags</label>
+
+                                                <input type="text" name="not_tags" placeholder="Not Tags"
+                                                       class=" form-control filter-form-control" id="id_not_tags"
+                                                       data-tag-list="[]"
+                                                       data-tag-options="{&quot;force_lowercase&quot;: true, &quot;autocomplete_settings&quot;: {&quot;placeholder&quot;: &quot;Enter some tags (comma separated, use enter to select / create a new tag)&quot;, &quot;width&quot;: &quot;200px&quot;, &quot;defer&quot;: true}, &quot;required&quot;: false}"
+                                                       data-tagulous="true" autocomplete="off"
+                                                       style="display: none;"><select style="width: 0px;"
+                                                                                      data-select2-id="select2-data-11-jkj8"
+                                                                                      multiple="" tabindex="-1"
+                                                                                      class="select2-hidden-accessible"
+                                                                                      aria-hidden="true"></select><span
+                                                    class="select2 select2-container select2-container--default"
+                                                    dir="ltr" data-select2-id="select2-data-12-wtam"
+                                                    style="width: 200px;"><span class="selection"><span
+                                                    class="select2-selection select2-selection--multiple"
+                                                    role="combobox" aria-haspopup="true" aria-expanded="false"
+                                                    tabindex="-1" aria-disabled="false"><ul
+                                                    class="select2-selection__rendered"
+                                                    id="select2-dv8c-container"></ul><span
+                                                    class="select2-search select2-search--inline"><textarea
+                                                    class="select2-search__field" type="search" tabindex="0"
+                                                    autocorrect="off" autocapitalize="none" spellcheck="false"
+                                                    role="searchbox" aria-autocomplete="list" autocomplete="off"
+                                                    aria-label="Search" aria-describedby="select2-dv8c-container"
+                                                    placeholder="Enter some tags (comma separated, use enter to select / create a new tag)"
+                                                    style="width: 100%;"></textarea></span></span></span><span
+                                                    class="dropdown-wrapper" aria-hidden="true"></span></span>
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_not_tag" style="display: block;">Not tag name
+                                                    contains</label>
+
+                                                <input type="text" name="not_tag" placeholder="Not tag name contains"
+                                                       class=" form-control filter-form-control" id="id_not_tag">
+
+                                            </div>
+
+                                            <div class="filter-form-input">
+
+                                                <label for="id_o" style="display: block;">Ordering</label>
+
+                                                <div class="dropdown bootstrap-select form-control filter-form-control bs3">
+                                                    <select name="o" =""="" class="
+                                                    form-control filter-form-control selectpicker" id="id_o"
+                                                    data-live-search="true" data-container="body" style="width: 70%
+                                                ;">
+                                                    <option value="" selected="">---------</option>
+
+                                                    <option value="product">Product</option>
+
+                                                    <option value="-product">Product (descending)</option>
+
+                                                    <option value="host">Host</option>
+
+                                                    <option value="-host">Host (descending)</option>
+
+                                                    </select>
+                                                    <button type="button" tabindex="-1"
+                                                            class="btn dropdown-toggle btn-default bs-placeholder"
+                                                            data-toggle="dropdown" role="combobox"
+                                                            aria-owns="bs-select-3" aria-haspopup="listbox"
+                                                            aria-expanded="false" data-id="id_o" title="---------">
+                                                        <div class="filter-option">
+                                                            <div class="filter-option-inner">
+                                                                <div class="filter-option-inner-inner">---------</div>
+                                                            </div>
+                                                        </div>
+                                                        <span class="bs-caret"><span class="caret"></span></span>
+                                                    </button>
+                                                    <div class="dropdown-menu open">
+                                                        <div class="bs-searchbox"><input type="search"
+                                                                                         class="form-control"
+                                                                                         autocomplete="off"
+                                                                                         role="combobox"
+                                                                                         aria-label="Search"
+                                                                                         aria-controls="bs-select-3"
+                                                                                         aria-autocomplete="list"></div>
+                                                        <div class="inner open" role="listbox" id="bs-select-3"
+                                                             tabindex="-1">
+                                                            <ul class="dropdown-menu inner " role="presentation"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="inline-block" style="vertical-align: text-top">
+                                            <button id="apply" class="btn btn-sm btn-secondary">
+                                                <div class="fa fa-filter"></div> Apply Filters
+                                            </button>
+                                            &nbsp;
+
+                                            <a href="/endpoint/host" id="clear" class="clear centered"> [Clear
+                                                Filters] </a>
+
+
+                                        </div>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="hidden" style="padding-bottom: 5px;" id="bulk_remedy">
+
+                            <form action="/product/4/endpoint/bulk_product" method="post" id="bulk_change_form">
+
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                                <button class="btn btn-sm btn-primary" type="submit" id="remedy_endpoint"
+                                        title="Mitigate Endpoints">
+                                    Bulk Mitigate
+                                </button>
+
+
+                                <button type="button" class="btn btn-sm  btn-primary" data-toggle="tooltip"
+                                        data-placement="bottom" title="Delete Endpoint">
+                                    <a class="white-color delete-bulk" href="#" alt="Delete Endpoints">
+                                        <div class="fa fa-trash"></div>
+                                    </a>
+                                </button>
+
+                            </form>
+                        </div>
+
+                        <div class="clearfix">
+
+
+                            <div class="pull-left pagination  pagination-sm">
+                                Showing entries 1 to {{ entities|length }} of {{ entities|length }}
+                            </div>
+
+                            <nav class="pull-right" aria-label="Pagination">
+                                <ul class="pagination pagination-sm">
+
+
+                                    <li>
+                                        <!-- Split button -->
+                                        &nbsp;
+                                        <div class="btn-group">
+                                            <button type="button" class="btn-sm btn-secondary dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Page Size
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="?product=4&amp;page_size=25">25</a></li>
+                                                <li><a href="?product=4&amp;page_size=50">50</a></li>
+                                                <li><a href="?product=4&amp;page_size=75">75</a></li>
+                                                <li><a href="?product=4&amp;page_size=100">100</a></li>
+                                                <li><a href="?product=4&amp;page_size=150">150</a></li>
+
+                                                <li><a href="?product=4&amp;page_size=2">All</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+
+                                </ul>
+                            </nav>
+
+
+                        </div>
+                        <div class="table-responsive panel panel-default">
+
+                            <table id="endpoints" aria-describedby="Component Table"
+                                   class="tablesorter-bootstrap table table-condensed table-striped table-hover">
+                                <tbody>
+                                <tr>
+
+                                    <th class="hidden-sm centered" title="Select all visible endpoint." id="bulk_edit">
+                                        <form class="inline-form centered" action="#">
+                                            <input type="checkbox" title="Select All" name="select_all" id="select_all">
+                                        </form>
+                                    </th>
+
+
+                                    <th><a title="Click to sort ascending" href="?product=4&amp;o=host">Host&nbsp;<div
+                                            class="fa fa-sort dd-sort"></div></a></th>
+
+
+                                    <th class="text-center">Active Verified Findings</th>
+                                    <th>Status</th>
+                                </tr>
+
+                                {% for i in entities %}
+                                <tr>
+
+                                    <td class="hidden-sm centered">
+                                        <form action="#">
+                                            <input type="checkbox" title="Select_{{ i.ID }}" name="select_{{ i.ID }}" id="{{ i.ID }}"
+                                                   class="select_one {{ i.ID }}">
+                                        </form>
+                                    </td>
+
+
+                                    <td><a href="/endpoint/host/{{ i.ID }}">{{ i.Hostname }}</a>
+
+
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        {{ i.findings_cnt }}
+
+                                    </td>
+                                    <td>
+
+                                        1 / 3 mitigated endpoints
+
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="clearfix">
+
+
+                            <div class="pull-left pagination  pagination-sm">
+                                Showing entries 1 to {{ entities|length }} of {{ entities|length }}
+                            </div>
+
+                            <nav class="pull-right" aria-label="Pagination">
+                                <ul class="pagination pagination-sm">
+
+
+                                    <li>
+                                        <!-- Split button -->
+                                        &nbsp;
+                                        <div class="btn-group">
+                                            <button type="button" class="btn-sm btn-secondary dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Page Size
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="?product=4&amp;page_size=25">25</a></li>
+                                                <li><a href="?product=4&amp;page_size=50">50</a></li>
+                                                <li><a href="?product=4&amp;page_size=75">75</a></li>
+                                                <li><a href="?product=4&amp;page_size=100">100</a></li>
+                                                <li><a href="?product=4&amp;page_size=150">150</a></li>
+
+                                                <li><a href="?product=4&amp;page_size=2">All</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+
+                                </ul>
+                            </nav>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,93 @@
+<!-- add_note modal -->
+<div id="add_note_modal" class="modal">
+  <!-- Modal content -->
+  <div class="settings_container">
+    
+    <div class="settings_row">
+      
+      <div class="settings_col_m8_center">
+    
+        <div class="settings_card">
+      
+          <div class="settings_card_header">
+            <span class="close" onclick="hideModal('add_note_modal')"><div class="fas fa-times" style="font-size: 3rem;"></div></span>
+            <h4 class="settings_card_title">Add Note</h4>
+          </div>
+      
+          <div class="settings_card_body">
+
+              <textarea name="new_note" id="new_note" rows="10" cols="175"></textarea>
+      
+            <div class="settings_form">
+              <div id="aim_warn_content"></div>
+            </div>
+
+            <div class="form-group">
+                <input class="btn btn-primary" type="submit" name="update_benchmarks" value="Add Note" onclick="addNewNote()">
+            </div>
+      
+          </div>
+      
+        </div>
+    
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+
+<script>
+function addNewNote() {
+    var note_val = document.getElementById('new_note').value;
+    var active_app = document.getElementById('active_app').value;
+    var active_rule = document.getElementById('active_rule').value;
+
+    var event = new Date(Date.now());
+    event = event.toISOString().replace("T", " ").split('.')[0];
+    var user = "{{ user.username }}"
+
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var notes_el = document.getElementById('bm_notes')
+            var new_id = JSON.parse(this.responseText).response;
+            var new_el = document.createElement('p')
+            new_el.id = "rule_note_id_" + new_id;
+            var date_el = document.createElement('div')
+            date_el.innerText = event;
+            date_el.innerHTML = event + `&nbsp;&nbsp;<div class="fas fa-trash-alt" onclick="deleteNote(${new_id})"></div>`
+            var username_el = document.createElement('div')
+            username_el.innerText = user;
+            var msg_el = document.createElement('div')
+            msg_el.innerText = note_val;
+
+            new_el.appendChild(date_el);
+            new_el.appendChild(username_el);
+            new_el.appendChild(msg_el);
+            notes_el.appendChild(new_el);
+
+            new_dict = {
+                "AddDate": event,
+                "ApplicationID": active_app,
+                "ID": "placeholder",
+                "Note": note_val,
+                "RuleID": active_rule,
+                "Type": "User",
+                "username": user
+            }
+
+            rule_list[active_rule].Notes.push(new_dict)
+            hideModal('add_note_modal')
+        }
+    };
+    xhttp.open("POST", "/add_benchmark_note", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("app_id=" + active_app + "&rule_id=" + active_rule + "&note=" + note_val + "&add_date=" + event);
+}
+</script>
+
+
+<!-- end add modal -->

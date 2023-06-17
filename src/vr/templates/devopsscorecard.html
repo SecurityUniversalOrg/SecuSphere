@@ -1,0 +1,179 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
+                </h3>
+                {% include "application_horizontal_bar.html" %}
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="scorecard_top">
+            <div style="display: inline-block;">
+                <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">MAL App: <strong>SALESFORCE.COM ENTERPRISE</strong></div>
+                <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">MAL Acronym: <strong>SALES</strong></div>
+                <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">Repo: <strong>SALES-enterprise</strong></div>
+                <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">Branch: <strong>Feb2023_STACK1</strong></div>
+                <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">Manager: <strong>JANE DOE</strong></div>
+                <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">Director: <strong>JOHN DOE</strong></div>
+                <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">Last Build: <strong>1/26/2023 10:13:26 PM</strong></div>
+                <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">JSL Version: <strong>stable</strong></div>
+                <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">SOX Compliance Enforced: <strong>True</strong></div>
+            </div>
+
+            <div class="performance_level">
+                <div style="padding: 1em;"><strong>Performance Level (DORA)</strong></div>
+                <div class="perf_button elite">Elite</div>
+                <div class="perf_button high">High</div>
+                <div class="perf_button medium">Medium</div>
+                <div class="perf_button low">Low</div>
+            </div>
+            <div class="linked_dashboards">
+                <div style="padding: 1em;"><strong>Linked Dashboards</strong></div>
+                <div style="margin: 0.78em;"><img src="/static/images/jenkins_logo.png" style="height: 48px;margin: auto;display: block;" alt="jenkins logo"></div>
+                <div style="margin: 0.78em;"><img src="/static/images/github_logo.jpg" style="height: 48px;margin: auto;display: block;" alt="github logo"></div>
+                <div style="margin: 0.78em;"><img src="/static/images/sonarqube_logo.svg" style="height: 48px;margin: auto;display: block;" alt="sonarqube logo"></div>
+                <div style="margin: 0.78em;"><img src="/static/images/splunk_logo.png" style="height: 48px;margin: auto;display: block;" alt="splunk logo"></div>
+            </div>
+            <div class="date_filter">
+                <div style="padding: 1em;"><strong>Date Range:</strong>
+                <select name="date_start">
+                    <option value="Today" selected>Today</option>
+                </select>
+                 to 01/05/2023
+                </div>
+            </div>
+        </div>
+        <div class="scorecard_row_1">
+            <div class="scorecard_item">
+                <div class="scorecard_item_grid">
+                    <div class="scorecard_item_section header">Avg Lead Time for Changes</div>
+                    <div class="scorecard_item_section main elite">00 d 16 h 52 m</div>
+                    <div class="scorecard_item_section small_label">(days:hours:minutes)</div>
+                    <div class="scorecard_item_section footer">CI/CD</div>
+                </div>
+            </div>
+            <div class="scorecard_item">
+                <div class="scorecard_item_grid">
+                    <div class="scorecard_item_section header">Avg Speed of Deployment</div>
+                    <div class="scorecard_item_section main low">00 h 43 m 54 s</div>
+                    <div class="scorecard_item_section small_label">(hours:minutes:seconds)</div>
+                    <div class="scorecard_item_section footer">CI/CD</div>
+                </div>
+            </div>
+            <div class="scorecard_item">
+                <div class="scorecard_item_grid">
+                    <div class="scorecard_item_section header">Deployment Frequency</div>
+                    <div class="scorecard_item_section main elite">39.5</div>
+                    <div class="scorecard_item_section small_label">Deploys Per Month</div>
+                    <div class="scorecard_item_section footer">CI/CD</div>
+                </div>
+            </div>
+            <div class="scorecard_item">
+                <div class="scorecard_item_grid">
+                    <div class="scorecard_item_section header">Mean Time to Restore Service (MTTR)*</div>
+                    <div class="scorecard_item_section main elite">No Service Disruptions</div>
+                    <div class="scorecard_item_section small_label">Minutes</div>
+                    <div class="scorecard_item_section footer">Operations</div>
+                </div>
+            </div>
+            <div class="scorecard_item">
+                <div class="scorecard_item_grid">
+                    <div class="scorecard_item_section header">Change Failure Rate (CFR)*</div>
+                    <div class="scorecard_item_section main elite">0.0 %</div>
+                    <div class="scorecard_item_section small_label"></div>
+                    <div class="scorecard_item_section footer">Operations</div>
+                </div>
+            </div>
+            <div class="scorecard_item">
+                <div class="scorecard_item_grid">
+                    <div class="scorecard_item_section header">Repo Onboarding Status</div>
+                    <div class="scorecard_item_section main elite"></div>
+                    <div class="scorecard_item_section small_label">Standardized</div>
+                    <div class="scorecard_item_section footer"></div>
+                </div>
+            </div>
+            <div class="scorecard_item">
+                <div class="scorecard_item_grid">
+                    <div class="scorecard_item_section header">Code Coverage</div>
+                    <div class="scorecard_item_section main low">0 %</div>
+                    <div class="scorecard_item_section small_label"></div>
+                    <div class="scorecard_item_section footer">Test Automation</div>
+                </div>
+            </div>
+            <div class="scorecard_item">
+                <div class="scorecard_item_grid">
+                    <div class="scorecard_item_section header">Functional, Sanity & Regression Tests</div>
+                    <div class="scorecard_item_section main elite">100 %</div>
+                    <div class="scorecard_item_section small_label"><strong>94</strong> Tests</div>
+                    <div class="scorecard_item_section footer">Test Automation</div>
+                </div>
+            </div>
+            <div class="scorecard_item">
+                <div class="scorecard_item_grid">
+                    <div class="scorecard_item_section header">Bug Score</div>
+                    <div class="scorecard_item_section main medium">E</div>
+                    <div class="scorecard_item_section small_label"><strong>447</strong> Bugs</div>
+                    <div class="scorecard_item_section footer">Code Quality</div>
+                </div>
+            </div>
+            <div class="scorecard_item">
+                <div class="scorecard_item_grid">
+                    <div class="scorecard_item_section header">Static App Security Testing (SAST) Vulns</div>
+                    <div class="scorecard_item_section main medium">C</div>
+                    <div class="scorecard_item_section small_label"><strong>229</strong> Vulns</div>
+                    <div class="scorecard_item_section footer">Security</div>
+                </div>
+            </div>
+            <div class="scorecard_item">
+                <div class="scorecard_item_grid">
+                    <div class="scorecard_item_section header">Dependabot Vulnerabilities</div>
+                    <div class="scorecard_item_section subsection">
+                        <div class="scorecard_item_subsection_child">Low<br>0</div>
+                        <div class="scorecard_item_subsection_child">Moderate<br>0</div>
+                    </div>
+                    <div class="scorecard_item_section subsection">
+                        <div class="scorecard_item_subsection_child">High<br>0</div>
+                        <div class="scorecard_item_subsection_child">Critical<br>0</div>
+                    </div>
+                    <div class="scorecard_item_section footer">Security</div>
+                </div>
+            </div>
+            <div class="scorecard_item">
+                <div class="scorecard_item_grid">
+                    <div class="scorecard_item_section header">Container Image Vulnerabilities</div>
+                    <div class="scorecard_item_section subsection">
+                        <div class="scorecard_item_subsection_child">Low<br>0</div>
+                        <div class="scorecard_item_subsection_child">Moderate<br>0</div>
+                    </div>
+                    <div class="scorecard_item_section subsection">
+                        <div class="scorecard_item_subsection_child">High<br>0</div>
+                        <div class="scorecard_item_subsection_child">Critical<br>0</div>
+                    </div>
+                    <div class="scorecard_item_section footer">Security</div>
+                </div>
+            </div>
+        </div>
+        <div class="scorecard_row_2">*MTTR and CFR metrics based on ServiceNow P1/P2 incident data limited to critical applications supported IT Ops Team.  See <a href="#">Help page</a> for more details.</div>
+
+    </div>
+
+
+<script>
+
+</script>
+
+{% endblock %}

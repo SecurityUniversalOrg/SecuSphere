@@ -1,0 +1,23 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - ./docker/provision/mysql/init:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_DATABASE: 'su_support'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'user'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'password'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '3306:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+      # Where our data will be persisted
+

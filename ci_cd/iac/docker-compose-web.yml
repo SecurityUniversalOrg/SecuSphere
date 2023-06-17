@@ -1,0 +1,19 @@
+version: '3'
+services:
+  su_web:
+    image: dynamic
+    restart: always
+    environment:
+      VM_RUNTIME: 'test'
+      API_PAIRING_KEY: 'dynamic'
+      AZURE_TENANT_ID: 'dynamic'
+      AZURE_CLIENT_ID: 'dynamic'
+      AZURE_CLIENT_SECRET: 'dynamic'
+    ports:
+      # <Port exposed> : < Port running inside container>
+      - '5010:80'
+    expose:
+      # Opens port on the container
+      - '5010'
+
+

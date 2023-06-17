@@ -1,0 +1,44 @@
+
+{% block app_content %}
+
+<div class="login_form_container">
+  <div class="login_form">
+  <section class="register_wrapper">
+    
+    <div class="logo">
+		 
+    </div>
+    
+    <form action="{{ url_for('admin.api_register', _external=True) }}" method="POST" role="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <h1 class="page_title">Create API KEY</h1>
+    <p class="page_subtitle">Please complete this form to create an API Key.</p>
+    <hr>
+    <br>
+    <label for="keyname"><strong>Key Name</strong></label>
+    <input type="text" name="keyname" required value="My API Key">
+
+    <hr>
+    <p class="terms" style="color: white !important;">By creating an API Key you agree to our <a href="#">Terms & Privacy</a>.</p>
+
+    <button type="submit" class="registerbtn">Create API Key</button>
+  
+
+</form>
+    
+  </section>
+  </div>
+</div>
+
+<script src='{{ url_for('static', filename='js/jquery.min.js') }}'></script>
+
+  
+
+    <script  src="js/index.js"></script>
+
+
+{% endblock %}
+
+</body>
+
+</html>

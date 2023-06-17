@@ -1,0 +1,19 @@
+appName: "secusphere"
+environment: dev
+
+apiPairingKey: ""
+credPrivateKey: ""
+credPublicKey: ""
+webAuthCode: ""
+dbPublicKey: ""
+azClientId: ""
+azClientSecret: ""
+azTenantId: ""
+
+imageCredentials:
+  username: "dynamic"
+  password: "dynamic"
+  email: "dynamic"
+
+tls.crt: "dynamic"
+tls.key: "dynamic"

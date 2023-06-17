@@ -1,0 +1,209 @@
+{% block style %}
+<!-- STYLES SECTION -->
+<head>
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .app_content_container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
+    .grid_container {
+      display: flex;
+      justify-content: space-between;
+    }
+    .prof_left_col, .prof_middle_col, .prof_right_col {
+      flex: 1;
+      margin: 10px;
+      padding: 20px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      border-radius: 5px;
+    }
+    .prof_section {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    }
+    .prof_pic {
+      border-radius: 50%;
+      max-width: 80px;
+    }
+    .su_center {
+      text-align: center;
+    }
+    .accordian_container {
+      margin-top: 20px;
+    }
+    .prof_status_card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    }
+    .tickets_sect {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .su_button {
+      background-color: #007bff;
+      color: #ffffff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .su_button:hover {
+      background-color: #0056b3;
+    }
+    .status_header {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<!-- END OF STYLES SECTION -->
+{% endblock%}
+
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    {{ super() }}
+
+<div class="app_content_container">
+  <div class="grid_container">
+    <div class="prof_left_col" style="background-color: currentColor;">
+      <div class="prof_section">
+        <div class="prof_section_container">
+         <h4 class="su_center">My Profile<a id="edit_profile_btn" href="{{ url_for('admin.edit_profile') }}" style="padding-left:2px;">
+             <div class="fa fa-cog"></div></a>
+             <div class="fa-solid fa-question" onclick="startIntroTour()"></div>
+         </h4>
+
+
+         <hr>
+
+         <!-- user details -->
+
+        </div>
+      </div>
+      <br>
+
+      <div class="accordian">
+        <div class="accordian_container">
+
+          <!-- My Roles section -->
+
+        </div>
+      </div>
+      <br>
+
+      <!-- Calendar -->
+
+    <div class="prof_middle_col">
+
+      <div class="prof_status_container">
+
+          <div class="prof_status_card">
+            <div class="prof_status">
+              <h4 class="status_header" id="user_status_hdr">Current Status: {% if new_vuln_cnt or msg_cnt or findings_needing_action_cnt %}Action Needed{% else %}Good{% endif %}</h4>
+              <p contenteditable="true" class="status_text" id="user_status_edit" style="display: none;"></p>
+
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="prof_right_col">
+       <div class="tickets_sect" id="new_vuln_section">
+           <p><a href="/all_vulnerabilities_filtered/status/Open-New">New Vulnerabilities</a> ({{ new_vuln_cnt }})</p>
+       </div>
+
+       <br>
+
+       <div class="tickets_sect" id="new_msg_section">
+           <p><a href="/messages">New Messages</a> ({{ msg_cnt }})</p>
+       </div>
+
+       <br>
+
+       <div class="tickets_sect" id="vuln_needing_attn_section">
+           <p><a href="{% if user.is_admin or user.is_security %}/all_vulnerabilities_filtered/status/Open-SecReview{% else %}/all_vulnerabilities_filtered/status/Open-New{% endif %}">Findings Needing Review/Approval</a> ({{ findings_needing_action_cnt }})</p>
+       </div>
+
+       <br>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- Modal section -->
+
+
+<!-- End Modal Section -->
+
+<!-- End Page Container -->
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to Your Profile Page!  Let's take a quick tour!"
+      },
+      {
+        title: 'Edit Profile',
+        element: document.querySelector('#edit_profile_btn'),
+        intro: "To edit your user profile, you can click on the gear icon here."
+      },
+      {
+        title: 'User Action Status',
+        element: document.querySelector('#user_status_hdr'),
+        intro: "Your current status is displayed here.  If certain actions are needed, you will be notified, otherwise this value will be presented as \"Good\""
+      },
+      {
+        title: 'New Vulnerabilities',
+        element: document.querySelector('#new_vuln_section'),
+        intro: "New Vulnerabilities Requiring Initial Review are listed here.  Clicking on the link will bring you to a filtered list of vulnerability findings that require an initial review."
+      },
+      {
+        title: 'New Messages',
+        element: document.querySelector('#new_msg_section'),
+        intro: "New System Messages are listed here.  Clicking on the link will bring you to a list of new messages requiring your attention."
+      },
+      {
+        title: 'Vulnerability Findings Requiring Attention',
+        element: document.querySelector('#vuln_needing_attn_section'),
+        intro: "Vulnerability findings that require your attention are listed here.  Clicking on the link will bring you to a filtered list of vulnerability findings that require your attention."
+      },
+      {
+        intro: "Profile Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+  });
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
+
+{% endblock %}

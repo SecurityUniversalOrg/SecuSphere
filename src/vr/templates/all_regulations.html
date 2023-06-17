@@ -1,0 +1,119 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+
+
+        <div class="row hidden-xs">
+            <div class="col-lg-12">
+
+                <ul class="breadcrumb main">
+
+                    <li class="">
+                        <a class="" href="/">Home</a>
+                    </li>
+
+                    <li class="active">
+                        <a class="active" href="/regulations">Regulations</a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading tight">
+                                <h3 class="has-filters">
+                                    Regulations
+
+
+
+                                </h3>
+                            </div>
+
+                        </div>
+
+
+                        <div class="clearfix">
+
+
+                        </div>
+                        <div class="panel panel-default table-responsive">
+                            <table id="products" aria-describedby="Component Table"
+                                   class="tablesorter-bootstrap table table-bordered table-condensed table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Regulation</th>
+                                    <th>Acronym</th>
+                                    <th>Jurisdiction</th>
+                                    <th>Category</th>
+                                    <th>Reference</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for i in entities %}
+                                <tr>
+                                    <td>
+
+                                        <strong>{{ i.Regulation }}</strong>
+
+                                    </td>
+                                    <td>
+                                        {{ i.Acronym }}
+                                    </td>
+                                    <td>
+                                        {{ i.Jurisdiction }}
+                                    </td>
+                                    <td>
+                                        {{ i.Category }}
+                                    </td>
+                                    <td>
+                                        {{ i.Reference }}
+                                    </td>
+                                    <td>
+                                        {{ i.Description }}
+                                    </td>
+
+                                </tr>
+                                {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="clearfix">
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+
+{% endblock %}

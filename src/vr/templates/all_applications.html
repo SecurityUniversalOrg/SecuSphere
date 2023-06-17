@@ -1,0 +1,406 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading tight">
+                                <h3 class="has-filters">
+                                    Application List
+                                    <div class="dropdown pull-right" style="top: -0.85rem;">
+
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+
+                                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
+                                                data-toggle="dropdown" aria-expanded="true">
+                                            <i class="fa fa-wrench"></i>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-right" role="menu"
+                                            aria-labelledby="dropdownMenu1">
+
+                                            <li role="presentation">
+                                                <a href="/add_application">
+                                                    <div class="fa fa-plus help_add_app"></div> Add Application
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </h3>
+                            </div>
+
+                        </div>
+
+                        {% include "pagination_tab.html" %}
+                        <div class="panel panel-default table-responsive">
+                            <div id="products_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+
+                                <table id="products"  aria-describedby="Component Table"
+                                       class="tablesorter-bootstrap table table-condensed table-striped dataTable no-footer">
+                                    <thead>
+                                    <tr>
+                                        <input type="hidden" id="val_page" value="{{ table_details['page'] }}">
+                                        <input type="hidden" id="val_per_page" value="{{ table_details['per_page'] }}">
+                                        <input type="hidden" id="val_orderby" value="{{ table_details['orderby'] }}">
+
+                                        <th id="hdr_btn" class="noVis sorting_disabled" rowspan="1" colspan="1"
+                                            style="width: 0.0833333px;" data-column-index="0" aria-label=""></th>
+                                        <th id="hdr_app" class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 79.1667px;" data-column-index="1"
+                                            aria-label="Product&amp;nbsp;: activate to sort column ascending">Application&nbsp;<div
+                                                class="fa fa-sort-asc dd-sort"></div></th>
+                                        <th id="hdr_tags" class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 32px;" data-column-index="2"
+                                            aria-label="Tags: activate to sort column ascending">Tags
+                                        </th>
+                                        <th id="hdr_criticality" class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 65px;" data-column-index="3"
+                                            aria-label=" Criticality: activate to sort column ascending"> Criticality
+                                        </th>
+                                        <th id="hdr_metadata" class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 66.05px;" data-column-index="4"
+                                            aria-label=" Metadata: activate to sort column ascending"> Metadata
+                                        </th>
+                                        <th id="hdr_active_vulns" class="text-center sorting" tabindex="0" aria-controls="products"
+                                            rowspan="1" colspan="1" style="width: 72.5px;" data-column-index="6"
+                                            aria-label=" Active (Verified) Findings: activate to sort column ascending">
+                                            Active Findings
+                                        </th>
+                                        <th id="hdr_vuln_endpoints" class="text-center sorting" tabindex="0" aria-controls="products"
+                                            rowspan="1" colspan="1" style="width: 84.55px;" data-column-index="7"
+                                            aria-label=" Endpoints: activate to sort column ascending">
+                                            Vulnerable Endpoints
+                                        </th>
+
+                                        <th id="hdr_app_type" class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 80px;" data-column-index="9"
+                                            aria-label="Application Type&amp;nbsp;: activate to sort column ascending">Application Type&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for i in entities %}
+                                    <tr class="odd tr_help">
+                                        <td class="  noVis">
+                                            <div class="pull-left">
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle pull-left"
+                                                       data-toggle="dropdown">&nbsp;<i class="fa fa-ellipsis-v"></i>&nbsp;</a>
+                                                    <ul class="dropdown-menu" role="menu"
+                                                        aria-labelledby="dropdownMenu1">
+                                                        <li role="presentation">
+                                                            <a class="" href="/application/{{ i.ID }}">
+                                                                <div class="fa fa-list-alt"></div> View
+                                                            </a>
+                                                        </li>
+
+
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><a href="/application/{{ i.ID }}" class="help_app_link"><strong>{{ i.ApplicationName }}</strong></a>
+
+
+                                           </td>
+                                        <!-- Tags column -->
+                                        <td>
+                                            {% if i.TargetRetirementDate and i.TargetRetirementDate != "1990-01-01T12:00:00" %}
+                                            <sup>
+                                                <a title="Search retire" class="tag-label tag-color" href="/simple_search?query=tag:retire">retire</a>
+                                            </sup>
+                                            {% endif %}
+                                        </td>
+                                        <!-- End of Tags Column -->
+                                        <td class="text-center">
+                                            <div class="has-popover" data-placement="bottom" data-content="{{ i.AppValue }}" data-original-title="" title="">
+                                                {% if i.AppValue == 'Minimal' %}
+                                                <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                    <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
+                                                        <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
+                                                            <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
+                                                                <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title=""></i>
+                                                            </i>
+                                                        </i>
+                                                    </i>
+                                                </i>
+                                                {% elif i.AppValue == 'Low' %}
+                                                <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                    <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                        <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
+                                                            <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
+                                                                <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title=""></i>
+                                                            </i>
+                                                        </i>
+                                                    </i>
+                                                </i>
+                                                {% elif i.AppValue == 'Medium' %}
+                                                <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                    <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                        <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                            <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
+                                                                <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title=""></i>
+                                                            </i>
+                                                        </i>
+                                                    </i>
+                                                </i>
+                                                {% elif i.AppValue == 'High' %}
+                                                <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                    <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                        <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                            <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                                <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title=""></i>
+                                                            </i>
+                                                        </i>
+                                                    </i>
+                                                </i>
+                                                {% elif i.AppValue == 'Critical' %}
+                                                <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                    <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                        <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                            <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                                <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title=""></i>
+                                                            </i>
+                                                        </i>
+                                                    </i>
+                                                </i>
+                                                {% else %}
+                                                <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                    <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                        <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
+                                                            <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
+                                                                <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title=""></i>
+                                                            </i>
+                                                        </i>
+                                                    </i>
+                                                </i>
+                                                {% endif %}
+
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% if i.WebEnabled == 1 %}
+                                            <i class="fa fa-list-alt has-popover" data-trigger="hover"
+                                               data-placement="bottom" data-content="Web" data-original-title=""
+                                               title=""></i>
+                                            {% endif %}
+                                            {% if not i.TargetRetirementDate or i.TargetRetirementDate == "1990-01-01T12:00:00" %}
+                                            <i class="fa fa-ship has-popover" data-trigger="hover"
+                                               data-placement="bottom" data-content="Sustain" data-original-title=""
+                                               title=""></i>
+                                            {% endif %}
+                                            {% if i.Origin == "COTS" %}
+                                            <i class="fa fa-money has-popover" data-trigger="hover"
+                                               data-placement="bottom" data-content="Purchased" data-original-title=""
+                                               title=""></i>
+                                            {% endif %}
+                                            {% if i.WebEnabled == 1 %}
+                                            <i class="fa fa-users has-popover" data-trigger="hover"
+                                               data-placement="bottom" data-content="External Audience"
+                                               data-original-title="" title=""></i>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center"><a href="/open_findings/{{ i.ID }}" class="help_act_vuln_link">{{ entity_details[i.ID]['finding_cnt'] }}</a></td>
+                                        <td class="text-center">
+                                            <a href="/application_endpoints/{{ i.ID }}" class="help_vuln_eps_link">{{ entity_details[i.ID]['endpoint_cnt'] }}</a>
+                                        </td>
+                                        <td>{{ i.TAWG }}</td>
+                                    </tr>
+                                    {% endfor %}
+
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% include "pagination_tab.html" %}
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Application Directory!  On this page, you can view a list of all of the applications within the SecuSphere system. Let's take a quick tour!"
+      },
+      {
+        title: 'Main Window',
+        element: document.querySelector('#products_wrapper'),
+        intro: "In the main window, you can view a list of all applications within the SecuSphere system."
+      },
+      {
+        title: 'Application Column',
+        element: document.querySelector('#hdr_app'),
+        intro: "In this column, the application name is listed.  This application name is a unique identifer."
+      },
+      {
+        title: 'Tags Column',
+        element: document.querySelector('#hdr_tags'),
+        intro: "In this column, the application tags are listed."
+      },
+        {
+        title: 'Criticality Column',
+        element: document.querySelector('#hdr_criticality'),
+        intro: "In this column, the criticality rating is listed."
+      },
+        {
+        title: 'Metadata Column',
+        element: document.querySelector('#hdr_metadata'),
+        intro: "In this column, the application metadata is listed."
+      },
+        {
+        title: 'Active Findings Column',
+        element: document.querySelector('#hdr_active_vulns'),
+        intro: "In this column, the count of active vulnerabilities is listed."
+      },
+        {
+        title: 'Vulnerable Endpoints Column',
+        element: document.querySelector('#hdr_vuln_endpoints'),
+        intro: "In this column, the count of vulnerable application endpoints is listed."
+      },
+        {
+        title: 'Application Type Column',
+        element: document.querySelector('#hdr_app_type'),
+        intro: "In this column, the application category or type is listed."
+      },
+      {
+        title: 'Application Entry',
+        element: document.querySelector('.tr_help'),
+        intro: "Each application is listed in a single row."
+      },
+      {
+        title: 'Application Details',
+        element: document.querySelector('.help_app_link'),
+        intro: "To view details about a specific application, click on the Application Name."
+      },
+      {
+        title: 'Application Active Findings',
+        element: document.querySelector('.help_act_vuln_link'),
+        intro: "To view a list of vulnerability findings for a specific application, click on the Active Findings value."
+      },
+      {
+        title: 'Application Vulnerable Endpoints',
+        element: document.querySelector('.help_vuln_eps_link'),
+        intro: "To view a list of vulnerable application endpoints for a specific application, click on the Vulnerable Endpoints value."
+      },
+      {
+        title: 'Pagination',
+        element: document.querySelector('.help_pagination'),
+        intro: "To scroll through multiple pages of listings and to adjust the entries per page, use the Pagination menu."
+      },
+      {
+        title: 'Add New Application',
+        element: document.querySelector('#dropdownMenu1'),
+        intro: "To manually add a new Application, click on the settings button."
+      },
+      {
+        intro: "Application Directory Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 13) {
+      document.getElementById('dropdownMenu1').click();
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
+
+<script>
+function updatePerPage(app_id, new_per_page) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/all_applications", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_per_page=" + new_per_page);
+}
+
+function updatePagination(app_id, new_page) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/all_applications", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_page=" + new_page);
+}
+
+function fieldSorter(app_id, field_name, new_dir) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/all_applications", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
+}
+</script>
+
+{% endblock %}

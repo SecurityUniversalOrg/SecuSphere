@@ -1,0 +1,209 @@
+
+{% block app_content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .register-container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 30px;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .page-title {
+      margin-bottom: 10px;
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    .form-group label {
+      font-weight: 600;
+    }
+    .terms {
+      font-size: 0.9rem;
+    }
+    .signin {
+      font-size: 0.9rem;
+    }
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        box-sizing: border-box;
+        border-radius: 5px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <h1 class="page-title">Register</h1>
+    <p class="page-subtitle">Please complete this form to create an account.</p>
+    <hr>
+
+    <form action="{{ url_for('admin.register_submit', _external=True) }}" method="POST" role="form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+      <div class="form-group">
+        <label for="firstname">First Name</label>
+        <input type="text" name="firstname" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+        <label for="lastname">Last Name</label>
+        <input type="text" name="lastname" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" name="email" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+        <label for="psw">Select Password</label>
+        <input type="password" name="psw" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+        <label for="psw-repeat">Repeat Password</label>
+        <input type="password" name="psw-repeat" class="form-control" required>
+      </div>
+
+      <hr>
+      <p class="terms">By creating an account, you agree to our <a href="#">Terms & Privacy</a>.</p>
+
+      <button type="submit" class="btn btn-primary">Register</button>
+
+      <div class="container signin mt-3">
+        <p>Already have an account? <a href="{{ url_for('admin.login') }}">Login</a>.</p>
+      </div>
+    </form>
+  </div>
+
+  <script src='{{ url_for('static', filename='js/jquery.min.js') }}'></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="js/index.js"></script>
+
+  <!-- Add the following code for the modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Terms & Privacy</h2>
+            <p>Last Updated: [DATE]</p>
+
+            <p>This Terms & Privacy document ("Agreement") is a legal agreement between you ("User", "you" or "your") and [YOUR COMPANY NAME] ("Company", "we", "us" or "our") governing your use of our web application that consumes CI/CD Pipeline Security Assessment Reports from various stages via a REST API and allows developers, security personnel, and operations teams to track and mitigate vulnerability findings (the "Service").</p>
+
+            <p>By accessing or using the Service, you agree to be bound by the terms of this Agreement. If you do not agree to the terms of this Agreement, do not access or use the Service.</p>
+
+            <h2>License Grant</h2>
+
+            <p>Subject to your compliance with the terms and conditions of this Agreement, we grant you a limited, non-exclusive, non-transferable, revocable license to access and use the Service for your internal business purposes only. This license is granted solely for the purpose of enabling you to use the Service as provided by us, in the manner permitted by this Agreement.</p>
+
+            <h2>Restrictions on Use</h2>
+
+            <p>You agree not to use the Service for any purpose that is unlawful or prohibited by this Agreement. You will not (a) sublicense, resell, rent, lease, transfer, assign, or distribute the Service; (b) modify or make derivative works based upon the Service; (c) reverse engineer or access the Service to build a competitive product or service; or (d) copy any features, functions, or graphics of the Service.</p>
+
+            <h2>Intellectual Property Rights</h2>
+
+            <p>All rights, title, and interest in and to the Service, including all intellectual property rights therein, are and shall remain the exclusive property of the Company and its licensors. This Agreement does not convey to you any rights of ownership in or related to the Service, or any intellectual property rights.</p>
+
+            <h2>User Data</h2>
+
+            <p>You are solely responsible for the accuracy, quality, integrity, legality, reliability, and appropriateness of all data submitted to the Service by you or your authorized users ("User Data"). You grant us a non-exclusive, worldwide, royalty-free, sublicensable, and transferable license to use, reproduce, modify, and display the User Data as necessary to provide the Service to you.</p>
+
+            <h2>Data Protection</h2>
+
+            <p>We are committed to protecting the privacy and security of your User Data. We maintain appropriate technical and organizational measures to protect your User Data from unauthorized access, disclosure, alteration, or destruction. Please review our Privacy Policy for more information about how we collect, use, and disclose information in connection with the Service.</p>
+
+            <h2>Termination</h2>
+
+            <p>We reserve the right to suspend or terminate your access to the Service, with or without notice, if you breach this Agreement. Upon termination, all rights and licenses granted to you in this Agreement shall immediately terminate, and you shall cease all use of the Service.</p>
+
+            <h2>Changes to Terms</h2>
+
+            <p>We may update this Agreement from time to time. If we make any material changes, we will notify you by email or by posting a notice on our website. Your continued use of the Service following such notification constitutes your acceptance of the updated Agreement.</p>
+
+            <h2>Governing Law</h2>
+
+            <p>This Agreement and any disputes arising out of or in connection with it shall be governed by the laws of [JURISDICTION], without regard to its conflict of law provisions.</p>
+
+            <h2>Contact Information</h2>
+
+            <p>If you have any questions about this Agreement or our Service, please contact us using the details provided below:</p>
+
+            <p>[COMPANY NAME]<br>
+            [STREET ADDRESS]<br>
+            [CITY, STATE, ZIP CODE]<br>
+            [COUNTRY]<br>
+            [EMAIL ADDRESS]<br>
+            [PHONE NUMBER]</p>
+
+            <p>By using our Service, you acknowledge that you have read and understand this Agreement and agree to be bound by its terms and conditions. If you do not agree with any part of this Agreement, please refrain from using our Service.</p>
+
+
+        </div>
+    </div>
+
+    <script>
+        var modal = document.getElementById("myModal");
+        var link = document.querySelector(".terms a");
+        var span = document.getElementsByClassName("close")[0];
+
+        link.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+{% endblock %}
+</body>
+</html>

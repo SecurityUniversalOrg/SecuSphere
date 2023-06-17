@@ -1,0 +1,281 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
+
+                </h3>
+                {% include "application_horizontal_bar.html" %}
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading tight">
+                                <h3 class="has-filters">
+                                    Contacts
+                                    <!-- Button trigger modal -->
+                                    <span class="fa-solid fa-user-plus" data-toggle="modal" data-target="#addContactModal"></span>
+                                </h3>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="addContactModal" tabindex="-1" role="dialog" aria-labelledby="addContactModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="addContactModalLabel">Add Contact</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <form>
+                                          <div class="form-group">
+                                            <label for="role-input" class="col-form-label">Role:</label>
+                                            <select class="form-control" id="role-input">
+                                                <option value="">--Select Role--</option>
+                                                <option value="Full Stack Developer">Full Stack Developer</option>
+                                                <option value="Frontend Developer">Frontend Developer</option>
+                                                <option value="Backend Developer">Backend Developer</option>
+                                                <option value="DevOps Engineer">DevOps Engineer</option>
+                                                <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
+                                                <option value="Network Architect">Network Architect</option>
+                                                <option value="QA Engineer">QA Engineer</option>
+                                                <option value="Database Administrator">Database Administrator</option>
+                                                <option value="Systems Administrator">Systems Administrator</option>
+                                                <option value="UX/UI Designer">UX/UI Designer</option>
+                                                <option value="Data Scientist">Data Scientist</option>
+                                                <option value="Cloud Engineer">Cloud Engineer</option>
+                                                <option value="Information Security Manager">Information Security Manager</option>
+                                                <option value="Site Reliability Engineer">Site Reliability Engineer</option>
+                                                <option value="Software Architect">Software Architect</option>
+                                                <option value="Business Analyst">Business Analyst</option>
+                                                <option value="Project Manager">Project Manager</option>
+                                                <option value="Product Manager">Product Manager</option>
+                                                <option value="AI/Machine Learning Engineer">AI/Machine Learning Engineer</option>
+                                                <option value="Mobile App Developer">Mobile App Developer</option>
+                                                <option value="Scrum Master">Scrum Master</option>
+                                                <option value="IT Operations Manager">IT Operations Manager</option>
+                                                <option value="Cyber Forensics Expert">Cyber Forensics Expert</option>
+                                                <option value="IT Auditor">IT Auditor</option>
+                                                <option value="Technical Writer">Technical Writer</option>
+                                                <option value="Application Support Analyst">Application Support Analyst</option>
+                                                <option value="IT Service Manager">IT Service Manager</option>
+                                                <option value="Infrastructure Engineer">Infrastructure Engineer</option>
+                                                <option value="Solutions Architect">Solutions Architect</option>
+                                                <option value="IT Compliance Manager">IT Compliance Manager</option>
+                                            </select>
+                                        </div>
+
+                                          <div class="form-group">
+                                            <label for="name-input" class="col-form-label">Name:</label>
+                                            <input type="text" class="form-control" id="name-input">
+                                          </div>
+                                          <div class="form-group">
+                                            <label for="uniqueid-input" class="col-form-label">UniqueID:</label>
+                                            <input type="text" class="form-control" id="uniqueid-input">
+                                          </div>
+                                          <div class="form-group">
+                                            <label for="email-input" class="col-form-label">Email:</label>
+                                            <input type="email" class="form-control" id="email-input">
+                                          </div>
+                                        </form>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" onclick="saveNewContact({{ app_data.ID }})">Save Contact</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                        {% include "pagination_tab.html" %}
+
+                        <div class="panel panel-default table-responsive">
+                            <div id="components-table_wrapper"
+                                 class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+
+                                <table id="components-table"  aria-describedby="Components Table"
+                                       class="tablesorter-bootstrap table table-condensed table-striped dataTable no-footer">
+                                    <thead>
+                                    <tr>
+
+                                        <input type="hidden" id="val_page" value="{{ table_details['page'] }}">
+                                        <input type="hidden" id="val_per_page" value="{{ table_details['per_page'] }}">
+                                        <input type="hidden" id="val_orderby" value="{{ table_details['orderby'] }}">
+
+                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                            rowspan="1" colspan="1"  style="width: 5%;"
+                                            aria-label="Delete: activate to sort column ascending">
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                            colspan="1" style="width: 142.783px;"
+                                            aria-label="Name: activate to sort column ascending">Role
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                            colspan="1" style="width: 142.783px;"
+                                            aria-label="Name: activate to sort column ascending">Name
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                            colspan="1" style="width: 169.417px;"
+                                            aria-label="Version: activate to sort column ascending">AddDate
+                                        </th>
+                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                            rowspan="1" colspan="1" style="width: 147.783px;"
+                                            aria-label="Active: activate to sort column ascending">CUID
+                                        </th>
+                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                            rowspan="1" colspan="1" style="width: 200.65px;"
+                                            aria-label="Duplicate: activate to sort column ascending">Email
+                                        </th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for i in entities %}
+                                    <tr class="odd">
+                                        <td class="text-center">
+                                            <span class="fa-solid fa-trash-can" onclick="deleteContact('{{ i.ID }}')"></span>
+                                        </td>
+                                        <td>{{ i.Role }}</td>
+                                        <td>{{ i.Name }}</td>
+                                        <td class="text-center">{{ i.AddDate }}</td>
+                                        <td class="text-center">{{ i.CUID }}</td>
+                                        <td class="text-center">{{ i.Email }}</td>
+                                    </tr>
+                                    {% endfor %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+
+                        {% include "pagination_tab.html" %}
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+<script>
+function saveNewContact(app_id) {
+    var role = document.getElementById('role-input').value;
+    var name = document.getElementById('name-input').value;
+    var uniqueid = document.getElementById('uniqueid-input').value;
+    var email = document.getElementById('email-input').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        location.reload();
+    }
+  };
+  xhttp.open("POST", "/add_contact/" + app_id, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("role=" + role + "&name=" + name + "&uniqueid=" + uniqueid + "&email=" + email);
+}
+
+function deleteContact(contact_id) {
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        location.reload();
+    }
+  };
+  xhttp.open("POST", "/delete_contact", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("contact_id=" + contact_id);
+}
+</script>
+
+<script>
+function updatePerPage(app_id, new_per_page) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/contacts/" + app_id, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_per_page=" + new_per_page);
+}
+
+function updatePagination(app_id, new_page) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/contacts/" + app_id, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_page=" + new_page);
+}
+
+function fieldSorter(app_id, field_name, new_dir) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/contacts/" + app_id, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
+}
+</script>
+
+{% endblock %}

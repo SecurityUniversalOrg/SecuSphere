@@ -1,0 +1,633 @@
+openapi: 3.0.0
+info:
+  title: Vulnerability Manager
+  version: 1.0.0
+  description: Manage DevSecOps Workflows
+servers:
+  - url: https://vulnmgr.securityuniversal.com
+components:
+  securitySchemes:
+    oAuth2ClientCredentials:
+      type: oauth2
+      description: See https://vulnmgr.securityuniversal.com/api/docs/v3/oauth2.html
+      flows:
+        clientCredentials:
+          tokenUrl: https://vulnmgr.securityuniversal.com/oauth/token
+          scopes:
+            read:vulnerabilities: read vulnerabilities in your account
+            write:vulnerabilities: modify vulnerabilities in your account
+  schemas:
+    Vulnerabilities:
+      type: object
+      properties:
+        VulnerabilityID:
+          type: integer
+          format: int32
+          description: The VulnerabilityID for the vulnerabilities.
+        VulnerabilityName:
+          type: string
+          description: The VulnerabilityName for the vulnerabilities.
+        CVEID:
+          type: string
+          description: The CVEID for the vulnerabilities.
+        CWEID:
+          type: string
+          description: The CWEID for the vulnerabilities.
+        Description:
+          type: string
+          description: The Description for the vulnerabilities.
+        ReleaseDate:
+          type: string
+          format: date-time
+          description: The ReleaseDate for the vulnerabilities.
+        Severity:
+          type: string
+          description: The Severity for the vulnerabilities.
+        Classification:
+          type: string
+          description: The Classification for the vulnerabilities.
+        Source:
+          type: string
+          description: The Source for the vulnerabilities.
+        LastModifiedDate:
+          type: string
+          format: date-time
+          description: The LastModifiedDate for the vulnerabilities.
+        ReferenceName:
+          type: string
+          description: The ReferenceName for the vulnerabilities.
+        ReferenceUrl:
+          type: string
+          description: The ReferenceUrl for the vulnerabilities.
+        ReferenceTags:
+          type: string
+          description: The ReferenceTags for the vulnerabilities.
+        AddDate:
+          type: string
+          format: date-time
+          description: The AddDate for the vulnerabilities.
+        SourceCodeFileId:
+          type: integer
+          format: int32
+          description: The SourceCodeFileId for the vulnerabilities.
+        SourceCodeFileStartLine:
+          type: integer
+          format: int32
+          description: The SourceCodeFileStartLine for the vulnerabilities.
+        SourceCodeFileStartCol:
+          type: integer
+          format: int32
+          description: The SourceCodeFileStartCol for the vulnerabilities.
+        SourceCodeFileEndLine:
+          type: integer
+          format: int32
+          description: The SourceCodeFileEndLine for the vulnerabilities.
+        SourceCodeFileEndCol:
+          type: integer
+          format: int32
+          description: The SourceCodeFileEndCol for the vulnerabilities.
+        DockerImageId:
+          type: integer
+          format: int32
+          description: The DockerImageId for the vulnerabilities.
+        ApplicationId:
+          type: integer
+          format: int32
+          description: The ApplicationId for the vulnerabilities.
+        HostId:
+          type: integer
+          format: int32
+          description: The HostId for the vulnerabilities.
+        Uri:
+          type: string
+          description: The Uri for the vulnerabilities.
+        HtmlMethod:
+          type: string
+          description: The HtmlMethod for the vulnerabilities.
+        Param:
+          type: string
+          description: The Param for the vulnerabilities.
+        Attack:
+          type: string
+          description: The Attack for the vulnerabilities.
+        Evidence:
+          type: string
+          description: The Evidence for the vulnerabilities.
+        Solution:
+          type: string
+          description: The Solution for the vulnerabilities.
+        VulnerablePackage:
+          type: string
+          description: The VulnerablePackage for the vulnerabilities.
+        VulnerableFileName:
+          type: string
+          description: The VulnerableFileName for the vulnerabilities.
+        VulnerableFilePath:
+          type: string
+          description: The VulnerableFilePath for the vulnerabilities.
+        MitigationDate:
+          type: string
+          format: date-time
+          description: The MitigationDate for the vulnerabilities.
+        Status:
+          type: string
+          description: The Status for the vulnerabilities.
+        ScanId:
+          type: integer
+          format: int32
+          description: The ScanId for the vulnerabilities.
+        InitialScanId:
+          type: integer
+          format: int32
+          description: The InitialScanId for the vulnerabilities.
+tags:
+  - name: Vulnerabilities
+paths:
+  /vulnerabilities:
+    description: List all vulnerabilities within the current permissions scope.
+    get:
+      tags:
+        - Vulnerabilities
+      summary: List Vulnerabilities
+      security:
+        - oAuth2ClientCredentials:
+          - read:vulnerabilities
+      responses:
+        '200':
+          description: OK
+          headers:
+            Server:
+              schema:
+                type: string
+                example: Werkzeug/2.1.2 Python/3.9.13
+            Date:
+              schema:
+                type: string
+                example: Wed, 09 Nov 2022 01:51:32 GMT
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Content-Length:
+              schema:
+                type: integer
+                example: '457'
+            Connection:
+              schema:
+                type: string
+                example: close
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vulnerabilities'
+              example:
+                - AddDate: "2023-01-05T01:07:32"
+                  ApplicationId: 4
+                  Attack: ""
+                  CVEID: ""
+                  CWEID: "CWE-798"
+                  Classification: "SecretScan-Github"
+                  Description: "Github Secret/Credential Discovered in file: ci_cd/ReportRunner.py"
+                  DockerImageId: ""
+                  Evidence: ""
+                  HostId: ""
+                  HtmlMethod: ""
+                  InitialScanId: 195
+                  LastModifiedDate: "2023-01-24T14:20:58"
+                  MitigationDate: ""
+                  Param: ""
+                  ReferenceName: ""
+                  ReferenceTags: ""
+                  ReferenceUrl: ""
+                  ReleaseDate: "2023-01-05T01:07:27"
+                  ScanId: 214
+                  Severity: "Critical"
+                  Solution: ""
+                  Source: "Trufflehog-CI_CD"
+                  SourceCodeFileEndCol: ""
+                  SourceCodeFileEndLine: ""
+                  SourceCodeFileId: ""
+                  SourceCodeFileStartCol: ""
+                  SourceCodeFileStartLine: ""
+                  Status: "New"
+                  Uri: ""
+                  VulnerabilityID: 18587
+                  VulnerabilityName: "Hardcoded Secret - Github"
+                  VulnerableFileName: "ci_cd/ReportRunner.py"
+                  VulnerableFilePath: ""
+                  VulnerablePackage: ""
+  /add_vulnerabilities:
+    description: Add new vulnerabilities in bulk or as a single entity.
+    post:
+      tags:
+        - Vulnerabilities
+      summary: Add Vulnerabilities
+      security:
+        - oAuth2ClientCredentials:
+          - write:vulnerabilities
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                VulnerabilityName:
+                  type: string
+                  description: The VulnerabilityName for the vulnerabilities.
+                CVEID:
+                  type: string
+                  description: The CVEID for the vulnerabilities.
+                CWEID:
+                  type: string
+                  description: The CWEID for the vulnerabilities.
+                Description:
+                  type: string
+                  description: The Description for the vulnerabilities.
+                ReleaseDate:
+                  type: string
+                  format: date-time
+                  description: The ReleaseDate for the vulnerabilities.
+                Severity:
+                  type: string
+                  description: The Severity for the vulnerabilities.
+                Classification:
+                  type: string
+                  description: The Classification for the vulnerabilities.
+                Source:
+                  type: string
+                  description: The Source for the vulnerabilities.
+                LastModifiedDate:
+                  type: string
+                  format: date-time
+                  description: The LastModifiedDate for the vulnerabilities.
+                ReferenceName:
+                  type: string
+                  description: The ReferenceName for the vulnerabilities.
+                ReferenceUrl:
+                  type: string
+                  description: The ReferenceUrl for the vulnerabilities.
+                ReferenceTags:
+                  type: string
+                  description: The ReferenceTags for the vulnerabilities.
+                AddDate:
+                  type: string
+                  format: date-time
+                  description: The AddDate for the vulnerabilities.
+                SourceCodeFileId:
+                  type: integer
+                  format: int32
+                  description: The SourceCodeFileId for the vulnerabilities.
+                SourceCodeFileStartLine:
+                  type: integer
+                  format: int32
+                  description: The SourceCodeFileStartLine for the vulnerabilities.
+                SourceCodeFileStartCol:
+                  type: integer
+                  format: int32
+                  description: The SourceCodeFileStartCol for the vulnerabilities.
+                SourceCodeFileEndLine:
+                  type: integer
+                  format: int32
+                  description: The SourceCodeFileEndLine for the vulnerabilities.
+                SourceCodeFileEndCol:
+                  type: integer
+                  format: int32
+                  description: The SourceCodeFileEndCol for the vulnerabilities.
+                DockerImageId:
+                  type: integer
+                  format: int32
+                  description: The DockerImageId for the vulnerabilities.
+                ApplicationId:
+                  type: integer
+                  format: int32
+                  description: The ApplicationId for the vulnerabilities.
+                HostId:
+                  type: integer
+                  format: int32
+                  description: The HostId for the vulnerabilities.
+                Uri:
+                  type: string
+                  description: The Uri for the vulnerabilities.
+                HtmlMethod:
+                  type: string
+                  description: The HtmlMethod for the vulnerabilities.
+                Param:
+                  type: string
+                  description: The Param for the vulnerabilities.
+                Attack:
+                  type: string
+                  description: The Attack for the vulnerabilities.
+                Evidence:
+                  type: string
+                  description: The Evidence for the vulnerabilities.
+                Solution:
+                  type: string
+                  description: The Solution for the vulnerabilities.
+                VulnerablePackage:
+                  type: string
+                  description: The VulnerablePackage for the vulnerabilities.
+                VulnerableFileName:
+                  type: string
+                  description: The VulnerableFileName for the vulnerabilities.
+                VulnerableFilePath:
+                  type: string
+                  description: The VulnerableFilePath for the vulnerabilities.
+                MitigationDate:
+                  type: string
+                  format: date-time
+                  description: The MitigationDate for the vulnerabilities.
+                Status:
+                  type: string
+                  description: The Status for the vulnerabilities.
+                ScanId:
+                  type: integer
+                  format: int32
+                  description: The ScanId for the vulnerabilities.
+                InitialScanId:
+                  type: integer
+                  format: int32
+                  description: The InitialScanId for the vulnerabilities.
+            examples:
+              single entity:
+                value: {
+                    "VulnerabilityName": "This is vulnerability one",
+                    "CVEID": "CVE-123",
+                    "CWEID": "CWE-45",
+                    "Description": "Don't worry, this is just a test!",
+                    "ReleaseDate": "2022-11-07",
+                    "Severity": "High",
+                    "Classification": "Container",
+                    "Source": "PostmanTest",
+                    "LastModifiedDate": "2022-11-07",
+                    "ReferenceName": "None",
+                    "ReferenceUrl": "None",
+                    "ReferenceTags": "None",
+                    "AddDate": "2022-11-08",
+                }
+              multiple entities:
+                value: [
+                {
+                    "VulnerabilityName": "This is vulnerability one",
+                    "CVEID": "CVE-123",
+                    "CWEID": "CWE-45",
+                    "Description": "Don't worry, this is just a test!",
+                    "ReleaseDate": "2022-11-07",
+                    "Severity": "High",
+                    "Classification": "Container",
+                    "Source": "PostmanTest",
+                    "LastModifiedDate": "2022-11-07",
+                    "ReferenceName": "None",
+                    "ReferenceUrl": "None",
+                    "ReferenceTags": "None",
+                    "AddDate": "2022-11-08",
+                },
+                {
+                    "VulnerabilityName": "This is vulnerability two",
+                    "CVEID": "CVE-123",
+                    "CWEID": "CWE-45",
+                    "Description": "Don't worry, this is just a test!",
+                    "ReleaseDate": "2022-11-07",
+                    "Severity": "High",
+                    "Classification": "Container",
+                    "Source": "PostmanTest",
+                    "LastModifiedDate": "2022-11-07",
+                    "ReferenceName": "None",
+                    "ReferenceUrl": "None",
+                    "ReferenceTags": "None",
+                    "AddDate": "2022-11-08",
+                },
+                ]
+      responses:
+        '200':
+          description: OK
+          headers:
+            Server:
+              schema:
+                type: string
+                example: Werkzeug/2.1.2 Python/3.9.13
+            Date:
+              schema:
+                type: string
+                example: Wed, 09 Nov 2022 02:23:00 GMT
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Content-Length:
+              schema:
+                type: integer
+                example: '15'
+            Connection:
+              schema:
+                type: string
+                example: close
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ID:
+                    type: integer
+                    format: int32
+                    description: The unique ID of the vulnerabilities.
+              example:
+                ID: 16
+  /delete_vulnerabilities:
+    description: Delete the Vulnerabilities that match the property filters.
+    post:
+      tags:
+        - Vulnerabilities
+      summary: Delete Vulnerabilities
+      security:
+        - oAuth2ClientCredentials:
+          - write:vulnerabilities
+      requestBody:
+        description: All properties are optional.  If multiple properties are provided, the deleted entities must match all property filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vulnerabilities'
+            examples:
+              success:
+                value: {
+                    "ID": "3"
+                }
+      responses:
+        '200':
+          description: OK
+          headers:
+            Server:
+              schema:
+                type: string
+                example: Werkzeug/2.1.2 Python/3.9.13
+            Date:
+              schema:
+                type: string
+                example: Sat, 21 Jan 2023 17:02:09 GMT
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Content-Length:
+              schema:
+                type: integer
+                example: '26'
+            Connection:
+              schema:
+                type: string
+                example: close
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Status:
+                    type: string
+              example:
+                Status: Deleted
+  /edit_vulnerabilities:
+    description: Edit the properties that match the filter properties with values provided.
+    post:
+      tags:
+        - Vulnerabilities
+      summary: Edit Vulnerabilities
+      security:
+        - oAuth2ClientCredentials:
+          - write:vulnerabilities
+      requestBody:
+        description: All properties are optional.  If multiple properties are provided, the edited entities must match all property filters.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - filter
+                - values
+              properties:
+                filter:
+                  $ref: '#/components/schemas/Vulnerabilities'
+                values:
+                  $ref: '#/components/schemas/Vulnerabilities'
+            examples:
+              single filter property:
+                value: {
+                  "filter": {'VulnerabilityID': '5'},
+                  "values": {'VulnerabilityName': 'This is NOT a REAL vulnerability', 'CVEID': 'CVE-123', 'CWEID': 'CWE-45', 'Description': "Don't worry, this is just a test!", 'ReleaseDate': '2022-11-07', 'Severity': 'High', 'Classification': 'Container', 'Source': 'PostmanTest', 'LastModifiedDate': '2022-11-07', 'ReferenceName': 'None', 'ReferenceUrl': 'None', 'ReferenceTags': 'None', 'AddDate': '2022-11-08'}
+                }
+              multiple filter properties:
+                value: {
+                  "filter": {'CVEID': 'CVE-123', 'Classification': 'Container', 'Source': 'PostmanTest'},
+                  "values": {'Description': "Don't worry, this is just a test!", 'ReleaseDate': '2022-11-07', 'Severity': 'High'}
+                }
+
+      responses:
+        '200':
+          description: OK
+          headers:
+            Server:
+              schema:
+                type: string
+                example: Werkzeug/2.1.2 Python/3.9.13
+            Date:
+              schema:
+                type: string
+                example: Thu, 10 Nov 2022 01:01:36 GMT
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Content-Length:
+              schema:
+                type: integer
+                example: '14'
+            Connection:
+              schema:
+                type: string
+                example: close
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ID:
+                    type: integer
+                    format: int32
+                    description: The unique ID of the edited Vulnerabilities.
+              example:
+                ID: 5
+  /search_vulnerabilities:
+    description: Search for vulnerabilities that match the properties filter(s).
+    post:
+      tags:
+        - Vulnerabilities
+      summary: Search Vulnerabilities
+      security:
+        - oAuth2ClientCredentials:
+          - read:vulnerabilities
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vulnerabilities'
+            examples:
+              single filter property:
+                value: {'VulnerabilityName': 'This is a REAL vulnerability'}
+              multiple filter property:
+                value: {'ApplicationID': '4', 'VulnerabilityName': 'This is a REAL vulnerability'}
+      responses:
+        '200':
+          description: OK
+          headers:
+            Server:
+              schema:
+                type: string
+                example: Werkzeug/2.1.2 Python/3.9.13
+            Date:
+              schema:
+                type: string
+                example: Thu, 10 Nov 2022 02:29:29 GMT
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Content-Length:
+              schema:
+                type: integer
+                example: '968'
+            Connection:
+              schema:
+                type: string
+                example: close
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vulnerabilities'
+              example:
+                - AddDate: '2022-11-10'
+                  CVEID: 'CVE-123'
+                  CWEID: 'CWE-45'
+                  Classification: 'Container'
+                  Description: 'Dont worry, this is just a test!'
+                  LastModifiedDate: '2022-11-07'
+                  ReferenceName: 'None'
+                  ReferenceTags: 'None'
+                  ReferenceUrl: 'None'
+                  ReleaseDate: '2022-11-07'
+                  Severity: 'High'
+                  Source: 'PostmanTest'
+                  VulnerabilityID: '17'
+                  VulnerabilityName: 'This is a test vulnerability'
+                - AddDate: '2022-11-10'
+                  CVEID: 'CVE-123'
+                  CWEID: 'CWE-45'
+                  Classification: 'Container'
+                  Description: 'Dont worry, this is just a test!'
+                  LastModifiedDate: '2022-11-07'
+                  ReferenceName: 'None'
+                  ReferenceTags: 'None'
+                  ReferenceUrl: 'None'
+                  ReleaseDate: '2022-11-07'
+                  Severity: 'High'
+                  Source: 'PostmanTest'
+                  VulnerabilityID: '18'
+                  VulnerabilityName: 'This is a test vulnerability'

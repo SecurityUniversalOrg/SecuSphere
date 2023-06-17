@@ -1,0 +1,49 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    {% if title %}{{ title }} - Vulnerability Manager {% else %}Vulnerability Manager{% endif %}
+{% endblock %}
+
+{% block head %}
+<!-- meta and links --> 
+{{ super() }}
+
+  <meta charset="UTF-8">
+{#  <link rel="shortcut icon" type="image/x-icon" href="/static/images/lock_only.png" />#}
+  <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome/css/all.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts/?family=Raleway') }}">
+<!-- style -->
+{% endblock %}
+
+  <!-- Top container -->
+  {% block navbar %}
+  <div class="top_menu">
+{#    <span class="logo_container"><a href="#"><img src="/static/images/web_transparent.png" height="75" width="292" alt="logo" border="0"></a></span>#}
+
+  </div>
+
+{% endblock %}
+
+{% block content %}
+
+  
+
+  <!-- !PAGE CONTENT! -->
+<div class="main_container" id="main">
+
+    
+    {% block app_content %}{% endblock %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<!-- scripts -->
+<script src='{{ url_for('static', filename='js/jquery.min.js') }}'></script>
+<script src='static/js/main.js'></script>
+<script src='static/js/Chart.min.js'></script>
+<script src="static/js/moment.js"></script>
+{% endblock %}

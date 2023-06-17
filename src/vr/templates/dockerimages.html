@@ -1,0 +1,157 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
+
+                </h3>
+                {% include "application_horizontal_bar.html" %}
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading tight">
+                                <h3 class="has-filters">
+                                    Docker Images
+
+                                </h3>
+                            </div>
+
+                        </div>
+
+
+                        <div class="clearfix"></div>
+
+                        {% include "pagination_tab.html" %}
+
+                        <div class="panel panel-default table-responsive">
+                            <table id="products" class="tablesorter-bootstrap table table-condensed table-striped" aria-describedby="Components Table">
+                                <thead>
+                                <tr>
+                                    <input type="hidden" id="val_page" value="{{ table_details['page'] }}">
+                                    <input type="hidden" id="val_per_page" value="{{ table_details['per_page'] }}">
+                                    <input type="hidden" id="val_orderby" value="{{ table_details['orderby'] }}">
+
+                                    <th>Image Name</th>
+                                    <th>Image Tag</th>
+                                    <th>Image Id</th>
+                                    <th>Add Date</th>
+                                    <th>Vulnerabilities</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for i in entities %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ i.ImageName }}</strong>
+                                    </td>
+                                    <td>
+                                        {{ i.ImageTag }}
+                                    </td>
+                                    <td>
+                                        {{ i.ImageId }}
+                                    </td>
+                                    <td>
+                                        {{ i.AddDate }}
+                                    </td>
+                                    <td>
+                                        <a href="/filtered_findings/{{ app_data.ID }}/docker/{{ i.ID }}">{{ i.total_vulnerabilities }}</a
+                                    </td>
+
+                                </tr>
+                                {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="clearfix"></div>
+
+                        {% include "pagination_tab.html" %}
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+<script>
+function updatePerPage(app_id, new_per_page) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/dockerimages/" + app_id, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_per_page=" + new_per_page);
+}
+
+function updatePagination(app_id, new_page) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/dockerimages/" + app_id, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_page=" + new_page);
+}
+
+function fieldSorter(app_id, field_name, new_dir) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/dockerimages/" + app_id, true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
+}
+</script>
+
+
+{% endblock %}

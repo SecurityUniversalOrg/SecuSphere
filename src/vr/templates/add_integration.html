@@ -1,0 +1,101 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+
+
+        <div class="row hidden-xs">
+            <div class="col-lg-12">
+
+                <ul class="breadcrumb main">
+
+                    <li class="">
+                        <a class="" href="/">Home</a>
+                    </li>
+
+                    <li class="">
+                        <a class="" href="/all_integrations">Integration List</a>
+                    </li>
+
+                    <li class="active">
+                        <a class="active" href="/add_integration">New Integration</a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <h3 style="color:white;"> Add an Integration </h3>
+                <form class="form-horizontal" action="/add_integration" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_name">Name<sup>*</sup></label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="name" maxlength="200" class="form-control" required=""
+                                   id="id_name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_description">Description</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="description" maxlength="2000" class="form-control" id="id_description">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_url">Url</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="url" maxlength="2000" class="form-control" id="id_url">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_tool_type">Tool Type<sup>*</sup></label>
+                        <div class="col-sm-10  ">
+                            <select name="tool_type" class="form-control selectpicker" required="" id="id_tool_type"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected="">---------</option>
+                                <option value="Jenkins">Jenkins</option>
+                                <option value="JIRA">JIRA</option>
+                                <option value="GitHub">GitHub</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_username">Username</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="username" maxlength="200" class="form-control" id="id_username">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_password">Password</label>
+                        <div class="col-sm-10  ">
+                            <input type="password" name="password" maxlength="600" class="form-control" id="id_password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <input style="width: max-content;margin-left: 94px;margin-top: 1rem;" class="btn btn-primary" type="submit" value="Submit">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+{% endblock %}

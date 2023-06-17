@@ -1,0 +1,52 @@
+
+{% block app_content %}
+
+<div class="login_form_container">
+  <div class="login_form">
+  <section class="register_wrapper">
+    
+    <div class="logo">
+		 
+    </div>
+    
+
+
+
+    <h1 class="page_title">API KEY</h1>
+    <p class="page_subtitle">Please note: This key will NOT be available after you leave this page.</p>
+    <hr>
+    <br>
+    <textarea
+        id="label_text_val"
+        cols="50"
+        rows="2"
+    >{{ api_key }}</textarea>
+
+    <button class="update_button settings_update_button cancel" onclick="copyTextToClipboard()">Copy</button>
+
+  
+
+
+    
+  </section>
+  </div>
+</div>
+
+<script src='{{ url_for('static', filename='js/jquery.min.js') }}'></script>
+
+  
+
+    <script  src="js/index.js"></script>
+
+<script>
+  function copyTextToClipboard() {
+    const area = document.querySelector('#label_text_val');
+    area.select();
+    document.execCommand('copy')
+}
+</script>
+{% endblock %}
+
+</body>
+
+</html>

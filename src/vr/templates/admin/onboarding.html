@@ -1,0 +1,290 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+  {{ super() }}
+
+  <div class="settings_container">
+
+    <div class="settings_row">
+
+      <div class="settings_col_m10_center">
+
+      <div class="settings_card">
+
+        <div class="settings_card_header">
+
+            <h4 class="settings_card_title" id="first" style="width: 100%;display: block ruby;"><div id="task_score">My Tasks - {{ total_done }}/{{ task_list|length }} Completed</div> <a href="javascript:void(0)" onclick="suppressTaskList()"><i class="fas fa-minus-circle" style="float: right;"></i></a></h4>
+
+      </div>
+
+      <div class="settings_card_body">
+
+        <div class="settings_form">
+
+          <div class="settings_card_row">
+            <div class="settings_card_col_md12">
+              <div class="settings_card_form_group">
+              <label class="settings_card_form_label" id="second">Task Name</label>
+
+              {% for i in task_list %}
+                  <div class="checkbox_grp col_adj" style="display: flex;">
+                    <div class="checkbox_label">
+                      {{ i['name'] }}
+                    </div><a href="{{ i['link'] }}" style="margin-left: 3px;"><i class="fas fa-external-link-square-alt"></i></a><i class="fas fa-info-circle" style="margin-left: 3px;" onclick="showModal('info_modal')"></i>
+                    <div class="checkbox_box">
+                      <label class="switch switch-green" id="task_status" style="display: flex;">
+                        <input type="checkbox" class="switch-input" name="cols" id="col_{{ i['name'] }}" value=""  onclick="return false;" onkeydown="return false;" disabled="disabled" {% if i['status'] == 'd' %}checked{% endif %}>
+                        <span class="switch-label" data-on="On" data-off="Off"></span>
+                        <span class="switch-handle"></span>
+                      </label>
+                    </div>
+                  </div>
+
+              {% endfor %}
+
+
+
+
+          </div>
+          </div>
+
+
+        </div>
+
+
+
+        <div class="settings_card_text_center">
+
+        </div>
+
+        <div class="settings_card_clearfix"></div>
+
+        </div>
+
+      </div>
+
+      </div>
+    </div>
+    </div>
+
+  </div>
+
+
+
+
+<!-- Modal Section -->
+<!-- info modal -->
+
+  <div id="info_modal" class="modal">
+    <div class="settings_container">
+
+      <div class="settings_row">
+
+        <div class="settings_col_m4_center">
+
+        <div class="settings_card">
+
+          <div class="settings_card_header">
+            <span class="close" onclick="hideModal('info_modal')"><i class="fas fa-times" style="font-size: 3rem;"></i></span>
+          <h4 class="settings_card_title" id="info_modal_title">Sample title</h4>
+
+        </div>
+
+        <div class="settings_card_body">
+
+          <div class="settings_form">
+
+
+
+              <div class="settings_card_row">
+
+
+                  <div id="div_1" class="settings_card_col_md12">
+                    <div class="settings_card_form_group">
+                      <label id="label_1" class="settings_card_form_label">Label 1</label>
+                      <label id="label_dynamic_val" class="settings_card_form_label" style="width: 100%;"></label>
+                    </div>
+                  </div>
+              </div>
+
+
+
+            <div class="settings_card_text_center">
+
+              <button class="update_button settings_update_button cancel" onclick="hideModal('info_modal');location.reload();">Done</button>
+
+            </div>
+
+            <div class="settings_card_clearfix"></div>
+
+          </div>
+
+        </div>
+
+        </div>
+
+      </div>
+      </div>
+
+    </div>
+  </div>
+
+
+<!-- end info modal -->
+<!-- End Page Container -->
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+
+  <script>
+    function suppressTaskList() {
+      var xhttp = new XMLHttpRequest();
+      var csrf_token = "{{ csrf_token() }}";
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          window.location.href = '/profile';
+        }
+      };
+      xhttp.open("POST", 'onboarding_suppress', true);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+      xhttp.send();
+    }
+  </script>
+  <script>
+  function closeoutTour() {
+      var xhttp = new XMLHttpRequest();
+      var csrf_token = "{{ csrf_token() }}";
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          location.reload();
+        }
+      };
+      xhttp.open("POST", 'onboarding_ud_menu_tour', true);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+      xhttp.send();
+  }
+  var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to Security Universal!  Let's take a quick tour!"
+      },
+      {
+        title: 'Top Menu',
+        element: document.querySelector('#menu_icon_container'),
+        intro: "This is your top menu that will be present on every page."
+      },
+      {
+        title: 'Help Requests',
+        element: document.querySelector('#help_btn'),
+        intro: "To submit Help Requests to Security Universal Support, click on the Help icon"
+      },
+      {
+        title: 'Calendars',
+        element: document.querySelector('#calendar_btn'),
+        intro: "To view your Personal and Shared Calendars, click on the Calendar icon"
+      },
+      {
+        title: 'Messaging',
+        element: document.querySelector('#messaging_btn'),
+        intro: "To view your Messages and Alerts, click on the Messaging icon"
+      },
+      {
+        title: 'Urgent Notifications',
+        element: document.querySelector('#menu_notifications'),
+        intro: "To view your Urgent Notifications, click on the Notifications icon"
+      },
+      {
+        title: 'User Profile',
+        element: document.querySelector('#profile_btn'),
+        intro: "To view your User Profile, click on the Profile icon"
+      },
+      {
+        title: 'Display/Close Side Menu',
+        element: document.querySelector('#menuButton'),
+        intro: "To display or close the side menu, click on the Menu icon"
+      },
+      {
+        title: 'Side Menu - Profile Picture',
+        element: document.querySelector('.menu_prof_icon_container'),
+        intro: "Your customizable Profile picture is displayed here"
+      },
+      {
+        title: 'Side Menu - Messaging',
+        element: document.querySelector('#menu_bar_messages'),
+        intro: "To view your Messages and Alerts, click on the Messaging icon"
+      },
+      {
+        title: 'Side Menu - User Profile',
+        element: document.querySelector('#menu_bar_profile'),
+        intro: "To view your User Profile, click on the Profile icon"
+      },
+      {
+        title: 'Side Menu - Edit User Profile',
+        element: document.querySelector('#menu_bar_edit_profile'),
+        intro: "To edit your User Profile, click on the Edit Profile icon"
+      },
+      {
+        title: 'Side Menu - Component Menus',
+        element: document.querySelector('#admin_menu'),
+        intro: "Each component has a dedicated Menu.  Click each component title to show the sub-menu"
+      },
+      {
+        title: 'Side Menu - Component Sub-Menus',
+        element: document.querySelector('#onboarding_tab'),
+        intro: "Click on a sub-menu to navigate to the intended page"
+      },
+      {
+        intro: "Top menu tour completed!"
+      },
+      {
+        intro: "To better help you get familiar with Security Universal, you been assigned Onboarding Tasks!"
+      },
+      {
+        title: 'Onboarding Status',
+        element: document.querySelector('#task_score'),
+        intro: "As you complete tasks, your status will be updated here"
+      },
+      {
+        title: 'Task Information',
+        element: document.querySelector('.fa-info-circle'),
+        intro: "For information about each task, click on the info icon"
+      },
+      {
+        title: 'Complete Task',
+        element: document.querySelector('.fa-external-link-square-alt'),
+        intro: "To complete the task, click on the arrow icon"
+      },
+      {
+        title: 'Task Status',
+        element: document.querySelector('#task_status'),
+        intro: "Once a task is completed, the checkbox will switch to green"
+      },
+      {
+        intro: "Onboarding tour completed!"
+      }
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+    if (this._currentStep === 7) {
+      openNav();menuAnimate(document.getElementById('menuButton'));
+    } else if (this._currentStep === 12) {
+      document.getElementById('admin_menu').click();
+    } else if (this._currentStep === 14) {
+      openNav();menuAnimate(document.getElementById('menuButton'));
+    } else if (this._currentStep === 19) {
+      closeoutTour();
+    }
+  });
+  {% if tour_status == 'nd' %}
+    ijs.start();
+  {% endif %}
+
+  </script>
+{% endblock %}

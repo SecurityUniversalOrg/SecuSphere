@@ -1,0 +1,882 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
+
+                </h3>
+                {% include "application_horizontal_bar.html" %}
+            </div>
+        </div>
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li><a data-toggle="tooltip" data-placement="top" title="Test" href="/test/35">{{ details.Source }} Scan</a>
+                        </li>
+                        <li><a data-toggle="tooltip" data-placement="top" title="Finding" href="/finding/{{ details.VulnerabilityID }}">{% if details.CWEID %}{{ details.CWEID }} {% endif %}{% if details.CVEID %}{{ details.CVEID }} {% endif %}{{ details.VulnerabilityName }}</a></li>
+
+                        <li class="breadcrumb-item active" aria-current="page">View Finding</li>
+
+                    </ol>
+                </nav>
+
+
+                <div id="test">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="clearfix">
+                                <h3 class="pull-left finding-title">
+                                    {% if details.CWEID %}{{ details.CWEID }} {% endif %}{% if details.CVEID %}{{ details.CVEID }} {% endif %}{{ details.VulnerabilityName }}
+                                    <sup>
+                                        {% if details.Classification == 'SCA' %}
+                                        <span title="Search lang-pkgs" class="tag-label tag-color">lang-pkgs</span>
+                                        {% elif details.Classification == 'Docker' %}
+                                        <span title="Search os-pkgs" class="tag-label tag-color">os-pkgs</span>
+                                        {% elif details.Classification == 'IaC' %}
+                                        <span title="Search jar" class="tag-label tag-color">file</span>
+                                        {% endif %}
+                                    </sup>
+
+
+
+                                </h3>
+                                <div class="dropdown pull-right">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
+                                            data-toggle="dropdown" aria-expanded="true">
+                                        <span class="fa fa-bars"></span>
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right" role="menu"
+                                        aria-labelledby="dropdownMenu1">
+
+                                        <li role="presentation" data-toggle="modal" data-target="#peerReviewModal">
+                                            <a href="#">
+                                                <div class="fa-regular fa-hand"></div> Request Security Review
+                                            </a>
+                                        </li>
+
+                                        <li role="presentation" data-toggle="modal" data-target="#devReviewedModal">
+                                            <a href="#">
+                                                <div class="fa-regular fa-circle-check"></div> Mark Reviewed
+                                            </a>
+                                        </li>
+
+                                        <li role="separator" class="divider"></li>
+
+                                        {% if user.is_security or user.is_admin %}
+                                        <li role="presentation" data-toggle="modal" data-target="#closedManualModal">
+                                            <a href="#">
+                                                <div class="fa fa-fire-extinguisher"></div> Close Finding
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% if user.is_security or user.is_admin %}
+                                        <li role="presentation" data-toggle="modal" data-target="#riskAcceptedModal">
+                                            <a href="#">
+                                                <div class="fa fa-exclamation-circle"></div> Add Risk Acceptance...
+                                            </a>
+                                        </li>
+                                        {% endif %}
+
+                                        {% if jira %}
+                                        <li role="separator" class="divider"></li>
+                                        <li role="presentation" id="createJira">
+                                            <a class="text-danger delete-finding" href="#">
+                                                <div class="fa-brands fa-jira"></div> Create JIRA Issue
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% if user.is_security or user.is_admin %}
+                                        <li role="separator" class="divider"></li>
+                                        <li role="presentation" data-toggle="modal" data-target="#deleteModal">
+                                            <a class="text-danger delete-finding" href="#">
+                                                <div class="fa fa-trash"></div> Delete Finding
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                    <!-- Security Review Modal -->
+                                    <div class="modal fade" id="peerReviewModal" role="dialog">
+                                        <div class="modal-dialog">
+
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="peerReviewModalLabel">Request Security Review</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <select class="form-control" id="peerReviewOption">
+                                                        <option value="" disabled="disabled">--Select An Option--</option>
+                                                        <option value="Possible False Positive">Possible False Positive</option>
+                                                        <option value="Need Help">Need Help</option>
+                                                        <option value="Can't Fix">Can't Fix</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                    <br>
+                                                    <textarea class="form-control" id="peerReviewnote" rows="3" placeholder="Add a note here..."></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary" onclick="AddIssueDispo('Open-SecReview')">Save changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Mark Reviewed Modal -->
+                                    <div class="modal fade" id="devReviewedModal" role="dialog">
+                                        <div class="modal-dialog">
+
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="devReviewedModalLabel">Submit Review</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <select class="form-control" id="devReviewedOption">
+                                                        <option value="" disabled="disabled">--Select An Option--</option>
+                                                        <option value="Confirmed">Confirmed</option>
+                                                        <option value="False Positive">False Positive</option>
+                                                        <option value="Duplicate">Duplicate</option>
+                                                        <option value="Out of Scope">Out of Scope</option>
+                                                        <option value="Not Exploitable">Not Exploitable</option>
+                                                        <option value="Mitigated">Mitigated</option>
+                                                        <option value="Needs More Information">Needs More Information</option>
+                                                        <option value="Won't Fix">Won't Fix</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                    <br>
+                                                    <textarea class="form-control" id="devReviewednote" rows="3" placeholder="Add a note here..."></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary" onclick="AddIssueDispo('Open-Reviewed')">Save changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Closed Reviewed Modal -->
+                                    <div class="modal fade" id="closedManualModal" role="dialog">
+                                        <div class="modal-dialog">
+
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="closedManualModalLabel">Manually Close Finding</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <select class="form-control" id="closedManualOption">
+                                                        <option value="" disabled="disabled">--Select An Option--</option>
+                                                        <option value="False Positive">False Positive</option>
+                                                        <option value="Superseded or Deprecated Component">Superseded or Deprecated Component</option>
+                                                        <option value="Compensating Control">Compensating Control</option>
+                                                        <option value="False Reporting">False Reporting</option>
+                                                        <option value="Reclassification">Reclassification</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                    <br>
+                                                    <textarea class="form-control" id="closedManualnote" rows="3" placeholder="Add a note here..."></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary" onclick="AddIssueDispo('Closed-Manual')">Save changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Risk Accepted Modal -->
+                                    <div class="modal fade" id="riskAcceptedModal" role="dialog">
+                                        <div class="modal-dialog">
+
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="riskAcceptedModalLabel">Add Risk Acceptance to Finding</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <select class="form-control" id="riskAcceptedOption">
+                                                        <option value="" disabled="disabled">--Select An Option--</option>
+                                                        <option value="Cost-Benefit Analysis">Cost-Benefit Analysis</option>
+                                                        <option value="Low Risk/Impact">Low Risk/Impact</option>
+                                                        <option value="Legacy Systems or Software">Legacy Systems or Software</option>
+                                                        <option value="Mitigation Controls">Mitigation Controls</option>
+                                                        <option value="Business Considerations">Business Considerations</option>
+                                                        <option value="Pending Upgrades or Replacements">Pending Upgrades or Replacements</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                    <br>
+                                                    <textarea class="form-control" id="riskAcceptednote" rows="3" placeholder="Add a note here..."></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary" onclick="AddIssueDispo('Open-RiskAccepted')">Save changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteModal" role="dialog">
+                                        <div class="modal-dialog">
+
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteModalLabel">Delete Finding</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <select class="form-control" id="deleteOption">
+                                                        <option value="" disabled="disabled">--Select An Option--</option>
+                                                        <option value="False Positive">False Positive</option>
+                                                        <option value="Duplicate Entry">Duplicate Entry</option>
+                                                        <option value="Outdated or Irrelevant Entry">Outdated or Irrelevant Entry</option>
+                                                        <option value="Data Normalization">Data Normalization</option>
+                                                        <option value="Data Privacy or Compliance Reasons">Data Privacy or Compliance Reasons</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                    <br>
+                                                    <textarea class="form-control" id="deletenote" rows="3" placeholder="Add a note here..."></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary" onclick="AddIssueDispo('Deleted')">Save changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="notes" class="table-striped table table-condensed table-hover centered" aria-describedby="Component Table">
+                                <tbody>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Severity</th>
+                                    <th>SLA</th>
+                                    <th>Status</th>
+                                    <th>Type</th>
+                                    <th>Date discovered</th>
+                                    <th>Age</th>
+                                    <th>CWE</th>
+                                    <th>CVE</th>
+                                    <th>Found by</th>
+                                </tr>
+                                <tr>
+                                    <td title="hash_code: ad77cb05554ea1709797994797e105e4bbcb9879fdf034946a3aeecd84d4ea0c">
+                                        {{ details.VulnerabilityID }}
+                                    </td>
+                                    <td>
+                                        <span class="label severity severity-{{ details.Severity }}" style="color:black;">
+                                            {{ details.Severity }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a class="has-popover" data-toggle="tooltip" data-placement="bottom" title=""
+                                           href="#"
+                                           data-content="Remediation for critical findings in 7 days or less since Dec 17, 2022)"
+                                           data-original-title=""><span class="label severity age-green"  style="color:black;">
+                                            {% if details.Severity == 'Critical' %}
+                                                {{ sla_policy[1] }}
+                                            {% elif details.Severity == 'High' %}
+                                                {{ sla_policy[2] }}
+                                            {% elif details.Severity == 'Medium' %}
+                                                {{ sla_policy[3] }}
+                                            {% elif details.Severity == 'Low' %}
+                                                {{ sla_policy[4] }}
+                                            {% endif %}
+                                        </span></a>
+                                    </td>
+
+
+                                    <td class="nowrap, align-top">
+
+                                        {{ details.Status }}
+                                        &nbsp;
+                                    </td>
+
+                                    <td>
+                                        {{ details.Classification }}
+
+
+                                    </td>
+                                    <td>{{ details.AddDate }}</td>
+                                    <td>{{ moment(details.AddDate|format_datetime).fromNow() }}</td>
+
+
+
+
+                                    <td>
+                                        {% if details.CWEID %}
+                                        <a target="_blank" href="https://cwe.mitre.org/data/definitions/{{ details.CWEID.replace('CWE-', '') }}.html">
+                                            <div class="fa fa-external-link"></div> {{ details.CWEID }}
+                                        </a>
+                                        {% endif %}
+
+                                    </td>
+                                    <td>
+
+                                        {% if details.CVEID %}
+                                        <a target="_blank" href="https://nvd.nist.gov/vuln/detail/{{ details.CVEID }}">
+                                            <div class="fa fa-external-link"></div> {{ details.CVEID }}
+                                        </a>
+                                        {% endif %}
+
+
+                                    </td>
+                                    <td>
+                                        {{ details.Source }} Scan
+                                    </td>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {% if 'IaC' in details.Classification %}
+                        {% include "findings/iac_finding.html" %}
+                    {% elif details.Classification == 'Container' %}
+                        {% include "findings/container_finding.html" %}
+                    {% elif details.Classification == 'DAST' %}
+                        {% include "findings/dast_finding.html" %}
+                    {% elif details.Classification == 'SCA' %}
+                        {% include "findings/sca_finding.html" %}
+                    {% elif 'Secret' in details.Classification %}
+                        {% include "findings/secret_finding.html" %}
+                    {% elif details.Classification != 'SAST' %}
+                        {% include "findings/sast_finding.html" %}
+                    {% else %}
+                        {% include "findings/misc_finding.html" %}
+                    {% endif %}
+
+
+                    <div class="view-finding">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Description <span class="pull-right"><a data-toggle="collapse" href="#vuln_desc"><div
+                                        class="glyphicon glyphicon-chevron-up"></div></a></span></h4>
+                            </div>
+                            <div id="vuln_desc" class="panel-body finding-description collapse in">
+                                <pre><p>{{ details.Description|safe }}</p></pre>
+                            </div>
+                        </div>
+
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Mitigation <span class="pull-right"><a data-toggle="collapse"
+                                                                           href="#vuln_mitigation"><div
+                                        class="glyphicon glyphicon-chevron-up"></div></a></span></h4>
+                            </div>
+                            <div id="vuln_mitigation" class="panel-body collapse in">
+                                <pre><p>{{ details.Solution|safe }}</p></pre>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Impact <span class="pull-right"><a data-toggle="collapse" href="#vuln_impact"><div
+                                        class="glyphicon glyphicon-chevron-down"></div></a></span></h4>
+                            </div>
+                            <div id="vuln_impact" class="panel-body collapse ">
+                                <pre></pre>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default" id="steps">
+                            <div class="panel-heading">
+                                <h4>Steps To Reproduce <span class="pull-right"><a data-toggle="collapse"
+                                                                                   href="#vuln_reproduce"><div
+                                        class="glyphicon glyphicon-chevron-down"></div></a></span></h4>
+                            </div>
+                            <div id="vuln_reproduce" class="panel-body collapse ">
+                                <pre></pre>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Severity Justification <span class="pull-right"><a data-toggle="collapse"
+                                                                                       href="#sev_just"><div
+                                        class="glyphicon glyphicon-chevron-down"></div></a></span></h4>
+                            </div>
+                            <div id="sev_just" class="panel-body collapse ">
+                                <pre></pre>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>References <span class="pull-right"><a data-toggle="collapse" href="#vuln_refs"><div
+                                        class="glyphicon glyphicon-chevron-up"></div></a></span></h4>
+                            </div>
+                            <div id="vuln_refs" class="panel-body collapse in">
+                <pre><p><a href="{{ details.ReferenceUrl }}"
+                           target="_blank" rel="noopener"
+                           title="{{ details.ReferenceUrl }}">
+                    {{ details.ReferenceUrl }}
+                </a></p></pre>
+                            </div>
+                        </div>
+
+                        <!--Cred Begin-->
+
+                    </div>
+
+
+                    <div class="panel panel-default table-responsive">
+                        <div class="panel-heading">
+                            <h4>Notes <span class="pull-right"><a data-toggle="collapse" href="#vuln_notes"><div
+                                    class="glyphicon glyphicon-chevron-up"></div></a></span></h4>
+                        </div>
+
+                        <div id="vuln_notes" class="panel-body collapse in">
+                            <div class="form-horizontal"><input type="hidden"
+                                                                                         name="csrfmiddlewaretoken"
+                                                                                         value="jQfwrc0DmoXlVUbmHFwmqhiPi2NZdepzoeASiOMeQNTn9WiL66ZEUE1AwdW6e6gG">
+
+
+
+
+                                <div class="form-group">
+
+
+                                    <label class="col-sm-2 control-label" for="id_entry">Notes:<sup>*</sup>
+
+                                    </label>
+
+                                    <input type="hidden" id="issue_id" name="issue_id" value="{{ details.VulnerabilityID }}" />
+
+                                    <div class="col-sm-10  ">
+                                        <textarea name="entry" cols="15" rows="4" maxlength="2400" class="form-control"
+                                                  required="" id="id_entry"></textarea>
+
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-sm-offset-2 col-sm-10 ">
+                                        <div class="checkbox">
+
+                                            <label>
+                                                <input type="checkbox" name="private" id="id_private" style="margin-left: inherit;">
+                                                <span style="margin-left: 2em;">Private</span>
+                                            </label>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <input class="btn btn-secondary" label="Add Note" type="submit" id="add_note"
+                                               value="Add Note" style="width: initial;" onclick="AddIssueNote()">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    {#        dynamic notes section        #}
+                    <div id="notesContainer">
+                    {% for i in issue_notes %}
+                        <input id="note_id_val" type="hidden" value="{{ i[0] }}"/>
+                        <div id="issue_notes_{{ i[0] }}">
+                        <div class="panel panel-default">
+                          <div class="panel-comments">
+
+                              <div class="pull-right">
+                                <formaction="#" style="padding: revert;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                    <input type="hidden" aria-label="id" name="id" value="1" id="id_id">
+                                    <button type="submit" aria-label="Delete Note" class="btn-delete" style="padding: revert;margin: revert;">
+                                      <div class="fa fa-trash" onclick="DeleteIssueNote()"></div>
+                                    </button>
+                                </form>
+                              </div>
+
+
+
+
+                              <div class="row-sm-2">
+                                <strong>({{ i[4] }})</strong>
+                                <span class="text-muted">commented {{ i[1] }}</span>
+                              </div>
+
+
+                          </div>
+                          <div class="panel-body">
+
+                            <p>{{ i[3] }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                    </div>
+
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+
+
+{% if jira %}
+<div id="createIssueModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Create JIRA Issue</h2>
+        </div>
+        <div class="modal-body">
+            <form id="createIssueForm">
+                <div class="input-field">
+                    <label for="issueTitle">Title</label>
+                    <input type="text" id="issueTitle" name="issueTitle" style="margin-left: 0px !important;"
+                    value="[{{ details.Classification }}] {{ details.VulnerabilityName }}">
+                </div>
+                <div class="input-field">
+                    <label for="issueDescription">Description</label>
+                    <textarea id="issueDescription" name="issueDescription">
+{% if details.Description %}{{ details.Description }}
+{% endif %}
+
+{% if details.Solution %}
+## Solution
+{{ details.Solution }}
+{% endif %}
+                    </textarea>
+                </div>
+                <input type="button" class="submit-button" value="Submit" onclick="submitIssue()">
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+/* The Modal (background) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 10%;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border-radius: 4px;
+    width: 50%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* The Close Button */
+.close {
+    color: #000;
+    float: right;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+/* Modal Header */
+.modal-header {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+/* Modal Body */
+.modal-body {
+    padding-top: 15px;
+}
+
+/* Input Fields */
+.input-field {
+    margin-bottom: 20px;
+}
+
+.input-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-field input,
+.input-field textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Submit Button */
+.submit-button {
+    background-color: #008CBA;
+    color: white;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+}
+
+.submit-button:hover {
+    background-color: #007B9A;
+}
+</style>
+{% endif %}
+
+
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<script>
+function AddIssueNote() {
+  var note_val = document.getElementById('id_entry').value;
+  var issue_id = document.getElementById('issue_id').value;
+  var xhttp = new XMLHttpRequest();
+  var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = JSON.parse(this.responseText);
+        appendNote(resp.ID, resp.AddDate, resp.Note);
+    }
+  };
+  xhttp.open("POST", "/add_issue_note", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("note_val=" + note_val + "&issue_id=" + issue_id);
+}
+
+function appendNote(noteId, addDate, note) {
+    // Create the main div for the note
+    let noteDiv = document.createElement('div');
+    noteDiv.id = `issue_notes_${noteId}`;
+    noteDiv.className = 'panel panel-default';
+
+    // Create the panel-comments div
+    let commentsDiv = document.createElement('div');
+    commentsDiv.className = 'panel-comments';
+
+    // Create the pull-right div with the form inside
+    let pullRightDiv = document.createElement('div');
+    pullRightDiv.className = 'pull-right';
+
+    let form = document.createElement('form');
+    form.action = "#";
+    form.style.padding = 'revert';
+
+    let inputHidden = document.createElement('input');
+    inputHidden.type = 'hidden';
+    inputHidden.name = 'csrf_token';
+    // add value to csrf_token when you have it
+    form.appendChild(inputHidden);
+
+    let button = document.createElement('button');
+    button.type = 'submit';
+    button.className = 'btn-delete';
+    button.style.padding = 'revert';
+    button.style.margin = 'revert';
+
+    let faDiv = document.createElement('div');
+    faDiv.className = 'fa fa-trash';
+    // add onclick function to div when you have it
+    button.appendChild(faDiv);
+
+    form.appendChild(button);
+    pullRightDiv.appendChild(form);
+    commentsDiv.appendChild(pullRightDiv);
+
+    // Create the row-sm-2 div
+    let rowDiv = document.createElement('div');
+    rowDiv.className = 'row-sm-2';
+
+    let strong = document.createElement('strong');
+    strong.textContent = `{{ user.username }}`;
+    rowDiv.appendChild(strong);
+
+    let span = document.createElement('span');
+    span.className = 'text-muted';
+    span.textContent = `commented ${addDate}`;
+    rowDiv.appendChild(span);
+
+    commentsDiv.appendChild(rowDiv);
+    noteDiv.appendChild(commentsDiv);
+
+    // Create the panel-body div
+    let panelBodyDiv = document.createElement('div');
+    panelBodyDiv.className = 'panel-body';
+
+    let p = document.createElement('p');
+    p.textContent = note;
+    panelBodyDiv.appendChild(p);
+
+    noteDiv.appendChild(panelBodyDiv);
+
+    // Append the noteDiv to the parent container
+    let container = document.getElementById('notesContainer'); // replace with the ID of your parent container
+    container.appendChild(noteDiv);
+}
+
+
+function DeleteIssueNote() {
+  var note_val = document.getElementById('id_entry').value;
+  var issue_id = document.getElementById('note_id_val').value;
+  var xhttp = new XMLHttpRequest();
+  var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        document.getElementById(`issue_notes_${issue_id}`).remove();
+    }
+  };
+  xhttp.open("POST", "/delete_issue_note", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("note_val=" + note_val + "&issue_id=" + issue_id);
+}
+</script>
+<script>
+function AddIssueDispo(dispo) {
+  var issue_id = document.getElementById('issue_id').value;
+  if (dispo == "Open-SecReview") {
+      var peerReviewOption = document.getElementById('peerReviewOption').value;
+      var peerReviewnote = document.getElementById('peerReviewnote').value;
+      var param_str = "dispo=" + dispo + "&issue_id=" + issue_id + "&peerReviewOption=" + peerReviewOption + "&peerReviewnote=" + peerReviewnote;
+  } else if (dispo == "Closed-Manual") {
+      var closedManualOption = document.getElementById('closedManualOption').value;
+      var closedManualnote = document.getElementById('closedManualnote').value;
+      var param_str = "dispo=" + dispo + "&issue_id=" + issue_id + "&closedManualOption=" + closedManualOption + "&closedManualnote=" + closedManualnote;
+  } else if (dispo == "Deleted") {
+      var deleteOption = document.getElementById('deleteOption').value;
+      var deletenote = document.getElementById('deletenote').value;
+      var param_str = "dispo=" + dispo + "&issue_id=" + issue_id + "&deleteOption=" + deleteOption + "&deletenote=" + deletenote;
+  }
+  else if (dispo == "Open-Reviewed") {
+      var devReviewedOption = document.getElementById('devReviewedOption').value;
+      var devReviewednote = document.getElementById('devReviewednote').value;
+      var param_str = "dispo=" + dispo + "&issue_id=" + issue_id + "&devReviewedOption=" + devReviewedOption + "&devReviewednote=" + devReviewednote;
+  }
+  else if (dispo == "Open-RiskAccepted") {
+      var riskAcceptedOption = document.getElementById('riskAcceptedOption').value;
+      var riskAcceptednote = document.getElementById('riskAcceptednote').value;
+      var param_str = "dispo=" + dispo + "&issue_id=" + issue_id + "&riskAcceptedOption=" + riskAcceptedOption + "&riskAcceptednote=" + riskAcceptednote;
+  }
+  else {
+    var param_str = "dispo=" + dispo + "&issue_id=" + issue_id
+  }
+  var xhttp = new XMLHttpRequest();
+  var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.location.reload(true);
+    }
+  };
+  xhttp.open("POST", "/add_issue_dispo", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send(param_str);
+}
+
+
+{% if jira %}
+var modal = document.getElementById("createIssueModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("createJira");
+
+// Get the <span> element that closes the modal
+var span = document.getElementById("closeModal");
+
+// When the user clicks the button, open the modal
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+
+function submitIssue() {
+  var issueTitle = document.getElementById('issueTitle').value;
+  var issueDescription = document.getElementById('issueDescription').value;
+  var appIntegrationId = "{{ jira[0][0] }}";
+
+  var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var resp = JSON.parse(this.responseText);
+            if (resp.status == "success") {
+                window.location.href = "/application_issues/" + "{{ app_data.ID}}";
+            }
+        }
+    };
+    xhttp.open("POST", "/add_service_ticket/{{ app_data.ID }}", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("issueTitle=" + issueTitle + "&issueDescription=" + issueDescription + "&appIntegrationId=" + appIntegrationId);
+}
+{% endif %}
+</script>
+{% endblock %}
+

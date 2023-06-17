@@ -1,0 +1,332 @@
+<ul class="nav nav-tabs horizontal-bar in">
+    <li role="presentation" {% if NAV['appbar'] == 'application' %} class="active"{% endif %}>
+        <a href="/application/{{ app_data.ID }}">
+            <span class="fa fa-globe" aria-hidden="true"></span>
+            <span class="hidden-xs">Overview</span>
+        </a>
+    </li>
+<!--    <li role="presentation" {% if NAV['appbar'] == 'scorecard' %} class="active"{% endif %}>-->
+<!--        <a href="/devopsscorecard/{{ app_data.ID }}">-->
+<!--            <span class="fas fa-code-branch" aria-hidden="true"></span>-->
+<!--            <span class="hidden-xs">DevOps Scorecard</span>-->
+<!--        </a>-->
+<!--    </li>-->
+    <li role="presentation" {% if NAV['appbar'] == 'branches' %} class="active"{% endif %}>
+        <a href="/branches/{{ app_data.ID }}">
+            <span class="fas fa-code-branch" aria-hidden="true"></span>
+            <span class="hidden-xs">Branches</span>
+        </a>
+    </li>
+
+    <li role="presentation" {% if NAV['appbar'] == 'contacts' %} class="active"{% endif %}>
+        <a href="/contacts/{{ app_data.ID }}">
+            <span class="fas fa-users" aria-hidden="true"></span>
+            <span class="hidden-xs">Contacts</span>
+        </a>
+    </li>
+    <li role="presentation" {% if NAV['appbar'] == 'metrics' %} class="active"{% endif %}>
+        <a href="/metrics/{{ app_data.ID }}">
+            <span class="fas fa-chart-line" aria-hidden="true"></span>
+            <span class="hidden-xs">Metrics</span>
+        </a>
+    </li>
+    <li role="presentation" {% if NAV['appbar'] == 'components' %} class="active"{% endif %}>
+        <a class="dropdown-toggle active" data-toggle="dropdown" href="">
+            <span class="fa-solid fa-code" aria-hidden="true"></span>
+            <span class="hidden-xs">Source Code</span>
+            <span class="caret"></span>
+        </a>
+
+        <ul class="dropdown-menu">
+            <li>
+                <a href="/sourcecode_files/{{ app_data.ID }}">
+                    <div class="fa-solid fa-file-code"></div>
+                    View Source Code Files
+                </a>
+            </li>
+            <li>
+                <a href="/components/{{ app_data.ID }}">
+                    <div class="fa-solid fa-file-import"></div>
+                    View Imports
+                </a>
+            </li>
+        </ul>
+
+    </li>
+    <!-- Infrastructure Tab -->
+    <li role="presentation" class="dropdown{% if NAV['appbar'] == 'endpoints' %} active{% endif %}">
+        <a class="dropdown-toggle active" data-toggle="dropdown" href="">
+            <span class="fa fa-sitemap" aria-hidden="true"></span>
+            <span class="hidden-xs">
+                                Infrastructure
+                            </span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="/application_endpoints/{{ app_data.ID }}">
+                    <div class="fa fa-list-alt"></div>
+                    View Endpoints
+                </a>
+            </li>
+            <li>
+                <a href="/dockerimages/{{ app_data.ID }}">
+                    <div class="fa fa-list-alt"></div>
+                    View Docker Images
+                </a>
+            </li>
+
+        </ul>
+    </li>
+    <!-- CI/CD Tab -->
+    <li role="presentation" class="dropdown{% if NAV['appbar'] == 'ci_cd' %} active{% endif %}" >
+        <a class="dropdown-toggle active" data-toggle="dropdown" href="">
+            <span class="fas fa-sync-alt" aria-hidden="true"></span>
+            <span class="hidden-xs">CI/CD</span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="/pipeline_jobs/{{ app_data.ID }}">
+                    <div class="fa fa-list-alt"></div>
+                    View Pipeline Jobs
+                </a>
+            </li>
+            <li role="separator" class="divider"></li>
+            <li>
+                <a href="/add_cicd_pipeline_stage">
+                    <div class="fa fa-plus"></div>
+                    Add New CI/CD Integration
+                </a>
+            </li>
+        </ul>
+    </li>
+    <!-- Assessments Tab -->
+    <li role="presentation" class="dropdown{% if NAV['appbar'] == 'scans' %} active{% endif %}" >
+        <a class="dropdown-toggle active" data-toggle="dropdown" href="">
+            <span class="fas fa-search-plus" aria-hidden="true"></span>
+            <span class="hidden-xs">Testing</span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="/vulnerability_scans/{{ app_data.ID }}">
+                    <div class="fa fa-list-alt"></div>
+                    View Tests and Scans
+                </a>
+            </li>
+
+        </ul>
+    </li>
+    <!-- Threat Models Tab -->
+    <li role="presentation" class="dropdown{% if NAV['appbar'] == 'threat_models' %} active{% endif %}" >
+        <a class="dropdown-toggle active" data-toggle="dropdown" href="">
+            <span class="fas fa-file-prescription" aria-hidden="true"></span>
+            <span class="hidden-xs">Threat Assessments</span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="/threat_assessments/{{ app_data.ID }}">
+                    <div class="fa fa-list-alt"></div>
+                    View Threat Assessments
+                </a>
+            </li>
+            <li role="separator" class="divider"></li>
+            <li>
+                <a href="/threat_modeler/{{ app_data.ID }}">
+                    <div class="fa fa-plus"></div>
+                    Add New Threat Assessment
+                </a>
+            </li>
+        </ul>
+    </li>
+    <!-- Workflows Tab -->
+    <li role="presentation" class="dropdown{% if NAV['appbar'] == 'workflows' %} active{% endif %}" >
+        <a class="dropdown-toggle active" data-toggle="dropdown" href="">
+            <span class="fa fa-calendar" aria-hidden="true"></span>
+            <span class="hidden-xs">Workflows</span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="/application_issues/{{ app_data.ID }}">
+                    <div class="fa fa-list-alt"></div>
+                    View Issues/Tickets
+                </a>
+            </li>
+
+        </ul>
+    </li>
+    <!-- Findings Tab -->
+    <li role="presentation" class="dropdown{% if NAV['appbar'] == 'findings' %} active{% endif %}">
+        <a class="dropdown-toggle active" data-toggle="dropdown" href="">
+            <span class="fa fa-bug" aria-hidden="true"></span>
+            <span class="hidden-xs">Findings</span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="/open_findings/{{ app_data.ID }}">
+                    <div class="fa fa-list-alt"></div>
+                    View Active Findings
+                </a>
+            </li>
+            <li>
+                <a href="/filtered_findings/{{ app_data.ID }}/severity/Critical">
+                    <div class="fa fa-exclamation-triangle"></div>
+                    View Critical Findings
+                </a>
+            </li>
+            <li>
+                <a href="/filtered_findings/{{ app_data.ID }}/severity/High">
+                    <div class="fa-solid fa-circle-exclamation"></div>
+                    View High Findings
+                </a>
+            </li>
+            <li>
+                <a href="/filtered_findings/{{ app_data.ID }}/severity/Medium">
+                    <div class="fa-solid fa-square"></div>
+                    View Medium Findings
+                </a>
+            </li>
+            <li>
+                <a href="/filtered_findings/{{ app_data.ID }}/severity/Low">
+                    <div class="fa-regular fa-circle-down"></div>
+                    View Low Findings
+                </a>
+            </li>
+            <li role="separator" class="divider"></li>
+            <li>
+                <a href="/filtered_findings/{{ app_data.ID }}/classification/Secret">
+                    <div class="fa-solid fa-key"></div>
+                    View Secret Scanning Findings
+                </a>
+            </li>
+            <li>
+                <a href="/filtered_findings/{{ app_data.ID }}/classification/SCA">
+                    <div class="fa-solid fa-file-import"></div>
+                    View SCA Findings
+                </a>
+            </li>
+            <li>
+                <a href="/filtered_findings/{{ app_data.ID }}/classification/SAST">
+                    <div class="fa-solid fa-file-code"></div>
+                    View SAST Findings
+                </a>
+            </li>
+            <li>
+                <a href="/filtered_findings/{{ app_data.ID }}/classification/IaC">
+                    <div class="fa-regular fa-file-code"></div>
+                    View IaC Findings
+                </a>
+            </li>
+            <li>
+                <a href="/filtered_findings/{{ app_data.ID }}/classification/Container">
+                    <div class="fa-brands fa-docker"></div>
+                    View Container Findings
+                </a>
+            </li>
+            <li>
+                <a href="/filtered_findings/{{ app_data.ID }}/classification/DAST">
+                    <div class="fa-solid fa-tablet-screen-button"></div>
+                    View DAST Findings
+                </a>
+            </li>
+            <li role="separator" class="divider"></li>
+            <li>
+                <a href="/filtered_findings/{{ app_data.ID }}/status/RiskAccepted">
+                    <div class="fa fa-check"></div>
+                    View Risk Accepted Findings
+                </a>
+            </li>
+            <li>
+                <a href="/open_findings/{{ app_data.ID }}">
+                    <div class="fa fa-search"></div>
+                    View All Findings
+                </a>
+            </li>
+            <li>
+                <a href="/filtered_findings/{{ app_data.ID }}/status/Closed">
+                    <div class="fa fa-fire-extinguisher"></div>
+                    &nbsp;&nbsp;View Closed Findings
+                </a>
+            </li>
+
+        </ul>
+    </li>
+
+    <!-- Benchmarks Tab -->
+    <li role="presentation" class="dropdown{% if NAV['appbar'] == 'benchmarks' %} active{% endif %}">
+        <a class="dropdown-toggle active" data-toggle="dropdown" href="">
+            <span class="fa fa-balance-scale" aria-hidden="true"></span>
+            <span class="hidden-xs">Benchmarks</span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+
+
+            <li>
+                <a href="/all_application_benchmarks/{{ app_data.ID }}">
+                    <div class="fa fa-list-alt"></div>
+                    View Benchmarks
+                </a>
+            </li>
+            <li>
+                <a href="/benchmark_assessments/{{ app_data.ID }}">
+                    <div class="fa fa-list-alt"></div>
+                    View Assessments
+                </a>
+            </li>
+{#            <li><a title="OWASP ASVS" href="/application_benchmarks/{{ app_data.ID }}">#}
+{#                <span class="fa fa-list"></span>#}
+{#                OWASP ASVS v. 3.1#}
+{#            </a>#}
+                <!-- the order is swithced here for some reason, but it looks bad the "correct" way -->
+            </li>
+
+        </ul>
+    </li>
+    <!-- Product Settings Tab -->
+    <li role="presentation" class="dropdown{% if NAV['appbar'] == 'settings' %} active{% endif %}">
+        <a class="dropdown-toggle active" data-toggle="dropdown" href="">
+            <span class="fa fa-cogs" aria-hidden="true"></span>
+            <span class="hidden-xs">Settings</span>
+            <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+
+            {% if user.is_admin %}
+            <li role="presentation">
+                <a class="" href="/edit_application/{{ app_data.ID }}">
+                    <div class="fa fa-pencil-square-o"></div>
+                    Edit
+                </a>
+            </li>
+            <li role="separator" class="divider"></li>
+            {% endif %}
+            <li role="presentation">
+                <a class="" href="/all_app_integrations/{{ app_data.ID }}">
+                    <div class="fa fa-pencil-square-o"></div>
+                    View Integrations
+                </a>
+            </li>
+            {% if user.is_admin %}
+            <li role="presentation">
+                <a class="" href="/add_app_integration/{{ app_data.ID }}">
+                    <div class="fa fa-pencil-square-o"></div>
+                    Add Integration
+                </a>
+            </li>
+            <li role="separator" class="divider"></li>
+            <li role="presentation">
+                <a class="text-danger" href="/delete_application/{{ app_data.ID }}">
+                    <div class="fa fa-trash"></div>
+                    Delete
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+    </li>
+
+</ul>

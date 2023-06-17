@@ -1,0 +1,108 @@
+<!-- threat_details modal -->
+<div id="threat_details_modal" class="modal">
+  <!-- Modal content -->
+  <div class="settings_container">
+    
+    <div class="settings_row">
+      
+      <div class="settings_col_m8_center">
+    
+        <div class="settings_card">
+      
+          <div class="settings_card_header">
+            <span class="close" onclick="hideModal('threat_details_modal')"><div class="fas fa-times" style="font-size: 3rem;"></div></span>
+            <h4 class="settings_card_title">Threat Details</h4>
+          </div>
+      
+          <div class="settings_card_body">
+      
+            <div class="settings_form">
+
+              <div id="aim_warn_content"></div>
+
+              <div class="settings_card_row">
+                <div class="settings_card_form_group">
+                    <h4>Threat</h4>
+                    <h5 id="threat_dyn"></h5>
+                </div>
+              </div>
+
+              <div class="settings_card_row">
+                <div class="settings_card_form_group">
+                    <h4>Add Date</h4>
+                    <h5 id="adddate_dyn"></h5>
+                </div>
+              </div>
+
+              <div class="settings_card_row">
+                <div class="settings_card_form_group">
+                    <h4>Severity</h4>
+                    <h5 id="severity_dyn"></h5>
+                </div>
+              </div>
+
+              <div class="settings_card_row">
+                <div class="settings_card_form_group">
+                    <h4>Details</h4>
+                    <h5 id="details_dyn"></h5>
+                </div>
+              </div>
+
+              <div class="settings_card_row">
+                <div class="settings_card_form_group">
+                    <h4>Likelihood of Attack</h4>
+                    <h5 id="loa_dyn"></h5>
+                </div>
+              </div>
+
+              <div class="settings_card_row">
+                <div class="settings_card_form_group">
+                    <h4>Mitigations</h4>
+                    <h5 id="mitigations_dyn"></h5>
+                </div>
+              </div>
+
+              <div class="settings_card_row">
+                <div class="settings_card_form_group">
+                    <h4>Example</h4>
+                    <h5 id="example_dyn"></h5>
+                </div>
+              </div>
+
+              <div class="settings_card_row">
+                <div class="settings_card_form_group">
+                    <h4>References</h4>
+                    <h5 id="references_dyn"></h5>
+                </div>
+              </div>
+          
+        
+
+        
+              <div class="settings_card_clearfix"></div>
+        
+            </div>
+      
+          </div>
+      
+        </div>
+    
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<!-- loading_modal -->
+  <div id="loading_modal" class="modal">
+    {% include "loading_modal.html" %}
+  </div>
+  <!-- end loading_modal -->
+
+
+
+
+<script>
+
+</script>
+<!-- end add modal -->

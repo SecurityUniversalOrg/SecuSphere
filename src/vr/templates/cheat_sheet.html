@@ -1,0 +1,11 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <div class="cheat_sheet_container">
+            {{ mkd_text|markdown }}
+        </div>
+    </div>
+
+{% endblock %}

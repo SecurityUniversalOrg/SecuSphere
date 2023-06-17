@@ -1,0 +1,20 @@
+{% extends 'base_auth.html' %}
+ 
+{% block app_content %}
+
+<div class="mfa_card">
+<header style="padding-top:22px">
+   <h3 class="page_title mfa_font" style="color: black !important;"><strong>Security Universal Mobile App Setup</strong></h3><br>
+</header>
+<div class="mfa_container">
+    <p class="page_title mfa_font" style="color: black !important;">Open the Security Universal App on your Phone and Scan the Code below to sync your account:</p>
+</div>
+<div class="mfa_container mfa_center">
+    <p><img id="qrcode" src="{{ url_for('admin.mobile_qrcode') }}"></p>
+</div>
+<div class="mfa_container mfa_center">
+    <p class="page_title mfa_font" style="color: black !important;"><a href="{{ url_for('admin.profile') }}">Back to Profile</a></p><br><br>
+</div>
+</div>
+
+{% endblock %}

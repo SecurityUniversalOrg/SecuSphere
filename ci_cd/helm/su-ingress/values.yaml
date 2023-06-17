@@ -1,0 +1,16 @@
+service:
+  port: 5010
+
+ingress:
+  serviceName: secusphere
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.org/mergeable-ingress-type: "master"
+    cert-manager.io/cluster-issuer: bk-selfsigned
+    meta.helm.sh/release-name: su-ingress
+    meta.helm.sh/release-namespace: securityuniversal
+  hosts:
+    - host: secusphere-dev.local
+      paths: []
+  tls: []

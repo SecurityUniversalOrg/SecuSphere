@@ -1,0 +1,1547 @@
+{% block style %}
+<!-- CALENDAR STYLE SECTION -->
+<head>
+  <link href='static/lib/fullcalendar/packages/core/main.css' rel='stylesheet' />
+  <link href='static/lib/fullcalendar/packages/daygrid/main.css' rel='stylesheet' />
+  <link href='static/lib/fullcalendar/packages/interaction/main.css' rel='stylesheet' />
+  <link href='static/lib/fullcalendar/packages/timegrid/main.css' rel='stylesheet' />
+
+  <!-- temp -->
+  <link href='static/css/bootstrap.min.css' rel='stylesheet' />
+  <link href='static/css/bootstrap-datepicker.min.css' rel='stylesheet' />
+  <link href='static/css/font-awesome.min.css' rel='stylesheet' />
+  <!-- end temp -->
+
+  {{ moment.include_moment() }}
+
+
+<style>
+.calendar_content_container {
+  padding:0.01em 16px;
+margin-left:auto;margin-right:auto;
+  /*color: #fff !important;*/
+}
+.fc-toolbar h2 {
+  font-size: 1.0rem;
+  margin: 0; 
+  font-family: 'exo_2regular', sans-serif;
+}
+.fc th {
+  text-align: center; 
+  font-family: 'exo_2regular', sans-serif;
+  background: #000;
+  color: rgb(255, 255, 255, 0.66);
+}
+.fc-day {
+  background-color: rgb(107, 110, 112, 0.5);
+}
+.fc-other-month {
+  background-color: rgb(154, 161, 166, 0.5);
+}
+.fc-highlight {
+  /* when user is selecting cells */
+  background: #286090;
+  opacity: .3; 
+}
+.fc td.fc-today {
+  border-style: double;
+  /* overcome neighboring borders */ 
+  background-color: rgb(0, 0, 0, 0.75);
+}
+.btn.btn-primary {
+    font-size: 0.75em;
+}
+
+</style>
+</head>
+<!-- END OF CALENDAR STYLE SECTION -->
+{% endblock%}
+
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+<div class="app_content_container">
+  <!-- The Grid -->
+  <div class="grid_container">
+    <!-- Left Column -->
+    <div class="prof_left_col">
+      <!-- Profile -->
+      <div class="prof_section">
+        <div class="prof_section_container">
+         <h4 class="su_center">Profile - {{ user.username }}</h4>
+          <p class="su_center"><img src="{{ user.avatar_path }}" class="prof_pic" alt="Avatar"></p>
+         <hr>
+         <p><i class="fas fa-pencil-alt fa-fw prof_section_item su_margin_right"></i> {{ user.jobtitle }}, {{ user.dept }}</p>
+         <p><i class="fa fa-home fa-fw w3-margin-right prof_section_item su_margin_right"></i> {{ user.loc_city }}, {{ user.loc_state }}</p>
+        </div>
+      </div>
+      <br>
+      
+      <!-- Accordion -->
+      <div class="accordian">
+        <div class="accordian_container">
+          
+          <button onclick="accordianFunc('Roles')" class="accordian_button su_button"><i class="fas fa-circle-notch fa-fw su_margin_right"></i> Roles</button>
+          <div id="Roles" class="accordian_button_child su_hide">
+            
+            {% for i in user_groups %}
+                <a href="#"><p>{{ i[0] }}</p></a>
+            {% endfor %}
+
+          </div>
+          
+          <button onclick="accordianFunc('Schedule')" class="accordian_button su_button"><i class="far fa-calendar-check fa-fw su_margin_right"></i> Schedule</button>
+          <div id="Schedule" class="accordian_button_child su_hide">
+
+            {% for i in user_events %}
+              <p>{{ i[1] }} {{ i[0] }}</p>
+            {% endfor %}
+            
+          
+          </div>
+          <button onclick="accordianFunc('IRTickets')" class="accordian_button su_button"><i class="fa fa-users fa-fw su_margin_right"></i> IR Tickets</button>
+          <div id="IRTickets" class="accordian_button_child su_hide">
+            
+            {% for i in user_ir_tickets %}
+              <p>{{ i[1] }} - {{ i[0] }}</p>
+            {% endfor %} 
+
+          </div>
+
+          <button onclick="accordianFunc('ServiceTickets')" class="accordian_button su_button"><i class="fa fa-users fa-fw su_margin_right"></i> Service Tickets</button>
+          <div id="ServiceTickets" class="accordian_button_child su_hide">
+
+            {% for i in user_service_tickets %}
+              <p>{{ i[1] }} - {{ i[0] }}</p>
+            {% endfor %}
+
+          </div>
+
+          <button onclick="accordianFunc('ProjectTasks')" class="accordian_button su_button"><i class="fa fa-users fa-fw su_margin_right"></i> Project Tasks</button>
+          <div id="ProjectTasks" class="accordian_button_child su_hide">
+
+            {% for i in user_project_tickets %}
+              <p>{{ i[1] }} - {{ i[0] }}</p>
+            {% endfor %}
+
+          </div>
+
+          <button onclick="accordianFunc('Assets')" class="accordian_button su_button"><i class="fa fa-users fa-fw su_margin_right"></i> Assets</button>
+          <div id="Assets" class="accordian_button_child su_hide">
+             
+            {% for i in user_assets %}
+              <p>{{ i[0] }}</p>
+            {% endfor %}
+          
+
+          </div>
+        </div>      
+      </div>
+      <br>
+      
+      <!-- Calendar --> 
+      <div class="calendar_content_container settings_col_m12_center" style="margin-top: -12px !important;">
+        <div class="calendar_container">
+            <!-- generated by js -->
+            <div id='calendar'></div>
+            <!-- end of generated by js -->
+         
+        </div>
+      </div>
+      <br>
+      
+      <!-- Interests --> 
+      <div class="interests_section">
+        <div class="interests_container">
+          <p>Interests</p>
+          <p>
+            {% for i in user_interests %}
+              <span class="interests_item">{{ i[0] }}</span>
+            {% endfor %}
+          </p>
+        </div>
+      </div>
+      <br>
+      
+      <!-- Alert Box -->
+      <div class="prof_alert_box">
+        <span onclick="this.parentElement.style.display='none'" class="su_button prof_alert_box_close">
+          <i class="fas fa-times"></i>
+        </span>
+        <p><strong>Hey!</strong></p>
+        <p>People are looking at your profile. Find out who.</p>
+      </div>
+    
+    <!-- End Left Column -->
+    </div>
+    
+    <!-- Middle Column -->
+    <div class="prof_middle_col">
+    
+      <div class="prof_status_container">
+         
+          <div class="prof_status_card">
+            <div class="prof_status">
+              <h4 class="status_header" id="user_status_hdr">Current Status: {{ user_status }}</h4>
+            </div>
+          </div>
+          
+      </div>
+
+      {% for i in profile_task_items %}
+        <div class="task_item"><br>
+          <img src="{{ i[1] }}" alt="Avatar" class="task_avatar">
+          <span class="task_ts">{{ moment(i[3], "YYYY-MM-DD hh:mm:ss").fromNow(refresh = True) }}</span>
+          <h4>{{ i[0] }}</h4><br>
+          <hr class="su_clear">
+          <p>{{ i[2] | safe }}</p>
+          <button type="button" class="su_button prof_task_button su_margin_btm"><i class="fa fa-thumbs-up"></i>  Like</button>
+          <button type="button" class="su_button prof_task_button su_margin_btm"><i class="fa fa-comment"></i>  Comment</button>
+        </div>
+      {% endfor %}
+
+      <div class="task_item"><br>
+        <img src="https://images.backstreetmerch.com/storeimages/trailer-park-boys-custom-domain/custom-page/ricky.jpg" alt="Avatar" class="task_avatar">
+        <span class="task_ts">1 min</span>
+        <h4>Ricky</h4><br>
+        <hr class="su_clear">
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+          <div class="task_main">
+            <div class="su_half">
+              <img src="https://media.timeout.com/images/105731796/630/472/image.jpg" style="width:100%" alt="Northern Lights" class="su_margin_btm">
+            </div>
+            <div class="su_half">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Shaqi_jrvej.jpg/1200px-Shaqi_jrvej.jpg" style="width:100%" alt="Nature" class="su_margin_btm">
+          </div>
+        </div>
+        <button type="button" class="prof_task_button su_button su_margin_btm"><i class="fa fa-thumbs-up"></i>  Like</button> 
+        <button type="button" class="prof_task_button su_button su_margin_btm"><i class="fa fa-comment"></i>  Comment</button> 
+      </div>
+      
+      <div class="task_item"><br>
+        <img src="http://scratchy.trailerparkboys.com/wp-content/uploads/2016/04/Julian_title.jpg" alt="Avatar" class="task_avatar">
+        <span class="task_ts">16 min</span>
+        <h4>Julian</h4><br>
+        <hr class="su_clear">
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <button type="button" class="su_button prof_task_button su_margin_btm"><i class="fa fa-thumbs-up"></i>  Like</button> 
+        <button type="button" class="su_button prof_task_button su_margin_btm"><i class="fa fa-comment"></i>  Comment</button> 
+      </div>
+
+      <div class="task_item"><br>
+        <img src="https://images.backstreetmerch.com/storeimages/trailer-park-boys-custom-domain/custom-page/ricky.jpg" alt="Avatar" class="task_avatar">
+        <span class="task_ts">32 min</span>
+        <h4>Ricky</h4><br>
+        <hr class="su_clear">
+        <p>Have you seen this?</p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Shaqi_jrvej.jpg/1200px-Shaqi_jrvej.jpg" style="width:100%" class="su_margin_bottom">
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <button type="button" class="su_button prof_task_button su_margin_btm"><i class="fa fa-thumbs-up"></i>  Like</button> 
+        <button type="button" class="su_button prof_task_button su_margin_btm"><i class="fa fa-comment"></i>  Comment</button> 
+      </div> 
+      
+    <!-- End Middle Column -->
+    </div>
+    
+    <!-- Right Column -->
+    <div class="prof_right_col">
+<!--       <div class="event_holder"> -->
+
+       <div card_stack_container>
+          <div card-stack>
+
+            <input id="card-0" name="card-set" type="radio" checked/>
+            <div card>
+              <div class="content">
+                <h2>Steps to Frontend Success</h2>
+                <p>A life well lived.</p>
+                <label for="card-1">Learn More</label>
+              </div>
+            </div>
+
+            <input id="card-1" name="card-set" type="radio"/>
+            <div card>
+              <div class="content">
+                <h2>Step 1</h2>
+                <p>Write some markup.</p>
+                <label for="card-2">Go to 2</label>
+              </div>
+            </div>
+
+            <input id="card-2" name="card-set" type="radio" />
+            <div card>
+              <div class="content">
+                <h2>Step 2</h2>
+                <p>Write some CSS.</p>
+                <label for="card-3">Go to 3</label>
+              </div>
+            </div>
+
+            <input id="card-3" name="card-set" type="radio" />
+            <div card>
+              <div class="content">
+                <h2>Step 3</h2>
+                <p>Look up stuff on MDN.</p>
+                <label for="card-4">Go to 4</label>
+              </div>
+            </div>
+
+            <input id="card-4" name="card-set" type="radio" />
+            <div card>
+              <div class="content">
+                <h2>Step 4</h2>
+                <p>Switch Pre-Processors. Because things are starting to get complicated.</p>
+                <label for="card-5">Go to 5</label>
+              </div>
+            </div>
+
+            <input id="card-5" name="card-set" type="radio" />
+            <div card>
+              <div class="content">
+                <h2>Step 5</h2>
+                <p>Thow out your work start over, becasuse this time you definately choose the right framework.</p>
+                <label for="card-6">Go to 6</label>
+              </div>
+            </div>
+
+            <input id="card-6" name="card-set" type="radio" />
+            <div card>
+              <div class="content">
+                <h2>Step 6</h2>
+                <p>Break down and cry.</p>
+                <label for="card-7">Go to 7</label>
+              </div>
+            </div>
+
+            <input id="card-7" name="card-set" type="radio" />
+            <div card>
+              <div class="content">
+                <h2>Step 7</h2>
+                <p>Curl up in fetal position.</p>
+                <label for="card-8">Go to 8</label>
+              </div>
+            </div>
+
+            <input id="card-8" name="card-set" type="radio" />
+            <div card>
+              <div class="content">
+                <h2>Step 8</h2>
+                <p>Write more CSS to cover up your already bad CSS.</p>
+                <label for="card-0">Start Over</label>
+              </div>
+            </div>
+
+          </div>
+       </div>
+
+<!-- End events section above -->
+        
+     <div class="table_row">
+      <div class="friend_req_sect">
+        <div class="friend_req_container">
+          <p>Friend Request</p>
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtBdc2yL_GduYRGC_2GoydsaTKSeNePpnsog&usqp=CAU" alt="Avatar" style="width:50%"><br>
+          <span>Jane Doe</span>
+          <div class="friend_req_bottom">
+            <div class="su_half">
+              <button class="su_button friend_req_btn_y" title="Accept"><i class="fa fa-check"></i></button>
+            </div>
+            <div class="su_half">
+              <button class="su_button friend_req_btn_n" title="Decline"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+     </div>
+      <br>
+      
+      <div class="tickets_sect">
+        <p>Tickets</p>
+      </div>
+      <br>
+      
+      <div class="bug_sect">
+        <p><i class="fa fa-bug w3-xxlarge"></i></p>
+      </div>
+      
+    <!-- End Right Column -->
+    </div>
+    
+  <!-- End Grid -->
+  </div>
+</div>
+
+<!-- Modal section -->
+<!-- add modal -->
+<div id="add_modal" class="modal">
+  <!-- Modal content -->
+  <div class="settings_container">
+    
+    <div class="settings_row">
+      
+      <div class="settings_col_m6_center">
+    
+      <div class="settings_card">
+      
+        <div class="settings_card_header">
+          <span class="close" onclick="hideModal('add_modal')"><i class="fas fa-times" style="font-size: 3rem;"></i></span>
+        <h4 class="settings_card_title">New Event</h4>
+      
+      </div>
+      
+      <div class="settings_card_body">
+      
+        <div class="settings_form">
+
+          <div class="settings_card_row">
+
+              <div class="settings_card_col_md12">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Event Name</label>
+                    <input name="title" id="title" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>  
+                </div>
+              </div>
+            
+          </div>
+          
+          <div class="settings_card_row">
+
+              <div class="settings_card_col_md6">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Category</label>
+                   <div class="select-editable">
+                    <select name="category" id="category_a" class="settings_card_form_input" onchange="this.nextElementSibling.value=this.value">
+                        <option value="General" selected="selected">General</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Meeting">Meeting</option>
+                        <option value="Project">Project</option>
+                        <option value="Task">Task</option>
+                        <option value="Training">Training</option>
+                    </select>
+                    <input name="category" id="category_b" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>
+                   </div>
+                </div>
+              </div>
+
+              <div class="settings_card_col_md6">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Location</label>
+                    <input name="location" id="location" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>  
+                </div>
+              </div>
+            
+          </div>
+
+          <div class="settings_card_row">
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Start</label>
+                    <!-- <input name="start_date" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input> -->
+                    <div id="filterDate2">
+          
+                      <!-- Datepicker as text field -->         
+                      <div class="input-group date" data-date-format="mm.dd.yyyy">
+                        <input name="start_date" id="start_date" type="text" class="settings_card_form_input form-control" placeholder="mm.dd.yyyy">
+                        <div class="input-group-addon" >
+                          <span class="glyphicon glyphicon-th"></span>
+                        </div>
+                      </div>
+                      
+                    </div>
+                </div>
+              </div>
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">&nbsp;&nbsp;</label>
+                    <div class="select-editable">
+                      <select name="start_time" id="start_time_a" class="settings_card_form_input" onchange="this.nextElementSibling.value=this.value">
+                        <option value="12:00am">12:00am</option>
+                        <option value="12:30am">12:30am</option>
+                        <option value="1:00am">1:00am</option>
+                        <option value="1:30am">1:30am</option>
+                        <option value="2:00am">2:00am</option>
+                        <option value="2:30am">2:30am</option>
+                        <option value="3:00am">3:00am</option>
+                        <option value="3:30am">3:30am</option>
+                        <option value="4:00am">4:00am</option>
+                        <option value="4:30am">4:30am</option>
+                        <option value="5:00am">5:00am</option>
+                        <option value="5:30am">5:30am</option>
+                        <option value="6:00am">6:00am</option>
+                        <option value="6:30am">6:30am</option>
+                        <option value="7:00am">7:00am</option>
+                        <option value="7:30am">7:30am</option>
+                        <option value="8:00am">8:00am</option>
+                        <option value="8:30am">8:30am</option>
+                        <option value="9:00am">9:00am</option>
+                        <option value="9:30am">9:30am</option>
+                        <option value="10:00am">10:00am</option>
+                        <option value="10:30am">10:30am</option>
+                        <option value="11:00am">11:00am</option>
+                        <option value="11:30am">11:30am</option>
+                        <option value="12:00pm">12:00pm</option>
+                        <option value="12:30pm">12:30pm</option>
+                        <option value="1:00pm">1:00pm</option>
+                        <option value="1:30pm">1:30pm</option>
+                        <option value="2:00pm">2:00pm</option>
+                        <option value="2:30pm">2:30pm</option>
+                        <option value="3:00pm">3:00pm</option>
+                        <option value="3:30pm">3:30pm</option>
+                        <option value="4:00pm">4:00pm</option>
+                        <option value="4:30pm">4:30pm</option>
+                        <option value="5:00pm">5:00pm</option>
+                        <option value="5:30pm">5:30pm</option>
+                        <option value="6:00pm">6:00pm</option>
+                        <option value="6:30pm">6:30pm</option>
+                        <option value="7:00pm">7:00pm</option>
+                        <option value="7:30pm">7:30pm</option>
+                        <option value="8:00pm">8:00pm</option>
+                        <option value="8:30pm">8:30pm</option>
+                        <option value="9:00pm">9:00pm</option>
+                        <option value="9:30pm">9:30pm</option>
+                        <option value="10:00pm">10:00pm</option>
+                        <option value="10:30pm">10:30pm</option>
+                        <option value="11:00pm">11:00pm</option>
+                        <option value="11:30pm">11:30pm</option>
+                      </select>
+                      <input name="start_time" id="start_time_b" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>
+                    </div>
+                </div>
+              </div>
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">End</label>
+                    <!-- <input name="end_date" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>   -->
+                    <div id="filterDate2">
+          
+                      <!-- Datepicker as text field -->         
+                      <div class="input-group date" data-date-format="mm.dd.yyyy">
+                        <input name="end_date" id="end_date" type="text" class="settings_card_form_input form-control" placeholder="mm.dd.yyyy">
+                        <div class="input-group-addon" >
+                          <span class="glyphicon glyphicon-th"></span>
+                        </div>
+                      </div>
+                      
+                    </div>
+
+                </div>
+              </div>
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">&nbsp;&nbsp;</label>
+                    <div class="select-editable">
+                      <select name="end_time" id="end_time_a" class="settings_card_form_input" onchange="this.nextElementSibling.value=this.value">
+                        <option value="12:00am">12:00am</option>
+                        <option value="12:30am">12:30am</option>
+                        <option value="1:00am">1:00am</option>
+                        <option value="1:30am">1:30am</option>
+                        <option value="2:00am">2:00am</option>
+                        <option value="2:30am">2:30am</option>
+                        <option value="3:00am">3:00am</option>
+                        <option value="3:30am">3:30am</option>
+                        <option value="4:00am">4:00am</option>
+                        <option value="4:30am">4:30am</option>
+                        <option value="5:00am">5:00am</option>
+                        <option value="5:30am">5:30am</option>
+                        <option value="6:00am">6:00am</option>
+                        <option value="6:30am">6:30am</option>
+                        <option value="7:00am">7:00am</option>
+                        <option value="7:30am">7:30am</option>
+                        <option value="8:00am">8:00am</option>
+                        <option value="8:30am">8:30am</option>
+                        <option value="9:00am">9:00am</option>
+                        <option value="9:30am">9:30am</option>
+                        <option value="10:00am">10:00am</option>
+                        <option value="10:30am">10:30am</option>
+                        <option value="11:00am">11:00am</option>
+                        <option value="11:30am">11:30am</option>
+                        <option value="12:00pm">12:00pm</option>
+                        <option value="12:30pm">12:30pm</option>
+                        <option value="1:00pm">1:00pm</option>
+                        <option value="1:30pm">1:30pm</option>
+                        <option value="2:00pm">2:00pm</option>
+                        <option value="2:30pm">2:30pm</option>
+                        <option value="3:00pm">3:00pm</option>
+                        <option value="3:30pm">3:30pm</option>
+                        <option value="4:00pm">4:00pm</option>
+                        <option value="4:30pm">4:30pm</option>
+                        <option value="5:00pm">5:00pm</option>
+                        <option value="5:30pm">5:30pm</option>
+                        <option value="6:00pm">6:00pm</option>
+                        <option value="6:30pm">6:30pm</option>
+                        <option value="7:00pm">7:00pm</option>
+                        <option value="7:30pm">7:30pm</option>
+                        <option value="8:00pm">8:00pm</option>
+                        <option value="8:30pm">8:30pm</option>
+                        <option value="9:00pm">9:00pm</option>
+                        <option value="9:30pm">9:30pm</option>
+                        <option value="10:00pm">10:00pm</option>
+                        <option value="10:30pm">10:30pm</option>
+                        <option value="11:00pm">11:00pm</option>
+                        <option value="11:30pm">11:30pm</option>
+                      </select>
+                      <input name="end_time" id="end_time_b" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>
+                    </div>
+                </div>
+              </div>
+            
+          </div>
+
+          <div class="settings_card_row">
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">All day</label>
+                    <div class="checkbox_grp col_adj no_hover_change" onclick="toggleCol('all_day');">
+                      <div class="inline_checkbox_box checkbox_box">
+                        <label class="switch switch-green">
+                          <input type="checkbox" class="switch-input" name="all_day" value="1" id="all_day">
+                          <span class="switch-label" data-on="On" data-off="Off"></span>
+                          <span class="switch-handle"></span>
+                        </label>
+                      </div>
+                    </div>
+                </div>
+              </div>
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Do not disturb</label>
+                    <div class="checkbox_grp col_adj no_hover_change" onclick="toggleCol('dnd');">
+                      <div class="inline_checkbox_box checkbox_box">
+                        <label class="switch switch-green">
+                          <input type="checkbox" class="switch-input" name="dnd" value="1" id="dnd">
+                          <span class="switch-label" data-on="On" data-off="Off"></span>
+                          <span class="switch-handle"></span>
+                        </label>
+                      </div>
+                    </div>
+                </div>
+              </div>
+
+              <div class="settings_card_col_md6">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Reoccurrance</label>
+                    <select name="recur" id="recur" class="settings_card_form_input">
+                      <option value="never" selected>Never</option>
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+              </div>
+            
+          </div>
+
+          <div class="settings_card_row">
+
+              <div class="settings_card_col_md12">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Link</label>
+                    <input name="link" id="link" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>  
+                </div>
+              </div>
+            
+          </div>
+
+          <div class="settings_card_row">
+
+              <div class="settings_card_col_md12">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Description</label>
+                    <textarea name="description" id="description" rows="4" cols="50" class="settings_card_form_input"></textarea>
+                </div>
+              </div>
+            
+          </div>
+        
+        <div class="settings_card_text_center">
+          <button class="add_btn_settings update_button settings_update_button" onclick="addCalendarEvt()">Add</button>
+          <button class="update_button settings_update_button" onclick="hideModal('add_modal')">Cancel</button>
+        </div>
+        
+        <div class="settings_card_clearfix"></div>
+        
+        </div>
+      
+      </div>
+      
+      </div>
+    
+    </div>
+    </div>
+    
+  </div>
+</div>
+<!-- end add modal -->
+<!-- edit modal -->
+<div id="edit_modal" class="modal">
+  <!-- Modal content -->
+  <div class="settings_container">
+    
+    <div class="settings_row">
+      
+      <div class="settings_col_m6_center">
+    
+      <div class="settings_card">
+      
+        <div class="settings_card_header">
+          <span class="close" onclick="hideModal('edit_modal')"><i class="fas fa-times" style="font-size: 3rem;"></i></span>
+        <h4 class="settings_card_title">Edit Event</h4>
+      
+      </div>
+      
+      <div class="settings_card_body">
+      
+        <div class="settings_form">
+
+          <div class="settings_card_row">
+
+              <div class="settings_card_col_md12">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Event Name</label>
+                    <input name="title" id="e_title" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>  
+                </div>
+              </div>
+            
+          </div>
+          
+          <div class="settings_card_row">
+
+              <div class="settings_card_col_md6">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Category</label>
+                   <div class="select-editable">
+                    <select name="category" id="e_category_a" class="settings_card_form_input" onchange="this.nextElementSibling.value=this.value">
+                        <option value="General" selected="selected">General</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Meeting">Meeting</option>
+                        <option value="Project">Project</option>
+                        <option value="Task">Task</option>
+                        <option value="Training">Training</option>
+                    </select>
+                    <input name="category" id="e_category_b" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>
+                   </div>
+                </div>
+              </div>
+
+              <div class="settings_card_col_md6">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Location</label>
+                    <input name="location" id="e_location" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>  
+                </div>
+              </div>
+            
+          </div>
+
+          <div class="settings_card_row">
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Start</label>
+                    <!-- <input name="start_date" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input> -->
+                    <div id="filterDate2">
+          
+                      <!-- Datepicker as text field -->         
+                      <div class="input-group date" data-date-format="mm.dd.yyyy">
+                        <input name="start_date" id="e_start_date" type="text" class="settings_card_form_input form-control" placeholder="mm.dd.yyyy">
+                        <div class="input-group-addon" >
+                          <span class="glyphicon glyphicon-th"></span>
+                        </div>
+                      </div>
+                      
+                    </div>
+                </div>
+              </div>
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">&nbsp;&nbsp;</label>
+                    <div class="select-editable">
+                      <select name="start_time" id="e_start_time_a" class="settings_card_form_input" onchange="this.nextElementSibling.value=this.value">
+                        <option value="12:00am">12:00am</option>
+                        <option value="12:30am">12:30am</option>
+                        <option value="1:00am">1:00am</option>
+                        <option value="1:30am">1:30am</option>
+                        <option value="2:00am">2:00am</option>
+                        <option value="2:30am">2:30am</option>
+                        <option value="3:00am">3:00am</option>
+                        <option value="3:30am">3:30am</option>
+                        <option value="4:00am">4:00am</option>
+                        <option value="4:30am">4:30am</option>
+                        <option value="5:00am">5:00am</option>
+                        <option value="5:30am">5:30am</option>
+                        <option value="6:00am">6:00am</option>
+                        <option value="6:30am">6:30am</option>
+                        <option value="7:00am">7:00am</option>
+                        <option value="7:30am">7:30am</option>
+                        <option value="8:00am">8:00am</option>
+                        <option value="8:30am">8:30am</option>
+                        <option value="9:00am">9:00am</option>
+                        <option value="9:30am">9:30am</option>
+                        <option value="10:00am">10:00am</option>
+                        <option value="10:30am">10:30am</option>
+                        <option value="11:00am">11:00am</option>
+                        <option value="11:30am">11:30am</option>
+                        <option value="12:00pm">12:00pm</option>
+                        <option value="12:30pm">12:30pm</option>
+                        <option value="1:00pm">1:00pm</option>
+                        <option value="1:30pm">1:30pm</option>
+                        <option value="2:00pm">2:00pm</option>
+                        <option value="2:30pm">2:30pm</option>
+                        <option value="3:00pm">3:00pm</option>
+                        <option value="3:30pm">3:30pm</option>
+                        <option value="4:00pm">4:00pm</option>
+                        <option value="4:30pm">4:30pm</option>
+                        <option value="5:00pm">5:00pm</option>
+                        <option value="5:30pm">5:30pm</option>
+                        <option value="6:00pm">6:00pm</option>
+                        <option value="6:30pm">6:30pm</option>
+                        <option value="7:00pm">7:00pm</option>
+                        <option value="7:30pm">7:30pm</option>
+                        <option value="8:00pm">8:00pm</option>
+                        <option value="8:30pm">8:30pm</option>
+                        <option value="9:00pm">9:00pm</option>
+                        <option value="9:30pm">9:30pm</option>
+                        <option value="10:00pm">10:00pm</option>
+                        <option value="10:30pm">10:30pm</option>
+                        <option value="11:00pm">11:00pm</option>
+                        <option value="11:30pm">11:30pm</option>
+                      </select>
+                      <input name="start_time" id="e_start_time_b" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>
+                    </div>
+                </div>
+              </div>
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">End</label>
+                    <!-- <input name="end_date" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>   -->
+                    <div id="filterDate2">
+          
+                      <!-- Datepicker as text field -->         
+                      <div class="input-group date" data-date-format="mm.dd.yyyy">
+                        <input name="end_date" id="e_end_date" type="text" class="settings_card_form_input form-control" placeholder="mm.dd.yyyy">
+                        <div class="input-group-addon" >
+                          <span class="glyphicon glyphicon-th"></span>
+                        </div>
+                      </div>
+                      
+                    </div>
+
+                </div>
+              </div>
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">&nbsp;&nbsp;</label>
+                    <div class="select-editable">
+                      <select name="end_time" id="e_end_time_a" class="settings_card_form_input" onchange="this.nextElementSibling.value=this.value">
+                        <option value="12:00am">12:00am</option>
+                        <option value="12:30am">12:30am</option>
+                        <option value="1:00am">1:00am</option>
+                        <option value="1:30am">1:30am</option>
+                        <option value="2:00am">2:00am</option>
+                        <option value="2:30am">2:30am</option>
+                        <option value="3:00am">3:00am</option>
+                        <option value="3:30am">3:30am</option>
+                        <option value="4:00am">4:00am</option>
+                        <option value="4:30am">4:30am</option>
+                        <option value="5:00am">5:00am</option>
+                        <option value="5:30am">5:30am</option>
+                        <option value="6:00am">6:00am</option>
+                        <option value="6:30am">6:30am</option>
+                        <option value="7:00am">7:00am</option>
+                        <option value="7:30am">7:30am</option>
+                        <option value="8:00am">8:00am</option>
+                        <option value="8:30am">8:30am</option>
+                        <option value="9:00am">9:00am</option>
+                        <option value="9:30am">9:30am</option>
+                        <option value="10:00am">10:00am</option>
+                        <option value="10:30am">10:30am</option>
+                        <option value="11:00am">11:00am</option>
+                        <option value="11:30am">11:30am</option>
+                        <option value="12:00pm">12:00pm</option>
+                        <option value="12:30pm">12:30pm</option>
+                        <option value="1:00pm">1:00pm</option>
+                        <option value="1:30pm">1:30pm</option>
+                        <option value="2:00pm">2:00pm</option>
+                        <option value="2:30pm">2:30pm</option>
+                        <option value="3:00pm">3:00pm</option>
+                        <option value="3:30pm">3:30pm</option>
+                        <option value="4:00pm">4:00pm</option>
+                        <option value="4:30pm">4:30pm</option>
+                        <option value="5:00pm">5:00pm</option>
+                        <option value="5:30pm">5:30pm</option>
+                        <option value="6:00pm">6:00pm</option>
+                        <option value="6:30pm">6:30pm</option>
+                        <option value="7:00pm">7:00pm</option>
+                        <option value="7:30pm">7:30pm</option>
+                        <option value="8:00pm">8:00pm</option>
+                        <option value="8:30pm">8:30pm</option>
+                        <option value="9:00pm">9:00pm</option>
+                        <option value="9:30pm">9:30pm</option>
+                        <option value="10:00pm">10:00pm</option>
+                        <option value="10:30pm">10:30pm</option>
+                        <option value="11:00pm">11:00pm</option>
+                        <option value="11:30pm">11:30pm</option>
+                      </select>
+                      <input name="end_time" id="e_end_time_b" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>
+                    </div>
+                </div>
+              </div>
+            
+          </div>
+
+          <div class="settings_card_row">
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">All day</label>
+                    <div class="checkbox_grp col_adj no_hover_change" onclick="toggleCol('all_day');">
+                      <div class="inline_checkbox_box checkbox_box">
+                        <label class="switch switch-green">
+                          <input type="checkbox" class="switch-input" name="all_day" value="1" id="e_all_day">
+                          <span class="switch-label" data-on="On" data-off="Off"></span>
+                          <span class="switch-handle"></span>
+                        </label>
+                      </div>
+                    </div>
+                </div>
+              </div>
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Do not disturb</label>
+                    <div class="checkbox_grp col_adj no_hover_change" onclick="toggleCol('dnd');">
+                      <div class="inline_checkbox_box checkbox_box">
+                        <label class="switch switch-green">
+                          <input type="checkbox" class="switch-input" name="dnd" value="1" id="e_dnd">
+                          <span class="switch-label" data-on="On" data-off="Off"></span>
+                          <span class="switch-handle"></span>
+                        </label>
+                      </div>
+                    </div>
+                </div>
+              </div>
+
+              <div class="settings_card_col_md6">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Reoccurrance</label>
+                    <select name="recur" id="e_recur" class="settings_card_form_input">
+                      <option value="never" selected>Never</option>
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+              </div>
+            
+          </div>
+
+          <div class="settings_card_row">
+
+              <div class="settings_card_col_md12">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Link</label>
+                    <input name="link" id="e_link" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" placeholder=""></input>  
+                </div>
+              </div>
+            
+          </div>
+
+          <div class="settings_card_row">
+
+              <div class="settings_card_col_md12">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Description</label>
+                    <textarea name="description" id="e_description" rows="4" cols="50" class="settings_card_form_input"></textarea>
+                </div>
+              </div>
+            
+          </div>
+        
+        <div class="settings_card_text_center">
+          <button class="add_btn_settings update_button settings_update_button" id='edit_btn'>Submit</button>
+          <button class="update_button settings_update_button" onclick="hideModal('edit_modal')">Cancel</button>
+        </div>
+        
+        <div class="settings_card_clearfix"></div>
+        
+        </div>
+      
+      </div>
+      
+      </div>
+    
+    </div>
+    </div>
+    
+  </div>
+</div>
+<!-- end edit modal -->
+<!-- start info modal -->
+<div id="info_modal" class="modal">
+  <!-- Modal content -->
+  <div class="settings_container">
+    
+    <div class="settings_row">
+      
+      <div class="settings_col_m6_center">
+    
+      <div class="settings_card">
+      
+        <div class="settings_card_header">
+          <span class="close" onclick="hideModal('info_modal')"><i class="fas fa-times" style="font-size: 3rem;"></i></span>
+        <h4 class="settings_card_title">Event Info</h4>
+      
+      </div>
+      
+      <div class="settings_card_body">
+      
+        <div class="settings_form">
+          <input name="evt_id" id="i_evt_id" type="hidden" value="">
+          <div class="settings_card_row">
+              
+              <div class="settings_card_col_md12">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Event Name</label>
+                  <input name="title" id="i_title" class="settings_card_form_input_disabled" aria-describedby="addon-right addon-left" type="text" value="" disabled=""></input>
+                </div>
+              </div>  
+  
+          </div>
+
+          <div class="settings_card_row">
+              
+              <div class="settings_card_col_md6">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Category</label>
+                  <input name="category" id="i_category" class="settings_card_form_input_disabled" aria-describedby="addon-right addon-left" type="text" value="" disabled=""></input>
+                </div>
+              </div>  
+
+              <div class="settings_card_col_md6">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Location</label>
+                  <input name="location" id="i_location" class="settings_card_form_input_disabled" aria-describedby="addon-right addon-left" type="text" value="" disabled=""></input>
+                </div>
+              </div>
+  
+          </div>
+
+          <div class="settings_card_row">
+              
+              <div class="settings_card_col_md6">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Start</label>
+                  <input name="start" id="i_start" class="settings_card_form_input_disabled" aria-describedby="addon-right addon-left" type="text" value="" disabled=""></input>
+                </div>
+              </div> 
+
+              <div class="settings_card_col_md6">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">End</label>
+                  <input name="end" id="i_end" class="settings_card_form_input_disabled" aria-describedby="addon-right addon-left" type="text" value="" disabled=""></input>
+                </div>
+              </div>  
+  
+          </div>
+
+          <div class="settings_card_row">
+              
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">All day</label>
+                  <input name="all_day" id="i_all_day" class="settings_card_form_input_disabled" aria-describedby="addon-right addon-left" type="text" value="" disabled=""></input>
+                </div>
+              </div> 
+
+              <div class="settings_card_col_md3">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Do not disturb</label>
+                  <input name="dnd" id="i_dnd" class="settings_card_form_input_disabled" aria-describedby="addon-right addon-left" type="text" value="" disabled=""></input>
+                </div>
+              </div>
+
+              <div class="settings_card_col_md6">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Reocurrance</label>
+                  <input name="recur" id="i_recur" class="settings_card_form_input_disabled" aria-describedby="addon-right addon-left" type="text" value="" disabled=""></input>
+                </div>
+              </div>  
+  
+          </div>
+
+          <div class="settings_card_row">
+              
+              <div class="settings_card_col_md12">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Link</label>
+                  <input name="link" id="i_link" class="settings_card_form_input_disabled" aria-describedby="addon-right addon-left" type="text" value="" disabled=""></input>
+                </div>
+              </div>  
+  
+          </div>
+
+          <div class="settings_card_row">
+              
+              <div class="settings_card_col_md12">
+                <div class="settings_card_form_group">
+                  <label class="settings_card_form_label">Description</label>
+                  <input name="description" id="i_description" class="settings_card_form_input_disabled" aria-describedby="addon-right addon-left" type="text" value="" disabled=""></input>
+                </div>
+              </div>  
+  
+          </div>
+    
+        
+        <div class="settings_card_text_center">
+          <button class="update_button settings_update_button" onclick="hideModal('info_modal');">Close</button>
+          <button class="update_button settings_update_button multiple" onclick="prepEventEdit()"><i class="far fa-edit"></i></button>
+          <button class="update_button settings_update_button multiple" onclick="deleteCalendarEvt()"><i class="far fa-trash-alt"></i></button>
+        </div>
+        
+        <div class="settings_card_clearfix"></div>
+        
+        </div>
+      
+      </div>
+      
+      </div>
+    
+    </div>
+    
+    
+    
+    </div>
+    
+  </div>
+</div>
+<!-- end info modal -->
+</div>
+
+<!-- End Modal Section -->
+
+<!-- End Page Container -->
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<!-- page-specific scripts -->
+<script src='static/lib/fullcalendar/packages/core/main.js'></script>
+<script src='static/lib/fullcalendar/packages/daygrid/main.js'></script>
+<script src='static/lib/fullcalendar/packages/interaction/main.js'></script>
+<script src='static/lib/fullcalendar/packages/timegrid/main.js'></script>
+<script src='static/lib/fullcalendar/packages/bootstrap/main.js'></script>
+
+<!-- temp -->
+<script src='static/js/jquery.min.js'></script>
+
+<script src='static/js/bootstrap.min.js'></script>
+<script src='static/js/bootstrap-datepicker.min.js'></script>
+<script>
+$('.input-group.date').datepicker({format: "mm.dd.yyyy"});
+</script>
+<!-- end temp -->
+<script>
+function updateUserStatus() {
+  var user_status_el = document.getElementById('user_status_edit');
+  var user_status_val = user_status_el.innerHTML.replace('<br>', '');
+  if(user_status_el.getAttribute("style")=="display: none;" ) {
+    user_status_el.setAttribute("style", "display: block;");
+  } else {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById('user_status_hdr').innerHTML = `Current Status: ${user_status_val}`;
+        user_status_el.setAttribute("style", "display: none;");
+      }
+    };
+    xhttp.open("POST", "{{ url_for('admin.update_user_status') }}", false);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("user_status=" + user_status_val);
+  }
+}
+</script>
+
+<script>
+var cat_color_map = {{ cat_color_map | safe }}
+
+var uri = window.location.toString();
+if (uri.indexOf("?") > 0) {
+    var clean_uri = uri.substring(0, uri.indexOf("?"));
+    window.history.replaceState({}, document.title, clean_uri);
+}
+</script>
+<script>
+var py_events = Array.from({{ events | safe }});
+var c_events = [];
+// alert(py_events[0]['allDay']);
+py_events.forEach(function (element) {
+  var evt_row = element;
+  if (element['allDay'] == 'True') {
+      var new_bool = true;
+      evt_row['allDay'] = new_bool
+  }
+  else if (element['allDay'] == 'False') {
+      var new_bool = false;
+      evt_row['allDay'] = new_bool
+  }
+  if (element['dnd'] == 'True') {
+      var new_bool = true;
+      evt_row['dnd'] = new_bool
+  }
+  else if (element['dnd'] == 'False') {
+      var new_bool = false;
+      evt_row['dnd'] = new_bool
+  }
+  c_events.push(evt_row);
+});
+
+window.calendar = '';
+
+function delEvent (evt_id) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      hideModal('info_modal');
+    }
+  };
+  xhttp.open("POST", "{{ url_for('operations.deletecalendarevt') }}", false);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.send("evt_id=" + evt_id);
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+  window.calendar = new FullCalendar.Calendar(calendarEl, {
+    plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'bootstrap' ],
+    defaultView: 'dayGridMonth',
+    defaultDate: '{{ today }}',
+    timeZone: 'local',
+    header: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'addEventButton,dayGridMonth,timeGridWeek,timeGridDay'
+    },
+    themeSystem: 'bootstrap',
+    selectable: true,
+    editable: true,
+    customButtons: {
+        addEventButton: {
+          text: '+',
+          click: function() {
+            showModal('add_modal');
+          }
+        }
+    },
+    eventLimit: true,
+    views: {
+      timeGrid: {
+        eventLimit: 6
+      }
+    },
+    events: c_events,
+    eventDrop: function(eventDropInfo ) {
+      changeEvtDate(eventDropInfo.event);
+    },
+    eventResize: function( eventResizeInfo ) { 
+      changeEvtDate(eventResizeInfo.event);
+    },
+    dateClick: function( dateClickInfo ) {
+      var cur_view = calendar.view.type;
+      if (cur_view == 'dayGridMonth') {
+        calendar.changeView('timeGridDay', dateClickInfo.dateStr);
+      }
+    },
+    select: function( selectionInfo ) {
+      var cur_view = calendar.view.type;
+      if (cur_view != 'dayGridMonth') {        
+        var startObj = unparseDate(selectionInfo.start.toString());
+        document.getElementById('start_date').value = startObj[0];
+        document.getElementById('start_time_a').value = startObj[1];
+        document.getElementById('start_time_b').value = startObj[1];
+        var endObj = unparseDate(selectionInfo.end.toString());
+        document.getElementById('end_date').value = endObj[0];
+        document.getElementById('end_time_a').value = endObj[1];
+        document.getElementById('end_time_b').value = endObj[1];
+        showModal('add_modal');
+      }
+    },
+    eventClick: function(info) {
+      window.evt_id = info.event.id;
+      document.getElementById('i_evt_id').value = info.event.id;
+      document.getElementById('i_title').value = info.event.title;
+      document.getElementById('i_category').value = info.event.extendedProps.category;
+      document.getElementById('i_location').value = info.event.extendedProps.locationID;
+      document.getElementById('i_start').value = info.event.start;
+      document.getElementById('i_end').value = info.event.end;
+      if (info.event.allDay == true) {
+        document.getElementById('i_all_day').value = 'Yes';
+      }
+      else {
+        document.getElementById('i_all_day').value = 'No';
+      };
+      document.getElementById('i_dnd').value = info.event.extendedProps.dnd;
+      if (info.event.extendedProps.dnd == true) {
+        document.getElementById('i_dnd').value = 'Yes';
+      }
+      else {
+        document.getElementById('i_dnd').value = 'No';
+      };
+      document.getElementById('i_recur').value = info.event.extendedProps.recur_interval;
+      document.getElementById('i_link').value = info.event.extendedProps.link;
+      document.getElementById('i_description').value = info.event.extendedProps.description;
+      showModal('info_modal');
+    } 
+  });
+  calendar.render()
+});
+function changeEvtDate(evt_el) {
+  var start = unparseDate(String(evt_el.start));
+  var startStr = start[0];
+  var startTm = start[1];
+  var end = unparseDate(String(evt_el.end));
+  var endStr = end[0];
+  var endTm = end[1];
+
+  var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        
+        // alert('successfully updated database');
+      }
+    };
+    xhttp.open("POST", "{{ url_for('operations.editcalendarevt') }}", false);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("type_id=" + '2' + "&evt_id=" + evt_el.id + "&startStr=" + startStr + "&startTm=" + startTm + "&endStr=" + endStr + "&endTm=" + endTm);
+};
+function prepEventEdit() {
+  var event = window.calendar.getEventById( window.evt_id );
+  // document.getElementById('e_evt_id').value = event.id;
+  document.getElementById('e_title').value = event.title;
+  // document.getElementById('e_location').placeholder = event.extendedProps.locationID;
+  var start = unparseDate(String(event.start));
+  document.getElementById('e_start_date').value = start[0];
+  document.getElementById('e_start_time_a').value = start[1];
+  document.getElementById('e_start_time_b').value = start[1];
+  var end = unparseDate(String(event.end));
+  document.getElementById('e_end_date').value = end[0];
+  document.getElementById('e_end_time_a').value = end[1];
+  document.getElementById('e_end_time_b').value = end[1];
+  document.getElementById('e_all_day').checked = event.allDay;
+  document.getElementById('e_dnd').checked = event.extendedProps.dnd;
+  document.getElementById('e_recur').value = event.extendedProps.recur_interval;
+  document.getElementById('e_link').value = event.extendedProps.link;
+  document.getElementById('e_description').value = event.extendedProps.description;
+  document.getElementById('e_category_a').value = event.extendedProps.category;
+  document.getElementById('e_category_b').value = event.extendedProps.category;
+
+  hideModal('info_modal');
+  showModal('edit_modal');
+
+  function editEvent() {
+
+    var title = document.getElementById('e_title').value;
+    var location = document.getElementById('e_location').value;
+    var startStr = document.getElementById('e_start_date').value; // mm.dd.yyyy format
+    var startTm = document.getElementById('e_start_time_b').value; // 9:30am format
+    var start = parseDate(startStr, startTm);
+    var endStr = document.getElementById('e_end_date').value; // mm.dd.yyyy format
+    var endTm = document.getElementById('e_end_time_b').value; // 9:30pm format
+    var end = parseDate(endStr, endTm);
+    var allDay = document.getElementById('e_all_day').checked; // true or false
+    // alert(allDay);
+    var dnd = document.getElementById('e_dnd').checked; // true or false
+    var recur = document.getElementById('e_recur').value;
+    if (recur == 'never') {
+       var recurring = false;
+    }
+    else {
+      var recurring = true;
+    }
+    var link = document.getElementById('e_link').value;
+    var description = document.getElementById('e_description').value;
+    var category = document.getElementById('e_category_b').value;
+    
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        
+        event.setProp( 'title', title );
+        event.setStart(start);
+        event.setEnd( end );
+        event.setAllDay( allDay );
+
+        event.setExtendedProp( 'link', link );
+        event.setExtendedProp( 'description', description );
+        event.setExtendedProp( 'locationID', location );
+        event.setExtendedProp( 'recurring', recurring );
+        event.setExtendedProp( 'recur_interval', recur );
+        event.setExtendedProp( 'dnd', dnd );
+        event.setExtendedProp( 'category', category );
+
+        event.setProp( 'backgroundColor', cat_color_map[category] );
+        // var evt_dict = {
+        //   id: this.responseText,
+        //   title: title,
+        //   start: start,
+        //   end: end,
+        //   allDay: allDay,
+        //   link: link,
+        //   description: description,
+        //   locationID: location,
+        //   recurring: recurring,
+        //   recur_interval: recur,
+        //   dnd: dnd
+        // };
+        if (recur != 'never') {
+          // evt_dict.startTime = start;
+          event.setProp( 'startTime', start );
+          // evt_dict.startRecur = start;
+          event.setProp( 'startRecur', start );
+        };
+        // window.calendar.addEvent(evt_dict);
+
+        hideModal('edit_modal');
+      }
+    };
+    xhttp.open("POST", "{{ url_for('operations.editcalendarevt') }}", false);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("type_id=" + '1' + "&evt_id=" + event.id + "&title=" + title + "&location=" + location + "&startStr=" + startStr + "&startTm=" + startTm + "&endStr=" + endStr + "&endTm=" + endTm + "&allDay=" + allDay + "&dnd=" + dnd + "&recur=" + recurring + "&recur_interval=" + recur + "&link=" + link + "&description=" + description + "&category=" + category);
+
+  };
+  document.getElementById('edit_btn').addEventListener('click', editEvent);
+
+
+};
+
+function unparseDate(dateObj) {
+  var mon = '';
+  d_array = dateObj.split(" ")
+  m_wrd = d_array[1];
+  if (m_wrd=='Jan') {mon='01'} else if (m_wrd=='Feb') {mon='02'} else if (m_wrd=='Mar') {mon='03'} else if (m_wrd=='Apr') {mon='04'} else if (m_wrd=='May') {mon='05'} else if (m_wrd=='Jun') {mon='06'} else if (m_wrd=='Jul') {mon='07'} else if (m_wrd=='Aug') {mon='08'} else if (m_wrd=='Sep') {mon='09'} else if (m_wrd=='Oct') {mon='10'} else if (m_wrd=='Nov') {mon='11'} else if (m_wrd=='Dec') {mon='12'};
+  var day = d_array[2];
+  var year = d_array[3];
+  var dateStr = mon + '.' + day + '.' + year;
+  
+  var timeObj = d_array[4];
+  var t_array = timeObj.split(":");
+  var am_pm = '';
+  var hour = '';
+  var min = t_array[1];
+  if (parseInt(t_array[0]) > 11) {
+    am_pm = 'pm';
+    if (parseInt(t_array[0]) > 12) {
+      hour = String(parseInt(t_array[0]) - 12);
+    }
+    else {
+      hour = t_array[0];
+    }
+  }
+  else {
+    am_pm = 'am';
+    if (parseInt(t_array[0]) == 0) {
+      hour = String(parseInt(t_array[0]) + 12);
+    }
+    else {
+      hour = String(parseInt(t_array[0]));
+    }
+  }
+  var timeStr = hour + ":" + min + am_pm;
+  // return dateStr;
+  return [dateStr, timeStr]; 
+}
+function parseDate(dateStr, timeStr) {
+  date_array = dateStr.split(".");
+  am_pm = timeStr.substring(timeStr.length-2,timeStr.length);
+  hr = timeStr.split(":")[0];
+  min = timeStr.split(":")[1].substring(0,2);
+  if (am_pm == 'pm') {
+    if (parseInt(hr) < 12) {
+      hr = String(parseInt(hr) + 12);
+    }
+  }
+  else if (am_pm == 'am') {
+    if (parseInt(hr) == 12) {
+      hr = '0' + String(parseInt(hr) - 12);
+    }
+    else {
+      hr = '0' + hr;
+    }
+  }
+  newDate = date_array[2] + '-' + date_array[0] + '-' + date_array[1] + 'T' + hr + ':' + min + ':00';
+  return newDate;
+}
+function addCalendarEvt() {
+
+  var title = document.getElementById('title').value;
+  var location = document.getElementById('location').value;
+  var startStr = document.getElementById('start_date').value; // mm.dd.yyyy format
+  var startTm = document.getElementById('start_time_a').value; // 9:30am format
+  var start = parseDate(startStr, startTm);
+  var endStr = document.getElementById('end_date').value; // mm.dd.yyyy format
+  var endTm = document.getElementById('end_time_a').value; // 9:30pm format
+  var end = parseDate(endStr, endTm);
+  var allDay = document.getElementById('all_day').checked; // true or false
+  // alert(allDay);
+  var dnd = document.getElementById('dnd').checked; // true or false
+  var recur = document.getElementById('recur').value;
+  if (recur == 'never') {
+     var recurring = false;
+  }
+  else {
+    var recurring = true;
+  }
+  var link = document.getElementById('link').value;
+  var description = document.getElementById('description').value;
+  var category = document.getElementById('category_a').value;
+  
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var evt_dict = {
+        id: this.responseText,
+        title: title,
+        start: start,
+        end: end,
+        allDay: allDay,
+        link: link,
+        description: description,
+        category: category,
+        locationID: location,
+        recurring: recurring,
+        recur_interval: recur,
+        dnd: dnd,
+        backgroundColor: cat_color_map[category]
+      };
+      if (recur != 'never') {
+        evt_dict.startTime = start;
+        evt_dict.startRecur = start;
+      };
+      window.calendar.addEvent(evt_dict);
+
+      hideModal('add_modal');
+    }
+  };
+  xhttp.open("POST", "{{ url_for('operations.addcalendarevt') }}", false);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.send("title=" + title + "&location=" + location + "&startStr=" + startStr + "&startTm=" + startTm + "&endStr=" + endStr + "&endTm=" + endTm + "&allDay=" + allDay + "&dnd=" + dnd + "&recur=" + recurring + "&recur_interval=" + recur + "&link=" + link + "&description=" + description + "&category=" + category);
+};
+
+function deleteCalendarEvt() {
+  var evt = window.calendar.getEventById( window.evt_id );
+  delEvent(window.evt_id);
+  evt.remove();
+};
+
+</script>
+
+{% endblock %}

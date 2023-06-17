@@ -1,0 +1,20 @@
+{% extends 'base_no_auth.html' %}
+ 
+{% block app_content %}
+
+<div class="mfa_card">
+<header style="padding-top:22px">
+   <h3 class="page_title mfa_font" style="color: black !important;"><strong>Two Factor Authentication Setup</strong></h3><br>
+</header>
+<div class="mfa_container">
+    <p class="page_title mfa_font" style="color: black !important;">You are almost done! Please start your favorite MFA client on your smartphone and scan the following QR Code with it:</p>
+</div>
+<div class="mfa_container mfa_center">
+    <p><img id="qrcode" src="{{ url_for('admin.qrcode') }}" alt="QR Code"></p>
+</div>
+<div class="mfa_container mfa_center">
+    <p class="page_title mfa_font" style="color: black !important;">I'm done, take me to the <a href="{{ url_for('admin.login') }}">Login</a> page!</p><br><br>
+</div>
+</div>
+
+{% endblock %}

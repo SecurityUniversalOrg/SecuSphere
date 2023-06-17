@@ -1,0 +1,84 @@
+<!-- bm_rule modal -->
+<div id="bm_rule_modal" class="modal">
+  <!-- Modal content -->
+  <div class="settings_container">
+    
+    <div class="settings_row">
+      
+      <div class="settings_col_m8_center">
+    
+        <div class="settings_card">
+      
+          <div class="settings_card_header">
+            <span class="close" onclick="hideModal('bm_rule_modal')"><div class="fas fa-times" style="font-size: 3rem;"></div></span>
+            <h4 class="settings_card_title" id="bm_rule_num"># </h4>
+          </div>
+      
+          <div class="settings_card_body">
+
+              <h4>Description</h4>
+              <p id="bm_description"></p>
+
+              <h4>Implementation Levels</h4>
+              <p id="bm_levels"></p>
+
+              <h4>Status</h4>
+              <p id="bm_status"></p>
+
+              <h4>Notes&nbsp;&nbsp;<a href="#"><div class="fas fa-plus-square" onclick="addNote()"></div></a></h4>
+              <div id="bm_notes"></div>
+
+      
+            <div class="settings_form">
+
+              <div id="aim_warn_content"></div>
+
+
+        
+            </div>
+      
+          </div>
+      
+        </div>
+    
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<input type="hidden" value="" id="active_rule">
+<input type="hidden" value="{{ app_data.ID }}" id="active_app">
+<input type="hidden" value="{{ user.username }}" id="cur_user">
+
+<script>
+function addNote() {
+    document.getElementById('new_note').value = "";
+    showModal('add_note_modal')
+}
+
+function deleteNote(note_id) {
+    var active_rule = document.getElementById('active_rule').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        for (var i = 0; i < rule_list[active_rule].Notes.length; i++) {
+            var this_note_id = rule_list[active_rule].Notes[i].ID;
+            if (note_id == this_note_id) {
+                var deleted_dict = rule_list[active_rule].Notes[i]
+            }
+        }
+        rule_list[active_rule].Notes.pop(deleted_dict)
+        document.getElementById(`rule_note_id_${note_id}`).remove();
+    };
+    xhttp.open("POST", "/delete_benchmark_note", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("note_id=" + note_id);
+}
+
+
+</script>
+
+
+<!-- end add modal -->

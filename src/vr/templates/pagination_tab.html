@@ -1,0 +1,48 @@
+<div class="clearfix">
+                            <div class="pull-left pagination  pagination-sm">
+                                Showing entries {% if table_details['item_tot'] %}{{ table_details['rec_start'] }}{% else %}0{% endif %} to {{ table_details['rec_end'] }} of {{ table_details['item_tot'] }}
+                            </div>
+                            <nav class="pull-right">
+                                <ul class="pagination pagination-sm help_pagination">
+                                    {% if table_details['page'] != 1 %}
+                                    <li onclick="updatePagination('{{ app_data.ID }}', {{ table_details['page'] - 1 }})">
+                                        <a href="#"> Back</a>
+                                    </li>
+                                    {% endif %}
+                                    {% for i in range(1, table_details['pg_cnt']+1) %}
+                                        <li {% if i == table_details['page'] %}class="active"{% endif %} onclick="updatePagination('{{ app_data.ID }}', {{ i }})">
+                                            <a href="#"> {{ i }}</a>
+                                        </li>
+                                    {% endfor %}
+                                    {% if (table_details['page'] != table_details['pg_cnt']) and (table_details['item_tot']) %}
+                                    <li onclick="updatePagination('{{ app_data.ID }}', {{ table_details['page'] + 1 }})">
+                                        <a href="#"> Next</a>
+                                    </li>
+                                    {% endif %}
+                                    <li>
+                                        <!-- Split button -->
+                                        &nbsp;
+                                        <div class="btn-group">
+                                            <button type="button" class="btn-sm btn-secondary dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;">
+                                                Page Size
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li onclick="updatePerPage('{{ app_data.ID }}', 25)"><a href="#">25</a></li>
+                                                <li onclick="updatePerPage('{{ app_data.ID }}', 50)"><a href="#">50</a></li>
+                                                <li onclick="updatePerPage('{{ app_data.ID }}', 75)"><a href="#">75</a></li>
+                                                <li onclick="updatePerPage('{{ app_data.ID }}', 100)"><a href="#">100</a></li>
+                                                <li onclick="updatePerPage('{{ app_data.ID }}', 150)"><a href="#">150</a></li>
+
+                                                <li onclick="updatePerPage('{{ app_data.ID }}', 'All')"><a href="#">All</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </nav>
+
+
+                        </div>

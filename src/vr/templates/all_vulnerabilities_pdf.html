@@ -1,0 +1,180 @@
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top">
+                    All Vulnerability Findings
+                </h3>
+                <h4>Report Date: {{ now }} (UTC)</h4>
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+
+                        <div class="panel panel-default table-responsive">
+                            <div id="open_findings_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                <table id="open_findings" aria-describedby="Component Table"
+                                       class="tablesorter-bootstrap table table-condensed table-striped table-hover dataTable no-footer">
+                                    <thead>
+                                    <tr>
+                                        <th class="nowrap centered sorting" tabindex="0" aria-controls="open_findings"
+                                            rowspan="1" colspan="1" style="width: 70px;color: black;" data-column-index="2"
+                                            aria-label="Severity&amp;nbsp;: activate to sort column ascending"><a
+                                                title="Click to sort descending"
+                                                href="#">Severity&nbsp;<div class="fa fa-sort dd-sort"></div></a></th>
+                                        <th onclick="fieldSorter('VulnerabilityName', 'dynamic')" class="nowrap sorting" tabindex="0" aria-controls="open_findings"
+                                            rowspan="1" colspan="1" style="width: 82px;" data-column-index="3"
+                                            aria-label="Name&amp;nbsp;: activate to sort column ascending"><a
+                                                title="Click to sort ascending"
+                                                href="#">Name&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a></th>
+                                        <th onclick="fieldSorter('CWEID', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 32px;" data-column-index="4"
+                                            aria-label="CWE: activate to sort column ascending"><a
+                                                title="Click to sort ascending"
+                                                href="#">CWE&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a>
+                                        </th>
+                                        <th onclick="fieldSorter('CVEID', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 86px;" data-column-index="5"
+                                            aria-label="Vulnerability Id: activate to sort column ascending">
+                                            <a
+                                                title="Click to sort ascending"
+                                                href="#">CVE&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a>
+                                        </th>
+                                        <th onclick="fieldSorter('AddDate', 'dynamic')" class="nowrap sorting" tabindex="0" aria-controls="open_findings"
+                                            rowspan="1" colspan="1" style="width: 79px;" data-column-index="6"
+                                            aria-label="Date&amp;nbsp;: activate to sort column ascending"><a
+                                                title="Click to sort ascending"
+                                                href="#">Date&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a></th>
+                                        <th onclick="fieldSorter('Source', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 60px;" data-column-index="10"
+                                            aria-label="Found By: activate to sort column ascending"><a
+                                                title="Click to sort ascending"
+                                                href="#">Found By&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a>
+                                        </th>
+                                        <th onclick="fieldSorter('Status', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 87px;" data-column-index="11"
+                                            aria-label="Status: activate to sort column ascending"><a
+                                                title="Click to sort ascending"
+                                                href="#">Status&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a>
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 87px;" data-column-index="11">Resource Type
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 87px;" data-column-index="11">Resource
+                                        </th>
+                                        <th class="nowrap sorting" tabindex="0" aria-controls="open_findings"
+                                            rowspan="1" colspan="1" style="width: 67px;" data-column-index="13"
+                                            aria-label="Product&amp;nbsp;: activate to sort column ascending"><a
+                                                title="Click to sort ascending"
+                                                href="?o=test__engagement__product__name">Application&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a></th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for i in entities %}
+                                        <tr class="active_finding odd">
+
+                                        <td style="text-align: center;" class="centered" data-order="3"><span style="color:black;" class="label severity severity-High">
+                                      {{ i.Severity }}
+                                  </span></td>
+                                        <td style="text-align: center;">{{ i.VulnerabilityName }}
+
+
+                                            <div class="fa fa-code has-popover dojo-sup" data-trigger="hover"
+                                               data-content="/root/register.jsp" data-placement="right"
+                                               data-container="body" data-original-title="Files" title="">
+
+                                            </div>
+                                            <sup>
+                                                {% if i.Classification == 'SCA' %}
+                                                <a title="Search lang-pkgs" class="tag-label tag-color" href="/simple_search?query=tag:lang-pkgs">lang-pkgs</a>
+                                                {% elif i.Classification == 'Container' %}
+                                                <a title="Search os-pkgs" class="tag-label tag-color" href="/simple_search?query=tag:os-pkgs">os-pkgs</a>
+                                                {% endif %}
+
+
+                                            </sup>
+                                        </td>
+                                        <td style="text-align: center;" class="nowrap">
+                                            {% if i.CWEID %}
+                                            <div class="fa fa-external-link"></div>{% endif %} {{ i.CWEID }}
+                                        </td>
+                                        <td style="text-align: center;" class="nowrap" style="color: black;">
+                                            {% if i.CVEID %}
+                                            <div class="fa fa-external-link"></div>{% endif %} {{ i.CVEID }}
+                                        </td>
+
+                                        <td style="text-align: center;" class="nowrap">{{ i.ReleaseDate }}</td>
+
+                                        <td style="text-align: center;">{{ i.Source }}</td>
+                                        <td style="text-align: center;" class="nowrap">{{ i.Status }}</td>
+
+                                        <td style="text-align: center;" class="nowrap">
+                                            {% if i.Classification.startswith("Secret") or i.Classification == 'SAST' or i.Classification.startswith("IaC") %}
+                                            File
+                                            {% elif i.Classification.startswith("Container") %}
+                                            Container Library
+                                            {% elif i.Classification == "SCA" %}
+                                            Source Code Library
+                                            {% elif i.Classification == "DAST" %}
+                                            URI
+                                            {% else %}
+                                            {% endif %}
+                                        </td>
+
+                                        <td style="text-align: center;" class="nowrap">
+                                            {% if i.Classification.startswith("Secret") or i.Classification == 'SAST' or i.Classification.startswith("IaC") %}
+                                                {{ i.VulnerableFileName }}{% if i.SourceCodeFileStartLine %}:{{ i.SourceCodeFileStartLine }}{% endif %}{% if i.SourceCodeFileEndLine %}:{{ i.SourceCodeFileEndLine }}{% endif %}
+                                            {% elif i.Classification.startswith("Container") or i.Classification == 'SCA' %}
+                                                {{ i.VulnerablePackage }}
+                                            {% elif i.Classification == "DAST" %}
+                                                {{ i.Uri }}
+                                            {% else %}
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td class="centered">{{ i.ApplicationName }}</td>
+
+                                    </tr>
+                                    {% endfor %}
+
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+{% endblock %}

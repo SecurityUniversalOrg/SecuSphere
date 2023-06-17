@@ -1,0 +1,148 @@
+{% extends 'base_auth.html' %}
+ 
+{% block app_content %}
+
+    {{ super() }}
+
+<div class="app_content_container">
+  <!-- The Grid -->
+  <div class="grid_container">
+
+    <div class="settings_container">
+	  
+	  <div class="settings_row">
+	  
+	    <div class="settings_col_m8" style="margin-left: auto;margin-right: auto;">
+		
+		  <div class="settings_card">
+		  
+		    <div class="settings_card_header">
+			
+				<h4 class="settings_card_title">Edit Profile<a href="{{ url_for('admin.display_mfa_qr') }}"><i class="fas fa-qrcode fa-2x" style="float: right;margin-right: 10px;"></i></a><a href="{{ url_for('admin.mobile_sync') }}"><i class="fas fa-mobile-alt fa-2x" style="float: right;margin-right: 10px;"></i></a></h4>
+			
+			</div>
+			
+			<div class="settings_card_body">
+			
+			  <form class="settings_form"  method="POST" action="{{ url_for('admin.edit_profile') }}">
+			    {{ form.csrf_token }}
+			    <div class="settings_card_row">
+				  <div class="settings_card_col_md3">
+				    <div class="settings_card_form_group">
+					  <label class="settings_card_form_label">Username</label>
+					  <input name="username" class="settings_card_form_input_disabled" aria-describedby="addon-right addon-left" type="text" disabled="disabled" placeholder="{{ username }}"></input>
+					</div>
+				  </div>
+				  <div class="settings_card_col_md4">
+				    <div class="settings_card_form_group">
+					  <label class="settings_card_form_label">Email</label>
+					  <input name="email" class="settings_card_form_input_disabled" aria-describedby="addon-right addon-left" type="text" disabled="disabled" placeholder="{{ emailaddr }}"></input>
+					</div>
+				  </div>
+				</div>
+				
+				<div class="settings_card_row">
+				  <div class="settings_card_col_md6">
+				    <div class="settings_card_form_group">
+					  <label class="settings_card_form_label">First Name</label>
+					  <input name="first_name" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" value="{{ firstname }}"></input>
+					</div>
+				  </div>
+				  <div class="settings_card_col_md6">
+				    <div class="settings_card_form_group">
+					  <label class="settings_card_form_label">Last Name</label>
+					  <input name="last_name" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" value="{{ lastname }}"></input>
+					</div>
+				  </div>
+				</div>
+				
+				<div class="settings_card_row">
+				  <div class="settings_card_col_md6">
+				    <div class="settings_card_form_group">
+					  <label class="settings_card_form_label">Job Title</label>
+					  <input name="jobtitle" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" value="{{ jobtitle }}"></input>
+					</div>
+				  </div>
+				  <div class="settings_card_col_md6">
+				    <div class="settings_card_form_group">
+					  <label class="settings_card_form_label">Department</label>
+					  <input name="dept" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" value="{{ dept }}"></input>
+					</div>
+				  </div>
+				</div>
+
+				<div class="settings_card_row">
+				  <div class="settings_card_col_md12">
+				    <div class="settings_card_form_group">
+					  <label class="settings_card_form_label">About Me</label>
+					  <input name="about_me" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" value="{{ about_me }}"></input>
+					</div>
+				  </div>
+				</div>
+
+				<div class="settings_card_row">
+
+				  <div class="settings_card_col_md4">
+				    <div class="settings_card_form_group">
+					  <label class="settings_card_form_label">City</label>
+					  <input name="city" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" value="{{ city }}"></input>
+					</div>
+				  </div>
+				  <div class="settings_card_col_md3">
+				    <div class="settings_card_form_group">
+					  <label class="settings_card_form_label">State</label>
+					  <input name="state" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" value="{{ state }}"></input>
+					</div>
+				  </div>
+				  <div class="settings_card_col_md2">
+				    <div class="settings_card_form_group">
+					  <label class="settings_card_form_label">Zip Code</label>
+					  <input name="zip" class="settings_card_form_input" aria-describedby="addon-right addon-left" type="text" value="{{ zip }}"></input>
+					</div>
+				  </div>
+				  <div class="settings_card_col_md3">
+				    <div class="settings_card_form_group">
+					  <label class="settings_card_form_label">Web Timezone</label>
+
+					  <select name="web_tz" id="web_tz" class="settings_card_form_input" style="height: 4.5rem;">
+
+						  {% for i in tz_list %}
+							<option value="{{ i }}"{% if web_tz == i %} selected{% endif %}>{{ i }}</option>
+						  {% endfor %}
+
+                      </select>
+					</div>
+				  </div>
+
+				</div>
+
+
+
+				<div class="settings_card_text_center">
+				  <button class="update_button settings_update_button" type="submit">Update Profile</button>
+				</div>
+				
+				<div class="settings_card_clearfix"></div>
+			  
+			  </form>
+
+			</div>
+		  
+		  </div>
+		
+		</div>
+	  
+
+	  
+	  </div>
+	  
+	</div>
+
+  <!-- End Grid -->
+  </div>
+</div>
+<script>
+	var removeItemDb_url = '/api/delete_key';
+</script>
+<!-- End Page Container -->
+{% endblock %}

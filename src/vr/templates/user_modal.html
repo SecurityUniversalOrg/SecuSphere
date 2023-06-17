@@ -1,0 +1,72 @@
+<!-- bm_rule modal -->
+<div id="user_modal" class="modal">
+  <!-- Modal content -->
+  <div class="settings_container">
+    
+    <div class="settings_row">
+      
+      <div class="settings_col_m8_center">
+    
+        <div class="settings_card">
+      
+          <div class="settings_card_header">
+            <span class="close" onclick="hideModal('user_modal')"><div class="fas fa-times" style="font-size: 3rem;"></div></span>
+            <h4 class="settings_card_title" id="um_username"># </h4>
+          </div>
+      
+          <div class="settings_card_body">
+
+              <h4>First Name</h4>
+              <p id="um_firstname"></p>
+
+              <h4>Last Name</h4>
+              <p id="um_lastname"></p>
+
+              <h4>Email</h4>
+              <p id="um_email"></p>
+
+              <h4>Roles&nbsp;&nbsp;<div class="fas fa-plus-circle" onclick="addGroupInit()"></div></h4>
+              <div id="add_role_section" style="display:none;">
+                  <select name="add_group_select" id="add_group_select">
+                      <option value="" disabled selected>Select One</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Application Admin">Application Admin</option>
+                      <option value="Application Viewer">Application Viewer</option>
+                      <option value="Developer">Developer</option>
+                      <option value="DevOps">DevOps</option>
+                      <option value="QA">QA</option>
+                      <option value="Security">Security</option>
+                  </select>
+                  <button id="add_group_button" onclick="addGroup()">Save</button>
+              </div>
+              <div id="role_section"></div>
+
+
+      
+            <div class="settings_form">
+
+              <div id="aim_warn_content"></div>
+
+
+        
+            </div>
+      
+          </div>
+      
+        </div>
+    
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+
+<script>
+
+
+
+</script>
+
+
+<!-- end add modal -->

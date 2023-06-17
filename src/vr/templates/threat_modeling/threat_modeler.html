@@ -1,0 +1,294 @@
+{% extends 'base_auth.html' %}
+
+<head>
+
+    <title>Vulnerability Manager</title>
+<style>
+
+
+</style>
+</head>
+
+
+{% block app_content %}
+
+<div class="login_form_container">
+  <div class="login_form">
+  <section class="register_wrapper">
+
+    <div class="logo">
+
+    </div>
+
+    <form action="/threat_modeler/{{ app_data.ID }}" method="POST" role="form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+
+        <!-- start of tabs -->
+
+
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">
+                    {{ app_data.ApplicationName }}
+
+
+                </h3>
+                {% include "application_horizontal_bar.html" %}
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+
+
+
+    <h1 class="page_title">Create Threat Model</h1>
+    <p class="page_subtitle">Please complete this form to create a Threat Model.</p>
+    <hr>
+    <br>
+    <div id="dynamic_section_one"></div>
+
+    <hr>
+
+
+    <button type="submit" class="submit_btn" style="width: fit-content;padding: 0.5em;">Create Threat Model</button>
+
+
+
+</form>
+
+  </section>
+  </div>
+</div>
+
+
+<script>
+var questions = {{ questions |safe }}
+getInitialQuestions()
+
+function getInitialQuestions() {
+    var parent_el = 'dynamic_section_one';
+    for (const key in questions) {
+        var obj = questions[key]
+        question_id = 'q_' + key
+        if (obj['type'] == "Core" && obj['prerequisites'] == "") {
+            if (obj['options'] == "bool") {
+                var options = ['Yes', 'No']
+            } else {
+                var options = obj['options'].split(', ')
+            }
+            addNewField(question_id, parent_el, obj['question'], options)
+        }
+    }
+}
+
+function addNewField(el_id, parent_el, value, options) {
+    var anchor = document.getElementById(parent_el)
+    var form_group = document.createElement('div')
+    form_group.classList.add('form-group')
+    var label = document.createElement('label')
+    label.innerText = value;
+    label.style.fontWeight = "bold";
+    label.style.color = "white";
+    label.classList.add('col-sm-2')
+    label.classList.add('control-label')
+    form_group.append(label);
+    var child_el = document.createElement('select')
+    child_el.name = value;
+    child_el.id = el_id;
+    child_el.classList.add('dyn_q')
+    child_el.addEventListener('change', () => dynamic_questions())
+    var opt = document.createElement('option')
+    opt.value = ""
+    opt.innerText = ''
+    opt.selected = true;
+    opt.disabled = true;
+    child_el.appendChild(opt)
+    for (var i = 0; i < options.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = options[i];
+        opt.innerText = options[i];
+        child_el.appendChild(opt);
+    }
+    form_group.append(child_el);
+    anchor.append(form_group);
+    var break_el = document.createElement('br')
+    anchor.append(break_el)
+}
+
+var expanded_dict = {}
+function showCheckboxes(q_id) {
+    var checkboxes = document.getElementById(q_id);
+    if (!expanded_dict.hasOwnProperty(q_id)) {
+        expanded_dict[q_id] = false;
+    }
+    if (!expanded_dict[q_id]) {
+        checkboxes.style.display = 'block';
+        expanded_dict[q_id] = true;
+    } else {
+        checkboxes.style.display = 'none';
+        expanded_dict[q_id] = false;
+    }
+}
+
+function addNewMultiselectField(el_id, parent_el, value, options) {
+    var anchor = document.getElementById(parent_el)
+    var form_group = document.createElement('div')
+    form_group.classList.add('form-group')
+    form_group.classList.add('dyn_q')
+    form_group.id = el_id
+
+    var container = document.createElement('div')
+    {#container.style.display = 'inline-flex'#}
+    {#container.classList.add('dyn_q')#}
+    {#container.id = el_id#}
+    var label = document.createElement('label')
+    label.innerText = value;
+    label.style.fontWeight = "bold";
+    label.style.color = "white";
+    label.classList.add('col-sm-2')
+    label.classList.add('control-label')
+    var master_div = document.createElement('div')
+    master_div.classList.add('multiselect')
+    new_html = `<div class="selectBox" onclick="showCheckboxes('checkboxes_${el_id}')">
+      <select>
+        <option></option>
+      </select>
+      <div class="overSelect"></div>
+    </div>`
+    master_div.innerHTML = new_html;
+    var checkboxes = document.createElement('div')
+    checkboxes.id = 'checkboxes_' + el_id
+    checkboxes.classList.add('checkboxes_multi')
+    var dyn_html = ''
+    for (var i = 0; i < options.length; i++) {
+        dyn_html += `<label for="${options[i]}"><input onclick="dynamic_questions()" type="checkbox" class="multi_opt" name="${value}_${options[i]}" id="${options[i]}" />${options[i]}`
+    }
+    checkboxes.innerHTML = dyn_html;
+    form_group.append(label);
+    master_div.append(checkboxes)
+    form_group.append(master_div)
+    {#form_group.append(container)#}
+    anchor.append(form_group);
+    var break_el = document.createElement('br')
+    anchor.append(break_el)
+}
+
+function dynamic_questions() {
+    var parent_el = 'dynamic_section_one'
+    var responses = document.getElementsByClassName('dyn_q')
+    for (var i = 0; i < responses.length; i++) {
+        var response_type = responses[i].type
+        if (response_type == "select-one") {
+            var q_id = responses[i].id.split('q_')[1]
+            var cur_val = responses[i].value;
+            for (const key in questions) {
+                var obj = questions[key]
+                var prereq = obj['prerequisites']
+                var match = false;
+                if (prereq == q_id || prereq.includes(q_id + '=')) {
+                    if (prereq == q_id) {
+                        if (cur_val == 'Yes') {
+                            match = true;
+                        }
+                    } else if (prereq.includes(q_id + '=')) {
+                        if (prereq.includes(',')) {
+                            opts = prereq.split(', ')
+                            for (var k = 0; k < opts.length; k++) {
+                                var answer_val = opts[k].split(q_id + '=')[1]
+                                if (cur_val == answer_val) {
+                                    match = true;
+                                }
+                            }
+                        } else {
+                            var answer_val = prereq.split(q_id + '=')[1]
+                            if (cur_val == answer_val) {
+                                match = true;
+                            }
+                        }
+                    }
+                }
+                if (match === true) {
+                    var check = document.getElementById('q_' + key)
+                    if (check === null) {
+                        if (obj['options'].includes(';')) {
+                            var options = obj['options'].split('; ')
+                            addNewMultiselectField('q_' + key, parent_el, obj['question'], options);
+                        } else {
+                            if (obj['options'] == 'bool') {
+                                var options = ['Yes', 'No']
+                            } else {
+                                var options = obj['options'].split(', ')
+                            }
+                            addNewField('q_' + key, parent_el, obj['question'], options)
+                        }
+                    }
+                }
+            }
+
+        } else {
+            var q_id = responses[i].id.split('q_')[1]
+            console.log(responses[i])
+            for (const key in questions) {
+                var obj = questions[key]
+                {#console.log(obj)#}
+                var prereq = obj['prerequisites']
+                {#console.log(prereq)#}
+                var match = false;
+                if (prereq.includes(q_id + '=')) {
+                    console.log(key)
+                    console.log(questions[key])
+                    var opts = questions[key].options.split('; ')
+                    console.log(opts)
+                    if (prereq.includes(',')) {
+                        opts = prereq.split(', ')
+                        for (var k = 0; k < opts.length; k++) {
+                            var answer_val = opts[k].split(q_id + '=')[1]
+                            if (cur_val == answer_val) {
+                                match = true;
+                            }
+                        }
+                    } else {
+                        var answer_val = prereq.split(q_id + '=')[1]
+                        console.log(answer_val)
+                        console.log(q_id)
+                        var q_base = document.getElementById(`q_${q_id}`).firstChild.innerText;
+                        cur_val = document.getElementsByName(`${q_base}_${answer_val}`)[0].checked;
+                        console.log(cur_val)
+                        if (cur_val) {
+                            console.log('FINALLY')
+                            match = true;
+                        }
+
+                    }
+                    if (match === true) {
+                    var check = document.getElementById('q_' + key)
+                    if (check === null) {
+                        if (obj['options'].includes(';')) {
+                            var options = obj['options'].split('; ')
+                            addNewMultiselectField('q_' + key, parent_el, obj['question'], options);
+                        } else {
+                            if (obj['options'] == 'bool') {
+                                var options = ['Yes', 'No']
+                            } else {
+                                var options = obj['options'].split(', ')
+                            }
+                            addNewField('q_' + key, parent_el, obj['question'], options)
+                        }
+                    }
+                }
+                }
+            }
+        }
+    }
+}
+
+</script>
+
+
+{% endblock %}
+
+</body>
+
+</html>

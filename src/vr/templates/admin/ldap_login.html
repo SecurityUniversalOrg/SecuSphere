@@ -1,0 +1,70 @@
+{% extends 'base_no_auth.html' %}
+
+{% block app_content %}
+
+<div class="login_form_container">
+  <div class="login_form">
+  <section class="login_wrapper">
+    
+    <div class="logo_placeholder">
+		 
+    </div>
+    
+    <form method="POST" action="{{ url_for('admin.login') }}">
+      {{ form.hidden_tag() }}
+      {{ form.username.label }} {{ form.username(size=20) }}<br>
+      {{ form.password.label }} {{ form.password(size=20) }}<br>
+      <input type="submit" value="Login">
+    </form>
+    {% if errors %}
+      <ul class="errors">
+        {% for error in errors.values() %}
+          {% for e in error %}
+            <li>{{ e }}</li>
+          {% endfor %}
+        {% endfor %}
+      </ul>
+    {% endif %}
+    
+  </section>
+  </div>
+</div>  
+<script src='{{ url_for('static', filename='js/jquery.min.js') }}'></script>
+
+  
+
+    <script  src="js/index.js"></script>
+
+<script>
+function checkAuth() {
+  var username = document.getElementById('login[username]').value;
+  var mfa_password = document.getElementById('login[password2]').value;
+  checkIfMfa(username, mfa_password);
+}
+function checkIfMfa(username, mfa_password) {
+  var csrf_token = "{{ csrf_token() }}";
+  if (mfa_password == '') {
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        var response = JSON.parse(this.responseText)
+        if (response['answer'] == 'active') {
+          document.getElementById('mfa_container').style.display = 'block'
+        } else {
+          document.getElementById('login').submit()
+        }
+      }
+    };
+    xhttp.open("POST", 'check_if_mfa', true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("username=" + username);
+  } else {
+    document.getElementById('login').submit()
+  }
+}
+</script>
+
+
+{% endblock %}

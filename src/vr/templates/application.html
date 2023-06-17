@@ -1,0 +1,938 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
+
+                </h3>
+                {% include "application_horizontal_bar.html" %}
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="panel panel-default">
+                            <div class="panel-heading tight">
+                                <div class="clearfix">
+                                    <h3 class="pull-left">Description</h3>
+                                    <div class="dropdown pull-right">
+                                        <div class="btn-group">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                                                <span class="fa fa-bars"></span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">
+                                                {% if user.is_admin %}
+                                                <li role="presentation">
+                                                    <a class="" href="/edit_application/{{ app_data.ID }}">
+                                                        <div class="fa-solid fa-pencil-to-square"></div>&nbsp;&nbsp;Edit
+                                                    </a>
+                                                </li>
+
+                                                <li role="separator" class="divider"></li>
+                                                {% endif %}
+
+                                                <li role="presentation">
+                                                    <a href="/application/{{ app_data.ID }}/export">
+                                                        <div class="fa-solid fa-clipboard-check"></div>&nbsp;&nbsp;PDF Report
+                                                    </a>
+                                                </li>
+                                                <li role="presentation">
+                                                    <a href="/application/{{ app_data.ID }}/csv">
+                                                        <div class="fa-solid fa-clipboard-check"></div>&nbsp;&nbsp;CSV Report
+                                                    </a>
+                                                </li>
+
+
+                                                <li role="separator" class="divider"></li>
+                                                {% if user.is_admin %}
+                                                <li role="presentation">
+                                                    <a class="text-danger" href="/delete_application/{{ app_data.ID }}">
+                                                        <div class="fa-solid fa-trash"></div>&nbsp;&nbsp;Delete
+                                                    </a>
+                                                </li>
+                                                {% endif %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if app_data.Description %}
+                            <div class="panel-body">
+                                <p>{{ app_data.Description }}</p>
+
+                            </div>
+                            {% else %}
+                            <div class="panel-body">
+                                <small class="text-muted"><em>No application description provided.</em></small>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- metrics -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            <span class="fa fa-pie-chart" aria-hidden="true"></span>&nbsp;&nbsp;Findings by Severity
+                                        </h3>
+                                    </div>
+                                    <table class="table table-condensed" aria-describedby="Component Table">
+                                        <tbody>
+                                            <tr>
+                                                <th class="col-sm-2 bg-vuln-critical vuln-count text-center"><a href="/filtered_findings/{{ app_data.ID }}/severity/Critical" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['critical'] }}<span class="hidden-xs"><br><small>CRITICAL</small></span></div></a></th>
+                                                <th class="col-sm-2 bg-vuln-high vuln-count text-center"><a href="/filtered_findings/{{ app_data.ID }}/severity/High" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['high'] }}<span class="hidden-xs"><br><small>HIGH</small></span></div></a></th>
+                                                <th class="col-sm-2 bg-vuln-medium vuln-count text-center"><a href="/filtered_findings/{{ app_data.ID }}/severity/Medium" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['medium'] }}<span class="hidden-xs"><br><small>MEDIUM</small></span></div></a></th>
+                                                <th class="col-sm-2 bg-vuln-low vuln-count text-center"><a href="/filtered_findings/{{ app_data.ID }}/severity/Low" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['low'] }}<span class="hidden-xs"><br><small>LOW</small></span></div></a></th>
+                                                <th class="col-sm-2 bg-vuln-info vuln-count text-center"><a href="/filtered_findings/{{ app_data.ID }}/severity/Informational" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['informational'] }}<span class="hidden-xs"><br><small>INFORMATIONAL</small></span></div></a></th>
+                                                <th class="col-sm-2 bg-muted vuln-count text-center"><a href="/open_findings/{{ app_data.ID }}" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['total'] }}<span class="hidden-xs"><br><small>TOTAL</small></span></div></a></th>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            <span class="fa fa-pie-chart" aria-hidden="true"></span>&nbsp;&nbsp;Findings by Assessment Type
+                                        </h3>
+                                    </div>
+                                    <table class="table table-condensed" aria-describedby="Component Table">
+                                        <tbody>
+                                            <tr>
+                                                <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/filtered_findings/{{ app_data.ID }}/classification/Secret" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['secrets'] }}<span class="hidden-xs"><br><small>SECRETS</small></span></div></a></th>
+                                                <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/filtered_findings/{{ app_data.ID }}/classification/SCA" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['sca'] }}<span class="hidden-xs"><br><small>SCA</small></span></div></a></th>
+                                                <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/filtered_findings/{{ app_data.ID }}/classification/SAST" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['sast'] }}<span class="hidden-xs"><br><small>SAST</small></span></div></a></th>
+                                                <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/filtered_findings/{{ app_data.ID }}/classification/IaC" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['iac'] }}<span class="hidden-xs"><br><small>IAC</small></span></div></a></th>
+                                                <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/filtered_findings/{{ app_data.ID }}/classification/Container" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['container'] }}<span class="hidden-xs"><br><small>CONTAINER</small></span></div></a></th>
+                                                <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/filtered_findings/{{ app_data.ID }}/classification/DAST" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['dast'] }}<span class="hidden-xs"><br><small>DAST</small></span></div></a></th>
+                                                <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/filtered_findings/{{ app_data.ID }}/classification/DASTAPI" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['dastapi'] }}<span class="hidden-xs"><br><small>DAST_API</small></span></div></a></th>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end metrics -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        <span class="fa fa-bolt" aria-hidden="true"></span>&nbsp;&nbsp;Technologies (0)
+                                    </h3>
+                                </div>
+
+                                {% if dependency_map['app2app_rels_downstream'] %}
+                                <table class="tablesorter-bootstrap table table-condensed table-striped" aria-describedby="Component Table">
+                                    <tbody>
+                                        <th>
+                                            <td>
+                                                <ul>
+                                                    <li class="dropdown" style="list-style:none;position:absolute">
+                                                        <a href="#" class="dropdown-toggle pull-left" data-toggle="dropdown" aria-expanded="true" label="Actions"><strong class="fa fa-ellipsis-v"></strong>&nbsp;</a>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a href="/technology/1/edit">
+                                                                <div class="fa fa-pencil-square-o"></div>Edit</a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="/technology/1/delete">
+                                                                <div class="fa fa-trash"></div>Delete</a>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                            <td name="technology_name">Tomcat</td>
+                                            <td name="technology_version">
+                                                <span class="badge">v.8.5.1</span>
+                                            </td>
+                                        </th>
+                                    </tbody>
+                                </table>
+                                {% else %}
+                                <div class="panel-body">
+                                    <small class="text-muted"><em>No technologies identified.</em></small>
+                                </div>
+                                {% endif %}
+
+                            </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="panel panel-default">
+                                  <div class="panel-heading">
+                                    <h3 class="panel-title"><span class="fa fa-gavel" aria-hidden="true"></span>&nbsp;&nbsp;Regulations ({{ regs_all|length }})</h3>
+                                  </div>
+
+                                  {% if regs_all %}
+                                  <ul class="list-group">
+                                      {% for i in regs_all %}
+                                      <li class="list-group-item">
+                                          <span class="badge">{{ i.Category }}</span>
+                                          <span data-toggle="tooltip" data-placement="bottom" title="">{{ i.Acronym }}</span>
+                                          <small class="text-muted">{{ i.Jusisdiction }}</small>
+                                      </li>
+                                      {% endfor %}
+                                  </ul>
+                                  {% else %}
+                                    <div class="panel-body">
+                                        <small class="text-muted"><em>No regulations identified.</em></small>
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- Entity Relationships -->
+                            <div class="row">
+                              <div class="col-md-12">
+                                <div class="panel panel-default">
+                                  <div class="panel-heading">
+                                    <h3 class="panel-title"><span class="fa-solid fa-repeat" aria-hidden="true"></span>&nbsp;&nbsp;Entity Relationships</h3>
+                                  </div>
+
+                                    {% if dependency_map['app2app_rels_downstream'] or dependency_map['app2app_rels_upstream'] or dependency_map['app2server_rels'] or dependency_map['app2db_rels'] %}
+                                    <ul class="list-group">
+
+                                        {% for i in dependency_map['app2app_rels_downstream'] %}
+                                          <li class="list-group-item">
+                                              <span class="badge">App - Downstream</span>
+                                              <span data-toggle="tooltip" data-placement="bottom" title="">{{ i.ApplicationName }}</span>
+{#                                              <small class="text-muted">{{ i.Jusisdiction }}</small>#}
+                                          </li>
+                                        {% endfor %}
+
+                                        {% for i in dependency_map['app2app_rels_upstream'] %}
+                                          <li class="list-group-item">
+                                              <span class="badge">App - Upstream</span>
+                                              <span data-toggle="tooltip" data-placement="bottom" title="">{{ i.ApplicationName }}</span>
+{#                                              <small class="text-muted">{{ i.Jusisdiction }}</small>#}
+                                          </li>
+                                        {% endfor %}
+
+                                        {% for i in dependency_map['app2server_rels'] %}
+                                          <li class="list-group-item">
+                                              <span class="badge">Server</span>
+                                              <span data-toggle="tooltip" data-placement="bottom" title="">{{ i.ServerName }}</span>
+                                              <small class="text-muted">{{ i.EnvAssociation }}</small>
+                                          </li>
+                                        {% endfor %}
+
+                                        {% for i in dependency_map['app2db_rels'] %}
+                                          <li class="list-group-item">
+                                              <span class="badge">Database</span>
+                                              <span data-toggle="tooltip" data-placement="bottom" title="">{{ i.DatabaseName }}</span>
+                                              <small class="text-muted">{{ i.Environment }}</small>
+                                          </li>
+                                        {% endfor %}
+
+                                    </ul>
+                                    {% else %}
+                                    <div class="panel-body">
+                                        <small class="text-muted"><em>No entity relationships established.</em></small>
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- Benchmark Tab -->
+
+                            <div class="row">
+                              <div class="col-md-12">
+                                <div class="panel panel-default">
+                                  <div class="panel-heading">
+                                    <h3 class="panel-title"><span class="fa fa-balance-scale" aria-hidden="true"></span>&nbsp;&nbsp;Benchmark Progress</h3>
+                                  </div>
+                                    {% if bm_assessments %}
+                                    <ul class="list-group">
+
+                                        {% for i in bm_assessments %}
+                                          <li class="list-group-item">
+                                              <span class="badge">{{ i.findings_cnt }}</span>
+                                              <span data-toggle="tooltip" data-placement="bottom" title="">{{ i.Name }}</span>
+                                              <small class="text-muted">{{ i.AddDate }}</small>
+                                          </li>
+                                        {% endfor %}
+
+                                    </ul>
+                                    {% else %}
+                                    <div class="panel-body">
+                                        <small class="text-muted"><em>No benchmarks completed.</em></small>
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+                              </div>
+                            </div>
+
+
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <div class="clearfix">
+                                            <h4 class="pull-left">Contacts</h4>
+                                            &nbsp
+
+
+{#                                            <div class="dropdown pull-right">#}
+{#                                                <button class="btn btn-primary dropdown-toggle" label="Actions" type="button" id="dropdownMenuAddProductMember" data-toggle="dropdown" aria-expanded="true" aria-label="Add Product Member">#}
+{#                                                    <span class="fa fa-bars"></span>#}
+{#                                                    <span class="caret"></span>#}
+{#                                                </button>#}
+{#                                                <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">#}
+{#                                                    <li role="presentation">#}
+{#                                                        <a id="addProductMember" href="/product/1/add_member">#}
+{#                                                            <div class="fa fa-plus"></div>Add Contacts#}
+{#                                                        </a>#}
+{#                                                    </li>#}
+{#                                                </ul>#}
+{#                                            </div>#}
+
+                                        </div>
+                                    </div>
+
+                                    {% if contacts %}
+
+                                        <div class="table-responsive">
+                                            <table class="tablesorter-bootstrap table table-condensed table-striped" aria-describedby="Component Table">
+                                                <thead>
+                                                <tr>
+                                                    <th label="Actions"></th>
+                                                    <th>User</th>
+                                                    <th>Email</th>
+                                                    <th>Role</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    {% for i in contacts %}
+                                                    <tr>
+                                                        <td>
+                                                            <ul>
+                                                            <li class="dropdown" style="list-style:none;position:absolute">
+                                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" label="Actions">&nbsp;<strong class="fa fa-ellipsis-v"></strong>&nbsp;</a>
+                                                                <ul class="dropdown-menu">
+
+                                                                    <li>
+                                                                        <a href="/product/member/1/edit">
+                                                                        <div class="fa fa-pencil-square-o"></div>Edit</a>
+                                                                    </li>
+
+
+                                                                    <li>
+                                                                        <a href="/product/member/1/delete">
+                                                                        <div class="fa fa-trash"></div>Delete</a>
+                                                                    </li>
+
+                                                                </ul>
+                                                            </li>
+                                                            </ul>
+                                                        </td>
+                                                        <td name="member_user">{{ i.Name }}</td>
+                                                        <td>{{ i.Email }}</td>
+                                                        <td name="member_role">{{ i.Role }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    {% else %}
+                                    <div class="panel-body">
+                                        <small class="text-muted"><em>No contacts found.</em></small>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                  <div class="panel panel-default">
+                                      <div class="panel-heading">
+                                          <div class="clearfix">
+                                              <h4 class="pull-left">Groups</h4>
+                                              &nbsp;
+
+{#                                              <div class="dropdown pull-right">#}
+{#                                                  <button class="btn btn-primary dropdown-toggle" label="Actions" type="button" id="dropdownMenuAddProductGroup" data-toggle="dropdown" aria-expanded="true" aria-label="Add Product Group">#}
+{#                                                      <span class="fa fa-bars"></span>#}
+{#                                                      <span class="caret"></span>#}
+{#                                                  </button>#}
+{#                                                  <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">#}
+{#                                                      <li role="presentation">#}
+{#                                                          <a id="addProductGroup" href="/product/1/add_group">#}
+{#                                                              <div class="fa fa-plus"></div>Add Groups#}
+{#                                                          </a>#}
+{#                                                      </li>#}
+{#                                                  </ul>#}
+{#                                              </div>#}
+
+                                          </div>
+                                      </div>
+
+                                      <div class="panel-body">
+                                          <small class="text-muted"><em>No groups found.</em></small>
+                                      </div>
+
+                                  </div>
+
+                            </div>
+                            <!-- Meta Data -->
+                            <div class="col-md-4">
+                              <div class="panel panel-default panel-default-secondary">
+                                <div class="panel-heading">
+                                  <h3 class="panel-title"><span class="fa fa-info-circle fa-fw" aria-hidden="true"></span>&nbsp;&nbsp;Metadata</h3>
+                                </div>
+                                <div class="table-responsive">
+                                  <table class="table table-striped" id="set-width" aria-describedby="Component Table">
+                                    <tbody>
+                                        <th style="display: none;"></th>
+                                      {% if app_data.SysgenID %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>SysgenID</strong></td>
+                                            <td>{{ app_data.SysgenID }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.ApplicationAcronym %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Application Acronym</strong></td>
+                                            <td>{{ app_data.ApplicationAcronym }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.LctlAppID %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>LctlAppID</strong></td>
+                                            <td>{{ app_data.LctlAppID }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.PrimaryLob %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>PrimaryLob</strong></td>
+                                            <td>{{ app_data.PrimaryLob }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.TAWG %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>TAWG</strong></td>
+                                            <td>{{ app_data.TAWG }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.Criticality %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Criticality</strong></td>
+                                            <td>{{ app_data.Criticality }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.Disposition %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Disposition</strong></td>
+                                            <td>{{ app_data.Disposition }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.LifecycleStatus %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Lifecycle Status</strong></td>
+                                            <td>{{ app_data.LifecycleStatus }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.WebEnabled %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Web Enabled</strong></td>
+                                            <td>{{ app_data.WebEnabled }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.HostingPlatform %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Hosting Platform</strong></td>
+                                            <td>{{ app_data.HostingPlatform }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.RegDate %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>RegDate</strong></td>
+                                            <td>{{ app_data.RegDate }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.MalListingAddDate and not app_data.MalListingAddDate == '1990-01-01T12:00:00' %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>MAL Listing AddDate</strong></td>
+                                            <td>{{ app_data.MalListingAddDate }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.PreprodDate and not app_data.PreprodDate == '1990-01-01T12:00:00' %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Pre-Prod Date</strong></td>
+                                            <td>{{ app_data.PreprodDate }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.ProductionDate and not app_data.ProductionDate == '1990-01-01T12:00:00' %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Production Date</strong></td>
+                                            <td>{{ app_data.ProductionDate }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.TargetRetirementDate and not app_data.TargetRetirementDate == '1990-01-01T12:00:00' %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Target Retirement Date</strong></td>
+                                            <td>{{ app_data.TargetRetirementDate }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.RetirementDate and not app_data.RetirementDate == '1990-01-01T12:00:00' %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>RetirementDate</strong></td>
+                                            <td>{{ app_data.RetirementDate }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.AssignmentChangedDate and not app_data.AssignmentChangedDate == '1990-01-01T12:00:00' %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Assignment Changed Date</strong></td>
+                                            <td>{{ app_data.AssignmentChangedDate }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.CicdStatus %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>CICD Status</strong></td>
+                                            <td>{{ app_data.CicdStatus }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.Language %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Languages</strong></td>
+                                            <td>{{ app_data.Language }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.UserAccessRestrictions %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>User Access Restrictions</strong></td>
+                                            <td>{{ app_data.UserAccessRestrictions }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.UserAccessControl %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>User Access Control</strong></td>
+                                            <td>{{ app_data.UserAccessControl }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.Hosting %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Hosting</strong></td>
+                                            <td>{{ app_data.Hosting }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.Region %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Region</strong></td>
+                                            <td>{{ app_data.Region }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.PrimaryProdUrl %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Primary Prod URL</strong></td>
+                                            <td>{{ app_data.PrimaryProdUrl }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.RepoURL %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Repo URL</strong></td>
+                                            <td><a href="{{ app_data.RepoURL }}" target="_blank">{{ app_data.RepoURL }}</a></td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.LogicalAccessControlUrl %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Logical Access Control URL</strong></td>
+                                            <td>{{ app_data.LogicalAccessControlUrl }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.UsedByMultipleLob %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Used By Multiple LOB</strong></td>
+                                            <td>{{ app_data.UsedByMultipleLob }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.AppSupporType %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>App Suppor Type</strong></td>
+                                            <td>{{ app_data.AppSupporType }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.MalAddReason %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>MAL Add Reason</strong></td>
+                                            <td>{{ app_data.MalAddReason }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.QaActivelyTested %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>QA Actively Tested</strong></td>
+                                            <td>{{ app_data.QaActivelyTested }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.PMUCNUSGOVT %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>PMUCNUSGOVT</strong></td>
+                                            <td>{{ app_data.PMUCNUSGOVT }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.AccountProvisionSupportGrp %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Account Provision Support Grp</strong></td>
+                                            <td>{{ app_data.AccountProvisionSupportGrp }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.PrioritizedForStability %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Prioritized For Stability</strong></td>
+                                            <td>{{ app_data.PrioritizedForStability }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.Origin %}
+                                        <tr>
+                                            <td><strong>Origin</strong></td>
+                                            <td>{{ app_data.Origin }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.MalAddReasonDetails %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>MAL Add Reason Details</strong></td>
+                                            <td>{{ app_data.MalAddReasonDetails }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.Assignment %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Assignment</strong></td>
+                                            <td>{{ app_data.Assignment }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.SupportEngApprReq %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Support Engineer Approval Required</strong></td>
+                                            <td>{{ app_data.SupportEngApprReq }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.Vendor %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Vendor</strong></td>
+                                            <td>{{ app_data.Vendor }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.WorkaroundDesc %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Workaround Description</strong></td>
+                                            <td>{{ app_data.WorkaroundDesc }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.RopaExists %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Ropa Exists</strong></td>
+                                            <td>{{ app_data.RopaExists }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.SoxCritical %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>SOX Critical</strong></td>
+                                            <td>{{ app_data.SoxCritical }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.BiaCritical %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>BIA Critical</strong></td>
+                                            <td>{{ app_data.BiaCritical }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.AccountProvisionAndDeprovision %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Account Provision And Deprovision</strong></td>
+                                            <td>{{ app_data.AccountProvisionAndDeprovision }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.AppMetricCat %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>App Metric Categories</strong></td>
+                                            <td>{{ app_data.AppMetricCat }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.AssetSystem %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Asset System</strong></td>
+                                            <td>{{ app_data.AssetSystem }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.OfficialBusinessRecord %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Official Business Record</strong></td>
+                                            <td>{{ app_data.OfficialBusinessRecord }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.BusinessImpactDesc %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Business Impact Description</strong></td>
+                                            <td>{{ app_data.BusinessImpactDesc }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.AppValue %}
+                                      <tr>
+                                        <td style="width: 160px;"><strong>AppValue</strong></td>
+                                        <td>{{ app_data.AppValue }}</td>
+                                      </tr>
+                                      {% endif %}
+                                      {% if app_data.ProductType %}
+                                      <tr>
+                                        <td><strong>Product Type</strong></td>
+                                        <td>{{ app_data.ProductType }}</td>
+                                      </tr>
+                                      {% endif %}
+                                      {% if app_data.ApplicationType %}
+                                      <tr>
+                                        <td><strong>Platform</strong></td>
+                                        <td>{{ app_data.ApplicationType }}</td>
+                                      </tr>
+                                      {% endif %}
+                                      {% if app_data.Lifecycle %}
+                                      <tr>
+                                        <td><strong>Lifecycle</strong></td>
+                                        <td>{{ app_data.Lifecycle }}</td>
+                                      </tr>
+                                      {% endif %}
+                                      {% if app_data.Revenue %}
+                                      <tr>
+                                        <td><strong>Revenue</strong></td>
+                                        <td>{{ app_data.Revenue }}</td>
+                                      </tr>
+                                      {% endif %}
+
+
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+
+                            <!-- End metadata -->
+                            <!-- SLA -->
+
+                                <div class="panel panel-default panel-default-secondary">
+                                <div class="panel-heading">
+                                  <h3 class="panel-title"><span class="fa-solid fa-calendar fa-fw" aria-hidden="true"></span>&nbsp;&nbsp;Service Level Agreement</h3>
+                                </div><div class="panel-body">
+                                    <p><strong>{{ sla_data[2] }}</strong></p>
+                                    <p>{{ sla_data[3] }}</p>
+                                  </div>
+                                <div class="table-responsive">
+                                  <table class="table table-striped" aria-describedby="Component Table">
+                                    <tbody>
+                                      <th style="display: none;"></th>
+                                      <tr>
+                                        <td style="width: 160px;"><strong>Critical</strong></td>
+                                        <td>{{ sla_data[4] }} days to remediate</td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width: 160px;"><strong>High</strong></td>
+                                        <td>{{ sla_data[5] }} days to remediate</td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width: 160px;"><strong>Medium</strong></td>
+                                        <td>{{ sla_data[6] }} days to remediate</td>
+                                      </tr>
+                                      <tr>
+                                        <td style="width: 160px;"><strong>Low</strong></td>
+                                        <td>{{ sla_data[7] }} days to remediate</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+
+                            <!-- End SLA -->
+                            <!-- Data Classifications -->
+
+                                <div class="panel panel-default panel-default-secondary">
+                                <div class="panel-heading">
+                                  <h3 class="panel-title"><span class="fa fa-info-circle fa-fw" aria-hidden="true"></span>&nbsp;&nbsp;Data Classifications</h3>
+                                </div>
+
+                                {% if app_data.SubjectToLegalHold or app_data.RetentionPeriod or app_data.PII or
+                                    app_data.PCI or app_data.PHI or app_data.EmployeeData or app_data.MiscCustomerData or
+                                    app_data.UserRecords %}
+                                <div class="table-responsive">
+                                  <table class="table table-striped" id="set-width"  aria-describedby="Components Table">
+                                    <tbody>
+                                    <th style="display: none;"></th>
+                                      {% if app_data.SubjectToLegalHold %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>SubjectToLegalHold</strong></td>
+                                            <td>{{ app_data.SubjectToLegalHold }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.RetentionPeriod %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>RetentionPeriod</strong></td>
+                                            <td>{{ app_data.RetentionPeriod }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.PII %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>PII</strong></td>
+                                            <td>{{ app_data.PII }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.PCI %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>PCI</strong></td>
+                                            <td>{{ app_data.PCI }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.PHI %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>PHI</strong></td>
+                                            <td>{{ app_data.PHI }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.EmployeeData %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Employee Data</strong></td>
+                                            <td>{{ app_data.EmployeeData }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.MiscCustomerData %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Customer Data</strong></td>
+                                            <td>{{ app_data.MiscCustomerData }}</td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.UserRecords %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>User Records</strong></td>
+                                            <td>{{ app_data.UserRecords }}</td>
+                                          </tr>
+                                      {% endif %}
+
+                                    </tbody>
+                                  </table>
+                                </div>
+                                {% else %}
+                                <div class="panel-body">
+                                    <small class="text-muted"><em>No data classifications identified.</em></small>
+                                </div>
+                                {% endif %}
+
+                              </div>
+
+                            <!-- End Data Classifications -->
+                            <!-- Lang -->
+
+                              <div class="panel panel-default panel-default-secondary">
+                                <div class="panel-heading">
+                                  <h3 class="panel-title">
+                                      <span class="fa fa-language" aria-hidden="true"></span>&nbsp;&nbsp;Languages ({{ ld['active_languages']|length }})
+                                  </h3>
+                                </div>
+                                <div class="panel-body" style="text-align: center;">
+                                  <div style="display: inline-block; padding: 0px 15px 0px 15px; vertical-align: top;">
+                                    <div class="chart" id="donut-lang" style="padding: 0px; position: relative;">
+                                        <canvas id="newChart"></canvas>
+                                    </div>
+                                    <div style="padding: 10px 0px 10px 0px;">
+
+                                        <strong>{{ ld['total_files'] }}</strong> files  and
+
+
+                                        <strong>{{ ld['total_loc'] }}</strong> lines of code
+
+                                    </div>
+                                  </div>
+                                  <div style="display: inline-block; padding: 0px 15px 0px 15px; white-space: nowrap; text-align: left;">
+                                    <div id="donut-lang-container">
+                                        <table style="font-size:smaller;color:#545454"  aria-describedby="Components Table">
+                                            <tbody>
+                                                <th style="display: none;"></th>
+                                                {% for i in ld['active_languages'] %}
+                                                    {% for j in i %}
+                                                        <tr>
+                                                            <td class="legendColorBox">
+                                                                <div style="border:1px solid #ccc;padding:1px">
+                                                                    <div style="width:4px;height:0;border:5px solid {{ color_wheel[j] }};overflow:hidden"></div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="legendLabel">&nbsp;{{ j }} - {{ i[j] }} LoC</td>
+                                                        </tr>
+                                                    {% endfor %}
+
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                            <!-- end lang  -->
+                            <!-- Custom fields -->
+
+                            <!-- end custom fields -->
+
+
+
+                            </div>
+                            </div>
+
+                        </div>
+                        <!-- /.col-lg-12 -->
+                    </div>
+
+
+    </div>
+
+{#  Scripts  #}
+<script src='../static/js/Chart.js'></script>
+<script>
+
+const data = {
+  labels: [
+      {% for i in ld['active_languages'] %}
+          {% for j in i %}
+              '{{ j }}',
+          {% endfor %}
+      {% endfor %}
+  ],
+  datasets: [{
+    label: 'My First Dataset',
+    data: [
+        {% for i in ld['active_languages'] %}
+          {% for j in i %}
+              {{ i[j] }},
+          {% endfor %}
+        {% endfor %}
+    ],
+    backgroundColor: [
+      {% for i in ld['active_languages'] %}
+          {% for j in i %}
+              '{{ color_wheel[j] }}',
+          {% endfor %}
+      {% endfor %}
+    ],
+    hoverOffset: 4
+  }]
+};
+
+// get chart canvas
+var ctx = document.getElementById("newChart").getContext("2d");
+var newChart = new Chart(ctx, {
+  type: 'doughnut',
+  data: data,
+    options: {
+        legend: {
+            display: false,
+        }
+    }
+});
+</script>
+{% endblock %}

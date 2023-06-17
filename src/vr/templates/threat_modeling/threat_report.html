@@ -1,0 +1,726 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
+
+                </h3>
+                {% include "application_horizontal_bar.html" %}
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+
+        <!-- start of tabs -->
+        <div class="row hidden-xs">
+            <div class="col-lg-12">
+
+                <ul class="breadcrumb main">
+
+                    <li class="active">
+                        <a class="active" href="/product">Threat and Migitation Report</a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading tight">
+                                <h3 class="has-filters">
+                                    Threat and Mitigation Report
+                                </h3>
+                                <h3 class="has-filters">
+                                    {{ threats|length }} Total Threats Identified
+                                </h3>
+                                <h3 class="has-filters">
+                                    {{ num_threats_mitigated }} Threats Can Be Mitigated with Suggested Controls
+                                </h3>
+                            </div>
+
+                        </div>
+
+                        <div class="clearfix">
+
+
+                            <div class="pull-left pagination  pagination-sm">
+                                Summarized Results - Showing entries 1 to {{ threats|length }} of {{ threats|length }}
+                            </div>
+
+                            <nav class="pull-right" aria-label="Pagination">
+                                <ul class="pagination pagination-sm">
+
+
+                                    <li>
+                                        <!-- Split button -->
+                                        &nbsp;
+                                        <div class="btn-group">
+                                            <button type="button" class="btn-sm btn-secondary dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Page Size
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="?page_size=25">25</a></li>
+                                                <li><a href="?page_size=50">50</a></li>
+                                                <li><a href="?page_size=75">75</a></li>
+                                                <li><a href="?page_size=100">100</a></li>
+                                                <li><a href="?page_size=150">150</a></li>
+
+                                                <li><a href="?page_size=4">All</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+
+                                </ul>
+                            </nav>
+
+
+                        </div>
+                        <div class="panel panel-default table-responsive">
+                            <div id="products_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                <div class="dt-buttons btn-group">
+                                    <button class="btn btn-default buttons-collection buttons-colvis" tabindex="0"
+                                            aria-controls="products" type="button" aria-haspopup="dialog"><span>Column visibility</span><span
+                                            class="dt-down-arrow">▼</span></button>
+                                    <button class="btn btn-default buttons-copy buttons-html5" tabindex="0"
+                                            aria-controls="products" type="button"><span>Copy</span></button>
+                                    <button class="btn btn-default buttons-excel buttons-html5" tabindex="0"
+                                            aria-controls="products" type="button"><span>Excel</span></button>
+                                    <button class="btn btn-default buttons-csv buttons-html5" tabindex="0"
+                                            aria-controls="products" type="button"><span>CSV</span></button>
+                                    <button class="btn btn-default buttons-pdf buttons-html5" tabindex="0"
+                                            aria-controls="products" type="button"><span>PDF</span></button>
+                                    <button class="btn btn-default buttons-print" tabindex="0" aria-controls="products"
+                                            type="button"><span>Print</span></button>
+                                </div>
+                                <div id="products_filter" class="dataTables_filter"><label>Search:<input type="search"
+                                                                                                         class="form-control input-sm"
+                                                                                                         placeholder=""
+                                                                                                         aria-controls="products"></label>
+                                </div>
+                                <table id="products"
+                                       class="tablesorter-bootstrap table table-condensed table-striped dataTable no-footer" aria-describedby="Components Table">
+                                    <thead>
+                                    <tr>
+                                        <th class="noVis sorting_disabled" rowspan="1" colspan="1"
+                                            style="width: 0.0833333px;" data-column-index="0" aria-label=""></th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 79.1667px;" data-column-index="1"
+                                            aria-label="Product&amp;nbsp;: activate to sort column ascending"><a
+                                                title="Click to sort descending" href="?o=-name">SID&nbsp;<div
+                                                class="fa fa-sort-asc dd-sort"></div></a></th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 32px;" data-column-index="2"
+                                            aria-label="Tags: activate to sort column ascending">Threat
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 65px;" data-column-index="3"
+                                            aria-label=" Criticality: activate to sort column ascending"> Status
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 66.05px;" data-column-index="4"
+                                            aria-label=" Metadata: activate to sort column ascending"> Control Option
+                                        </th>
+                                        <th class="text-center sorting" tabindex="0" aria-controls="products"
+                                            rowspan="1" colspan="1" style="width: 31px;" data-column-index="5"
+                                            aria-label="Eng.: activate to sort column ascending">Validated By
+                                        </th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for i in threats %}
+                                    <tr class="odd">
+                                        <td class="  noVis">
+                                            <div class="pull-left">
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle pull-left"
+                                                       data-toggle="dropdown">&nbsp;<strong class="fa fa-ellipsis-v"></strong>&nbsp;</a>
+                                                    <ul class="dropdown-menu" role="menu"
+                                                        aria-labelledby="dropdownMenu1">
+                                                        <li role="presentation">
+                                                            <a class="" href="/product/3">
+                                                                <div class="fa fa-list-alt"></div> View
+                                                            </a>
+                                                        </li>
+
+                                                        <li role="presentation">
+                                                            <a class="" href="/product/3/edit">
+                                                                <div class="fa fa-pencil-square-o"></div> Edit
+                                                            </a>
+                                                        </li>
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li>
+                                                            <a href="/product/3/engagements">
+                                                                <div class="fa fa-calendar"></div> View Engagements
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="/product/3/new_engagement">
+                                                                <div class="fa fa-plus"></div> Add New Engagement
+                                                            </a>
+                                                        </li>
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li>
+                                                            <a href="/product/3/finding/open">
+                                                                <div class="fa fa-list-alt"></div> View Open Findings
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="/product/3/finding/open?severity=Critical">
+                                                                <div class="fa fa-exclamation-triangle"></div> View Critical Findings
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="/product/3/finding/open?date=2">
+                                                                <div class="fa fa-calendar"></div> View Last 7 Days Findings
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="/product/3/ad_hoc_finding">
+                                                                <div class="fa fa-plus"></div> Add New Finding
+                                                            </a>
+                                                        </li>
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li>
+                                                            <a href="/endpoint?product=3">
+                                                                <div class="fa fa-list-alt"></div> View Endpoints
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="/endpoint/host?product=3">
+                                                                <div class="fa fa-list-alt"></div> View Hosts
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="/endpoint/vulnerable?product=3">
+                                                                <div class="fa fa-sitemap"></div> View Vulnerable Endpoints
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="/endpoint/host/vulnerable?product=3">
+                                                                <div class="fa fa-sitemap"></div> View Vulnerable Hosts
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="/product/3/endpoint/report">
+                                                                <div class="fa fa-file-text-o"></div> Endpoint Report
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="/endpoints/3/add">
+                                                                <div class="fa fa-plus"></div> Add New Endpoint
+                                                            </a>
+                                                        </li>
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li role="presentation">
+                                                            <a class="" href="/product/3/add_meta_data">
+                                                                <div class="fa fa-list-alt"></div> Add Custom Fields
+                                                            </a>
+                                                        </li>
+                                                        <li role="presentation">
+                                                            <a title="Edit Custom Fields"
+                                                               href="/product/3/edit_meta_data">
+                                                                <div class="fa fa-pencil-square-o"></div> Edit Custom Fields
+                                                            </a>
+                                                        </li>
+                                                        <li role="separator" class="divider"></li>
+                                                        <li role="presentation">
+                                                            <a class="" href="/product/3/add_api_scan_configuration">
+                                                                <div class="fa fa-list-alt"></div> Add Scan API
+                                                                Configuration
+                                                            </a>
+                                                        </li>
+                                                        <li role="presentation">
+                                                            <a title="View API Scan configurations"
+                                                               href="/product/3/view_api_scan_configurations">
+                                                                <div class="fa fa-history"></div> View Scan API
+                                                                Configurations
+                                                            </a>
+                                                        </li>
+
+
+                                                        <li role="separator" class="divider"></li>
+
+                                                        <li role="presentation">
+                                                            <a class="" href="/product/3/object/add">
+                                                                <div class="fa fa-list-alt"></div> Add Product Tracking
+                                                                Files
+                                                            </a>
+                                                        </li>
+
+
+                                                        <li role="presentation">
+                                                            <a href="/product/3/object/view">
+                                                                <div class="fa fa-history"></div> View Product Tracking
+                                                                Files
+                                                            </a>
+                                                        </li>
+
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li role="presentation">
+                                                            <a href="/product/3/report">
+                                                                <div class="fa fa-file-text-o"></div> Product Report
+                                                            </a>
+                                                        </li>
+
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li role="presentation">
+                                                            <a href="/history/23/3">
+                                                                <div class="fa fa-history"></div> View History
+                                                            </a>
+                                                        </li>
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li role="presentation">
+                                                            <a class="text-danger" href="/product/3/delete">
+                                                                <div class="fa fa-trash"></div> Delete
+                                                            </a>
+                                                        </li>
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><a href="#"><strong>{{ i['SID'] }}</strong></a>
+                                            <sup>
+                                                <div class="tag-label A">A</div>
+                                            </sup>
+                                        </td>
+                                        <!-- description column -->
+                                        <td>
+                                            {{ i['description'] }}
+                                        </td>
+                                        <!-- End of description Column -->
+                                        <td class="text-center">
+                                            {{ i['status'] }}
+                                        </td>
+                                        <td>
+                                            {{ i['control_option'] }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ i['validation_method'] }}
+                                        </td>
+
+                                    </tr>
+                                    {% endfor %}
+
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+
+
+                            <div class="pull-left pagination  pagination-sm">
+                                Summarized Results - Showing entries 1 to {{ threats|length }} of {{ threats|length }}
+                            </div>
+
+                            <nav class="pull-right" aria-label="Pagination">
+                                <ul class="pagination pagination-sm">
+
+
+                                    <li>
+                                        <!-- Split button -->
+                                        &nbsp;
+                                        <div class="btn-group">
+                                            <button type="button" class="btn-sm btn-secondary dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Page Size
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="?page_size=25">25</a></li>
+                                                <li><a href="?page_size=50">50</a></li>
+                                                <li><a href="?page_size=75">75</a></li>
+                                                <li><a href="?page_size=100">100</a></li>
+                                                <li><a href="?page_size=150">150</a></li>
+
+                                                <li><a href="?page_size=4">All</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+
+                                </ul>
+                            </nav>
+
+
+                        </div>
+
+                        <div class="clearfix">
+
+
+                            <div class="pull-left pagination  pagination-sm">
+                                Detailed Results - Showing entries 1 to {{ threats|length }} of {{ threats|length }}
+                            </div>
+
+                            <nav class="pull-right" aria-label="Pagination">
+                                <ul class="pagination pagination-sm">
+
+
+                                    <li>
+                                        <!-- Split button -->
+                                        &nbsp;
+                                        <div class="btn-group">
+                                            <button type="button" class="btn-sm btn-secondary dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Page Size
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="?page_size=25">25</a></li>
+                                                <li><a href="?page_size=50">50</a></li>
+                                                <li><a href="?page_size=75">75</a></li>
+                                                <li><a href="?page_size=100">100</a></li>
+                                                <li><a href="?page_size=150">150</a></li>
+
+                                                <li><a href="?page_size=4">All</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+
+                                </ul>
+                            </nav>
+
+
+                        </div>
+                        <div class="panel panel-default table-responsive">
+                            <div id="products_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                                <div class="dt-buttons btn-group">
+                                    <button class="btn btn-default buttons-collection buttons-colvis" tabindex="0"
+                                            aria-controls="products" type="button" aria-haspopup="dialog"><span>Column visibility</span><span
+                                            class="dt-down-arrow">▼</span></button>
+                                    <button class="btn btn-default buttons-copy buttons-html5" tabindex="0"
+                                            aria-controls="products" type="button"><span>Copy</span></button>
+                                    <button class="btn btn-default buttons-excel buttons-html5" tabindex="0"
+                                            aria-controls="products" type="button"><span>Excel</span></button>
+                                    <button class="btn btn-default buttons-csv buttons-html5" tabindex="0"
+                                            aria-controls="products" type="button"><span>CSV</span></button>
+                                    <button class="btn btn-default buttons-pdf buttons-html5" tabindex="0"
+                                            aria-controls="products" type="button"><span>PDF</span></button>
+                                    <button class="btn btn-default buttons-print" tabindex="0" aria-controls="products"
+                                            type="button"><span>Print</span></button>
+                                </div>
+                                <div id="products_filter" class="dataTables_filter"><label>Search:<input type="search"
+                                                                                                         class="form-control input-sm"
+                                                                                                         placeholder=""
+                                                                                                         aria-controls="products"></label>
+                                </div>
+                                <table id="products"  aria-describedby="Components Table"
+                                       class="tablesorter-bootstrap table table-condensed table-striped dataTable no-footer">
+                                    <thead>
+                                    <tr>
+                                        <th class="noVis sorting_disabled" rowspan="1" colspan="1"
+                                            style="width: 0.0833333px;" data-column-index="0" aria-label=""></th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 79.1667px;" data-column-index="1"
+                                            aria-label="Product&amp;nbsp;: activate to sort column ascending"><a
+                                                title="Click to sort descending" href="?o=-name">SID&nbsp;<div
+                                                class="fa fa-sort-asc dd-sort"></div></a></th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 32px;" data-column-index="2"
+                                            aria-label="Tags: activate to sort column ascending">Threat
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 32px;" data-column-index="2"
+                                            aria-label="Tags: activate to sort column ascending">Details
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 65px;" data-column-index="3"
+                                            aria-label=" Criticality: activate to sort column ascending"> Likelihood of Attack
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 66.05px;" data-column-index="4"
+                                            aria-label=" Metadata: activate to sort column ascending"> Severity
+                                        </th>
+                                        <th class="text-center sorting" tabindex="0" aria-controls="products"
+                                            rowspan="1" colspan="1" style="width: 31px;" data-column-index="5"
+                                            aria-label="Eng.: activate to sort column ascending">Prerequisites
+                                        </th>
+                                        <th class="text-center sorting" tabindex="0" aria-controls="products"
+                                            rowspan="1" colspan="1" style="width: 31px;" data-column-index="5"
+                                            aria-label="Eng.: activate to sort column ascending">Mitigations
+                                        </th>
+                                        <th class="text-center sorting" tabindex="0" aria-controls="products"
+                                            rowspan="1" colspan="1" style="width: 31px;" data-column-index="5"
+                                            aria-label="Eng.: activate to sort column ascending">Example
+                                        </th>
+                                        <th class="text-center sorting" tabindex="0" aria-controls="products"
+                                            rowspan="1" colspan="1" style="width: 31px;" data-column-index="5"
+                                            aria-label="Eng.: activate to sort column ascending">References
+                                        </th>
+                                        <th class="text-center sorting" tabindex="0" aria-controls="products"
+                                            rowspan="1" colspan="1" style="width: 31px;" data-column-index="5"
+                                            aria-label="Eng.: activate to sort column ascending">Status
+                                        </th>
+                                        <th class="text-center sorting" tabindex="0" aria-controls="products"
+                                            rowspan="1" colspan="1" style="width: 31px;" data-column-index="5"
+                                            aria-label="Eng.: activate to sort column ascending">Control Option
+                                        </th>
+                                        <th class="text-center sorting" tabindex="0" aria-controls="products"
+                                            rowspan="1" colspan="1" style="width: 31px;" data-column-index="5"
+                                            aria-label="Eng.: activate to sort column ascending">Validated By
+                                        </th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for i in threats %}
+                                    <tr class="odd">
+                                        <td class="  noVis">
+                                            <div class="pull-left">
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle pull-left"
+                                                       data-toggle="dropdown">&nbsp;<strong class="fa fa-ellipsis-v"></strong>&nbsp;</a>
+                                                    <ul class="dropdown-menu" role="menu"
+                                                        aria-labelledby="dropdownMenu1">
+                                                        <li role="presentation">
+                                                            <a class="" href="/product/3">
+                                                                <div class="fa fa-list-alt"></div> View
+                                                            </a>
+                                                        </li>
+
+                                                        <li role="presentation">
+                                                            <a class="" href="/product/3/edit">
+                                                                <div class="fa fa-pencil-square-o"></div> Edit
+                                                            </a>
+                                                        </li>
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li>
+                                                            <a href="/product/3/engagements">
+                                                                <div class="fa fa-calendar"></div> View Engagements
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="/product/3/new_engagement">
+                                                                <div class="fa fa-plus"></div> Add New Engagement
+                                                            </a>
+                                                        </li>
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li>
+                                                            <a href="/product/3/finding/open">
+                                                                <div class="fa fa-list-alt"></div> View Open Findings
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="/product/3/finding/open?severity=Critical">
+                                                                <div class="fa fa-exclamation-triangle"></div> View Critical Findings
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="/product/3/finding/open?date=2">
+                                                                <div class="fa fa-calendar"></div> View Last 7 Days Findings
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="/product/3/ad_hoc_finding">
+                                                                <div class="fa fa-plus"></div> Add New Finding
+                                                            </a>
+                                                        </li>
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li>
+                                                            <a href="/endpoint?product=3">
+                                                                <div class="fa fa-list-alt"></div> View Endpoints
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="/endpoint/host?product=3">
+                                                                <div class="fa fa-list-alt"></div> View Hosts
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="/endpoint/vulnerable?product=3">
+                                                                <div class="fa fa-sitemap"></div> View Vulnerable Endpoints
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="/endpoint/host/vulnerable?product=3">
+                                                                <div class="fa fa-sitemap"></div> View Vulnerable Hosts
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="/product/3/endpoint/report">
+                                                                <div class="fa fa-file-text-o"></div> Endpoint Report
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="/endpoints/3/add">
+                                                                <div class="fa fa-plus"></div> Add New Endpoint
+                                                            </a>
+                                                        </li>
+
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li role="presentation">
+                                                            <a class="" href="/product/3/add_meta_data">
+                                                                <div class="fa fa-list-alt"></div> Add Custom Fields
+                                                            </a>
+                                                        </li>
+                                                        <li role="presentation">
+                                                            <a title="Edit Custom Fields"
+                                                               href="/product/3/edit_meta_data">
+                                                                <div class="fa fa-pencil-square-o"></div> Edit Custom Fields
+                                                            </a>
+                                                        </li>
+                                                        <li role="separator" class="divider"></li>
+                                                        <li role="presentation">
+                                                            <a class="" href="/product/3/add_api_scan_configuration">
+                                                                <div class="fa fa-list-alt"></div> Add Scan API
+                                                                Configuration
+                                                            </a>
+                                                        </li>
+                                                        <li role="presentation">
+                                                            <a title="View API Scan configurations"
+                                                               href="/product/3/view_api_scan_configurations">
+                                                                <div class="fa fa-history"></div> View Scan API
+                                                                Configurations
+                                                            </a>
+                                                        </li>
+
+
+                                                        <li role="separator" class="divider"></li>
+
+                                                        <li role="presentation">
+                                                            <a class="" href="/product/3/object/add">
+                                                                <div class="fa fa-list-alt"></div> Add Product Tracking
+                                                                Files
+                                                            </a>
+                                                        </li>
+
+
+                                                        <li role="presentation">
+                                                            <a href="/product/3/object/view">
+                                                                <div class="fa fa-history"></div> View Product Tracking
+                                                                Files
+                                                            </a>
+                                                        </li>
+
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li role="presentation">
+                                                            <a href="/product/3/report">
+                                                                <div class="fa fa-file-text-o"></div> Product Report
+                                                            </a>
+                                                        </li>
+
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li role="presentation">
+                                                            <a href="/history/23/3">
+                                                                <div class="fa fa-history"></div> View History
+                                                            </a>
+                                                        </li>
+
+                                                        <li role="separator" class="divider"></li>
+                                                        <li role="presentation">
+                                                            <a class="text-danger" href="/product/3/delete">
+                                                                <div class="fa fa-trash"></div> Delete
+                                                            </a>
+                                                        </li>
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        {% for j in i %}
+                                            {% if j != 'target' and j != 'condition' %}
+                                                <td>{{ i[j] }}</td>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                    </tr>
+                                    {% endfor %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                            <div class="pull-left pagination  pagination-sm">
+                                Detailed Results - Showing entries 1 to {{ threats|length }} of {{ threats|length }}
+                            </div>
+
+                            <nav class="pull-right" aria-label="Pagination">
+                                <ul class="pagination pagination-sm">
+
+
+                                    <li>
+                                        <!-- Split button -->
+                                        &nbsp;
+                                        <div class="btn-group">
+                                            <button type="button" class="btn-sm btn-secondary dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Page Size
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="?page_size=25">25</a></li>
+                                                <li><a href="?page_size=50">50</a></li>
+                                                <li><a href="?page_size=75">75</a></li>
+                                                <li><a href="?page_size=100">100</a></li>
+                                                <li><a href="?page_size=150">150</a></li>
+
+                                                <li><a href="?page_size=4">All</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+
+                                </ul>
+                            </nav>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+
+    </div>
+
+{% endblock %}

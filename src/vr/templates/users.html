@@ -1,0 +1,699 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+
+
+        <div class="row hidden-xs">
+            <div class="col-lg-12">
+
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading tight">
+                                <h3 class="has-filters">
+                                    User List
+                                    <div class="dropdown pull-right" style="bottom: 1rem;">
+                                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
+                                                data-toggle="dropdown" aria-expanded="true">
+                                            <span class="fa fa-wrench"></span>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-right" role="menu"
+                                            aria-labelledby="dropdownMenu1">
+
+                                            <li role="presentation">
+                                                <a href="#" data-toggle="modal" data-target="#addUserModal">
+                                                    <div class="fa fa-plus"></div> Add User
+                                                </a>
+                                            </li>
+
+
+                                        </ul>
+                                    </div>
+                                </h3>
+                            </div>
+
+                        </div>
+
+                        {% include "pagination_tab.html" %}
+                        <div class="panel panel-default table-responsive">
+                            <div id="products_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+
+
+                                <table id="products" aria-describedby="Components Table"
+                                       class="tablesorter-bootstrap table table-condensed table-striped dataTable no-footer">
+                                    <thead>
+                                    <tr>
+                                        <input type="hidden" id="val_page" value="{{ table_details['page'] }}">
+                                        <input type="hidden" id="val_per_page" value="{{ table_details['per_page'] }}">
+                                        <input type="hidden" id="val_orderby" value="{{ table_details['orderby'] }}">
+                                        <th style="width: 22.5px;" data-column-index="7"></th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 79.1667px;" data-column-index="1">
+                                            <a href="?o=-name">First Name&nbsp;<div
+                                                class="fa fa-sort-asc dd-sort"></div>
+                                            </a>
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 79.1667px;" data-column-index="1">
+                                            <a href="?o=-name">Last Name&nbsp;<div
+                                                class="fa fa-sort-asc dd-sort"></div>
+                                            </a>
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 65px;" data-column-index="3"
+                                            aria-label=" Criticality: activate to sort column ascending"> Auth Type
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 66.05px;" data-column-index="4"
+                                            aria-label=" Metadata: activate to sort column ascending"> Email
+                                        </th>
+                                        <th class="text-center sorting" tabindex="0" aria-controls="products"
+                                            rowspan="1" colspan="1" style="width: 72.5px;" data-column-index="6"
+                                            aria-label=" Active (Verified) Findings: activate to sort column ascending">
+                                            Username
+                                        </th>
+                                        <th class="text-center" tabindex="0" aria-controls="products"
+                                            rowspan="1" colspan="1" style="width: 72.5px;" data-column-index="6"
+                                            aria-label=" Role Management">Role Management</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for i in entities %}
+                                        <tr class="odd">
+                                            <td class="text-center">
+                                                <div class="fa-solid fa-trash btn-delete" style="display: none;" data-toggle="modal" data-target="#deleteModal-{{i.id}}"></div>
+                                            </td>
+                                            <td class="text-center"><strong>{{ i.first_name }}</strong></td>
+                                            <td class="text-center"><strong>{{ i.last_name }}</strong></td>
+                                            <td class="text-center"><strong>{{ i.auth_type }}</strong></td>
+                                            <td class="text-center"><strong>{{ i.email }}</strong></td>
+                                            <td class="text-center"><strong>{{ i.username }}</strong></td>
+                                            <td class="text-center">
+                                                <div class="fa-solid fa-user-plus" data-toggle="modal" data-target="#roleModal-{{i.id}}"></div>
+                                            </td>
+
+                                        </tr>
+                                        <!-- Delete Confirmation Modal -->
+                                        <div class="modal fade" id="deleteModal-{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Are you sure you want to delete this user? This action is irreversible.
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                        <button type="button" class="btn btn-danger" onclick="deleteUser({{i.id}})">Delete</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+
+
+
+                                <!-- Role Management Modal -->
+                                {% for i in entities %}
+                                <div id="roleModal-{{i.id}}" class="modal fade" role="dialog">
+                                    <div class="modal-dialog">
+
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h4 class="modal-title">Manage Roles for {{i.username}}</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Current Roles:</p>
+                                                <ul id="role_list-{{i.id}}" style="display: inline-grid;">
+                                                {% for role in user_list[i.id].user_roles %}
+                                                    <div id="cur_role_{{i.id}}_{{role}}" style="display: flex;" onmouseover="showDeleteBtn('cur_role_{{i.id}}_{{role}}_del_btn')" onmouseout="hideDeleteBtn('cur_role_{{i.id}}_{{role}}_del_btn')">
+                                                        <li>{{ role }}</li>
+                                                        <div id="cur_role_{{i.id}}_{{role}}_del_btn" style="padding-left: 0.5rem;display: none;" class="fa-solid fa-x" onclick="removeRole({{i.id}}, '{{role}}')"></div>
+                                                    </div>
+                                                    {% if role == 'Application Viewer' %}
+                                                        <ul id="app_viewer_role_list-{{i.id}}" style="display: inline-grid;">
+                                                        {% for j in user_list[i.id].app_perms %}
+                                                            {% for k in all_apps %}
+                                                                {% if j|int == k.ID %}
+                                                                    <div id="cur_app_{{i.id}}_{{k.ApplicationName}}" style="display: inline-flex;"  onmouseover="showDeleteBtn('cur_app_{{i.id}}_{{k.ApplicationName}}_del_btn')" onmouseout="hideDeleteBtn('cur_app_{{i.id}}_{{k.ApplicationName}}_del_btn')">
+                                                                        <li>{{ k.ApplicationName }}</li>
+                                                                        <div id="cur_app_{{i.id}}_{{k.ApplicationName}}_del_btn" style="padding-left: 0.5rem;display: none;" class="fa-solid fa-x" onclick="removeAppViewerRole({{i.id}}, '{{k.ApplicationName}}', '{{k.ID}}')"></div>
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                        </ul>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                </ul>
+                                                <form>
+                                                    <div class="form-group">
+                                                        <label for="new-role-{{i.id}}">Assign New Role:</label>
+                                                        <select class="form-control" id="new-role-{{i.id}}" onchange="showApplications({{i.id}})">
+                                                            {% set user_roles = user_list[i.id].user_roles %}
+                                                            {% if 'Admin' not in user_roles %}
+                                                            <option value="Admin">Admin</option>
+                                                            {% endif %}
+                                                            {% if 'Developer' not in user_roles %}
+                                                            <option value="Developer">Developer</option>
+                                                            {% endif %}
+                                                            {% if 'DevOps' not in user_roles %}
+                                                            <option value="DevOps">DevOps</option>
+                                                            {% endif %}
+                                                            {% if 'QA' not in user_roles %}
+                                                            <option value="QA">QA</option>
+                                                            {% endif %}
+                                                            {% if 'Security' not in user_roles %}
+                                                            <option value="Security">Security</option>
+                                                            {% endif %}
+                                                            {% if 'Application Admin' not in user_roles %}
+                                                            <option value="Application Admin">Application Admin</option>
+                                                            {% endif %}
+
+                                                            <option value="Application Viewer">Application Viewer</option>
+
+
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="form-group" id="assign_apps_container-{{i.id}}" style="display: none;">
+                                                        <label for="new-role-{{i.id}}" style="margin-left: 0.5rem;margin-top: 1.5rem;">Assign Applications:</label>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input select-all" style="margin-bottom: 0.5em;" type="checkbox" value="selectAll" id="selectAll-{{i.id}}">
+                                                            <label class="form-check-label" for="selectAll-{{i.id}}" style="display: contents;">Select All</label>
+                                                        </div>
+                                                        {% set app_perms = user_list[i.id].app_perms %}
+                                                        {% for app in all_apps %}
+                                                        {% if app.ID|string not in app_perms %}
+                                                        <div class="form-check" id="check_box_form-{{i.id}}-{{ app.ID }}">
+                                                            <input class="form-check-input app-check appview_app" style="margin-bottom: 0.5em;" type="checkbox" value="{{ app.ID }}" id="{{ app.ApplicationName }}">
+                                                            <label class="form-check-label" for="{{ app.ApplicationName }}" style="display: contents;">{{ app.ApplicationName }}</label>
+                                                        </div>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary" onclick="addNewUserRole({{i.id}})">Save Changes</button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                        {% include "pagination_tab.html" %}
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+<input type="hidden" id="active_user">
+
+{% include "user_modal.html" %}
+<!-- Modal -->
+<div id="addUserModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add User</h4>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    <div class="form-group">
+                        <label for="firstname">First Name:</label>
+                        <input type="text" class="form-control" id="firstname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname">Last Name:</label>
+                        <input type="text" class="form-control" id="lastname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submitAddUser" onclick="addNewUser()">Add User</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ... -->
+<script>
+function deleteUser(user_id) {
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            location.reload();
+        }
+    };
+    xhttp.open("POST", '/remove_user', true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("user_id=" + user_id);
+}
+
+window.onload = function () {
+    let tableRows = document.querySelectorAll('#products tbody tr');
+    tableRows.forEach(row => {
+        let deleteBtn = row.querySelector('.btn-delete');
+        row.addEventListener('mouseover', () => {
+            deleteBtn.style.display = 'inline-block';
+        });
+        row.addEventListener('mouseout', () => {
+            deleteBtn.style.display = 'none';
+        });
+    });
+};
+
+
+
+function showDeleteBtn(elem_id) {
+    var target_el = document.getElementById(elem_id);
+    target_el.style.display = 'block'
+}
+function hideDeleteBtn(elem_id) {
+    var target_el = document.getElementById(elem_id);
+    target_el.style.display = 'none'
+}
+
+function removeRole(user_id, role) {
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById(`cur_role_${user_id}_${role}`).remove();
+            addOptionByValue(`new-role-${user_id}`, role, role);
+        }
+    };
+    xhttp.open("POST", '/remove_user_role', true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("user_id=" + user_id + "&role=" + role);
+}
+
+function removeAppViewerRole(user_id, app_name, app_id) {
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById(`cur_app_${user_id}_${app_name}`).remove();
+            addCheckboxOption(`assign_apps_container-${user_id}`, `check_box_form-${user_id}-${app_id}`, app_name)
+        }
+    };
+    xhttp.open("POST", '/remove_user_appview_role', true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("user_id=" + user_id + "&app_id=" + app_id);
+}
+
+// get all "Select All" checkboxes
+var selectAllCheckboxes = document.querySelectorAll('.select-all');
+
+selectAllCheckboxes.forEach(function(selectAllCheckbox) {
+    // add click event listener to each "Select All" checkbox
+    selectAllCheckbox.addEventListener('click', function() {
+        // get the container of this checkbox
+        var container = this.closest('.form-group');
+        // get all app checkboxes within the container
+        var appCheckboxes = container.querySelectorAll('.app-check');
+        // check or uncheck all app checkboxes depending on the state of the "Select All" checkbox
+        appCheckboxes.forEach(function(appCheckbox) {
+            appCheckbox.checked = selectAllCheckbox.checked;
+        });
+    });
+});
+
+// get all app checkboxes
+var appCheckboxes = document.querySelectorAll('.app-check');
+
+appCheckboxes.forEach(function(appCheckbox) {
+    // add click event listener to each app checkbox
+    appCheckbox.addEventListener('click', function() {
+        // get the container of this checkbox
+        var container = this.closest('.form-group');
+        // get the "Select All" checkbox within the container
+        var selectAllCheckbox = container.querySelector('.select-all');
+        // if this checkbox was unchecked
+        if (!this.checked) {
+            // also uncheck the "Select All" checkbox
+            selectAllCheckbox.checked = false;
+        } else {
+            // if this checkbox was checked, check if all other app checkboxes are also checked
+            var otherAppCheckboxes = container.querySelectorAll('.app-check');
+            var allChecked = true;
+            otherAppCheckboxes.forEach(function(otherAppCheckbox) {
+                if (!otherAppCheckbox.checked) {
+                    allChecked = false;
+                }
+            });
+            // if all app checkboxes are checked, also check the "Select All" checkbox
+            if (allChecked) {
+                selectAllCheckbox.checked = true;
+            }
+        }
+    });
+});
+
+function addOptionByValue(selectElementId, value, text) {
+    var select = document.getElementById(selectElementId);
+    var option = document.createElement("option");
+    option.value = value;
+    option.text = text;
+    select.add(option);
+}
+
+
+function showApplications(user_id) {
+    var select = document.getElementById("new-role-" + user_id);
+  var selectedOption = select.options[select.selectedIndex].value;
+
+  if (selectedOption == "Application Viewer") {
+    // Do something when Application Viewer is selected
+    document.getElementById('assign_apps_container-' + user_id).style.display = 'block';
+  } else {
+    document.getElementById('assign_apps_container-' + user_id).style.display = 'none';
+  }
+
+}
+function removeOptionByValue(selectElementId, value) {
+    var select = document.getElementById(selectElementId);
+    for(var i = 0; i < select.options.length; i++) {
+        if(select.options[i].value === value) {
+            select.remove(i);
+            break;
+        }
+    }
+}
+function appendLiToUl(userId, value) {
+    var ul = document.getElementById('role_list-' + userId);
+    var li = document.createElement('li');
+    li.textContent = value;
+    ul.appendChild(li);
+}
+function appendLiToAppUl(userId, value) {
+    var ul = document.getElementById('app_viewer_role_list-' + userId);
+    var li = document.createElement('li');
+    li.textContent = value;
+    ul.appendChild(li);
+}
+function addNewUserRole(user_id) {
+    var new_role = document.getElementById(`new-role-${user_id}`).value;
+    if (new_role == "Application Viewer") {
+        addNewAppViewerRole(user_id)
+    } else {
+        var xhttp = new XMLHttpRequest();
+        var csrf_token = "{{ csrf_token() }}";
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                appendLiToUl(user_id, new_role);
+                removeOptionByValue(`new-role-${user_id}`, new_role);
+            }
+        };
+        xhttp.open("POST", '/add_user_role', true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+        xhttp.send("user_id=" + user_id + "&new_grp=" + new_role);
+    }
+}
+
+function removeCheckboxOption(user_id, app_id) {
+    var elem = document.getElementById(`check_box_form-${user_id}-${app_id}`);
+    elem.remove();
+}
+
+function addCheckboxOption(parentId, checkboxId, labelText) {
+    var parent = document.getElementById(parentId);
+    var div = document.createElement("div");
+    div.className = "form-check";
+
+    var input = document.createElement("input");
+    input.type = "checkbox";
+    input.className = "form-check-input";
+    input.id = checkboxId;
+
+    var label = document.createElement("label");
+    label.className = "form-check-label";
+    label.htmlFor = checkboxId;
+    label.innerText = labelText;
+
+    div.appendChild(input);
+    div.appendChild(label);
+    parent.appendChild(div);
+}
+
+
+function addNewAppViewerRole(user_id) {
+    var inputs = document.querySelectorAll('.appview_app');
+    var values = [];
+    var names = [];
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].checked) {
+            values.push(inputs[i].value);
+            names.push(inputs[i].id);
+        }
+    }
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            for (var i = 0; i < names.length; i++) {
+                appendLiToAppUl(user_id, names[i]);
+            }
+            for (var i = 0; i < values.length; i++) {
+                removeCheckboxOption(user_id, values[i]);
+            }
+        }
+    };
+    xhttp.open("POST", '/add_user_role', true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("user_id=" + user_id + "&new_grp=" + "Application Viewer" + "&values=" + values);
+}
+
+function addNewUser() {
+    var firstname = document.getElementById('firstname').value;
+    var lastname = document.getElementById('lastname').value;
+    var email = document.getElementById('email').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            location.reload();
+        }
+    };
+    xhttp.open("POST", '/add_new_user', true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("firstname=" + firstname + "&lastname=" + lastname + "&email=" + email);
+
+}
+</script>
+
+<script>
+var add_active = 'n'
+var user_list = {{ user_list|safe }}
+var cur_user = "{{ user.username }}"
+
+function updateUserModal(user_id) {
+    document.getElementById('active_user').value = user_id;
+    document.getElementById('add_role_section').style.display = 'none';
+    var user_info = user_list[user_id]
+
+    document.getElementById('um_username').innerText = user_info.username;
+    document.getElementById('um_firstname').innerText = user_info.first_name;
+    document.getElementById('um_lastname').innerText = user_info.last_name;
+    document.getElementById('um_email').innerText = user_info.email;
+    var parent_el =  document.getElementById('role_section');
+    removeAllChildNodes(parent_el)
+    var user_roles = user_info.user_roles;
+    for (var i = 0; i < user_roles.length; i++) {
+        var new_el = document.createElement('p');
+        new_el.id = `role_${user_roles[i]['id']}`;
+        new_el.innerHTML = user_roles[i]['name'] + `&nbsp;&nbsp;<a href="#"><div class="fas fa-user-times" onclick="removeGroup(${user_id}, ${user_roles[i]['id']})"></div></a>`;
+        parent_el.appendChild(new_el);
+    }
+
+    showModal('user_modal')
+}
+
+function addGroupInit() {
+    if (add_active == 'n') {
+        document.getElementById('add_role_section').style.display = 'block';
+        add_active = 'y';
+    } else {
+        document.getElementById('add_role_section').style.display = 'none';
+        add_active = 'n';
+    }
+}
+
+function addGroup() {
+    addGroupBackend()
+}
+
+function addGroupGui(pairing_id, group_name, user_id) {
+    var user_id = document.getElementById('active_user').value;
+    var parent_el =  document.getElementById('role_section');
+    var new_el = document.createElement('p');
+    new_el.id = `role_${pairing_id}`;
+    new_el.innerHTML = group_name + `&nbsp;&nbsp;<a href="#"><div class="fas fa-user-times" onclick="removeGroup(${user_id}, ${pairing_id})"></div></a>`;
+    parent_el.appendChild(new_el);
+    user_list[user_id].user_roles.push({'name': group_name, 'id': pairing_id});
+}
+
+function addGroupBackend() {
+    var new_grp = document.getElementById('add_group_select').value;
+    var active_user_id = document.getElementById('active_user').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var resp = JSON.parse(this.responseText);
+            addGroupGui(resp.id, resp.name, resp.user_id)
+        }
+    };
+    xhttp.open("POST", '/add_user_role', true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("new_grp=" + new_grp + "&user_id=" + active_user_id);
+
+}
+
+function removeGroup(user_id, role_id) {
+    console.log(user_id + ", " + role_id)
+    removeGroupBackend(role_id)
+}
+
+function removeGroupGui(pairing_id) {
+    var role_el = document.getElementById(`role_${pairing_id}`)
+    var group_name = role_el.innerText;
+    console.log('grp_name: ' + group_name)
+    role_el.remove()
+    var user_id = document.getElementById('active_user').value;
+    user_list[user_id].user_roles.pop({'name': group_name, 'id': pairing_id});
+}
+
+function removeGroupBackend(pairing_id) {
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            removeGroupGui(pairing_id)
+        }
+    };
+    xhttp.open("POST", '/remove_user_role', true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("pairing_id=" + pairing_id);
+}
+
+function removeAllChildNodes(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
+
+function updatePerPage(app_id, new_per_page) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/users", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_per_page=" + new_per_page);
+}
+
+function updatePagination(app_id, new_page) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/users", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_page=" + new_page);
+}
+
+function fieldSorter(app_id, field_name, new_dir) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/users", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
+}
+</script>
+
+{% endblock %}

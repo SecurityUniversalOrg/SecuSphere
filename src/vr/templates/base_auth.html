@@ -1,0 +1,354 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    {% if title %}{{ title }} - Vulnerability Manager {% else %}Vulnerability Manager{% endif %}
+{% endblock %}
+
+{% block head %}
+<!-- meta and links --> 
+  {{ super() }}
+
+  <meta charset="UTF-8" />
+{#  <link rel="shortcut icon" type="image/x-icon" href="/static/images/lock_only.png" />#}
+  <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome/css/all.css') }}" />
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/introjs.min.css') }}" />
+
+
+  <!-- style -->
+{% endblock %}
+
+
+
+<!-- Top container -->
+{% block navbar %}
+
+
+
+  <div class="top_menu">
+
+    <span id="logo_container" class="float_left col_3 auto_width" onclick="openNav();menuAnimate(menuButton)">
+{#      <img src="/static/images/web_transparent.png" height="75" width="292" alt="logo" border="0">#}
+    </span>
+  
+    <div id="top_nav_bar_cont" class="col_3">
+
+
+      <span id="top_navbar" class="col_3 auto_width" onmouseenter="addAndRemoveClass('top_nav_btn_r', 'visible', 'invisible');addAndRemoveClass('top_nav_btn_l', 'visible', 'invisible')" onmouseleave="addAndRemoveClass('top_nav_btn_r', 'invisible', 'visible');addAndRemoveClass('top_nav_btn_l', 'invisible', 'visible')">
+
+        <button id="top_nav_btn_l" class="invisible top_nav_btn_l menu_top_item  auto_width float_left" onclick="goBack()">
+          <i class="top_nav_i fas fa-arrow-alt-circle-left fa-3x"></i>
+        </button>
+
+        <ul class="breadcrumb">
+            {% if 'name' in NAV['CAT'] %}
+            {% if NAV['CAT']['name'] == NAV['curpage']['name'] %}
+            {% else %}
+            <li>{{ NAV['CAT']['name'] }}</li>
+            {% endif %}
+            {% endif %}
+            <li>{{ NAV['curpage']['name'] }}</li>
+        </ul>
+
+        <button id="top_nav_btn_r" class="invisible top_nav_btn_r menu_top_item  auto_width float_right" onclick="goForward()">
+          <i class="top_nav_i fas fa-arrow-alt-circle-right fa-3x"></i>
+        </button>
+      
+      </span>
+
+    </div>
+
+    <div id="top_menu_container" class="float_right col_4">
+
+  	  <span id="menu_icon_container" class="float_right col_4 auto_width">
+
+
+        <button class="menu_top_item notification_button auto_width float_left" id="menu_notifications">
+
+  	      <div id="menu_top_dropdown_menu" class="float_left col_6" style="display: none;overflow: auto;max-height: 50rem;">
+
+            <div class="dashboard_card_flex" id="menu_notification_card" style="background-color: rgb(177, 181, 176, 1) !important;">
+              <div class="dashboard_card_header" id="menu_notification_card_header" style="background-color: rgb(177, 181, 176, 1) !important;">
+                <p class="dashboard_card_task_category" id="menu_notification_header_txt" style="background-color: rgb(177, 181, 176, 1) !important;color:black;"><div class="far fa-bell"></div> {{ new_msg_cnt }} Notifications</p>
+              </div>
+              
+              <div class="dashboard_card_body">
+                <table class="dashboard_task_table" aria-describedby="Component Table">
+                  <tbody>
+                    <th style="display: none;"></th>
+                    {% for msg in messages %}
+                        {% if msg['topic_name'] == 'Security Event' %}
+                            <tr class="dashboard_task_table_tr" onclick="window.location='{{ url_for('ir.secevent_details', id=msg['entity_id']) }}';">
+                        {% elif msg['topic_name'] == 'Security Incident' %}
+                            <tr class="dashboard_task_table_tr" onclick="window.location='{{ url_for('ir.secincident_details', id=msg['entity_id']) }}';">
+                        {% elif msg['topic_name'] == 'Service Ticket' %}
+                            <tr class="dashboard_task_table_tr" onclick="window.location='{{ url_for('operations.service_tickets') }}';">
+                        {% elif msg['topic_name'] == 'Message' %}
+                            <tr class="dashboard_task_table_tr" onclick="window.location='{{ url_for('operations.messages') }}';">
+                        {% elif msg['topic_name'] == 'Authorization' %}
+                            <tr class="dashboard_task_table_tr" onclick="window.location='{{ url_for('admin.authorizations') }}';">
+                        {% elif msg['topic_name'] == 'Suggested Action' %}
+                            <tr class="dashboard_task_table_tr" onclick="window.location='{{ url_for('admin.suggested_actions') }}';">
+                        {% else %}
+                            <tr class="dashboard_task_table_tr">
+                        {% endif %}
+
+
+                              <td class="dashboard_task_table_td">
+                                <div class="dashboard_task_form_check">
+                                  <label class="dashboard_task_form_check_label">
+                                    {{ msg['topic_name'] }}
+                                    <span class="dashboard_task_form_check_sign"></span>
+                                  </label>
+                                  <span></span>
+                                </div>
+                              </td>
+
+                              <td class="dashboard_task_table_td">
+                                  {{ msg['msg'] | safe }}
+                              </td>
+                              <td class="dashboard_task_table_td_actions">
+                                <button class="dashboard_task_table_button_info" type="button">
+                                  <div class="fa fa-edit"></div>
+                                </button>
+                                <button class="dashboard_task_table_button_danger" type="button">
+                                  <div class="fa fa-times"></div>
+                                </button>
+                              </td>
+
+                            </tr>
+
+
+
+                    {% endfor %}
+
+
+                  </tbody>
+                </table> 
+                
+                <div class="dashboard_card_footer">
+                  <hr class="dashboard_hr">
+                  <div class="dashboard_quarter_footer_stats">
+                    <div>
+                      <div class="fa fa-history dashboard_footer_history"></div>
+                      Updated 3 Minutes Ago
+                    </div>
+                  </div>
+                </div>
+              </div>  
+            </div>
+  	      </div>
+        </button>
+
+        <a href="{{ url_for('admin.messages') }}">
+          <button id="message_btn" class="menu_top_item auto_width float_left">
+            <span class="su_tooltip_menu">
+                <div class="fa fa-envelope fa-3x"></div>
+                <span class="su_tooltiptext" style="top: -3.85rem;">Messages</span>
+              </span>
+          </button>
+        </a>
+
+        <a href="{{ url_for('admin.profile') }}">
+          <button id="profile_btn" class="menu_top_item auto_width float_left">
+            <span class="su_tooltip_menu">
+                <div class="far fa-user fa-3x"></div>
+                <span class="su_tooltiptext" style="top: -3.85rem;">My Profile</span>
+              </span>
+          </button>
+        </a>
+
+
+  	  
+  	    <button class="menu_button" id="menuButton" onclick="openNav();menuAnimate(this);">
+
+          <span class="su_tooltip_menu">
+                <div id="menu_bars">
+                    <div class="bar1"></div>
+                    <div class="bar2"></div>
+                    <div class="bar3"></div>
+                  </div>
+                <span class="su_tooltiptext" style="top: -1.75rem;position: absolute;left: -2.25rem;font-size: 14px;">Menu</span>
+              </span>
+        </button>
+      </span>
+    
+    </div>
+
+  </div>
+
+{% endblock %}
+
+{% block content %}
+
+  <!-- Sidebar/menu -->
+  <nav class="sidebar scroller" id="mySidebar"><br>
+    <div class="top_menu_bar">
+
+      <div class="top_menu_bottom_container">
+        <span>Welcome, <strong>{{ user.first_name }}</strong></span>
+        <div class="fas fa-times close_btn" onclick="closeNav();menuAnimate(menuButton)"></div>
+        <br>
+        <div style="display: inline-flex;">
+            <a id="menu_bar_messages" href="{{ url_for('admin.messages') }}" class="menu_bar_item"><div class="fa fa-envelope"></div></a>
+            <a id="menu_bar_profile" href="{{ url_for('admin.profile') }}" class="menu_bar_item"><div class="fa fa-user"></div></a>
+            <a id="menu_bar_edit_profile" href="{{ url_for('admin.edit_profile') }}" class="menu_bar_item"><div class="fa fa-cog"></div></a>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="menu_main">
+      
+      <a href="{{ url_for('admin.profile') }}" class="menu_main_row menu_btn">
+          <div class="fas fa-address-card side_menu_btn"></div>Profile
+      </a>
+      
+      <button id="admin_menu" class="menu_main_row dropdown_btn">
+          <div class="fab fa-expeditedssl side_menu_btn"></div>Admin
+          <div class="fa fa-caret-down"></div>
+      </button>
+      <div class="dropdown_container">
+        <a id="onboarding_tab" href="{{ url_for('admin.onboarding') }}" class="menu_child_btn reg">Onboarding</a>
+        {% if user.is_admin %}
+          <a href="{{ url_for('admin.users') }}" class="menu_child_btn reg">Users</a>
+          <a href="{{ url_for('admin.create_client') }}" class="menu_child_btn reg">Create App Client</a>
+        {% endif %}
+      </div>
+
+
+      <button class="menu_main_row dropdown_btn">
+          <div class="fas fa-window-restore side_menu_btn"></div>Applications
+          <div class="fa fa-caret-down"></div>
+      </button>
+	  <div class="dropdown_container">
+        <a href="{{ url_for('vulns.all_applications') }}" class="menu_child_btn reg">All Applications</a>
+        {% if user.is_admin %}
+          <a href="{{ url_for('vulns.add_application') }}" class="menu_child_btn reg">Add Application</a>
+        {% endif %}
+        <a href="{{ url_for('sourcecode.cheatsheets', sheet_name='Index') }}" class="menu_child_btn reg">Cheat Sheets</a>
+      </div>
+
+      <button class="menu_main_row dropdown_btn">
+          <div class="fas fa-circle-notch side_menu_btn"></div>CI/CD
+          <div class="fa fa-caret-down"></div>
+      </button>
+	  <div class="dropdown_container">
+        <a href="{{ url_for('vulns.all_pipeline_jobs') }}" class="menu_child_btn reg">Pipeline Jobs</a>
+      </div>
+
+      <button class="menu_main_row dropdown_btn">
+          <div class="fas fa-server side_menu_btn"></div>Infrastructure
+          <div class="fa fa-caret-down"></div>
+      </button>
+	  <div class="dropdown_container">
+        <a href="{{ url_for('orchestration.all_dockerimages') }}" class="menu_child_btn reg">All Docker Images</a>
+      </div>
+
+      <button class="menu_main_row dropdown_btn">
+          <div class="fas fa-ticket-alt side_menu_btn"></div>Issue Management
+          <div class="fa fa-caret-down"></div>
+      </button>
+	  <div class="dropdown_container">
+        <a href="{{ url_for('sourcecode.all_service_tickets') }}" class="menu_child_btn reg">All Tickets</a>
+      </div>
+
+      <button class="menu_main_row dropdown_btn">
+          <div class="fas fa-gavel side_menu_btn"></div>Regulations
+          <div class="fa fa-caret-down"></div>
+      </button>
+	  <div class="dropdown_container">
+        <a href="{{ url_for('vulns.all_regulations') }}" class="menu_child_btn reg">All Regulations</a>
+      </div>
+
+      <button class="menu_main_row dropdown_btn">
+          <div class="fas fa-bug side_menu_btn"></div>Vulnerabilities
+          <div class="fa fa-caret-down"></div>
+      </button>
+	  <div class="dropdown_container">
+        <a href="{{ url_for('vulns.all_vulnerabilities') }}" class="menu_child_btn reg">All Vulnerabilities</a>
+      </div>
+
+      {% if user.is_admin %}
+      <button class="menu_main_row dropdown_btn">
+          <div class="fas fa-brain side_menu_btn"></div>Integrations
+          <div class="fa fa-caret-down"></div>
+      </button>
+	  <div class="dropdown_container">
+        <a href="{{ url_for('vulns.all_integrations') }}" class="menu_child_btn reg">All Integrations</a>
+        <a href="{{ url_for('vulns.add_integration') }}" class="menu_child_btn reg">Add Integration</a>
+      </div>
+      {% endif %}
+
+	  <a href="{{ url_for('admin.logout') }}" class="menu_main_row menu_btn">
+          <div class="fas fa-eject side_menu_btn"></div>Logout
+      </a>
+        <br><br>
+	  <br><br><br><br>
+
+    </div>
+  </nav>
+
+  <!-- Overlay effect when opening sidebar on small screens -->
+  <div class="su_overlay" onclick="closeNav()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+  <!-- End Sidebar -->
+  <input type="hidden" id="msg_display_tracker" value="n" />
+  <!-- !PAGE CONTENT! -->
+
+
+
+<div class="main_container" id="main">
+
+{% block app_content %}
+  <!-- START help desk modal section -->
+
+{% endblock %}
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+  {{ super() }}
+  <!-- scripts -->
+
+
+  <script src="{{ url_for('static', filename='js/core.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/intro.min.js') }}"></script>
+
+  {{ moment.include_moment() }}
+
+  <script>
+    document.addEventListener('click', function(event) {
+      var tracker = document.getElementById('msg_display_tracker');
+      var ignoreClickOnMeElement = document.getElementById('menu_notifications');
+      var isClickInsideElement = ignoreClickOnMeElement.contains(event.target);
+      if (!isClickInsideElement) {
+        if (tracker.value == 'y') {
+          toggleTopNav();
+          tracker.value = 'n';
+        }
+      } else {
+        tracker.value = 'y';
+      }
+    });
+
+    /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+    var dropdown = document.getElementsByClassName("dropdown_btn");
+    var i;
+
+    for (i = 0; i < dropdown.length; i++) {
+      dropdown[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var dropdownContent = this.nextElementSibling;
+      if (dropdownContent.style.display === "block") {
+      dropdownContent.style.display = "none";
+      } else {
+      dropdownContent.style.display = "block";
+      }
+      });
+    }
+
+
+  </script>
+{% endblock %}

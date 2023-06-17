@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: az-creds
+type: Opaque
+data:
+  clientid: {{ .Values.azClientId | b64enc }}
+  secret: {{ .Values.azClientSecret | b64enc }}
+  tenantid: {{ .Values.azTenantId | b64enc }}

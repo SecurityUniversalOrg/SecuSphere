@@ -1,0 +1,351 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">
+                    {{ app_data.ApplicationName }}
+
+                </h3>
+                {% include "application_horizontal_bar.html" %}
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading tight">
+                                <h3 class="has-filters">
+                                    {{ scan.ScanName }} - {{ scan.ScanStartDate }} - Open Findings
+                                    <div class="dropdown pull-right" style="top: -0.5em;">
+                                        &nbsp;
+                                        <button class="btn btn-primary dropdown-toggle" type="button" id="downloadMenu"
+                                                data-toggle="dropdown" aria-expanded="true">
+                                            <span class="fa fa-download"></span>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-right" role="menu"
+                                            aria-labelledby="downloadMenu">
+                                            <li role="presentation">
+                                                <a id="report"
+                                                   href="/open_findings_for_scan/{{ app_data.ID }}/{{ scan.ID }}/export">
+                                                    <div class="fa fa-file-text-o"></div> PDF Report
+                                                </a>
+                                            </li>
+                                            <li role="presentation">
+                                                <a id="csv_export"
+                                                   href="/open_findings_for_scan/{{ app_data.ID }}/{{ scan.ID }}/csv">
+                                                    <div class="fa fa-table"></div> CSV Export
+                                                </a>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+                                </h3>
+                            </div>
+
+                        </div>
+
+                        {% include "pagination_tab.html" %}
+
+                        <div class="dropdown hidden" style="padding-bottom: 5px;" id="bulk_edit_menu">
+
+                            <button class="btn btn-info btn-sm btn-primary dropdown-toggle" type="button"
+                                    id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"
+                                    style="color: black;">
+                                Bulk Edit
+                                <span class="caret"></span>
+                            </button>
+
+                            <div class="btn-group mr-2" role="group" aria-label="Bulk Actions">
+
+                                <button type="button" id="merge_findings" class="btn btn-sm  btn-primary"
+                                        data-toggle="tooltip" data-placement="bottom" title="Merge Findings">
+                                    <a class="white-color merge" href="#" alt="Merge Findings">
+                                        <div class="fa fa-compress"></div>
+                                    </a>
+                                </button>
+
+
+                                <button type="button" class="btn btn-sm  btn-primary" data-toggle="tooltip"
+                                        data-placement="bottom" title="Delete Findings">
+                                    <a class="white-color delete-bulk" href="#" alt="Delete Findings">
+                                        <div class="fa fa-trash"></div>
+                                    </a>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="panel panel-default table-responsive">
+                            <div id="open_findings_wrapper"
+                                 class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+
+                                <div id="open_findings_filter" class="dataTables_filter" style="float: right;padding-top: 1em;padding-bottom: 1em;"><label>Search:<input
+                                        type="search" class="form-control input-sm" placeholder=""
+                                        aria-controls="open_findings"></label></div>
+                                <table id="open_findings" aria-describedby="Components Table"
+                                       class="tablesorter-bootstrap table table-condensed table-striped table-hover dataTable no-footer">
+                                    <thead>
+                                    <tr>
+                                        <input type="hidden" id="val_page" value="{{ table_details['page'] }}">
+                                        <input type="hidden" id="val_per_page" value="{{ table_details['per_page'] }}">
+                                        <input type="hidden" id="val_orderby" value="{{ table_details['orderby'] }}">
+
+
+                                        <th class="noVis sorting_disabled" rowspan="1" colspan="1" style="width: 0px;" data-column-index="1" aria-label=""></th>
+                                        <th onclick="fieldSorter({{ app_data.ID }}, 'Severity', 'dynamic')" class="nowrap centered sorting" tabindex="0" aria-controls="open_findings"
+                                            rowspan="1" colspan="1" style="width: 70px;color: black;" data-column-index="2"
+                                            aria-label="Severity&amp;nbsp;: activate to sort column ascending"><a
+                                                title="Click to sort descending"
+                                                href="#">Severity&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a></th>
+                                        <th onclick="fieldSorter({{ app_data.ID }}, 'VulnerabilityName', 'dynamic')" class="nowrap sorting" tabindex="0" aria-controls="open_findings"
+                                            rowspan="1" colspan="1" style="width: 82px;" data-column-index="3"
+                                            aria-label="Name&amp;nbsp;: activate to sort column ascending"><a
+                                                title="Click to sort ascending"
+                                                href="#">Name&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a></th>
+                                        <th onclick="fieldSorter({{ app_data.ID }}, 'CWEID', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 32px;" data-column-index="4"
+                                            aria-label="CWE: activate to sort column ascending"><a
+                                                title="Click to sort ascending"
+                                                href="#">CWE&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a>
+                                        </th>
+                                        <th onclick="fieldSorter({{ app_data.ID }}, 'CVEID', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 86px;" data-column-index="5"
+                                            aria-label="Vulnerability Id: activate to sort column ascending">
+                                            <a
+                                                title="Click to sort ascending"
+                                                href="#">CVE&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a>
+                                        </th>
+                                        <th onclick="fieldSorter({{ app_data.ID }}, 'AddDate', 'dynamic')" class="nowrap sorting" tabindex="0" aria-controls="open_findings"
+                                            rowspan="1" colspan="1" style="width: 79px;" data-column-index="6"
+                                            aria-label="Date&amp;nbsp;: activate to sort column ascending"><a
+                                                title="Click to sort ascending"
+                                                href="#">Date&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a></th>
+                                        <th class="nowrap sorting" tabindex="0" aria-controls="open_findings"
+                                            rowspan="1" colspan="1" style="width: 27px;" data-column-index="7"
+                                            aria-label="Age: activate to sort column ascending">Age&nbsp;
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 27.4333px;color: black;" data-column-index="8"
+                                            aria-label="SLA: activate to sort column ascending">SLA&nbsp;
+                                        </th>
+                                        <th onclick="fieldSorter({{ app_data.ID }}, 'Source', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 60px;" data-column-index="10"
+                                            aria-label="Found By: activate to sort column ascending"><a
+                                                title="Click to sort ascending"
+                                                href="#">Found By&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a>
+                                        </th>
+                                        <th onclick="fieldSorter({{ app_data.ID }}, 'Status', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 87px;" data-column-index="11"
+                                            aria-label="Status: activate to sort column ascending"><a
+                                                title="Click to sort ascending"
+                                                href="#">Status&nbsp;<div
+                                                class="fa fa-sort dd-sort"></div></a>
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 87px;" data-column-index="11">Resource Type
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                            colspan="1" style="width: 87px;" data-column-index="11">Resource
+                                        </th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for i in entities %}
+                                        <tr class="active_finding odd">
+
+
+
+                                        <td class="  noVis">
+                                            <div class="align-top">
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle pull-left"
+                                                       data-toggle="dropdown">&nbsp;<div class="fa fa-ellipsis-v"></div>&nbsp;</a>
+                                                    <ul class="dropdown-menu" role="menu"
+                                                        aria-labelledby="dropdownMenu1">
+                                                        <li>
+                                                            <a class="" href="/finding/{{ app_data.ID }}/{{ i.VulnerabilityID }}">
+                                                                <div class="fa fa-arrow-circle-right"></div> View
+                                                            </a>
+                                                        </li>
+
+
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: center;" class="centered" data-order="3"><span style="color:black;" class="label severity severity-High">
+                                      {{ i.Severity }}
+                                  </span></td>
+                                        <td style="text-align: center;"><a title="{{ i.VulnerabilityName }}" href="/finding/{{ app_data.ID }}/{{ i.VulnerabilityID }}">{{ i.VulnerabilityName }}</a>
+
+
+                                            <div class="fa fa-code has-popover dojo-sup" data-trigger="hover"
+                                               data-content="/root/register.jsp" data-placement="right"
+                                               data-container="body" data-original-title="Files" title="">
+
+                                            </div>
+                                            <sup>
+{#                                                <a title="Search jar" class="tag-label tag-color" href="/simple_search?query=tag:jar">jar</a>#}
+                                                {% if i.Classification == 'SCA' %}
+                                                <a title="Search lang-pkgs" class="tag-label tag-color" href="/simple_search?query=tag:lang-pkgs">lang-pkgs</a>
+                                                {% elif i.Classification == 'Container' %}
+                                                <a title="Search os-pkgs" class="tag-label tag-color" href="/simple_search?query=tag:os-pkgs">os-pkgs</a>
+                                                {% endif %}
+
+
+                                            </sup>
+                                        </td>
+                                        <td style="text-align: center;" class="nowrap">
+                                            {% if i.CWEID %}
+                                            <a target="_blank" href="https://cwe.mitre.org/data/definitions/{{ i.CWEID.replace('CWE-', '') }}.html">
+                                            <div class="fa fa-external-link"></div>{% endif %} {{ i.CWEID }}
+                                        </a></td>
+                                        <td style="text-align: center;" class="nowrap" style="color: black;">
+                                            {% if i.CVEID %}
+                                            <a target="_blank" href="https://nvd.nist.gov/vuln/detail/{{ i.CVEID }}">
+                                            <div class="fa fa-external-link"></div>{% endif %} {{ i.CVEID }}
+                                        </a></td>
+
+                                        <td style="text-align: center;" class="nowrap">{{ i.ReleaseDate }}</td>
+
+                                        <td style="text-align: center;">{{ moment(i.ReleaseDate|format_datetime).fromNow() }}</td>
+
+                                        <td style="color: black;text-align: center;"><a class="has-popover" data-toggle="tooltip" data-placement="bottom"
+                                               title="" href="#"
+                                               data-content="Overdue: Remediation for high findings in 30 days or less since {{ i.ReleaseDate }})"
+                                               data-original-title=""><span
+                                                class="label severity age-red" style="color: black;">{{ i.SLAStatus|safe }}</span></a></td>
+
+                                        <td style="text-align: center;">{{ i.Source }}</td>
+                                        <td style="text-align: center;" class="nowrap">{{ i.Status }}</td>
+
+                                        <td style="text-align: center;" class="nowrap">
+                                            {% if i.Classification.startswith("Secret") or i.Classification == 'SAST' or i.Classification.startswith("IaC") %}
+                                            File
+                                            {% elif i.Classification.startswith("Container") %}
+                                            Container Library
+                                            {% elif i.Classification == "SCA" %}
+                                            Source Code Library
+                                            {% elif i.Classification == "DAST" %}
+                                            URI
+                                            {% else %}
+                                            {% endif %}
+                                        </td>
+
+                                        <td style="text-align: center;" class="nowrap">
+                                            {% if i.Classification.startswith("Secret") or i.Classification == 'SAST' or i.Classification.startswith("IaC") %}
+                                                {{ i.VulnerableFileName }}{% if i.SourceCodeFileStartLine %}:{{ i.SourceCodeFileStartLine }}{% endif %}{% if i.SourceCodeFileEndLine %}:{{ i.SourceCodeFileEndLine }}{% endif %}
+                                            {% elif i.Classification.startswith("Container") or i.Classification == 'SCA' %}
+                                                {{ i.VulnerablePackage }}
+                                            {% elif i.Classification == "DAST" %}
+                                                {{ i.Uri }}
+                                            {% else %}
+                                            {% endif %}
+
+                                        </td>
+
+                                    </tr>
+                                    {% endfor %}
+
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% include "pagination_tab.html" %}
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+<script>
+function updatePerPage(app_id, new_per_page) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/open_findings_for_scan/" + "{{ app_data.ID }}/{{ scan.ID }}", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_per_page=" + new_per_page);
+}
+
+function updatePagination(app_id, new_page) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/open_findings_for_scan/" + "{{ app_data.ID }}/{{ scan.ID }}", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_page=" + new_page);
+}
+
+function fieldSorter(app_id, field_name, new_dir) {
+    var cur_page = document.getElementById('val_page').value;
+    var cur_per_page = document.getElementById('val_per_page').value;
+    var cur_orderby = document.getElementById('val_orderby').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+        document.body.parentElement.innerHTML = resp;
+    }
+  };
+  xhttp.open("POST", "/open_findings_for_scan/" + "{{ app_data.ID }}/{{ scan.ID }}", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
+}
+</script>
+
+{% endblock %}

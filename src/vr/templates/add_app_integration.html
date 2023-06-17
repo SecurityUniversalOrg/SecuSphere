@@ -1,0 +1,121 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
+
+                </h3>
+                {% include "application_horizontal_bar.html" %}
+            </div>
+        </div>
+
+        <div class="row hidden-xs">
+            <div class="col-lg-12">
+
+                <ul class="breadcrumb main">
+
+                    <li class="">
+                        <a class="" href="/">Home</a>
+                    </li>
+
+                    <li class="">
+                        <a class="" href="/all_integrations">Integration List</a>
+                    </li>
+
+                    <li class="active">
+                        <a class="active" href="/add_integration">New Integration</a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <h3 style="color:white;"> Add an Integration </h3>
+                <form class="form-horizontal" action="#">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_tool_type">Tool Type<sup>*</sup></label>
+                        <div class="col-sm-10  ">
+                            <select name="tool_type" class="form-control selectpicker" required="" id="id_tool_type"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected="">---------</option>
+                                {% for i in entities %}
+                                <option value="{{ i.ID }}">{{ i.Name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_username">Project Key</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="username" maxlength="200" class="form-control" id="id_username">
+                        </div>
+                    </div>
+                    <div class="form-group" onclick="validateIntegration()">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <input style="width: max-content;margin-left: 94px;margin-top: 1rem;" class="btn btn-primary" type="button" value="Validate" id="validate_btn">
+                        </div>
+                    </div>
+                    <div class="form-group" onclick="submitIntegration()">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <input style="width: max-content;margin-left: 94px;margin-top: 1rem;" class="btn btn-primary" type="button" value="Submit" id="submit_btn" disabled="disabled">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+<script>
+function validateIntegration() {
+    var tool_type = document.getElementById('id_tool_type').value;
+    var project_key = document.getElementById('id_username').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        document.getElementById('validate_btn').disabled = true;
+        document.getElementById('submit_btn').disabled = false;
+    };
+    xhttp.open("POST", "/validate_integration", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("tool_type=" + tool_type + "&project_key=" + project_key);
+}
+
+function submitIntegration() {
+    var tool_type = document.getElementById('id_tool_type').value;
+    var project_key = document.getElementById('id_username').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        document.getElementById('validate_btn').disabled = true;
+        document.getElementById('submit_btn').disabled = false;
+    };
+    xhttp.open("POST", "/submit_app_integration/{{ app_id }}", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("tool_type=" + tool_type + "&project_key=" + project_key);
+}
+
+</script>
+
+{% endblock %}

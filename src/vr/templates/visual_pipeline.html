@@ -1,0 +1,1313 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Netmap</title>
+<style>
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 100000; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+.settings_container {
+	width: 100%;
+padding-right: 15px;
+padding-left: 15px;
+margin-right: auto;
+margin-left: auto;
+}
+.settings_row {
+display: flex;
+flex-wrap: wrap;
+margin-right: -15px;
+margin-left: -15px;
+}
+.settings_col_m8_center {
+	flex: 0 0 66.666667%;
+max-width: 66.666667%;
+position: relative;
+width: 100%;
+min-height: 1px;
+padding-right: 15px;
+padding-left: 15px;
+padding-top: 15px;
+margin: auto !important;
+}
+.settings_card {
+	border-radius: 4px;
+background-color: rgb(177, 181, 176, 1) !important;
+margin-bottom: 30px;
+position: relative;
+display: flex;
+flex-direction: column;
+min-width: 0;
+word-wrap: break-word;
+background-clip: border-box;
+border: 1px solid rgba(0,0,0,.125);
+}
+.settings_card_header {
+	padding: 15px 15px 0;
+/*background-color: #fff;*/
+border-bottom: none !important;
+border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0;
+margin-bottom: 0;
+}
+.settings_card_title {
+	margin: 0;
+color: #333;
+font-weight: 300;
+font-size: 26px;
+line-height: 30px;
+font-family: 'exo_2regular', sans-serif;
+text-transform: uppercase;
+}
+.settings_card_body {
+	padding: 15px 15px 10px;
+	flex: 1 1 auto;
+	/*background-color: #fff !important;*/
+}
+.settings_card_form_group {
+	margin-bottom: 1rem;
+}
+.app-node-info {
+	position: absolute;
+	top: 0;
+	left: 45%;
+	background: #444;
+	-webkit-box-shadow: 0 0 1em #000;
+	box-shadow: 0 0 1em #000;
+	z-index: 10;
+	padding: .5em;
+	border-radius: .5em;
+	margin: .5em;
+	font-size: .8em;
+	color: #fff;
+	margin-left: auto;
+	margin-right: auto;
+	min-width: max-content;
+	/* right: 50%; */
+}
+.app, body, html {
+	font-family: helvetica neue,helvetica,sans-serif;
+}
+.menu-toggle {
+	position: absolute;
+	right: 0;
+	top: 6em;
+	margin: .2em .125em;
+	width: 2.5em;
+	height: 2.5em;
+	background-image: url("../static/images/search_icon.png");
+	background-size: 60% 60%;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	z-index: 11;
+	cursor: pointer;
+	border-radius: .25em;
+	background-color: rgba(86, 83, 83, 0.85);
+	-webkit-transition-duration: .25s;
+	transition-duration: .25s;
+	-webkit-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	-webkit-transition-property: background-color;
+	transition-property: background-color;
+}
+.menu {
+    overflow: auto;
+	position: absolute;
+	right: 0;
+	top: 6em;
+	bottom: 0;
+	width: 30%;
+	min-width: 300px;
+	max-width: 100vw;
+	background: #444;
+	-webkit-box-shadow: 0 0 1em #000;
+	box-shadow: 0 0 1em #000;
+	z-index: 10;
+	-webkit-transition-duration: .25s;
+	transition-duration: .25s;
+	-webkit-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	-webkit-transition-property: opacity,-webkit-transform;
+	transition-property: opacity,-webkit-transform;
+	transition-property: transform,opacity;
+	transition-property: transform,opacity,-webkit-transform;
+	-webkit-transform: translateZ(0);
+	transform: translateZ(0);
+	opacity: 1;
+}
+.menu.menu-closed {
+	-webkit-transform: translate3d(30%,0,0);
+	transform: translate3d(30%,0,0);
+	opacity: 0;
+	pointer-events: none;
+}
+.menu-search {
+	border-radius: 1em;
+	border: 0;
+	outline: 0;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: .4em .5em;
+	margin-top: .5em;
+	margin-left: .75em;
+	width: calc(100% - 3.5em);
+	background: #32342d;
+	color: #fff;
+	-webkit-box-shadow: inset 0 .125em .25em #000;
+	box-shadow: inset 0 .125em .25em #000;
+	-webkit-appearance: none;
+}
+button, input {
+	overflow: visible;
+}
+button, input, optgroup, select, textarea {
+	font-family: inherit;
+	font-size: 100%;
+	line-height: 1.15;
+	margin: 0;
+}
+.menu-toggle.menu-open {
+	background-color: transparent;
+}
+.close_modal {
+    float: right;
+}
+.menu-search-results .node-info {
+	padding: .5em;
+	cursor: pointer;
+	border-top: 1px solid #333;
+}
+.node-info-name {
+	font-size: 1.25em;
+	margin-bottom: .125em;
+}
+.menu-search-results .node-info {
+	cursor: pointer;
+}
+
+
+.menu-toggle-2 {
+	position: absolute;
+	right: 0;
+	top: 9em;
+	margin: .2em .125em;
+	width: 2.5em;
+	height: 2.5em;
+	background-image: url("../static/images/categories_icon.png");
+	background-size: 60% 60%;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	z-index: 11;
+	cursor: pointer;
+	border-radius: .25em;
+	background-color: rgba(86, 83, 83, 0.85);
+	-webkit-transition-duration: .25s;
+	transition-duration: .25s;
+	-webkit-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	-webkit-transition-property: background-color;
+	transition-property: background-color;
+}
+.menu-2 {
+    overflow: auto;
+	position: absolute;
+	right: 3em;
+	top: 6em;
+	bottom: 0;
+	width: 30%;
+	min-width: 300px;
+	max-width: 100vw;
+	background: #444;
+	-webkit-box-shadow: 0 0 1em #000;
+	box-shadow: 0 0 1em #000;
+	z-index: 10;
+	-webkit-transition-duration: .25s;
+	transition-duration: .25s;
+	-webkit-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	-webkit-transition-property: opacity,-webkit-transform;
+	transition-property: opacity,-webkit-transform;
+	transition-property: transform,opacity;
+	transition-property: transform,opacity,-webkit-transform;
+	-webkit-transform: translateZ(0);
+	transform: translateZ(0);
+	opacity: 1;
+}
+.menu-2.menu-closed-2 {
+	-webkit-transform: translate3d(30%,0,0);
+	transform: translate3d(30%,0,0);
+	opacity: 0;
+	pointer-events: none;
+}
+.menu-toggle-2.menu-open-2 {
+	background-color: transparent;
+}
+.menu-search-results-2 .node-info-2 {
+	padding: .5em;
+	cursor: pointer;
+	border-top: 1px solid #333;
+    background-color: green;
+}
+.node-info-name-2 {
+	font-size: 1.25em;
+	margin-bottom: .125em;
+}
+.menu-search-results-2 .node-info-2 {
+	cursor: pointer;
+}
+.menu-parent-2 {
+    right: 3rem;
+}
+.menu-search-2 {
+	border: 0;
+	outline: 0;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: .4em .5em;
+	margin-top: .5em;
+	margin-left: .75em;
+	width: calc(100% - 3.5em);
+	background: #32342d;
+	color: #fff;
+	-webkit-box-shadow: inset 0 .125em .25em #000;
+	box-shadow: inset 0 .125em .25em #000;
+	-webkit-appearance: none;
+}
+.menu-search-results-2 {
+
+}
+.menu-toggle-3 {
+	position: absolute;
+	right: 0;
+	top: 12em;
+	margin: .2em .125em;
+	width: 2.5em;
+	height: 2.5em;
+	background-image: url("../static/images/label_icon.png");
+	background-size: 60% 60%;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	z-index: 11;
+	cursor: pointer;
+	border-radius: .25em;
+	background-color: rgba(86, 83, 83, 0.85);
+	-webkit-transition-duration: .25s;
+	transition-duration: .25s;
+	-webkit-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	-webkit-transition-property: background-color;
+	transition-property: background-color;
+}
+.menu-toggle-4 {
+	position: absolute;
+	right: 0;
+	top: 15em;
+	margin: .2em .125em;
+	width: 2.5em;
+	height: 2.5em;
+	background-image: url("../static/images/png_icon.png");
+	background-size: 60% 60%;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	z-index: 11;
+	cursor: pointer;
+	border-radius: .25em;
+	background-color: rgba(86, 83, 83, 0.85);
+	-webkit-transition-duration: .25s;
+	transition-duration: .25s;
+	-webkit-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	-webkit-transition-property: background-color;
+	transition-property: background-color;
+}
+.menu-toggle-5 {
+	position: absolute;
+	right: 0;
+	top: 18em;
+	margin: .2em .125em;
+	width: 2.5em;
+	height: 2.5em;
+	background-image: url("../static/images/jpg_icon.png");
+	background-size: 60% 60%;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	z-index: 11;
+	cursor: pointer;
+	border-radius: .25em;
+	background-color: rgba(86, 83, 83, 0.85);
+	-webkit-transition-duration: .25s;
+	transition-duration: .25s;
+	-webkit-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	-webkit-transition-property: background-color;
+	transition-property: background-color;
+}
+.menu-toggle-6 {
+	position: absolute;
+	right: 0;
+	top: 21em;
+	margin: .2em .125em;
+	width: 2.5em;
+	height: 2.5em;
+	background-image: url("../static/images/json_icon.png");
+	background-size: 60% 60%;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	z-index: 11;
+	cursor: pointer;
+	border-radius: .25em;
+	background-color: rgba(86, 83, 83, 0.85);
+	-webkit-transition-duration: .25s;
+	transition-duration: .25s;
+	-webkit-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	-webkit-transition-property: background-color;
+	transition-property: background-color;
+}
+.menu-toggle-7 {
+	position: absolute;
+	right: 0;
+	top: 24em;
+	margin: .2em .125em;
+	width: 2.5em;
+	height: 2.5em;
+	background-image: url("../static/images/resize_icon.png");
+	background-size: 60% 60%;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	z-index: 11;
+	cursor: pointer;
+	border-radius: .25em;
+	background-color: rgba(86, 83, 83, 0.85);
+	-webkit-transition-duration: .25s;
+	transition-duration: .25s;
+	-webkit-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	-webkit-transition-property: background-color;
+	transition-property: background-color;
+}
+.menu-toggle-8 {
+	position: absolute;
+	right: 0;
+	top: 27em;
+	margin: .2em .125em;
+	width: 2.5em;
+	height: 2.5em;
+	background-image: url("../static/images/import_icon.png");
+	background-size: 60% 60%;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	z-index: 11;
+	cursor: pointer;
+	border-radius: .25em;
+	background-color: rgba(86, 83, 83, 0.85);
+	-webkit-transition-duration: .25s;
+	transition-duration: .25s;
+	-webkit-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	-webkit-transition-property: background-color;
+	transition-property: background-color;
+}
+
+.menu-toggle-9 {
+	position: absolute;
+	right: 0;
+	top: 30em;
+	margin: .2em .125em;
+	width: 2.5em;
+	height: 2.5em;
+	background-image: url("../static/images/settings_icon.png");
+	background-size: 60% 60%;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	z-index: 11;
+	cursor: pointer;
+	border-radius: .25em;
+	background-color: rgba(86, 83, 83, 0.85);
+	-webkit-transition-duration: .25s;
+	transition-duration: .25s;
+	-webkit-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	-webkit-transition-property: background-color;
+	transition-property: background-color;
+}
+.menu-9 {
+    overflow: auto;
+	position: absolute;
+	right: 3em;
+	top: 6em;
+	bottom: 0;
+	width: 30%;
+	min-width: 300px;
+	max-width: 100vw;
+	background: #444;
+	-webkit-box-shadow: 0 0 1em #000;
+	box-shadow: 0 0 1em #000;
+	z-index: 10;
+	-webkit-transition-duration: .25s;
+	transition-duration: .25s;
+	-webkit-transition-timing-function: ease-out;
+	transition-timing-function: ease-out;
+	-webkit-transition-property: opacity,-webkit-transform;
+	transition-property: opacity,-webkit-transform;
+	transition-property: transform,opacity;
+	transition-property: transform,opacity,-webkit-transform;
+	-webkit-transform: translateZ(0);
+	transform: translateZ(0);
+	opacity: 1;
+}
+.menu-9.menu-closed-9 {
+	-webkit-transform: translate3d(30%,0,0);
+	transform: translate3d(30%,0,0);
+	opacity: 0;
+	pointer-events: none;
+}
+.menu-toggle-9.menu-open-9 {
+	background-color: transparent;
+}
+.menu-search-results-9 .node-info-9 {
+	padding: .5em;
+	cursor: pointer;
+	border-top: 1px solid #333;
+
+}
+.node-info-name-9 {
+	font-size: 1.25em;
+	margin-bottom: .125em;
+}
+.menu-search-results-9 .node-info-9 {
+	cursor: pointer;
+}
+.menu-parent-9 {
+    right: 3rem;
+}
+.menu-search-9 {
+	border: 0;
+	outline: 0;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: .4em .5em;
+	margin-top: .5em;
+	margin-left: .75em;
+	width: calc(100% - 3.5em);
+	background: #32342d;
+	color: #fff;
+	-webkit-box-shadow: inset 0 .125em .25em #000;
+	box-shadow: inset 0 .125em .25em #000;
+	-webkit-appearance: none;
+}
+.menu-search-results-9 {
+
+}
+
+</style>
+</head>
+<body>
+<div id="cy"></div>
+
+<div id="node_info_box" class="app-node-info" style="display: none;">
+    <div class="node-info">
+        <div id="dyn_group" class="node-info-type">White Wine</div>
+        <div id="dyn_name" class="node-info-name">Sauvignon Blanc</div>
+    </div>
+</div>
+
+<div class="menu-parent">
+    <div class="menu-toggle" onclick="toggleMenu()"></div>
+    <div id="menu_status" class="menu menu-closed">
+        <input type="text" class="menu-search" placeholder="Search" id="menu-search">
+        <div class="menu-search-results" id="menu-search-results">
+
+
+
+        </div>
+    </div>
+</div>
+<div class="menu-parent-2">
+    <div class="menu-toggle-2" onclick="toggleMenu2()"></div>
+    <div id="menu_status-2" class="menu-2 menu-closed-2">
+        <div class="menu-search-2" id="menu-search-2">
+            Categories
+        </div>
+        <div class="menu-search-results-2">
+
+            {% for i in group_names %}
+
+                <div.menu-node-info-2 onclick="toggleNodeGrp('node_{{ i }}')">
+                    <div id="node_{{ i }}" class="node-info-2" style="background-color: green">
+                        <div id="{{ i }}" class="node-info-name-2 legend">{{ i }}</div>
+                    </div>
+                </div.menu-node-info-2>
+
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <div class="menu-toggle-3" onclick="toggleLabels()"></div>
+    <div class="menu-toggle-4" onclick="downloadAsPng()"></div>
+    <div class="menu-toggle-5" onclick="downloadAsJpg()"></div>
+    <div class="menu-toggle-6" onclick="downloadAsJson()"></div>
+    <div class="menu-toggle-7" onclick="resizeDrawing()"></div>
+
+    <div class="menu-toggle-8" onclick="startImportJsonFile()">
+        <form id="import_upload" target="#" onsubmit="return false;" style="display: none;">
+            <input type="file" id="import_file" accept=".json" hidden>
+        </form>
+    </div>
+
+    <div class="menu-toggle-9" onclick="toggleMenu9()"></div>
+    <div id="menu_status-9" class="menu-9 menu-closed-9">
+        <div id="img_container" onclick="applySettings()">
+            <img src="../static/images/play_icon.png" style="height: 5%;width: 5%;float: right;display: inline;padding-right: .5em;padding-top: .5em;" alt="play button">
+        </div>
+
+        <div class="menu-search-9" id="menu-search-9">
+            Settings
+        </div>
+        <div class="menu-search-results-9">
+
+            {% for i in default_settings %}
+
+                <div.menu-node-info-9>
+                    <div id="node_{{ i }}" class="node-info-9">
+                        <select name="input_{{ i }}" id="input_{{ i }}" style="float:right">
+                            {% for opt in default_settings[i]['options'] %}
+                                <option value="{{ opt }}" {% if opt == default_settings[i]['default'] %}selected{% endif %} {% if i == 'background-color' %}style="background-color:{{ opt }}"{% endif %}>{{ opt }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <div id="{{ i }}" class="node-info-name-9 legend">{{ i }}</div>
+
+                    </div>
+                </div.menu-node-info-9>
+
+            {% endfor %}
+
+        </div>
+    </div>
+
+</div>
+
+<div id="detail_modal" class="modal">
+    <!-- Modal content -->
+    <div class="settings_container" xmlns="http://www.w3.org/1999/html">
+
+        <div class="settings_row">
+
+            <div class="settings_col_m8_center">
+
+                <div class="settings_card">
+
+                    <div class="settings_card_header">
+                        <span class="close_modal" onclick="hideModal('detail_modal')">X</span>
+                        <h4 id="details_title" class="settings_card_title">Processing...</h4>
+                        <h6 id="details_subtitle" class="settings_card_title">Processing...</h6>
+
+                    </div>
+
+                    <div class="settings_card_body" id="detail_rows">
+
+                        <div class="settings_card_clearfix"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src='{{ url_for('static', filename='js/cytoscape.min.js') }}'></script>
+<script>
+
+function applySettings() {
+    document.body.style.backgroundColor = document.getElementById('input_background-color').value;
+    var layout = document.getElementById('input_layout').value;
+    var options = {}
+    if (layout == 'random') {
+        var options = {
+          name: 'random',
+
+          fit: true, // whether to fit to viewport
+          padding: 30, // fit padding
+          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+          animate: false, // whether to transition the node positions
+          animationDuration: 500, // duration of animation in ms if enabled
+          animationEasing: undefined, // easing of animation if enabled
+          animateFilter: function ( node, i ){ return true; }, // a function that determines whether the node should be animated.  All nodes animated by default on animate enabled.  Non-animated nodes are positioned immediately when the layout starts
+          ready: undefined, // callback on layoutready
+          stop: undefined, // callback on layoutstop
+          transform: function (node, position ){ return position; } // transform a given node position. Useful for changing flow direction in discrete layouts
+        };
+    } else if (layout == 'preset') {
+        var options = {
+          name: 'preset',
+
+          positions: undefined, // map of (node id) => (position obj); or function(node){ return somPos; }
+          zoom: undefined, // the zoom level to set (prob want fit = false if set)
+          pan: undefined, // the pan level to set (prob want fit = false if set)
+          fit: true, // whether to fit to viewport
+          padding: 30, // padding on fit
+          animate: false, // whether to transition the node positions
+          animationDuration: 500, // duration of animation in ms if enabled
+          animationEasing: undefined, // easing of animation if enabled
+          animateFilter: function ( node, i ){ return true; }, // a function that determines whether the node should be animated.  All nodes animated by default on animate enabled.  Non-animated nodes are positioned immediately when the layout starts
+          ready: undefined, // callback on layoutready
+          stop: undefined, // callback on layoutstop
+          transform: function (node, position ){ return position; } // transform a given node position. Useful for changing flow direction in discrete layouts
+        };
+    } else if (layout == 'grid') {
+        var options = {
+          name: 'grid',
+
+          fit: true, // whether to fit the viewport to the graph
+          padding: 30, // padding used on fit
+          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+          avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+          avoidOverlapPadding: 10, // extra spacing around nodes when avoidOverlap: true
+          nodeDimensionsIncludeLabels: false, // Excludes the label when calculating node bounding boxes for the layout algorithm
+          spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
+          condense: false, // uses all available space on false, uses minimal space on true
+          rows: undefined, // force num of rows in the grid
+          cols: undefined, // force num of columns in the grid
+          position: function( node ){}, // returns { row, col } for element
+          sort: undefined, // a sorting function to order the nodes; e.g. function(a, b){ return a.data('weight') - b.data('weight') }
+          animate: false, // whether to transition the node positions
+          animationDuration: 500, // duration of animation in ms if enabled
+          animationEasing: undefined, // easing of animation if enabled
+          animateFilter: function ( node, i ){ return true; }, // a function that determines whether the node should be animated.  All nodes animated by default on animate enabled.  Non-animated nodes are positioned immediately when the layout starts
+          ready: undefined, // callback on layoutready
+          stop: undefined, // callback on layoutstop
+          transform: function (node, position ){ return position; } // transform a given node position. Useful for changing flow direction in discrete layouts
+        };
+    } else if (layout == 'circle') {
+        var options = {
+          name: 'circle',
+
+          fit: true, // whether to fit the viewport to the graph
+          padding: 30, // the padding on fit
+          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+          avoidOverlap: true, // prevents node overlap, may overflow boundingBox and radius if not enough space
+          nodeDimensionsIncludeLabels: false, // Excludes the label when calculating node bounding boxes for the layout algorithm
+          spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
+          radius: undefined, // the radius of the circle
+          startAngle: 3 / 2 * Math.PI, // where nodes start in radians
+          sweep: undefined, // how many radians should be between the first and last node (defaults to full circle)
+          clockwise: true, // whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)
+          sort: undefined, // a sorting function to order the nodes; e.g. function(a, b){ return a.data('weight') - b.data('weight') }
+          animate: false, // whether to transition the node positions
+          animationDuration: 500, // duration of animation in ms if enabled
+          animationEasing: undefined, // easing of animation if enabled
+          animateFilter: function ( node, i ){ return true; }, // a function that determines whether the node should be animated.  All nodes animated by default on animate enabled.  Non-animated nodes are positioned immediately when the layout starts
+          ready: undefined, // callback on layoutready
+          stop: undefined, // callback on layoutstop
+          transform: function (node, position ){ return position; } // transform a given node position. Useful for changing flow direction in discrete layouts
+
+        };
+    } else if (layout == 'concentric') {
+        var options = {
+          name: 'concentric',
+
+          fit: true, // whether to fit the viewport to the graph
+          padding: 30, // the padding on fit
+          startAngle: 3 / 2 * Math.PI, // where nodes start in radians
+          sweep: undefined, // how many radians should be between the first and last node (defaults to full circle)
+          clockwise: true, // whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)
+          equidistant: false, // whether levels have an equal radial distance betwen them, may cause bounding box overflow
+          minNodeSpacing: 10, // min spacing between outside of nodes (used for radius adjustment)
+          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+          avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+          nodeDimensionsIncludeLabels: false, // Excludes the label when calculating node bounding boxes for the layout algorithm
+          height: undefined, // height of layout area (overrides container height)
+          width: undefined, // width of layout area (overrides container width)
+          spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
+          concentric: function( node ){ // returns numeric value for each node, placing higher nodes in levels towards the centre
+          return node.degree();
+          },
+          levelWidth: function( nodes ){ // the variation of concentric values in each level
+          return nodes.maxDegree() / 4;
+          },
+          animate: false, // whether to transition the node positions
+          animationDuration: 500, // duration of animation in ms if enabled
+          animationEasing: undefined, // easing of animation if enabled
+          animateFilter: function ( node, i ){ return true; }, // a function that determines whether the node should be animated.  All nodes animated by default on animate enabled.  Non-animated nodes are positioned immediately when the layout starts
+          ready: undefined, // callback on layoutready
+          stop: undefined, // callback on layoutstop
+          transform: function (node, position ){ return position; } // transform a given node position. Useful for changing flow direction in discrete layouts
+        };
+    } else if (layout == 'breadthfirst') {
+        var options = {
+          name: 'breadthfirst',
+
+          fit: true, // whether to fit the viewport to the graph
+          directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+          padding: 30, // padding on fit
+          circle: false, // put depths in concentric circles if true, put depths top down if false
+          grid: false, // whether to create an even grid into which the DAG is placed (circle:false only)
+          spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+          avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+          nodeDimensionsIncludeLabels: false, // Excludes the label when calculating node bounding boxes for the layout algorithm
+          roots: undefined, // the roots of the trees
+          maximal: false, // whether to shift nodes down their natural BFS depths in order to avoid upwards edges (DAGS only)
+          depthSort: undefined, // a sorting function to order nodes at equal depth. e.g. function(a, b){ return a.data('weight') - b.data('weight') }
+          animate: false, // whether to transition the node positions
+          animationDuration: 500, // duration of animation in ms if enabled
+          animationEasing: undefined, // easing of animation if enabled,
+          animateFilter: function ( node, i ){ return true; }, // a function that determines whether the node should be animated.  All nodes animated by default on animate enabled.  Non-animated nodes are positioned immediately when the layout starts
+          ready: undefined, // callback on layoutready
+          stop: undefined, // callback on layoutstop
+          transform: function (node, position ){ return position; } // transform a given node position. Useful for changing flow direction in discrete layouts
+        };
+    } else if (layout == 'cose') {
+        var options = {
+          name: 'cose',
+
+          // Called on `layoutready`
+          ready: function(){},
+
+          // Called on `layoutstop`
+          stop: function(){},
+
+          // Whether to animate while running the layout
+          // true : Animate continuously as the layout is running
+          // false : Just show the end result
+          // 'end' : Animate with the end result, from the initial positions to the end positions
+          animate: true,
+
+          // Easing of the animation for animate:'end'
+          animationEasing: undefined,
+
+          // The duration of the animation for animate:'end'
+          animationDuration: undefined,
+
+          // A function that determines whether the node should be animated
+          // All nodes animated by default on animate enabled
+          // Non-animated nodes are positioned immediately when the layout starts
+          animateFilter: function ( node, i ){ return true; },
+
+
+          // The layout animates only after this many milliseconds for animate:true
+          // (prevents flashing on fast runs)
+          animationThreshold: 250,
+
+          // Number of iterations between consecutive screen positions update
+          refresh: 20,
+
+          // Whether to fit the network view after when done
+          fit: true,
+
+          // Padding on fit
+          padding: 30,
+
+          // Constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+          boundingBox: undefined,
+
+          // Excludes the label when calculating node bounding boxes for the layout algorithm
+          nodeDimensionsIncludeLabels: false,
+
+          // Randomize the initial positions of the nodes (true) or use existing positions (false)
+          randomize: false,
+
+          // Extra spacing between components in non-compound graphs
+          componentSpacing: 40,
+
+          // Node repulsion (non overlapping) multiplier
+          nodeRepulsion: function( node ){ return 2048; },
+
+          // Node repulsion (overlapping) multiplier
+          nodeOverlap: 4,
+
+          // Ideal edge (non nested) length
+          idealEdgeLength: function( edge ){ return 32; },
+
+          // Divisor to compute edge forces
+          edgeElasticity: function( edge ){ return 32; },
+
+          // Nesting factor (multiplier) to compute ideal edge length for nested edges
+          nestingFactor: 1.2,
+
+          // Gravity force (constant)
+          gravity: 1,
+
+          // Maximum number of iterations to perform
+          numIter: 1000,
+
+          // Initial temperature (maximum node displacement)
+          initialTemp: 1000,
+
+          // Cooling factor (how the temperature is reduced between consecutive iterations
+          coolingFactor: 0.99,
+
+          // Lower temperature threshold (below this point the layout will end)
+          minTemp: 1.0
+        };
+    }
+    cy.layout( options ).run();
+
+}
+
+function startImportJsonFile() {
+    document.getElementById('import_file').click()
+}
+let form = document.querySelector('#import_upload');
+let file = document.querySelector('#import_file');
+file.addEventListener('input', submitForm);
+async function submitForm(event) {
+    const object = await parseJsonFile(file);
+    cy.json(object);
+}
+async function parseJsonFile(file) {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader()
+    fileReader.onload = event => resolve(JSON.parse(event.target.result))
+    fileReader.onerror = error => reject(error)
+    fileReader.readAsText(file.files[0])
+  })
+}
+
+function resizeDrawing() {
+    var cur = cy.makeLayout();
+    console.log(cur);
+    cy.layout( cur ).run();
+}
+
+function downloadAsJson() {
+    const json_obj = cy.json();
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(json_obj));
+    const link = document.createElement('a')
+    link.href = dataStr
+    link.download = 'map.json'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+}
+
+async function downloadAsPng() {
+  const imageBlog = await cy.png(
+      {
+          "output": "blob"
+      }
+  );
+  const imageURL = URL.createObjectURL(imageBlog)
+  const link = document.createElement('a')
+  link.href = imageURL
+  link.download = 'map'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+async function downloadAsJpg() {
+  const imageBlog = await cy.jpg(
+      {
+          "output": "blob"
+      }
+  );
+  const imageURL = URL.createObjectURL(imageBlog)
+  const link = document.createElement('a')
+  link.href = imageURL
+  link.download = 'map'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+function showModal(modal_nm) {
+  // Get the modal
+  var modal = document.getElementById(modal_nm);
+  modal.style.display = "block";
+};
+function hideModal(modal_nm) {
+  // Get the modal
+  var modal = document.getElementById(modal_nm);
+  modal.style.display = "none";
+};
+var cy = cytoscape({
+
+  container: document.getElementById('cy'), // container to render in
+
+  elements: [ // list of graph elements to start with
+    {% for i in entity_groups %}
+        {% if 'background-image' in i['style'] %}
+        {
+            data: {{ i['data'] | safe }},
+            style: {
+                'background-color': '{{i['style']['background-color']}}',
+                'background-image': ['{{i['style']['background-image']|safe}}'],
+                'background-fit': 'contain contain'
+            },
+            classes: ['active']
+        },
+        {% else %}
+        {
+            data: {{ i['data'] | safe }}, style: {'background-color': '{{i['style']['background-color']}}' }, classes: ['active']
+        },
+        {% endif %}
+
+  {% endfor %}
+
+    {% for i in edge_group %}
+  { // edge ab
+      data: { id: '{{i['source']}}_to_{{i['target']}}', source: '{{i['source']}}', target: '{{i['target']}}' }
+    },
+  {% endfor %}
+
+  ],
+
+  style: [ // the stylesheet for the graph
+    {
+      selector: 'node',
+      style: {
+        'background-color': '#666',
+        'label': ''
+      }
+    },
+    {
+      selector: 'edge',
+      style: {
+        'width': 3,
+        'line-color': '#ccc',
+        'target-arrow-color': '#ccc',
+        'target-arrow-shape': 'triangle',
+        'curve-style': 'bezier'
+      }
+    }
+  ],
+
+  layout: {
+    name: 'cose',
+	// Called on `layoutready`
+	ready: function(){},
+	// Called on `layoutstop`
+	stop: function(){},
+	// Whether to animate while running the layout
+	// true : Animate continuously as the layout is running
+	// false : Just show the end result
+	// 'end' : Animate with the end result, from the initial positions to the end positions
+	animate: true,
+	// Easing of the animation for animate:'end'
+	animationEasing: undefined,
+	// The duration of the animation for animate:'end'
+	animationDuration: undefined,
+	// A function that determines whether the node should be animated
+	// All nodes animated by default on animate enabled
+	// Non-animated nodes are positioned immediately when the layout starts
+	animateFilter: function ( node, i ){ return true; },
+	// The layout animates only after this many milliseconds for animate:true
+	// (prevents flashing on fast runs)
+	animationThreshold: 250,
+	// Number of iterations between consecutive screen positions update
+	refresh: 20,
+	// Whether to fit the network view after when done
+	fit: true,
+	// Padding on fit
+	padding: 80,
+	// Constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+	boundingBox: undefined,
+	// Excludes the label when calculating node bounding boxes for the layout algorithm
+	nodeDimensionsIncludeLabels: true,
+	// Randomize the initial positions of the nodes (true) or use existing positions (false)
+	randomize: false,
+	// Extra spacing between components in non-compound graphs
+	componentSpacing: 40,
+	// Node repulsion (non overlapping) multiplier
+	nodeRepulsion: function( node ){ return 2048; },
+	// Node repulsion (overlapping) multiplier
+	nodeOverlap: 4,
+	// Ideal edge (non nested) length
+	idealEdgeLength: function( edge ){ return 32; },
+	// Divisor to compute edge forces
+	edgeElasticity: function( edge ){ return 32; },
+	// Nesting factor (multiplier) to compute ideal edge length for nested edges
+	nestingFactor: 1.2,
+	// Gravity force (constant)
+	gravity: 1,
+	// Maximum number of iterations to perform
+	numIter: 1000,
+	// Initial temperature (maximum node displacement)
+	initialTemp: 1000,
+	// Cooling factor (how the temperature is reduced between consecutive iterations
+	coolingFactor: 0.99,
+	// Lower temperature threshold (below this point the layout will end)
+	minTemp: 1.0
+  }
+
+
+
+
+});
+function setContainerLayout() {
+    var el = document.getElementById('cy').firstElementChild;
+    el.style.height = '1000px';
+};
+setContainerLayout();
+
+function setDetailModal(data_dict) {
+    clearDetailRows();
+    console.log(data_dict);
+    document.getElementById('details_title').innerText = data_dict.name;
+    document.getElementById('details_subtitle').innerText = data_dict.group;
+    document.getElementById('node_info_box').style.display = 'none';
+    var parent_el = document.getElementById('detail_rows');
+    addDetailLinkRow(parent_el, data_dict['href']);
+    for (const [key, value] of Object.entries(data_dict)) {
+        if (key == 'db_data') {
+            for (const [key_b, value_b] of Object.entries(data_dict['db_data'])) {
+                if (value_b != "") {
+                    console.log(`${key_b}: ${value_b}`);
+                    addDetailRow(parent_el, key_b, value_b);
+                }
+            }
+        } else {
+            if (key != "href") {
+                    console.log(`${key}: ${value}`);
+                    addDetailRow(parent_el, key, value);
+            }
+        }
+    }
+}
+
+function setDetailModalCore(data_dict) {
+    clearDetailRows();
+    console.log(data_dict);
+    document.getElementById('details_title').innerText = data_dict.name;
+    document.getElementById('details_subtitle').innerText = data_dict.group;
+    document.getElementById('node_info_box').style.display = 'none';
+    var parent_el = document.getElementById('detail_rows');
+    addDetailLinkRow(parent_el, data_dict['href']);
+    for (const [key, value] of Object.entries(data_dict)) {
+        if (key == 'db_data') {
+            for (const [key_b, value_b] of Object.entries(data_dict['db_data'])) {
+                if (value_b != "") {
+                    console.log(`${key_b}: ${value_b}`);
+                    addDetailRow(parent_el, key_b, value_b);
+                }
+            }
+        } else {
+            if (key != "href") {
+                    console.log(`${key}: ${value}`);
+                    addDetailRow(parent_el, key, value);
+            }
+        }
+    }
+   var node = document.createElement("div")
+   node.innerHTML = `<strong>Add New</strong>`;
+   parent_el.appendChild(node);
+}
+
+function clearDetailRows() {
+    var parent_el = document.getElementById('detail_rows');
+    while (parent_el.firstChild) {
+        parent_el.removeChild(parent_el.firstChild);
+    }
+}
+
+function addDetailRow(parent, key, value) {
+   var node = document.createElement("div")
+   node.innerHTML = `<strong>${key}:</strong>&nbsp;&nbsp;&nbsp;&nbsp;${value}`;
+   parent.appendChild(node);
+}
+
+function addDetailLinkRow(parent, value) {
+   var node = document.createElement("div")
+   node.innerHTML = `<strong><a href="${value}">More Info</a></strong>`;
+   parent.appendChild(node);
+}
+
+var label_status = 'off'
+function toggleLabels() {
+    if (label_status == 'off') {
+        cy.style().fromString('node { label: data(id); }').update(); // update the elements in the graph with the new style
+        label_status = 'on'
+    } else {
+        cy.style().fromString('node { label:  }').update(); // update the elements in the graph with the new style
+        label_status = 'off'
+    }
+}
+
+cy.on('click', 'node', function(evt){
+    if (this.json().data.group.startsWith('CI/CD Pipeline - ')) {
+        setDetailModalCore(this.json().data)
+    } else {
+        setDetailModal(this.json().data)
+    }
+    showModal('detail_modal');
+	  {#alert(this.json().data.name);#}
+      {#window.location.href = this.json().data.href;#}
+});
+cy.on('mouseover', 'node', function(evt){
+    document.getElementById('dyn_name').innerText = this.json().data.name;
+    document.getElementById('dyn_group').innerText = this.json().data.group;
+    document.getElementById('node_info_box').style.display = 'block';
+});
+cy.on('mouseout', 'node', function(evt){
+      {#showModal('detail_modal');#}
+	  document.getElementById('node_info_box').style.display = 'none';
+      {#window.location.href = this.json().data.href;#}
+});
+
+cy.on('click', 'edge', function(evt){
+      alert( 'clicked ' + this.id() );
+});
+
+var inactive_dict = {
+    {% for i in group_names %}
+    '{{ i }}': {
+        'elems': [],
+		'edges': []
+    },
+    {% endfor %}
+}
+
+function toggleNodeGrp(id) {
+    var node_id = id;
+    var grp = node_id.split('node_')[1]
+    var color = document.getElementById(node_id).style.backgroundColor;
+    if (color == 'green') {
+        var all_elements = cy.elements(cy.filter(`node[group = "${grp}"]`))
+        inactive_dict[grp]['elems'] = all_elements
+        for (var i = 0; i < all_elements.length; i++) {
+            var edges = cy.elements(`edge[source = "${all_elements[i].id()}"], edge[target = "${all_elements[i].id()}"]`);
+			if (edges.length > 0) {
+				inactive_dict[grp]['edges'].push(edges);
+			};
+        }
+        all_elements.remove();
+        document.getElementById(node_id).style.backgroundColor = "inherit";
+    } else {
+		inactive_dict[grp]['elems'].restore()
+        for (var i = 0; i < inactive_dict[grp]['edges'].length; i++) {
+			inactive_dict[grp]['edges'][i].restore()
+		}
+        document.getElementById(node_id).style.backgroundColor = "green";
+    }
+
+}
+
+function toggleMenu() {
+    var el = document.getElementById('menu_status');
+    if(hasClass(el, 'menu-closed')) {
+        el.classList.remove("menu-closed");
+        el.classList.add("menu-open");
+    }
+    else {
+        el.classList.remove("menu-open");
+        el.classList.add("menu-closed");
+    }
+}
+
+
+function toggleMenu2() {
+    var el = document.getElementById('menu_status-2');
+    if(hasClass(el, 'menu-closed-2')) {
+        el.classList.remove("menu-closed-2");
+        el.classList.add("menu-open-2");
+    }
+    else {
+        el.classList.remove("menu-open-2");
+        el.classList.add("menu-closed-2");
+    }
+}
+
+function toggleMenu9() {
+    var el = document.getElementById('menu_status-9');
+    if(hasClass(el, 'menu-closed-9')) {
+        el.classList.remove("menu-closed-9");
+        el.classList.add("menu-open-9");
+    }
+    else {
+        el.classList.remove("menu-open-9");
+        el.classList.add("menu-closed-9");
+    }
+}
+
+function hasClass(element, className) {
+    return (' ' + element.className + ' ').indexOf(' ' + className+ ' ') > -1;
+}
+
+var elems_all = cy.elements()
+
+var menu_search = document.getElementById("menu-search");
+menu_search.addEventListener("keyup", function (e) {
+    validate(e)
+});
+function validate(e) {
+    var text = e.target.value;
+    search_elements(text);
+    //validation of the input...
+}
+
+function addSearchResult(match_name, match_grp) {
+    var container = document.getElementById('menu-search-results');
+    var node = document.createElement("div");
+    node.classList.add("node-info");
+    var node_name = document.createElement("div");
+    node_name.classList.add("node-info-name");
+    node_name.innerText = match_name;
+    var node_type = document.createElement("div");
+    node_type.classList.add("node-info-type");
+    node_type.innerText = match_grp;
+    node.appendChild(node_name);
+    node.appendChild(node_type);
+    container.appendChild(node);
+}
+
+function clearResults() {
+    var container = document.getElementById('menu-search-results');
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+}
+
+function search_elements(text) {
+    clearResults();
+    var matches = [];
+    for (var i = 0; i < elems_all.length; i++) {
+        if (elems_all[i].group() == 'nodes') {
+            var group = elems_all[i].data().group;
+            var name = elems_all[i].data().name;
+            if ((group!== null && name!== null) && (group.includes(text) || name.includes(text))) {
+                console.log('found a match')
+                matches.push(elems_all[i]);
+            }
+        }
+    }
+    for (var i = 0; i < matches.length; i++) {
+        addSearchResult(matches[i].data().name, matches[i].data().group);
+    }
+}
+
+</script>
+</body>
+</html>
+
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+<style>
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .row label {
+    margin-right: 1rem;
+    width: 100px; /* Set a fixed width for the labels */
+    text-align: right;
+  }
+
+  .row input {
+    margin-right: 1rem;
+  }
+</style>
+<script>
+function copyToClipboard(id) {
+  const el = document.getElementById(id);
+  el.select();
+  el.setSelectionRange(0, 99999); // For mobile devices
+  document.execCommand("copy");
+  alert("Copied to clipboard: " + el.value);
+}
+</script>
+</head>
+<body>
+<p style="color: white;"><strong>Note</strong>: This page is only available for one-time view. Please securely store the following:</p>
+  <div class="container">
+    <div class="row">
+      <label style="color: white;" for="client_id">client_id: </label>
+      <input type="text" id="client_id" value="{{ client_id }}" readonly>
+      <button onclick="copyToClipboard('client_id')"><i class="fa-solid fa-copy"></i></button>
+    </div>
+    <div class="row">
+      <label style="color: white;" for="client_secret">client_secret: </label>
+      <input type="text" id="client_secret" value="{{ client_secret }}" readonly>
+      <button onclick="copyToClipboard('client_secret')"><i class="fa-solid fa-copy"></i></button>
+    </div>
+  </div>
+
+
+
+
+
+
+
+{% endblock %}

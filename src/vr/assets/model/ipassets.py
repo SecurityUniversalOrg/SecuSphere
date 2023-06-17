@@ -1,0 +1,112 @@
+from datetime import datetime
+from vr import db, app
+from marshmallow import Schema, fields
+from marshmallow import post_load
+
+
+class IPAssets(db.Model):
+    __table_args__ = {'extend_existing': True}
+    __tablename__ = 'IPAssets'
+    ID = db.Column(db.Integer, primary_key=True)
+    TechnologyID = db.Column(db.Integer, db.ForeignKey('Technologies.TechnologyID', ondelete='CASCADE'))
+    IPAddress = db.Column(db.String(20), nullable=False)
+    MacAddress = db.Column(db.String(30))
+    Type = db.Column(db.String(50))
+    EntityID = db.Column(db.String(80))
+    Hostname = db.Column(db.String(80))
+    OS = db.Column(db.String(80))
+    OSArchitecture = db.Column(db.String(80))
+    OSFamily = db.Column(db.String(80))
+    OSID = db.Column(db.String(80))
+    OSProduct = db.Column(db.String(80))
+    OSSystemName = db.Column(db.String(80))
+    OSType = db.Column(db.String(80))
+    OSVendor = db.Column(db.String(80))
+    OSVersion = db.Column(db.String(80))
+    Description = db.Column(db.String(100))
+    Domain = db.Column(db.String(100))
+    Location = db.Column(db.String(30))
+    Active = db.Column(db.String(1))
+    RegComplete = db.Column(db.String(1))
+    RegDate = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
+    SubnetID = db.Column(db.Integer, db.ForeignKey('PrivateNetworks.ID', ondelete='CASCADE'))
+    Authorized = db.Column(db.Integer)
+    OSUpdate = db.Column(db.String(80))
+    OSEdition = db.Column(db.String(80))
+    OSCPE = db.Column(db.String(200))
+    MacVendor = db.Column(db.String(200))
+    ServerName = db.Column(db.String(200))
+    ComponentID = db.Column(db.String(200))
+    Assignment = db.Column(db.String(50))
+    Status = db.Column(db.String(50))
+    AssetTag = db.Column(db.String(40))
+    SerialNumber = db.Column(db.String(200))
+    Brand = db.Column(db.String(200))
+    Model = db.Column(db.String(200))
+    ModelCategory = db.Column(db.String(60))
+    AbbreviatedModel = db.Column(db.String(200))
+    CPUsPhysical = db.Column(db.Integer)
+    CPUsCores = db.Column(db.Integer)
+    CPUsHWThreads = db.Column(db.Integer)
+    SupportGroup = db.Column(db.String(60))
+    LocationCode = db.Column(db.String(30))
+    AssetSystem = db.Column(db.String(60))
+
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
+    def __repr__(self):
+        return '<IPAssets(name={self.TechnologyID!r})>'.format(self=self)
+
+class IPAssetsSchema(Schema):
+    ID = fields.Int()
+    TechnologyID = fields.Int()
+    IPAddress = fields.Str()
+    MacAddress = fields.Str()
+    Type = fields.Str()
+    EntityID = fields.Str()
+    Hostname = fields.Str()
+    OS = fields.Str()
+    OSArchitecture = fields.Str()
+    OSFamily = fields.Str()
+    OSID = fields.Str()
+    OSProduct = fields.Str()
+    OSSystemName = fields.Str()
+    OSType = fields.Str()
+    OSVendor = fields.Str()
+    OSVersion = fields.Str()
+    Description = fields.Str()
+    Domain = fields.Str()
+    Location = fields.Str()
+    Active = fields.Str()
+    RegComplete = fields.Str()
+    RegDate = fields.DateTime()
+    SubnetID = fields.Int()
+    Authorized = fields.Int()
+    OSUpdate = fields.Str()
+    OSEdition = fields.Str()
+    OSCPE = fields.Str()
+    MacVendor = fields.Str()
+    ServerName = fields.Str()
+    ComponentID = fields.Str()
+    Assignment = fields.Str()
+    Status = fields.Str()
+    AssetTag = fields.Str()
+    SerialNumber = fields.Str()
+    Brand = fields.Str()
+    Model = fields.Str()
+    ModelCategory = fields.Str()
+    AbbreviatedModel = fields.Str()
+    CPUsPhysical = fields.Int()
+    CPUsCores = fields.Int()
+    CPUsHWThreads = fields.Int()
+    SupportGroup = fields.Str()
+    LocationCode = fields.Str()
+    AssetSystem = fields.Str()
+
+class MakeIPAssetsSchema(IPAssetsSchema):
+    @post_load
+    def make_it(self, data, **kwargs):
+        return IPAssets(**data)
+
+

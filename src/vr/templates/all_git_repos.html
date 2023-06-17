@@ -1,0 +1,121 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+
+
+        <div class="row hidden-xs">
+            <div class="col-lg-12">
+
+                <ul class="breadcrumb main">
+
+                    <li class="">
+                        <a class="" href="/">Home</a>
+                    </li>
+
+                    <li class="active">
+                        <a class="active" href="/all_git_repos">Git Repository List</a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading tight">
+                                <h3 class="has-filters">
+                                    Git Repositories
+                                    <div class="dropdown pull-right">
+
+                                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
+                                                data-toggle="dropdown" aria-expanded="true">
+                                            <span class="fa fa-wrench"></span>
+                                            <span class="caret"></span>
+                                        </button>
+{#                                        <ul class="dropdown-menu dropdown-menu-right" role="menu"#}
+{#                                            aria-labelledby="dropdownMenu1">#}
+{#                                            <li role="presentation">#}
+{#                                                <a href="/add_integration">#}
+{#                                                    <div class="fa fa-plus"></div> Add Integration#}
+{#                                                </a>#}
+{#                                            </li>#}
+{#                                        </ul>#}
+
+                                    </div>
+                                </h3>
+                            </div>
+
+                        </div>
+
+
+                        <div class="clearfix">
+
+
+                        </div>
+                        <div class="panel panel-default table-responsive">
+                            <table id="products" class="tablesorter-bootstrap table table-condensed table-striped" aria-describedby="Component Table" >
+                                <thead>
+                                <tr>
+                                    <th>Repo Name</th>
+                                    <th>Add Date</th>
+                                    <th>Source</th>
+                                    <th>Application</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for i in entities %}
+                                <tr>
+                                    <td>
+                                        <a href="/tool_config/{{ i.ID }}/edit"><strong>{{ i.RepoName }}</strong></a>
+                                    </td>
+                                    <td>
+                                        {{ i.AddDate }}
+                                    </td>
+                                    <td>
+                                        {{ i.Source }}
+                                    </td>
+                                    <td>
+                                        {{ i.ApplicationName }}
+                                    </td>
+
+
+                                </tr>
+                                {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="clearfix">
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+{% endblock %}
