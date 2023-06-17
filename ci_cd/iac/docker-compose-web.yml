@@ -1,6 +1,6 @@
 version: '3'
 services:
-  su_web:
+  secusphere:
     image: dynamic
     restart: always
     environment:
