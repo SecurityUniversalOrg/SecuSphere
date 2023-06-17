@@ -24,9 +24,9 @@ pipeline {
         SONARQUBE_AUTH_TOKEN = credentials('SonarQube Global Analysis')
         SNYK_API_KEY = credentials('snyk-api-key')
         // App-specific settings
-        appName = "SUVULNMGMR"
+        appName = "SECUSPHERE"
         K8_ENV = "su_pubweb"
-        K8_NAMESPACE = "su-vulnmgr"
+        K8_NAMESPACE = "secusphere"
         SOURCE_DIR = "src"
         API_DEFINITION_FILE = "src/vr/templates/openapi.yaml"
         KUBECONFIG = "${WORKSPACE}/kubeconfig"
