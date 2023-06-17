@@ -14,7 +14,7 @@ pipeline {
         SUPPORT_EMAIL = "${globalVars.SUPPORT_EMAIL}"
         RELEASE_NUMBER = "${globalVars.RELEASE_NUMBER}"
         DOCKER_REG = "${globalVars.DOCKER_REG}"
-        DOCKER_TAG = "${globalVars.DOCKER_TAG}"
+        DOCKER_TAG = "0.1.0-beta"
         IMG_PULL_SECRET = "${globalVars.IMG_PULL_SECRET}"
         GIT_CREDS_ID = "${globalVars.GIT_CREDS_ID}"
         ANCHORE_URL = "${globalVars.ANCHORE_URL}"

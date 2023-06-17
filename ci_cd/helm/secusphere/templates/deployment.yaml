@@ -33,6 +33,8 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           env:
+            - name: VM_RUNTIME
+              value: "prod"
             - name: AZURE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
