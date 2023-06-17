@@ -60,7 +60,7 @@ You can install SecuSphere by cloning the repository, setting up locally, or usi
 ### Clone the Repository
 
 ```bash
-$ git clone https://github.com/SecurityUniversalOrg/Security-Universal-VulnManager.git
+$ git clone https://github.com/SecurityUniversalOrg/SecuSphere.git
 ```
 
 ## 🛠️ Setup
@@ -80,8 +80,8 @@ Build and run the Dockerfile in the cicd directory:
 
 ```bash
 $ cd cicd/
-$ docker build -t vuln_manager:latest .
-$ docker run vuln_manager:latest
+$ docker build -t secusphere:latest .
+$ docker run secusphere:latest
 ```
 
 ### Docker Compose
@@ -89,8 +89,8 @@ $ docker run vuln_manager:latest
 Use Docker Compose in the cicd directory:
 
 ```bash
-$ cd cicd/
-$ docker-compose vuln_manager up
+$ cd ci_cd/iac/
+$ docker-compose secusphere up
 ```
 
 ### Pull from Docker Hub
@@ -98,8 +98,8 @@ $ docker-compose vuln_manager up
 Pull the latest version of the vulnerability manager from Docker Hub and run it:
 
 ```bash
-$ docker pull bkaiserdevops/vuln_manager:latest
-$ docker run vuln_manager:latest
+$ docker pull securityuniversal/secusphere:latest
+$ docker run secusphere:latest
 ```
 
 ## 💡 Feedback and Support
