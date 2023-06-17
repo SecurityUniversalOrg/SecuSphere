@@ -1,11 +1,16 @@
 import mysql.connector
 from vr import app
 import sqlite3
+import os
 
 
 if app.config['RUNTIME_ENV'] == 'test':
     def connect_to_db():
-        db_uri = 'instance/database.db'
+        cur_path = os.getcwd()
+        if 'www' in cur_path and 'html' in cur_path:
+            db_uri = '/var/www/html/src/instance/database.db'
+        else:
+            db_uri = 'instance/database.db'
         db = sqlite3.connect(db_uri)
         cur = db.cursor()
         return cur, db
