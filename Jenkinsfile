@@ -14,7 +14,7 @@ pipeline {
         SUPPORT_EMAIL = "${globalVars.SUPPORT_EMAIL}"
         RELEASE_NUMBER = "${globalVars.RELEASE_NUMBER}"
         DOCKER_REG = "${globalVars.DOCKER_REG}"
-        DOCKER_TAG = "${globalVars.DOCKER_TAG}"
+        DOCKER_TAG = "0.1.0-beta"
         IMG_PULL_SECRET = "${globalVars.IMG_PULL_SECRET}"
         GIT_CREDS_ID = "${globalVars.GIT_CREDS_ID}"
         ANCHORE_URL = "${globalVars.ANCHORE_URL}"
@@ -24,9 +24,9 @@ pipeline {
         SONARQUBE_AUTH_TOKEN = credentials('SonarQube Global Analysis')
         SNYK_API_KEY = credentials('snyk-api-key')
         // App-specific settings
-        appName = "SUVULNMGMR"
+        appName = "SECUSPHERE"
         K8_ENV = "su_pubweb"
-        K8_NAMESPACE = "su-vulnmgr"
+        K8_NAMESPACE = "secusphere"
         SOURCE_DIR = "src"
         API_DEFINITION_FILE = "src/vr/templates/openapi.yaml"
         KUBECONFIG = "${WORKSPACE}/kubeconfig"
@@ -140,9 +140,7 @@ pipeline {
                  }
             }
             steps {
-                jslSetupTestDB("mysqldb")
-                jslVerifyTcpServiceReady('127.0.0.1', 3306)
-                jslRunDockerCompose("web")
+                jslRunDockerCompose("secusphere")
             }
         }
 

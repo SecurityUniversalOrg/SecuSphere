@@ -5,6 +5,8 @@ COPY ./requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./src /var/www/html/src
+RUN chown -R www-data:www-data /var/www/html
+
 RUN /bin/rm -f /etc/apache2/apache2.conf
 RUN /bin/mv /var/www/html/src/apache_config/apache2.conf /etc/apache2/apache2.conf
 RUN /bin/rm -f /etc/apache2/sites-enabled/000-default.conf

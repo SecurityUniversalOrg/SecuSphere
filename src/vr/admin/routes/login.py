@@ -1,3 +1,4 @@
+import re
 from flask_login import current_user, login_user
 from flask import session, redirect, url_for, render_template, request, json, flash
 # Start of Entity-specific Imports
@@ -40,7 +41,9 @@ def login():
             username = request.form.get('login[username]')
             password = request.form.get('login[password]')
 
-            resp = _get_initial_login_details(username, form)
+            un_type = check_input(username)  # determine if email or username was provided
+
+            resp = _get_initial_login_details(username, form, un_type)
             if not isinstance(resp, tuple):
                 return resp
             else:
@@ -66,8 +69,20 @@ def login():
     return render_template(LOGIN_TEMPLATE, form=form, warnmsg=warnmsg)
 
 
-def _get_initial_login_details(username, form):
-    user = User.query.filter_by(username=username).first()
+def check_input(user_input):
+    email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+
+    if re.fullmatch(email_regex, user_input):
+        return "Email"
+    else:
+        return "Username"
+
+
+def _get_initial_login_details(username, form, un_type):
+    if un_type == 'Username':
+        user = User.query.filter(User.username.ilike(username)).first()
+    else:
+        user = User.query.filter(User.email.ilike(username)).first()
     if user is None:
         warnmsg = _handle_no_user(username)
         return render_template(LOGIN_TEMPLATE, form=form, warnmsg=warnmsg)
@@ -96,7 +111,7 @@ def _login_attempt(user, username, password, userid, form, mfa_password):
         if not user.authenticate(mfa_password, otp_secret):
             warnmsg = _handle_failed_mfa_login(userid)
             return render_template(LOGIN_TEMPLATE, form=form, warnmsg=warnmsg)
-    _handle_successful_login(userid, auth_success, username, user)
+    _handle_successful_login(userid, auth_success, user)
     try:
         if request.referrer and 'login?next=' in request.referrer:
             next_pg = request.referrer.replace(request.root_url, '').split('login?next=%2F')[1]
@@ -109,15 +124,14 @@ def _login_attempt(user, username, password, userid, form, mfa_password):
     return redirect(url_for('vulns.all_applications'))
 
 
-
-def _handle_successful_login(userid, auth_success, username, user):
+def _handle_successful_login(userid, auth_success, user):
     loginattempt = AuthAttempts(user_id=userid, success=auth_success)
     db.session.add(loginattempt)
     db.session.commit()
     login_user(user, remember=False, force=True)
     session.permanent = True
     session.modified = True
-    session['username'] = username
+    session['username'] = user.username
     session['roles'] = user.get_roles()
 
 
@@ -128,6 +142,7 @@ def _handle_failed_mfa_login(userid):
     db.session.commit()
     log_failed_attempt(AUTH_FAILED_PW_WINDOW, int(userid), AUTH_FAILED_PW_ATT)
     return warnmsg
+
 
 def _handle_failed_login(userid, auth_success):
     warnmsg = ('failedlogin', 'danger')
@@ -162,7 +177,11 @@ def _handle_lo_answer(userid):
 def check_if_mfa():
     try:
         user_to_check = request.form.get('username')
-        user = User.query.filter_by(username=user_to_check).first()
+        un_type = check_input(user_to_check)
+        if un_type == 'Username':
+            user = User.query.filter(User.username.ilike(user_to_check)).first()
+        else:
+            user = User.query.filter(User.email.ilike(user_to_check)).first()
         rsp_json = {"answer": ""}
         if user:
             if user.mfa_enabled:
