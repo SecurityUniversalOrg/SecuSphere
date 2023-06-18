@@ -80,9 +80,9 @@ def check_input(user_input):
 
 def _get_initial_login_details(username, form, un_type):
     if un_type == 'Username':
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter(User.username.ilike(username)).first()
     else:
-        user = User.query.filter_by(email=username).first()
+        user = User.query.filter(User.email.ilike(username)).first()
     if user is None:
         warnmsg = _handle_no_user(username)
         return render_template(LOGIN_TEMPLATE, form=form, warnmsg=warnmsg)
@@ -179,9 +179,9 @@ def check_if_mfa():
         user_to_check = request.form.get('username')
         un_type = check_input(user_to_check)
         if un_type == 'Username':
-            user = User.query.filter_by(username=user_to_check).first()
+            user = User.query.filter(User.username.ilike(user_to_check)).first()
         else:
-            user = User.query.filter_by(email=user_to_check).first()
+            user = User.query.filter(User.email.ilike(user_to_check)).first()
         rsp_json = {"answer": ""}
         if user:
             if user.mfa_enabled:

@@ -4,7 +4,7 @@ from email.mime import text as mimetext
 from config_engine import SMTP_HOST, SMTP_USER, SMTP_PASSWORD, SMTP_ADMIN_EMAIL
 
 
-def send_email(msg_fromaddr,msg_toaddr,msg_subject,msg_body):
+def send_email(msg_fromaddr, msg_toaddr, msg_subject, msg_body):
     message = msg_body
     msg = multipart.MIMEMultipart('related')
     msg['From'] = msg_fromaddr
@@ -113,7 +113,7 @@ html_header = '<!DOCTYPE html>\
       }\
     }'
 
-msg_header ='<body>\
+msg_header = '<body>\
     \
     <div class="header">\
       <h1><a href="https://www.securityuniversal.com"><img src="cid:image1" height="100" width="339" alt="logo" border="0"></a></h1>\
@@ -135,7 +135,8 @@ html_footer = '<div class="footer">\
   </body>\
   </html>'
 
-def generate_evnt_msg(msg_subject,evnt_ts,evnt_list,action_list,st):
+
+def generate_evnt_msg(msg_subject, evnt_ts, evnt_list, action_list, st):
     evt_style = '#events {\
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;\
         border-collapse: collapse;\
@@ -259,14 +260,15 @@ def generate_evnt_msg(msg_subject,evnt_ts,evnt_list,action_list,st):
         }\
         </style>\
         </head>'
-    evt_msg = '<div class="row"><div class="leftcolumn"><div class="card"><h2>{}</h2><h5>Event Time: {}</h5><table id="events"><tr>'.format(msg_subject.upper(),evnt_ts)
+    evt_msg = '<div class="row"><div class="leftcolumn"><div class="card"><h2>{}</h2><h5>Event Time: {}</h5><table id="events"><tr>'.format(
+        msg_subject.upper(), evnt_ts)
     if evnt_list:
         for i in evnt_list[0].keys():
-            evt_msg = evt_msg + '<th>{}</th>'.format(i.replace('_',' ').upper())
+            evt_msg = evt_msg + '<th>{}</th>'.format(i.replace('_', ' ').upper())
         evt_msg = evt_msg + '</tr>'
         for i in evnt_list:
             evt_msg = evt_msg + '<tr>'
-            for j in range(0,len(i.keys())):
+            for j in range(0, len(i.keys())):
                 evt_msg = evt_msg + '<td>{}</td>'.format(i[list(i.keys())[j]])
             evt_msg = evt_msg + '</tr>'
         evt_msg = evt_msg + '</table></div>'
@@ -275,12 +277,12 @@ def generate_evnt_msg(msg_subject,evnt_ts,evnt_list,action_list,st):
     recom_action = '<div class="card">\
       <h2>RECOMMENDED ACTION</h2>'
     if st:
-        recom_action = recom_action + f"<h5>Service Ticket: <a href=\"{web_url}/service_ticket_details_{st}\">IR-{st}</a></h5>"
+        recom_action = recom_action + f"<h5>Service Ticket: <a href=\"/service_ticket_details_{st}\">IR-{st}</a></h5>"
     recom_action = recom_action + '<ul id="myUL">'
     for i in action_list:
         recom_action = recom_action + '<li>{}</li>'.format(i)
     recom_action = recom_action + '</ul></div></div></div>'
-    
+
     evt_msg = evt_msg + recom_action
     msg_body = html_header + evt_style + msg_header + evt_msg + html_footer
     return msg_body
