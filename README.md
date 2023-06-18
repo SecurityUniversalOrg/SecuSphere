@@ -1,10 +1,24 @@
+<div align="center">
+  <img alt="Secusphere Logo" src="user_guide/images/secusphere.png" height="140" />
+  <h2 align="center">SecuSphere</h2>
+  <p align="center">Your Comprehensive DevSecOps Solution</p>
+</div>
+
+---
+
+<div align="center">
 
 
-# SecuSphere - Your Comprehensive DevSecOps Solution
+
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+
+</div>
+
+---
 
 Welcome to SecuSphere, your one-stop solution for all DevSecOps needs. Our centralized platform is expertly designed to manage and optimize your vulnerability management, CI/CD pipeline integration, security assessments, and DevSecOps practices.
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 SecuSphere is a comprehensive DevSecOps platform designed to streamline and enhance your organization's security posture throughout the software development life cycle. Our platform serves as a centralized hub for vulnerability management, security assessments, CI/CD pipeline integration, and fostering DevSecOps practices and culture.
 
