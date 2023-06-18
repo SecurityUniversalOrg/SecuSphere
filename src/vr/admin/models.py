@@ -20,7 +20,6 @@ from config_engine import AUTH_TYPE
 if AUTH_TYPE == 'ldap':
     from vr import ldap_manager
 
-import time
 if app.config['RUNTIME_ENV'] == 'test':
     from sqlalchemy.dialects.sqlite import TEXT as LONGTEXT
 else:
@@ -176,7 +175,8 @@ class User(UserMixin, db.Model):
 
     def get_username_token(self, expires_in=600):
         secret = str(self.username) + "-" + str(self.registration_date)
-        return jwt.encode({'undisplay_token': self.id, 'exp': time() + expires_in}, secret, algorithm='HS256')
+        jwt_payload = {'undisplay_token': self.id, 'exp': time() + expires_in}
+        return jwt.encode(jwt_payload, secret, algorithm='HS256')
 
     def verify_username_token(self, token, given_id):
         secret = str(self.username) + "-" + str(self.registration_date)
@@ -365,7 +365,7 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
         if self.revoked:
             return False
         expires_at = self.issued_at + self.expires_in * 2
-        return expires_at >= time.time()
+        return expires_at >= time()
 
 
 class Credentials(db.Model):

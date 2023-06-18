@@ -140,9 +140,7 @@ pipeline {
                  }
             }
             steps {
-                jslSetupTestDB("mysqldb")
-                jslVerifyTcpServiceReady('127.0.0.1', 3306)
-                jslRunDockerCompose("web")
+                jslRunDockerCompose("secusphere")
             }
         }
 

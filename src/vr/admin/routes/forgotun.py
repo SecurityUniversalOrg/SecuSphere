@@ -5,6 +5,8 @@ from vr.admin import admin
 from vr.admin.models import User, LoginForm
 from vr.admin.email_alerts import send_email, generate_evnt_msg
 from vr.functions.timefunctions import return_datetime_now
+from config_engine import SMTP_ADMIN_EMAIL
+
 
 NAV_CAT= { "name": "Admin", "url": "admin.admin_dashboard"}
 
@@ -16,7 +18,7 @@ def forgotun():
             # read config file
             config = None
             email = request.form.get('email')
-            user = User.query.filter_by(email=email).first()
+            user = User.query.filter(User.email.ilike(email)).first()
             if user:
                 token = user.get_username_token()
                 msg_subject = 'Security Universal Alert - Username Recovery Confirmation'
@@ -26,14 +28,17 @@ def forgotun():
                 action_list = [action]
                 st = 'n'
                 msg_body = generate_evnt_msg(msg_subject,now,evt_list,action_list,st)
-                msg_fromaddr = 'bkaiser.infosec@gmail.com'
-                send_email(msg_fromaddr, email, msg_subject, msg_body)
-                warnmsg = ('pwresetemail','success')
+                msg_fromaddr = SMTP_ADMIN_EMAIL
+                try:
+                    send_email(msg_fromaddr, email, msg_subject, msg_body)
+                    warnmsg = ('pwresetemail', 'success')
+                except:
+                    warnmsg = ('pwresetemail', 'fail')
                 return render_template('admin/login.html', form=form, config=config, warnmsg=warnmsg)
             else:
                 warnmsg = ('pwresetemail', 'success')
                 return render_template('admin/login.html', form=form, config=config, warnmsg=warnmsg)
-        return render_template('admin/forgotun.html', form=form)
+        return render_template('admin/forgotun.html')
     except RuntimeError:
         return render_template('500.html'), 500
 

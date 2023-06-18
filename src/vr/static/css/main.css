@@ -1561,3 +1561,7 @@ width: 0;
   padding-top: 15px;
   margin: auto !important;
 }
+
+.warnmsg_fail {
+  color: white;
+}
