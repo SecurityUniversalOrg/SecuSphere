@@ -1,10 +1,17 @@
 # User Management
+[Back to User Guide](./index.md)
 
 To manage Users in SecuSphere, you must have a user with Administrator privileges.
+
+* [Add Users](#add-users)
+* [Remove Users](#remove-users)
+* [Role Management](#role-management)
 
 To reach the User Management page, activate the side menu and then click on Admin > Users.
 
 ![Diagram](./screenshots/user_list_nav.png)
+
+[Back to the Top](#user-management)
 
 ### Add Users
 From the User Management page, click on the blue wrench button and then click `+ Add User`.
@@ -16,6 +23,8 @@ The `Add User` window will pop up.  Fill out the User details and then click the
 The new User will now appear in the User list.  If you have configured SMTP Integration, the user will recieve an email with login details. 
 ![Diagram](./screenshots/new_user_list.png)
 
+[Back to the Top](#user-management)
+
 ### Remove Users
 From the User Management page, hover over the user row for the user that you would like to remove.
 ![Diagram](./screenshots/delete_user_list.png)
@@ -24,6 +33,8 @@ Click on the Trash icon and a Confirmation window will pop up.
 ![Diagram](./screenshots/confirm_delete_modal.png)
 
 Confirm you would like to remove the user by clicking on the `Delete` button.
+
+[Back to the Top](#user-management)
 
 ### Role Management
 
@@ -37,3 +48,5 @@ When assigning the `Application Viewer` role, you are also required to select sp
 ![Diagram](./screenshots/role_mgmt_app_viewer.png)
 
 Click on the `Save Changes` button to apply the role assignment.
+
+[Back to the Top](#user-management)

@@ -55,6 +55,8 @@ SecuSphere offers built-in dashboards and reporting capabilities that allow you 
 
 SecuSphere provides a comprehensive REST API and Web Console. This allows for greater flexibility and control over your security operations, ensuring you can automate and integrate SecuSphere into your existing systems and workflows as seamlessly as possible.
 
+For more information please refer to our [Official Rest API Documentation](https://www.securityuniversal.com/secusphere/api/documentation)
+
 ## 💼 Integration with Ticketing Systems
 
 SecuSphere integrates with popular ticketing systems, enabling the creation and management of remediation tasks directly within the platform. This helps streamline your security operations and ensure faster resolution of identified vulnerabilities.
