@@ -2,6 +2,8 @@
 
 [Getting Started](getting_started.md)
 
+[Production Deployments](getting_started.md)
+
 [Creating an Application Profile](creating_an_application_profile.md)
 
 [User Management](user_management.md)
