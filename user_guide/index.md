@@ -2,7 +2,7 @@
 
 [Getting Started](getting_started.md)
 
-[Production Deployments](getting_started.md)
+[Production Deployments](production_deployments.md)
 
 [Creating an Application Profile](creating_an_application_profile.md)
 
