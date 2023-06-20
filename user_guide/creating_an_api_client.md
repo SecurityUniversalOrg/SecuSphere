@@ -1,6 +1,19 @@
 # Creating an API Client
+[Back to User Guide](./index.md)
 
 For more information please refer to our [Official Rest API Documentation](https://www.securityuniversal.com/secusphere/api/documentation)
+
+* Sample API Client Apps
+  * [Python](#python)
+  * [JavaScript](#javascript)
+  * [Java](#java)
+  * [C#](#c)
+  * [PHP](#php)
+  * [Ruby](#ruby)
+  * [Go](#go)
+  * [Typescript](#typescript)
+  * [Swift](#swift)
+  * [Kotlin](#kotlin)
 
 In order to submit CI/CD Pipeline Security Assessment Reports to SecuSphere for analysis, an OAuth2 API Client is required.
 
@@ -15,6 +28,8 @@ From the `Create API Client` page, add a client name and select your perferred p
 
 After clicking on the `Submit` button, you will be presented with the API Client ID and Secret.  Please note, this data is only available during this session and should be stored in a secure password manager.
 ![Diagram](./screenshots/create_api_creds.png)
+
+[Back to the Top](#creating-an-api-client)
 
 ### Sample API Client Apps
 
@@ -116,6 +131,8 @@ resp = api.send_search('search_vulnerabilities', field, value)
 
 ```
 
+[Back to the Top](#creating-an-api-client)
+
 #### JavaScript 
 ```javascript
 const axios = require('axios');
@@ -211,6 +228,8 @@ const field = "Severity";
 const value = "High";
 api.send_search('search_vulnerabilities', field, value).then((resp) => console.log(resp));
 ```
+
+[Back to the Top](#creating-an-api-client)
 
 #### Java 
 ```java
@@ -345,6 +364,8 @@ String value = "High";
 resp = api.send_search("search_vulnerabilities", field, value);
 
 ```
+
+[Back to the Top](#creating-an-api-client)
 
 #### C# 
 ```csharp
@@ -486,6 +507,8 @@ string value = "High";
 resp = api.SendSearch("search_vulnerabilities", field, value);
 ```
 
+[Back to the Top](#creating-an-api-client)
+
 #### PHP 
 ```php
 <?php
@@ -617,6 +640,8 @@ $resp = $api->send_search('search_vulnerabilities', $field, $value);
 ?>
 ```
 
+[Back to the Top](#creating-an-api-client)
+
 #### Ruby
 ```ruby
 require 'rest-client'
@@ -714,6 +739,8 @@ value = "High"
 
 resp = api.send_search('search_vulnerabilities', field, value)
 ```
+
+[Back to the Top](#creating-an-api-client)
 
 #### Go 
 ```go
@@ -870,6 +897,7 @@ func main() {
 }
 ```
 
+[Back to the Top](#creating-an-api-client)
 
 #### TypeScript
 ```typescript
@@ -973,6 +1001,8 @@ const value = "High";
 
 api.send_search('search_vulnerabilities', field, value).then(resp => console.log(resp));
 ```
+
+[Back to the Top](#creating-an-api-client)
 
 #### Swift
 ```swift
@@ -1149,6 +1179,8 @@ if let resp = api.send_search(endpoint: "search_vulnerabilities", field: field, 
 }
 ```
 
+[Back to the Top](#creating-an-api-client)
+
 #### Kotlin
 ```kotlin
 import io.ktor.client.*
@@ -1291,4 +1323,4 @@ fun main() = runBlocking {
 }
 ```
 
-
+[Back to the Top](#creating-an-api-client)
