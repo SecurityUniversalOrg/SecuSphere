@@ -1,6 +1,6 @@
 # Creating an API Client
 
-For more information please refer to our [Official Rest API Documenation](https://www.securityuniversal.com/secusphere/api/documentation)
+For more information please refer to our [Official Rest API Documentation](https://www.securityuniversal.com/secusphere/api/documentation)
 
 In order to submit CI/CD Pipeline Security Assessment Reports to SecuSphere for analysis, an OAuth2 API Client is required.
 

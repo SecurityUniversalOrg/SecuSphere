@@ -10,7 +10,7 @@
 
 [CI/CD Pipeline Integrations](cicd_pipeline_integrations.md)
 
-[Ticketing System Intregrations](ticketing_system_integrations.md)
+[Ticketing System Integrations](ticketing_system_integrations.md)
 
 [Viewing Application Status](viewing_application_status.md)
 
