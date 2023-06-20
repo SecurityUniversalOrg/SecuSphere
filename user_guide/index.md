@@ -16,8 +16,6 @@
 
 [Viewing Application Status](viewing_application_status.md)
 
-[Viewing Application Vulnerability Findings](viewing_application_vulnerability_findings.md)
-
 [Managing Vulnerability Findings](managing_vulnerability_findings.md)
 
 [Creating Reports](creating_reports.md)

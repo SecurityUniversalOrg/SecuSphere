@@ -14,6 +14,8 @@ Requirements
 * Azure Managed MySQL Database
 * SMTP Configuration Details
 
+[Back to the Top](#production-deployments)
+
 ## 2. Setup Production Credentials
 Currently, Azure is the supported cloud platform for production deployments.
 
@@ -59,6 +61,8 @@ SET_SMTP_ADMIN_EMAIL = 'admin@securityuniversal.com'     <---------- UPDATE WITH
 SET_SMTP_PW_REF = 'SENDGRID-SMTP-PW'     <---------- ADD AZURE SECRET NAME HERE
 ...
 ```
+
+[Back to the Top](#production-deployments)
 
 ## 3. Deploy SecuSphere via Helm Charts
 1. From the source code root directory, navigate to the helm directory
@@ -128,3 +132,6 @@ helm upgrade secusphere ./secusphere -n secusphere -i --values ./secusphere/valu
 ```
 
 9. If the deployment was successful, you should be able to reach the web console at https://[your-instance-url]
+
+
+[Back to the Top](#production-deployments)
