@@ -1,5 +1,5 @@
 # Viewing Application Status
-[Back to User Guide](./index.md)
+[Back to User Guide](./README.md)
 
 To view the status of an Application monitored by SecuSphere, start by navigating to the `All Applications` page and then click on the Target Application Profile:
 ![Diagram](./screenshots/view_app_status_app_list.png)

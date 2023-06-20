@@ -1,5 +1,5 @@
 # Ticketing System Integrations
-[Back to User Guide](./index.md)
+[Back to User Guide](./README.md)
 
 ## JIRA Integration
 [Integration Guide](integrations/jira_integration.md)

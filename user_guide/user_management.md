@@ -1,5 +1,5 @@
 # User Management
-[Back to User Guide](./index.md)
+[Back to User Guide](./README.md)
 
 To manage Users in SecuSphere, you must have a user with Administrator privileges.
 

@@ -1,5 +1,5 @@
 # Creating an API Client
-[Back to User Guide](./index.md)
+[Back to User Guide](./README.md)
 
 For more information please refer to our [Official Rest API Documentation](https://www.securityuniversal.com/secusphere/api/documentation)
 
