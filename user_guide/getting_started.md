@@ -1,7 +1,7 @@
 # Getting Started
-[Back to User Guide](./index.md)
+[Back to User Guide](./README.md)
 
-1. Open your web browser and navigate to the ThreatBuster URL<br>
+1. Open your web browser and navigate to the SecuSphere URL<br>
 ![Diagram](./screenshots/initial_url.png)
 <br><br>
 2. Your browser will be redirected to the Register page.<br>

@@ -1,5 +1,5 @@
 # Creating an Application Profile
-[Back to User Guide](./index.md)
+[Back to User Guide](./README.md)
 
 In SecuSphere, an Application Profile represents a unique instance of an Application that you'd like SecuSphere to monitor.
 
