@@ -30,7 +30,6 @@ function copyToClipboard(id) {
   el.select();
   el.setSelectionRange(0, 99999); // For mobile devices
   document.execCommand("copy");
-  alert("Copied to clipboard: " + el.value);
 }
 </script>
 </head>
