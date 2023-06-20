@@ -7,6 +7,11 @@ from settings import SET_ENV, SET_AZURE_KEYVAULT_NAME, SET_AUTH_TYPE, SET_INSECU
     SET_SMTP_ADMIN_EMAIL, SET_LDAP_HOST, SET_LDAP_PORT, SET_LDAP_BASE_DN, SET_LDAP_USER_DN, SET_LDAP_GROUP_DN, \
     SET_LDAP_USER_RDN_ATTR, SET_LDAP_USER_LOGIN_ATTR, SET_LDAP_BIND_USER_DN, SET_LDAP_BIND_USER_PASSWORD, \
     SET_APP_EXT_URL
+if SET_ENV == 'prod':
+    from settings import SET_PROD_DB_URI_REF, SET_SMTP_PW_REF, SET_JENKINS_KEY_REF, SET_JENKINS_USER_REF, \
+        SET_JENKINS_PW_REF
+else:
+    from settings import SET_PROD_DB_URI, SET_SMTP_PW, SET_JENKINS_KEY, SET_JENKINS_USER, SET_JENKINS_PW
 
 
 VERSION = '0.1.0-beta'
@@ -88,25 +93,25 @@ if os.getenv('VM_RUNTIME'):
 else:
     ENV = SET_ENV
 if ENV == 'prod':
-    PROD_DB_URI = KeyVaultManager().get_secret('PROD-DB-URI')
+    PROD_DB_URI = KeyVaultManager().get_secret(SET_PROD_DB_URI_REF)
 else:
-    PROD_DB_URI = None
+    PROD_DB_URI = SET_PROD_DB_URI
 
 ## Email Variables ##
 if ENV == 'prod':
-    SMTP_PASSWORD = KeyVaultManager().get_secret('SENDGRID-SMTP-PW')
+    SMTP_PASSWORD = KeyVaultManager().get_secret(SET_SMTP_PW_REF)
 else:
-    SMTP_PASSWORD = None
+    SMTP_PASSWORD = SET_SMTP_PW
 
 ##
 ## GitHub to Jenkins Webhook ##
 if ENV == 'prod':
-    JENKINS_USER = KeyVaultManager().get_secret('JENKINS-USER')
-    JENKINS_PW = KeyVaultManager().get_secret('JENKINS-PW')
-    JENKINS_KEY = KeyVaultManager().get_secret('JENKINS-KEY')
+    JENKINS_USER = KeyVaultManager().get_secret(SET_JENKINS_USER_REF)
+    JENKINS_PW = KeyVaultManager().get_secret(SET_JENKINS_PW_REF)
+    JENKINS_KEY = KeyVaultManager().get_secret(SET_JENKINS_KEY_REF)
 else:
-    JENKINS_USER = None
-    JENKINS_PW = None
-    JENKINS_KEY = None
+    JENKINS_USER = SET_JENKINS_USER
+    JENKINS_PW = SET_JENKINS_PW
+    JENKINS_KEY = SET_JENKINS_KEY
 
 

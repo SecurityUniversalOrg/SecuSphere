@@ -1,11 +1,6 @@
 appName: "secusphere"
 environment: dev
 
-apiPairingKey: ""
-credPrivateKey: ""
-credPublicKey: ""
-webAuthCode: ""
-dbPublicKey: ""
 azClientId: ""
 azClientSecret: ""
 azTenantId: ""
