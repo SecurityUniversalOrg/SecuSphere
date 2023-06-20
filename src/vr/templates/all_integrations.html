@@ -43,7 +43,7 @@
                             <div class="panel-heading tight">
                                 <h3 class="has-filters">
                                     Integration Configurations
-                                    <div class="dropdown pull-right">
+                                    <div class="dropdown pull-right" style="bottom: 1rem;">
 
                                         <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
                                                 data-toggle="dropdown" aria-expanded="true">
@@ -85,7 +85,7 @@
                                 {% for i in entities %}
                                 <tr>
                                     <td>
-                                        <a href="/tool_config/{{ i.ID }}/edit"><strong>{{ i.Name }}</strong></a>
+                                        <strong>{{ i.Name }}</strong>
                                     </td>
                                     <td>
                                         {{ i.Description }}
