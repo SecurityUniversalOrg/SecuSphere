@@ -65,7 +65,7 @@ SecuSphere integrates with popular ticketing systems, enabling the creation and 
 
 SecuSphere is not just a tool, it's a comprehensive solution that drives and accelerates the adoption of DevSecOps principles and practices. We provide security training and awareness for developers, security, and operations teams, and aid in establishing secure coding guidelines and best practices.
 
-## 📘 [User Guide](user_guide/index.md)
+## 📘 [User Guide](user_guide/README.md)
 
 Get started with SecuSphere using our comprehensive user guide.
 
