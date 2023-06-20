@@ -1,0 +1,706 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SecuSphere Rest API</title>
+    <style type="text/css">
+      body {
+      	font-family: Trebuchet MS, sans-serif;
+      	font-size: 15px;
+      	color: #444;
+      	margin-right: 24px;
+      }
+
+      h1	{
+      	font-size: 25px;
+      }
+      h2	{
+      	font-size: 20px;
+      }
+      h3	{
+      	font-size: 16px;
+      	font-weight: bold;
+      }
+      hr	{
+      	height: 1px;
+      	border: 0;
+      	color: #ddd;
+      	background-color: #ddd;
+      }
+
+      .app-desc {
+        clear: both;
+        margin-left: 20px;
+      }
+      .param-name {
+        width: 100%;
+      }
+      .license-info {
+        margin-left: 20px;
+      }
+
+      .license-url {
+        margin-left: 20px;
+      }
+
+      .model {
+        margin: 0 0 0px 20px;
+      }
+
+      .method {
+        margin-left: 20px;
+      }
+
+      .method-notes	{
+      	margin: 10px 0 20px 0;
+      	font-size: 90%;
+      	color: #555;
+      }
+
+      pre {
+        padding: 10px;
+        margin-bottom: 2px;
+      }
+
+      .http-method {
+       text-transform: uppercase;
+      }
+
+      pre.get {
+        background-color: #0f6ab4;
+      }
+
+      pre.post {
+        background-color: #10a54a;
+      }
+
+      pre.put {
+        background-color: #c5862b;
+      }
+
+      pre.delete {
+        background-color: #a41e22;
+      }
+
+      .huge	{
+      	color: #fff;
+      }
+
+      pre.example {
+        background-color: #f3f3f3;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+
+      code {
+        white-space: pre;
+      }
+
+      .nickname {
+        font-weight: bold;
+      }
+
+      .method-path {
+        font-size: 1.5em;
+        background-color: #0f6ab4;
+      }
+
+      .up {
+        float:right;
+      }
+
+      .parameter {
+        width: 500px;
+      }
+
+      .param {
+        width: 500px;
+        padding: 10px 0 0 20px;
+        font-weight: bold;
+      }
+
+      .param-desc {
+        width: 700px;
+        padding: 0 0 0 20px;
+        color: #777;
+      }
+
+      .param-type {
+        font-style: italic;
+      }
+
+      .param-enum-header {
+      width: 700px;
+      padding: 0 0 0 60px;
+      color: #777;
+      font-weight: bold;
+      }
+
+      .param-enum {
+      width: 700px;
+      padding: 0 0 0 80px;
+      color: #777;
+      font-style: italic;
+      }
+
+      .field-label {
+        padding: 0;
+        margin: 0;
+        clear: both;
+      }
+
+      .field-items	{
+      	padding: 0 0 15px 0;
+      	margin-bottom: 15px;
+      }
+
+      .return-type {
+        clear: both;
+        padding-bottom: 10px;
+      }
+
+      .param-header {
+        font-weight: bold;
+      }
+
+      .method-tags {
+        text-align: right;
+      }
+
+      .method-tag {
+        background: none repeat scroll 0% 0% #24A600;
+        border-radius: 3px;
+        padding: 2px 10px;
+        margin: 2px;
+        color: #FFF;
+        display: inline-block;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+  <h1>SecuSphere Rest API</h1>
+    <div class="app-desc">Your Comprehensive DevSecOps Solution</div>
+    <div class="app-desc">More information: <a href="https://www.securityuniversal.com/secusphere">https://www.securityuniversal.com/secusphere</a></div>
+    <div class="app-desc">Contact Info: <a href="admin@securityuniversal.com">admin@securityuniversal.com</a></div>
+    <div class="app-desc">Version: 0.1.0</div>
+
+    <div class="license-info">All rights reserved</div>
+    <div class="license-url">https://www.gnu.org/licenses/gpl-3.0</div>
+  <h2>Access</h2>
+    <ol>
+      <li>OAuth AuthorizationUrl:TokenUrl:https://[your-instance]/oauth/token</li>
+    </ol>
+
+  <h2><a name="__Methods">Methods</a></h2>
+  [ Jump to <a href="#__Models">Models</a> ]
+
+  <h3>Table of Contents </h3>
+  <div class="method-summary"></div>
+  <h4><a href="#Vulnerabilities">Vulnerabilities</a></h4>
+  <ul>
+  <li><a href="#addVulnerabilitiesPost"><code><span class="http-method">post</span> /add_vulnerabilities</code></a></li>
+  <li><a href="#deleteVulnerabilitiesPost"><code><span class="http-method">post</span> /delete_vulnerabilities</code></a></li>
+  <li><a href="#editVulnerabilitiesPost"><code><span class="http-method">post</span> /edit_vulnerabilities</code></a></li>
+  <li><a href="#searchVulnerabilitiesPost"><code><span class="http-method">post</span> /search_vulnerabilities</code></a></li>
+  <li><a href="#vulnerabilitiesGet"><code><span class="http-method">get</span> /vulnerabilities</code></a></li>
+  </ul>
+
+  <h1><a name="Vulnerabilities">Vulnerabilities</a></h1>
+  <div class="method"><a name="addVulnerabilitiesPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /add_vulnerabilities</code></pre></div>
+    <div class="method-summary">Add Vulnerabilities (<span class="nickname">addVulnerabilitiesPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#add_vulnerabilities_body">add_vulnerabilities_body</a> (optional)</div>
+
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+            <div class="param-desc"><span class="param-type">example: <code>{
+  &quot;value&quot; : {
+    &quot;VulnerabilityName&quot; : &quot;This is vulnerability one&quot;,
+    &quot;CVEID&quot; : &quot;CVE-123&quot;,
+    &quot;CWEID&quot; : &quot;CWE-45&quot;,
+    &quot;Description&quot; : &quot;Don&#x27;t worry, this is just a test!&quot;,
+    &quot;ReleaseDate&quot; : &quot;2022-11-07&quot;,
+    &quot;Severity&quot; : &quot;High&quot;,
+    &quot;Classification&quot; : &quot;Container&quot;,
+    &quot;Source&quot; : &quot;PostmanTest&quot;,
+    &quot;LastModifiedDate&quot; : &quot;2022-11-07&quot;,
+    &quot;ReferenceName&quot; : &quot;None&quot;,
+    &quot;ReferenceUrl&quot; : &quot;None&quot;,
+    &quot;ReferenceTags&quot; : &quot;None&quot;,
+    &quot;AddDate&quot; : &quot;2022-11-08&quot;
+  }
+}</code></span></div>    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200">inline_response_200</a>
+
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "ID" : 0
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#inline_response_200">inline_response_200</a>
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{&quot;ID&quot;:16}</code></pre>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="deleteVulnerabilitiesPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /delete_vulnerabilities</code></pre></div>
+    <div class="method-summary">Delete Vulnerabilities (<span class="nickname">deleteVulnerabilitiesPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#Vulnerabilities">Vulnerabilities</a> (optional)</div>
+
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; All properties are optional.  If multiple properties are provided, the deleted entities must match all property filters. </div>
+            <div class="param-desc"><span class="param-type">example: <code>{
+  &quot;value&quot; : {
+    &quot;ID&quot; : &quot;3&quot;
+  }
+}</code></span></div>    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200_1">inline_response_200_1</a>
+
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "Status" : "Status"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#inline_response_200_1">inline_response_200_1</a>
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{&quot;Status&quot;:&quot;Deleted&quot;}</code></pre>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="editVulnerabilitiesPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /edit_vulnerabilities</code></pre></div>
+    <div class="method-summary">Edit Vulnerabilities (<span class="nickname">editVulnerabilitiesPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#edit_vulnerabilities_body">edit_vulnerabilities_body</a> (optional)</div>
+
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; All properties are optional.  If multiple properties are provided, the edited entities must match all property filters. </div>
+            <div class="param-desc"><span class="param-type">example: <code>{
+  &quot;value&quot; : {
+    &quot;filter&quot; : {
+      &quot;VulnerabilityID&quot; : &quot;5&quot;
+    },
+    &quot;values&quot; : {
+      &quot;VulnerabilityName&quot; : &quot;This is NOT a REAL vulnerability&quot;,
+      &quot;CVEID&quot; : &quot;CVE-123&quot;,
+      &quot;CWEID&quot; : &quot;CWE-45&quot;,
+      &quot;Description&quot; : &quot;Don&#x27;t worry, this is just a test!&quot;,
+      &quot;ReleaseDate&quot; : &quot;2022-11-07&quot;,
+      &quot;Severity&quot; : &quot;High&quot;,
+      &quot;Classification&quot; : &quot;Container&quot;,
+      &quot;Source&quot; : &quot;PostmanTest&quot;,
+      &quot;LastModifiedDate&quot; : &quot;2022-11-07&quot;,
+      &quot;ReferenceName&quot; : &quot;None&quot;,
+      &quot;ReferenceUrl&quot; : &quot;None&quot;,
+      &quot;ReferenceTags&quot; : &quot;None&quot;,
+      &quot;AddDate&quot; : &quot;2022-11-08&quot;
+    }
+  }
+}</code></span></div>    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200_2">inline_response_200_2</a>
+
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "ID" : 0
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#inline_response_200_2">inline_response_200_2</a>
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{&quot;ID&quot;:5}</code></pre>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="searchVulnerabilitiesPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /search_vulnerabilities</code></pre></div>
+    <div class="method-summary">Search Vulnerabilities (<span class="nickname">searchVulnerabilitiesPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#Vulnerabilities">Vulnerabilities</a> (optional)</div>
+
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+            <div class="param-desc"><span class="param-type">example: <code>{
+  &quot;value&quot; : {
+    &quot;VulnerabilityName&quot; : &quot;This is a REAL vulnerability&quot;
+  }
+}</code></span></div>    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#Vulnerabilities">Vulnerabilities</a>
+
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "VulnerablePackage" : "VulnerablePackage",
+  "VulnerabilityID" : 0,
+  "LastModifiedDate" : "2000-01-23T04:56:07.000+00:00",
+  "Description" : "Description",
+  "SourceCodeFileStartCol" : 5,
+  "VulnerableFileName" : "VulnerableFileName",
+  "Uri" : "Uri",
+  "Source" : "Source",
+  "ReferenceUrl" : "ReferenceUrl",
+  "SourceCodeFileEndLine" : 5,
+  "CVEID" : "CVEID",
+  "Classification" : "Classification",
+  "HtmlMethod" : "HtmlMethod",
+  "Evidence" : "Evidence",
+  "ScanId" : 2,
+  "DockerImageId" : 7,
+  "ReferenceName" : "ReferenceName",
+  "Solution" : "Solution",
+  "Status" : "Status",
+  "SourceCodeFileStartLine" : 1,
+  "MitigationDate" : "2000-01-23T04:56:07.000+00:00",
+  "Severity" : "Severity",
+  "Attack" : "Attack",
+  "ReleaseDate" : "2000-01-23T04:56:07.000+00:00",
+  "HostId" : 3,
+  "VulnerabilityName" : "VulnerabilityName",
+  "VulnerableFilePath" : "VulnerableFilePath",
+  "ReferenceTags" : "ReferenceTags",
+  "SourceCodeFileId" : 6,
+  "InitialScanId" : 4,
+  "CWEID" : "CWEID",
+  "AddDate" : "2000-01-23T04:56:07.000+00:00",
+  "Param" : "Param",
+  "ApplicationId" : 9,
+  "SourceCodeFileEndCol" : 2
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#Vulnerabilities">Vulnerabilities</a>
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[{&quot;AddDate&quot;:&quot;2022-11-10&quot;,&quot;CVEID&quot;:&quot;CVE-123&quot;,&quot;CWEID&quot;:&quot;CWE-45&quot;,&quot;Classification&quot;:&quot;Container&quot;,&quot;Description&quot;:&quot;Dont worry, this is just a test!&quot;,&quot;LastModifiedDate&quot;:&quot;2022-11-07&quot;,&quot;ReferenceName&quot;:&quot;None&quot;,&quot;ReferenceTags&quot;:&quot;None&quot;,&quot;ReferenceUrl&quot;:&quot;None&quot;,&quot;ReleaseDate&quot;:&quot;2022-11-07&quot;,&quot;Severity&quot;:&quot;High&quot;,&quot;Source&quot;:&quot;PostmanTest&quot;,&quot;VulnerabilityID&quot;:&quot;17&quot;,&quot;VulnerabilityName&quot;:&quot;This is a test vulnerability&quot;},{&quot;AddDate&quot;:&quot;2022-11-10&quot;,&quot;CVEID&quot;:&quot;CVE-123&quot;,&quot;CWEID&quot;:&quot;CWE-45&quot;,&quot;Classification&quot;:&quot;Container&quot;,&quot;Description&quot;:&quot;Dont worry, this is just a test!&quot;,&quot;LastModifiedDate&quot;:&quot;2022-11-07&quot;,&quot;ReferenceName&quot;:&quot;None&quot;,&quot;ReferenceTags&quot;:&quot;None&quot;,&quot;ReferenceUrl&quot;:&quot;None&quot;,&quot;ReleaseDate&quot;:&quot;2022-11-07&quot;,&quot;Severity&quot;:&quot;High&quot;,&quot;Source&quot;:&quot;PostmanTest&quot;,&quot;VulnerabilityID&quot;:&quot;18&quot;,&quot;VulnerabilityName&quot;:&quot;This is a test vulnerability&quot;}]</code></pre>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="vulnerabilitiesGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /vulnerabilities</code></pre></div>
+    <div class="method-summary">List Vulnerabilities (<span class="nickname">vulnerabilitiesGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#Vulnerabilities">Vulnerabilities</a>
+
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "VulnerablePackage" : "VulnerablePackage",
+  "VulnerabilityID" : 0,
+  "LastModifiedDate" : "2000-01-23T04:56:07.000+00:00",
+  "Description" : "Description",
+  "SourceCodeFileStartCol" : 5,
+  "VulnerableFileName" : "VulnerableFileName",
+  "Uri" : "Uri",
+  "Source" : "Source",
+  "ReferenceUrl" : "ReferenceUrl",
+  "SourceCodeFileEndLine" : 5,
+  "CVEID" : "CVEID",
+  "Classification" : "Classification",
+  "HtmlMethod" : "HtmlMethod",
+  "Evidence" : "Evidence",
+  "ScanId" : 2,
+  "DockerImageId" : 7,
+  "ReferenceName" : "ReferenceName",
+  "Solution" : "Solution",
+  "Status" : "Status",
+  "SourceCodeFileStartLine" : 1,
+  "MitigationDate" : "2000-01-23T04:56:07.000+00:00",
+  "Severity" : "Severity",
+  "Attack" : "Attack",
+  "ReleaseDate" : "2000-01-23T04:56:07.000+00:00",
+  "HostId" : 3,
+  "VulnerabilityName" : "VulnerabilityName",
+  "VulnerableFilePath" : "VulnerableFilePath",
+  "ReferenceTags" : "ReferenceTags",
+  "SourceCodeFileId" : 6,
+  "InitialScanId" : 4,
+  "CWEID" : "CWEID",
+  "AddDate" : "2000-01-23T04:56:07.000+00:00",
+  "Param" : "Param",
+  "ApplicationId" : 9,
+  "SourceCodeFileEndCol" : 2
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#Vulnerabilities">Vulnerabilities</a>
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[{&quot;AddDate&quot;:&quot;2023-01-05T01:07:32&quot;,&quot;ApplicationId&quot;:4,&quot;Attack&quot;:&quot;&quot;,&quot;CVEID&quot;:&quot;&quot;,&quot;CWEID&quot;:&quot;CWE-798&quot;,&quot;Classification&quot;:&quot;SecretScan-Github&quot;,&quot;Description&quot;:&quot;Github Secret/Credential Discovered in file: ci_cd/ReportRunner.py&quot;,&quot;DockerImageId&quot;:&quot;&quot;,&quot;Evidence&quot;:&quot;&quot;,&quot;HostId&quot;:&quot;&quot;,&quot;HtmlMethod&quot;:&quot;&quot;,&quot;InitialScanId&quot;:195,&quot;LastModifiedDate&quot;:&quot;2023-01-24T14:20:58&quot;,&quot;MitigationDate&quot;:&quot;&quot;,&quot;Param&quot;:&quot;&quot;,&quot;ReferenceName&quot;:&quot;&quot;,&quot;ReferenceTags&quot;:&quot;&quot;,&quot;ReferenceUrl&quot;:&quot;&quot;,&quot;ReleaseDate&quot;:&quot;2023-01-05T01:07:27&quot;,&quot;ScanId&quot;:214,&quot;Severity&quot;:&quot;Critical&quot;,&quot;Solution&quot;:&quot;&quot;,&quot;Source&quot;:&quot;Trufflehog-CI_CD&quot;,&quot;SourceCodeFileEndCol&quot;:&quot;&quot;,&quot;SourceCodeFileEndLine&quot;:&quot;&quot;,&quot;SourceCodeFileId&quot;:&quot;&quot;,&quot;SourceCodeFileStartCol&quot;:&quot;&quot;,&quot;SourceCodeFileStartLine&quot;:&quot;&quot;,&quot;Status&quot;:&quot;New&quot;,&quot;Uri&quot;:&quot;&quot;,&quot;VulnerabilityID&quot;:18587,&quot;VulnerabilityName&quot;:&quot;Hardcoded Secret - Github&quot;,&quot;VulnerableFileName&quot;:&quot;ci_cd/ReportRunner.py&quot;,&quot;VulnerableFilePath&quot;:&quot;&quot;,&quot;VulnerablePackage&quot;:&quot;&quot;}]</code></pre>
+  </div> <!-- method -->
+  <hr/>
+
+  <h2><a name="__Models">Models</a></h2>
+  [ Jump to <a href="#__Methods">Methods</a> ]
+
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#Vulnerabilities"><code>Vulnerabilities</code></a></li>
+    <li><a href="#add_vulnerabilities_body"><code>add_vulnerabilities_body</code></a></li>
+    <li><a href="#edit_vulnerabilities_body"><code>edit_vulnerabilities_body</code></a></li>
+    <li><a href="#inline_response_200"><code>inline_response_200</code></a></li>
+    <li><a href="#inline_response_200_1"><code>inline_response_200_1</code></a></li>
+    <li><a href="#inline_response_200_2"><code>inline_response_200_2</code></a></li>
+  </ol>
+
+  <div class="model">
+    <h3><a name="Vulnerabilities"><code>Vulnerabilities</code></a> <a class="up" href="#__Models">Up</a></h3>
+
+    <div class="field-items">
+      <div class="param">VulnerabilityID (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The VulnerabilityID for the vulnerabilities. format: int32</div>
+<div class="param">VulnerabilityName (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The VulnerabilityName for the vulnerabilities. </div>
+<div class="param">CVEID (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The CVEID for the vulnerabilities. </div>
+<div class="param">CWEID (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The CWEID for the vulnerabilities. </div>
+<div class="param">Description (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Description for the vulnerabilities. </div>
+<div class="param">ReleaseDate (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> The ReleaseDate for the vulnerabilities. format: date-time</div>
+<div class="param">Severity (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Severity for the vulnerabilities. </div>
+<div class="param">Classification (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Classification for the vulnerabilities. </div>
+<div class="param">Source (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Source for the vulnerabilities. </div>
+<div class="param">LastModifiedDate (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> The LastModifiedDate for the vulnerabilities. format: date-time</div>
+<div class="param">ReferenceName (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The ReferenceName for the vulnerabilities. </div>
+<div class="param">ReferenceUrl (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The ReferenceUrl for the vulnerabilities. </div>
+<div class="param">ReferenceTags (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The ReferenceTags for the vulnerabilities. </div>
+<div class="param">AddDate (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> The AddDate for the vulnerabilities. format: date-time</div>
+<div class="param">SourceCodeFileId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The SourceCodeFileId for the vulnerabilities. format: int32</div>
+<div class="param">SourceCodeFileStartLine (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The SourceCodeFileStartLine for the vulnerabilities. format: int32</div>
+<div class="param">SourceCodeFileStartCol (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The SourceCodeFileStartCol for the vulnerabilities. format: int32</div>
+<div class="param">SourceCodeFileEndLine (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The SourceCodeFileEndLine for the vulnerabilities. format: int32</div>
+<div class="param">SourceCodeFileEndCol (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The SourceCodeFileEndCol for the vulnerabilities. format: int32</div>
+<div class="param">DockerImageId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The DockerImageId for the vulnerabilities. format: int32</div>
+<div class="param">ApplicationId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The ApplicationId for the vulnerabilities. format: int32</div>
+<div class="param">HostId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The HostId for the vulnerabilities. format: int32</div>
+<div class="param">Uri (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Uri for the vulnerabilities. </div>
+<div class="param">HtmlMethod (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The HtmlMethod for the vulnerabilities. </div>
+<div class="param">Param (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Param for the vulnerabilities. </div>
+<div class="param">Attack (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Attack for the vulnerabilities. </div>
+<div class="param">Evidence (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Evidence for the vulnerabilities. </div>
+<div class="param">Solution (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Solution for the vulnerabilities. </div>
+<div class="param">VulnerablePackage (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The VulnerablePackage for the vulnerabilities. </div>
+<div class="param">VulnerableFileName (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The VulnerableFileName for the vulnerabilities. </div>
+<div class="param">VulnerableFilePath (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The VulnerableFilePath for the vulnerabilities. </div>
+<div class="param">MitigationDate (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> The MitigationDate for the vulnerabilities. format: date-time</div>
+<div class="param">Status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Status for the vulnerabilities. </div>
+<div class="param">ScanId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The ScanId for the vulnerabilities. format: int32</div>
+<div class="param">InitialScanId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The InitialScanId for the vulnerabilities. format: int32</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="add_vulnerabilities_body"><code>add_vulnerabilities_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+
+    <div class="field-items">
+      <div class="param">VulnerabilityName (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The VulnerabilityName for the vulnerabilities. </div>
+<div class="param">CVEID (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The CVEID for the vulnerabilities. </div>
+<div class="param">CWEID (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The CWEID for the vulnerabilities. </div>
+<div class="param">Description (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Description for the vulnerabilities. </div>
+<div class="param">ReleaseDate (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> The ReleaseDate for the vulnerabilities. format: date-time</div>
+<div class="param">Severity (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Severity for the vulnerabilities. </div>
+<div class="param">Classification (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Classification for the vulnerabilities. </div>
+<div class="param">Source (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Source for the vulnerabilities. </div>
+<div class="param">LastModifiedDate (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> The LastModifiedDate for the vulnerabilities. format: date-time</div>
+<div class="param">ReferenceName (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The ReferenceName for the vulnerabilities. </div>
+<div class="param">ReferenceUrl (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The ReferenceUrl for the vulnerabilities. </div>
+<div class="param">ReferenceTags (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The ReferenceTags for the vulnerabilities. </div>
+<div class="param">AddDate (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> The AddDate for the vulnerabilities. format: date-time</div>
+<div class="param">SourceCodeFileId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The SourceCodeFileId for the vulnerabilities. format: int32</div>
+<div class="param">SourceCodeFileStartLine (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The SourceCodeFileStartLine for the vulnerabilities. format: int32</div>
+<div class="param">SourceCodeFileStartCol (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The SourceCodeFileStartCol for the vulnerabilities. format: int32</div>
+<div class="param">SourceCodeFileEndLine (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The SourceCodeFileEndLine for the vulnerabilities. format: int32</div>
+<div class="param">SourceCodeFileEndCol (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The SourceCodeFileEndCol for the vulnerabilities. format: int32</div>
+<div class="param">DockerImageId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The DockerImageId for the vulnerabilities. format: int32</div>
+<div class="param">ApplicationId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The ApplicationId for the vulnerabilities. format: int32</div>
+<div class="param">HostId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The HostId for the vulnerabilities. format: int32</div>
+<div class="param">Uri (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Uri for the vulnerabilities. </div>
+<div class="param">HtmlMethod (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The HtmlMethod for the vulnerabilities. </div>
+<div class="param">Param (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Param for the vulnerabilities. </div>
+<div class="param">Attack (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Attack for the vulnerabilities. </div>
+<div class="param">Evidence (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Evidence for the vulnerabilities. </div>
+<div class="param">Solution (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Solution for the vulnerabilities. </div>
+<div class="param">VulnerablePackage (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The VulnerablePackage for the vulnerabilities. </div>
+<div class="param">VulnerableFileName (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The VulnerableFileName for the vulnerabilities. </div>
+<div class="param">VulnerableFilePath (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The VulnerableFilePath for the vulnerabilities. </div>
+<div class="param">MitigationDate (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> The MitigationDate for the vulnerabilities. format: date-time</div>
+<div class="param">Status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The Status for the vulnerabilities. </div>
+<div class="param">ScanId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The ScanId for the vulnerabilities. format: int32</div>
+<div class="param">InitialScanId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The InitialScanId for the vulnerabilities. format: int32</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="edit_vulnerabilities_body"><code>edit_vulnerabilities_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+
+    <div class="field-items">
+      <div class="param">filter </div><div class="param-desc"><span class="param-type"><a href="#Vulnerabilities">Vulnerabilities</a></span>  </div>
+<div class="param">values </div><div class="param-desc"><span class="param-type"><a href="#Vulnerabilities">Vulnerabilities</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_200"><code>inline_response_200</code></a> <a class="up" href="#__Models">Up</a></h3>
+
+    <div class="field-items">
+      <div class="param">ID (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The unique ID of the vulnerabilities. format: int32</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_200_1"><code>inline_response_200_1</code></a> <a class="up" href="#__Models">Up</a></h3>
+
+    <div class="field-items">
+      <div class="param">Status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_200_2"><code>inline_response_200_2</code></a> <a class="up" href="#__Models">Up</a></h3>
+
+    <div class="field-items">
+      <div class="param">ID (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> The unique ID of the edited Vulnerabilities. format: int32</div>
+    </div>  <!-- field-items -->
+  </div>
+  </body>
+</html>
