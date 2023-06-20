@@ -1,5 +1,5 @@
 # Creating Reports
-[Back to User Guide](./index.md)
+[Back to User Guide](./README.md)
 
 ## Application Report
 To generate an Application Findings report, navigate to the Dashboard for the target Application.
