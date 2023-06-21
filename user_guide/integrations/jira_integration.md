@@ -1,5 +1,5 @@
 # JIRA Integration Guide
-[Back to User Guide](../index.md)
+[Back to User Guide](../README.md)
 
 * [Adding a New Integration](#adding-a-new-integration)
 * [Assigning Application Profiles to JIRA Projects](#assigning-application-profiles-to-jira-projects)

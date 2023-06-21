@@ -1,14 +1,10 @@
+environment: prod
 appName: "secusphere"
-environment: dev
 
 azClientId: ""
 azClientSecret: ""
 azTenantId: ""
 
-imageCredentials:
-  username: "dynamic"
-  password: "dynamic"
-  email: "dynamic"
-
+tls.name: "dynamic"
 tls.crt: "dynamic"
 tls.key: "dynamic"

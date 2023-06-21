@@ -20,10 +20,6 @@ spec:
       labels:
         {{- include "secusphere.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       serviceAccountName: {{ include "secusphere.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
@@ -35,6 +31,14 @@ spec:
           env:
             - name: VM_RUNTIME
               value: "prod"
+            - name: PROD_DB_URI_REF
+              value: "{{ .Values.azKeyVaultDbUriRefName }}"
+            - name: SMTP_PW_REF
+              value: "{{ .Values.azKeyVaultSmtpPasswordRefName }}"
+            - name: AZURE_KEYVAULT_NAME
+              value: "{{ .Values.azKeyVaultName }}"
+            - name: APP_EXT_URL
+              value: "{{ .Values.appExtUrl }}"
             - name: AZURE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
