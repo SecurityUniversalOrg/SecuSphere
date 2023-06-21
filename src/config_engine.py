@@ -15,10 +15,14 @@ else:
 
 
 VERSION = '0.1.0-beta'
+
 AZURE_KEYVAULT_NAME = SET_AZURE_KEYVAULT_NAME
 AUTH_TYPE = SET_AUTH_TYPE
 INSECURE_OAUTH = SET_INSECURE_OAUTH
-APP_EXT_URL = SET_APP_EXT_URL
+if os.getenv('APP_EXT_URL'):
+    APP_EXT_URL = SET_APP_EXT_URL
+else:
+    APP_EXT_URL = SET_APP_EXT_URL
 SMTP_HOST = SET_SMTP_HOST
 SMTP_USER = SET_SMTP_USER
 SMTP_ADMIN_EMAIL = SET_SMTP_ADMIN_EMAIL
@@ -36,7 +40,10 @@ LDAP_BIND_USER_PASSWORD = SET_LDAP_BIND_USER_PASSWORD
 
 class KeyVaultManager(object):
     def __init__(self):
-        key_vault_uri = f"https://{AZURE_KEYVAULT_NAME}.vault.azure.net"
+        if os.getenv('AZURE_KEYVAULT_NAME'):
+            key_vault_uri = f"https://{os.getenv('AZURE_KEYVAULT_NAME')}.vault.azure.net"
+        else:
+            key_vault_uri = f"https://{AZURE_KEYVAULT_NAME}.vault.azure.net"
         self.credential = DefaultAzureCredential()
         self.secret_client = SecretClient(vault_url=key_vault_uri, credential=self.credential)
         self.key_client = KeyClient(vault_url=key_vault_uri, credential=self.credential)
@@ -93,13 +100,19 @@ if os.getenv('VM_RUNTIME'):
 else:
     ENV = SET_ENV
 if ENV == 'prod':
-    PROD_DB_URI = KeyVaultManager().get_secret(SET_PROD_DB_URI_REF)
+    if os.getenv('PROD_DB_URI_REF'):
+        PROD_DB_URI = KeyVaultManager().get_secret(os.getenv('PROD_DB_URI_REF'))
+    else:
+        PROD_DB_URI = KeyVaultManager().get_secret(SET_PROD_DB_URI_REF)
 else:
     PROD_DB_URI = SET_PROD_DB_URI
 
 ## Email Variables ##
 if ENV == 'prod':
-    SMTP_PASSWORD = KeyVaultManager().get_secret(SET_SMTP_PW_REF)
+    if os.getenv('SMTP_PW_REF'):
+        SMTP_PASSWORD = KeyVaultManager().get_secret(os.getenv('SMTP_PW_REF'))
+    else:
+        SMTP_PASSWORD = KeyVaultManager().get_secret(SET_SMTP_PW_REF)
 else:
     SMTP_PASSWORD = SET_SMTP_PW
 
