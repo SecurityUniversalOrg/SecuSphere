@@ -123,7 +123,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <select class="form-control" id="peerReviewOption">
+                                                    <select class="form-control modal_input" id="peerReviewOption">
                                                         <option value="" disabled="disabled">--Select An Option--</option>
                                                         <option value="Possible False Positive">Possible False Positive</option>
                                                         <option value="Need Help">Need Help</option>
@@ -131,7 +131,7 @@
                                                         <option value="Other">Other</option>
                                                     </select>
                                                     <br>
-                                                    <textarea class="form-control" id="peerReviewnote" rows="3" placeholder="Add a note here..."></textarea>
+                                                    <textarea class="form-control modal_input" id="peerReviewnote" rows="3" placeholder="Add a note here..."></textarea>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -152,7 +152,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <select class="form-control" id="devReviewedOption">
+                                                    <select class="form-control modal_input" id="devReviewedOption">
                                                         <option value="" disabled="disabled">--Select An Option--</option>
                                                         <option value="Confirmed">Confirmed</option>
                                                         <option value="False Positive">False Positive</option>
@@ -165,7 +165,7 @@
                                                         <option value="Other">Other</option>
                                                     </select>
                                                     <br>
-                                                    <textarea class="form-control" id="devReviewednote" rows="3" placeholder="Add a note here..."></textarea>
+                                                    <textarea class="form-control modal_input" id="devReviewednote" rows="3" placeholder="Add a note here..."></textarea>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -186,7 +186,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <select class="form-control" id="closedManualOption">
+                                                    <select class="form-control modal_input" id="closedManualOption">
                                                         <option value="" disabled="disabled">--Select An Option--</option>
                                                         <option value="False Positive">False Positive</option>
                                                         <option value="Superseded or Deprecated Component">Superseded or Deprecated Component</option>
@@ -196,7 +196,7 @@
                                                         <option value="Other">Other</option>
                                                     </select>
                                                     <br>
-                                                    <textarea class="form-control" id="closedManualnote" rows="3" placeholder="Add a note here..."></textarea>
+                                                    <textarea class="form-control modal_input" id="closedManualnote" rows="3" placeholder="Add a note here..."></textarea>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -217,7 +217,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <select class="form-control" id="riskAcceptedOption">
+                                                    <select class="form-control modal_input" id="riskAcceptedOption">
                                                         <option value="" disabled="disabled">--Select An Option--</option>
                                                         <option value="Cost-Benefit Analysis">Cost-Benefit Analysis</option>
                                                         <option value="Low Risk/Impact">Low Risk/Impact</option>
@@ -228,7 +228,7 @@
                                                         <option value="Other">Other</option>
                                                     </select>
                                                     <br>
-                                                    <textarea class="form-control" id="riskAcceptednote" rows="3" placeholder="Add a note here..."></textarea>
+                                                    <textarea class="form-control modal_input" id="riskAcceptednote" rows="3" placeholder="Add a note here..."></textarea>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -249,7 +249,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <select class="form-control" id="deleteOption">
+                                                    <select class="form-control modal_input" id="deleteOption">
                                                         <option value="" disabled="disabled">--Select An Option--</option>
                                                         <option value="False Positive">False Positive</option>
                                                         <option value="Duplicate Entry">Duplicate Entry</option>
@@ -259,7 +259,7 @@
                                                         <option value="Other">Other</option>
                                                     </select>
                                                     <br>
-                                                    <textarea class="form-control" id="deletenote" rows="3" placeholder="Add a note here..."></textarea>
+                                                    <textarea class="form-control modal_input" id="deletenote" rows="3" placeholder="Add a note here..."></textarea>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -593,7 +593,7 @@
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    /*z-index: 1000;*/
     padding-top: 10%;
     left: 0;
     top: 0;
@@ -609,10 +609,12 @@
     margin: auto;
     padding: 20px;
     border-radius: 4px;
-    width: 50%;
+    width: 100%;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
-
+.modal_input {
+    width: 100% !important;
+}
 /* The Close Button */
 .close {
     color: #000;
