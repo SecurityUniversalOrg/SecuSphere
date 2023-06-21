@@ -38,7 +38,7 @@ spec:
             - name: AZURE_KEYVAULT_NAME
               value: "{{ .Values.azKeyVaultName }}"
             - name: APP_EXT_URL
-              value: "{{ .Values.appExtUrl }}"
+              value: "https://{{ .Values.appName }}.{{ .Values.appDomain }}"
             - name: AZURE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
