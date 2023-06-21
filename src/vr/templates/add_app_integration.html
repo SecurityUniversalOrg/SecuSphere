@@ -92,6 +92,7 @@ function validateIntegration() {
     var xhttp = new XMLHttpRequest();
     var csrf_token = "{{ csrf_token() }}";
     xhttp.onreadystatechange = function() {
+        document.getElementById('validate_btn').value = 'Validated';
         document.getElementById('validate_btn').disabled = true;
         document.getElementById('submit_btn').disabled = false;
     };
