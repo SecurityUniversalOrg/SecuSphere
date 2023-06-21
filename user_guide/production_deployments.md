@@ -65,7 +65,7 @@ helm upgrade nginx-ingress ./su-ingress/ingress-nginx -n secusphere -i --values 
 ```
 helm upgrade secusphere ./secusphere -n secusphere -i --values ./secusphere/values.yaml \
     --set tlsSecretName=$TLS_SECRET_NAME --set appDomain=$YOUR_DOMAIN --set azKeyVaultName=$AZURE_KEYVAULT_NAME \
-    --set azKeyVaultDbUriRefName=AZURE_KV_PROD_DB_URI_REF --set azKeyVaultSmtpPasswordRefName=AZURE_KV_SMTP_PW_REF
+    --set azKeyVaultDbUriRefName=$AZURE_KV_PROD_DB_URI_REF --set azKeyVaultSmtpPasswordRefName=$AZURE_KV_SMTP_PW_REF
 ```
 
 6. If the deployment was successful, you should be able to reach the web console at https://[your-instance-url]
