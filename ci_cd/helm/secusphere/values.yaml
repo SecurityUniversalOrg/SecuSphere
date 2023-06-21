@@ -1,12 +1,22 @@
 # Default values for secusphere
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-appName: "secusphere"
 environment: prod
+appName: "secusphere"
+appDomain: "acme.com"
 
-apiPairingKey: ""
-appExtUrl: ""
+tlsSecretName: su-wildcard-tls
 
+azKeyVaultName: ""
+azKeyVaultDbUriRefName: ""
+azKeyVaultSmtpPasswordRefName: ""
+
+
+
+
+
+## These values are not commonly modified.  Change at your own risk.
+appExtUrl: "https://{{ .Values.appName }}.{{ .Values.appDomain }}"
 
 replicaCount: 1
 
@@ -16,8 +26,6 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
-imagePullSecrets:
-- name: dockerhub-auth
 nameOverride: ""
 fullnameOverride: ""
 
@@ -37,7 +45,24 @@ volumes:
   - name: su
     claimName: su-webapp-pv-claim
 
-
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    meta.helm.sh/release-name: "{{ .Values.appName }}"
+    meta.helm.sh/release-namespace: "{{ .Values.appName }}"
+  hosts:
+    - host: "{{ .Values.appName }}.{{ .Values.appDomain }}"
+      paths:
+        - path: /
+          serviceName: "{{ .Values.appName }}"
+          servicePort: 80
+      servicePort: 80
+  tls:
+   - secretName: {{ .Values.tlsSecretName }}
+     hosts:
+       - "{{ .Values.appName }}.{{ .Values.appDomain }}"
+  serviceName: "{{ .Values.appName }}"
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -67,30 +92,7 @@ service:
   targetPort: 80
   tlsCertId: "dynamic"
 
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-#    nginx.ingress.kubernetes.io/proxy-body-size: "0"
-    # Attempt to redirect HTTP to HTTPS.
-#    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    meta.helm.sh/release-name: secusphere
-    meta.helm.sh/release-namespace: secusphere
-#    nginx.ingress.kubernetes.io/backend-protocol: "https"
-#    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-#    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-  hosts:
-    - host: secusphere.securityuniversal.com
-      paths:
-        - path: /
-          serviceName: 'secusphere'
-          servicePort: 80
-      servicePort: 80
-  tls:
-   - secretName: su-wildcard-tls
-     hosts:
-       - secusphere.securityuniversal.com
-  serviceName: "secusphere"
+
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

@@ -28,40 +28,6 @@ Configure Azure Key Vault
 4. Next, create another secret for the SMTP Password used to send system alerts from SecuSphere.  Again, be sure to make note of the name of the secret.
 ![Diagram](./screenshots/azure_key_vault_smtp_pw.png)
 
-Clone Repository and Set Configuration Settings
-1. Clone the SecuSphere repository be executing the following command:
-```shell
-$ git clone https://github.com/SecurityUniversalOrg/SecuSphere.git
-```
-2. Navigate to the source directory and open the settings.py file.
-```shell
-$ cd src/
-$ vi settings.py
-```
-3. Update lines 4, 6 and 8 with the names of the Azure Key Vault, the Database URI Azure Secret name and the SMTP Password Azure Secret name.
-```shell
-## Authentication  ##
-SET_AUTH_TYPE = 'local'  # options: local, ldap, saml
-SET_INSECURE_OAUTH = False
-SET_AZURE_KEYVAULT_NAME = 'BkDevSecOpsKeyVault' <---------- ADD AZURE KEYVAULT NAME HERE
-SET_ENV = 'test'  # options: test, prod
-SET_PROD_DB_URI_REF = 'PROD-DB-URI'    <---------- ADD AZURE SECRET NAME HERE
-# Non-Secure Settings - DO NOT USE IN PRODUCTION DEPLOYMENTS
-SET_PROD_DB_URI = 'changeme'
-
-##
-## Local Instance Settings ##
-SET_APP_EXT_URL = '192.168.0.150'
-
-##
-## Email Variables ##
-SET_SMTP_HOST = 'smtp.sendgrid.net:587'     <---------- UPDATE WITH YOUR SMTP DETAILS
-SET_SMTP_USER = 'apikey'     <---------- UPDATE WITH YOUR SMTP DETAILS
-SET_SMTP_ADMIN_EMAIL = 'admin@securityuniversal.com'     <---------- UPDATE WITH YOUR SMTP DETAILS
-SET_SMTP_PW_REF = 'SENDGRID-SMTP-PW'     <---------- ADD AZURE SECRET NAME HERE
-...
-```
-
 [Back to the Top](#production-deployments)
 
 ## 3. Deploy SecuSphere via Helm Charts
@@ -69,69 +35,40 @@ SET_SMTP_PW_REF = 'SENDGRID-SMTP-PW'     <---------- ADD AZURE SECRET NAME HERE
 ```shell
 $ cd ci_cd/helm 
 ```
-2. Open the `su-secrets` helm chart by executing the following command:
+2. Update the variables below and save them as environment variables in your current shell:
 ```shell
-$ vi su-secrets/values.html
-```
-3. Update the values as follows:
-```shell
-appName: "secusphere"
-environment: dev
-
-azClientId: ""     <---------- ADD AZURE CLIENT ID FOR KEY VAULT HERE
-azClientSecret: ""     <---------- ADD AZURE CLIENT SECRET FOR KEY VAULT HERE
-azTenantId: ""     <---------- ADD AZURE TENANT ID FOR KEY VAULT HERE
-
-imageCredentials:
-  username: "dynamic"     <---------- (OPTIONAL) IF USING PRIVATE DOCKER REGISTRY
-  password: "dynamic"     <---------- (OPTIONAL) IF USING PRIVATE DOCKER REGISTRY
-  email: "dynamic"     <---------- (OPTIONAL) IF USING PRIVATE DOCKER REGISTRY
-
-tls.crt: "dynamic"     <---------- ADD BASE64-ENCODED TLS CERTIFICATE
-tls.key: "dynamic"     <---------- ADD BASE64-ENCODED TLS CERTIFICATE PRIVATE KEY
-
+YOUR_DOMAIN="acme.com"   # Set the domain here.  Your hostname will be secusphere.YOUR_DOMAIN
+TLS_SECRET_NAME = "tls-wildcard"   # Set the Kubernetes TLS Secret Name here
+TLS_CERT_B64_ENCODED = "LS0tLS1CRUdJTiBDRV....."   # Add the Base64-encoded TLS Certificate
+TLS_KEY_B64_ENCODED = "LS0tLS1CRUdJTiBSU0....."   # Add the Base64-encoded TLS Key
+AZURE_KEYVAULT_NAME = "MyAzureKeyVaultName"    # Add the Azure Key Vault Name
+AZURE_CLIENT_ID = "a21f3bab-0253-...."     # Add the Azure Client ID with necessary permissions to read/write to Azure Key Vault
+AZURE_CLIENT_SECRET = "58af2bba...."     # Add the Azure Client Secret with necessary permissions to read/write to Azure Key Vault
+AZURE_TENANT_ID = "71f0c7fe-8e01-...."     # Add the Azure Tenant ID with necessary permissions to read/write to Azure Key Vault
+AZURE_KV_PROD_DB_URI_REF = "PROD-DB-URI"     # Add the Azure Key Vault Secret Name reference for the Database URI
+AZURE_KV_SMTP_PW_REF = "SMTP-PW"     # Add the Azure Key Vault Secret Name reference for the SMTP Password
 ```
 
-4. Open the `su-ingress` helm chart by executing the following command:
-```shell
-$ vi su-ingress/values.html
+3. Deploy the Kubernetes Secrets Resources
 ```
-5. Update the values as follows:
-```shell
-service:
-  port: 5010
-
-ingress:
-  serviceName: secusphere
-  enabled: true
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.org/mergeable-ingress-type: "master"
-    cert-manager.io/cluster-issuer: bk-selfsigned
-    meta.helm.sh/release-name: su-ingress
-    meta.helm.sh/release-namespace: securityuniversal
-  hosts:
-    - host: secusphere-dev.local      <---------- CHANGE THIS VALUE TO YOUR HOSTNAME
-      paths: []
-  tls: []
+helm upgrade su-secrets ./su-secrets -n secusphere -i --values ./su-secrets/values.yaml --create-namespace \
+    --set azClientId=$AZURE_CLIENT_ID --set azClientSecret=$AZURE_CLIENT_SECRET --set azTenantId=$AZURE_TENANT_ID \
+    --set tls.name=$TLS_SECRET_NAME --set tls.crt=$TLS_CERT_B64_ENCODED --set tls.key=$TLS_KEY_B64_ENCODED
 ```
 
-6. Deploy the Kubernetes secrets resources via Helm:
-```shell
-helm upgrade su-secrets ./su-secrets -n secusphere -i --values ./su-secrets/values.yaml --create-namespace
+4. Deploy the Kubernetes Ingress Resources
 ```
-
-7. Deploy the Kubernetes Ingress-Controller resources via Helm:
-```shell
 helm upgrade nginx-ingress ./su-ingress/ingress-nginx -n secusphere -i --values /su-ingress/ingress-nginx/values.yaml
 ```
 
-8. Deploy the SecuSphere application via Helm:
-```shell
-helm upgrade secusphere ./secusphere -n secusphere -i --values ./secusphere/values.yaml
+5. Deploy the SecuSphere Application
+```
+helm upgrade secusphere ./secusphere -n secusphere -i --values ./secusphere/values.yaml \
+    --set tlsSecretName=$TLS_SECRET_NAME --set appDomain=$YOUR_DOMAIN --set azKeyVaultName=$AZURE_KEYVAULT_NAME \
+    --set azKeyVaultDbUriRefName=AZURE_KV_PROD_DB_URI_REF --set azKeyVaultSmtpPasswordRefName=AZURE_KV_SMTP_PW_REF
 ```
 
-9. If the deployment was successful, you should be able to reach the web console at https://[your-instance-url]
+6. If the deployment was successful, you should be able to reach the web console at https://[your-instance-url]
 
 
 [Back to the Top](#production-deployments)
