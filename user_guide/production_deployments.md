@@ -38,15 +38,15 @@ $ cd ci_cd/helm
 2. Update the variables below and save them as environment variables in your current shell:
 ```shell
 YOUR_DOMAIN="acme.com"   # Set the domain here.  Your hostname will be secusphere.YOUR_DOMAIN
-TLS_SECRET_NAME = "tls-wildcard"   # Set the Kubernetes TLS Secret Name here
-TLS_CERT_B64_ENCODED = "LS0tLS1CRUdJTiBDRV....."   # Add the Base64-encoded TLS Certificate
-TLS_KEY_B64_ENCODED = "LS0tLS1CRUdJTiBSU0....."   # Add the Base64-encoded TLS Key
-AZURE_KEYVAULT_NAME = "MyAzureKeyVaultName"    # Add the Azure Key Vault Name
-AZURE_CLIENT_ID = "a21f3bab-0253-...."     # Add the Azure Client ID with necessary permissions to read/write to Azure Key Vault
-AZURE_CLIENT_SECRET = "58af2bba...."     # Add the Azure Client Secret with necessary permissions to read/write to Azure Key Vault
-AZURE_TENANT_ID = "71f0c7fe-8e01-...."     # Add the Azure Tenant ID with necessary permissions to read/write to Azure Key Vault
-AZURE_KV_PROD_DB_URI_REF = "PROD-DB-URI"     # Add the Azure Key Vault Secret Name reference for the Database URI
-AZURE_KV_SMTP_PW_REF = "SMTP-PW"     # Add the Azure Key Vault Secret Name reference for the SMTP Password
+TLS_SECRET_NAME="tls-wildcard"   # Set the Kubernetes TLS Secret Name here
+TLS_CERT_B64_ENCODED="LS0tLS1CRUdJTiBDRV....."   # Add the Base64-encoded TLS Certificate
+TLS_KEY_B64_ENCODED="LS0tLS1CRUdJTiBSU0....."   # Add the Base64-encoded TLS Key
+AZURE_KEYVAULT_NAME="MyAzureKeyVaultName"    # Add the Azure Key Vault Name
+AZURE_CLIENT_ID="a21f3bab-0253-...."     # Add the Azure Client ID with necessary permissions to read/write to Azure Key Vault
+AZURE_CLIENT_SECRET="58af2bba...."     # Add the Azure Client Secret with necessary permissions to read/write to Azure Key Vault
+AZURE_TENANT_ID="71f0c7fe-8e01-...."     # Add the Azure Tenant ID with necessary permissions to read/write to Azure Key Vault
+AZURE_KV_PROD_DB_URI_REF="PROD-DB-URI"     # Add the Azure Key Vault Secret Name reference for the Database URI
+AZURE_KV_SMTP_PW_REF="SMTP-PW"     # Add the Azure Key Vault Secret Name reference for the SMTP Password
 ```
 
 3. Deploy the Kubernetes Secrets Resources
