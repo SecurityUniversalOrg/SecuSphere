@@ -17,30 +17,23 @@ metadata:
     meta.helm.sh/release-namespace: "{{ .Values.appName }}"
 spec:
   tls:
-    - hosts:
-        - host: "{{ .Values.appName }}.{{ .Values.appDomain }}"
-          paths:
-            - path: /
-              serviceName: "{{ .Values.appName }}"
-              servicePort: 80
-          servicePort: 80
-      secretName: {{ .Values.tlsSecretName }}
+    - secretName: {{ .Values.tlsSecretName }}
+      hosts:
+        - "{{ .Values.appName }}.{{ .Values.appDomain }}"
   defaultBackend:
     service:
       name: {{ $fullName }}
       port:
         number: 80
   rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    - host: "{{ .Values.appName }}.{{ .Values.appDomain }}"
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: 'secusphere'
+                name: "{{ .Values.appName }}"
                 port:
-                  number: {{ .servicePort }}
-    {{- end }}
+                  number: {{ $svcPort }}
   {{- end }}
