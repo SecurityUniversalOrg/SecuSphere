@@ -13,6 +13,7 @@ from vr.admin.helper_functions import hash_password
 from vr.admin.email_alerts import send_registration_email
 from vr.functions.initial_setup import setup_core_db_tables, generate_key_pair
 from config_engine import ENV
+from vr.db_models.setup_2 import _init_db
 
 
 NAV_CAT= { "name": "Admin", "url": "admin.admin_dashboard"}
@@ -109,6 +110,8 @@ def register_submit():
                 User.avatar_path: '/static/images/default_profile_avatar.jpg'
             }, synchronize_session=False)
             db.session.commit()
+
+            _init_db(db=db)
 
             generate_key_pair()
             setup_core_db_tables(ENV)
