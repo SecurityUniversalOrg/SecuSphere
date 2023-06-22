@@ -12,10 +12,11 @@ metadata:
   labels:
     {{- include "secusphere.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: "azure/application-gateway"
+#    kubernetes.io/ingress.class: "azure/application-gateway"
     meta.helm.sh/release-name: "{{ .Values.appName }}"
     meta.helm.sh/release-namespace: "{{ .Values.appName }}"
 spec:
+  ingressClassName: nginx
   tls:
     - secretName: {{ .Values.tlsSecretName }}
       hosts:
