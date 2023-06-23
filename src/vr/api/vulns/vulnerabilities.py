@@ -250,7 +250,7 @@ def _add_vulnerabilityscan(scan_dict):
 
 def _set_new_and_dup_vulns(new_vulns, dup_vulns, source_type, source, app_id):
     if new_vulns or dup_vulns:
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+        engine = db.engine
     if new_vulns:
         _add_new_vulns(new_vulns, engine)
     if dup_vulns:
