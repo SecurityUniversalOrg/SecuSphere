@@ -8,7 +8,7 @@ class SourceCodeFile(db.Model):
     __tablename__ = 'SourceCodeFile'
     ID = db.Column(db.Integer, primary_key=True)
     AddDate = db.Column(db.DateTime)
-    GitRepoId = db.Column(db.Integer, db.ForeignKey('GitRepo.ID', ondelete='CASCADE'))
+    GitRepoId = db.Column(db.Integer)
     FileName = db.Column(db.String(300))
     FileLocation = db.Column(db.String(300))
     FileType = db.Column(db.String(300))
