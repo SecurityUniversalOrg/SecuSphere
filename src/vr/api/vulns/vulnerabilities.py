@@ -265,7 +265,7 @@ def _set_new_and_dup_vulns(new_vulns, dup_vulns, source_type, source, app_id):
 def _add_new_vulns(new_vulns, engine):
     with Session(engine) as s:
         s.bulk_save_objects(new_vulns)
-        db_connection_handler(s)
+        s.commit()
 
 
 def _setup_duplicate_vulns(source_type, dup_vulns):
