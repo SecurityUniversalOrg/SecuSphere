@@ -107,7 +107,7 @@ def register_submit():
                 User.password: hashed_pw, User.otp_secret: otp_secret, User.email: email, User.first_name: firstname,
                 User.last_name: lastname, User.auth_type: 'local', User.user_type: 'system',
                 User.email_updates: 'y', User.app_updates: 'y', User.text_updates: 'n',
-                User.avatar_path: '/static/images/default_profile_avatar.jpg'
+                User.avatar_path: '/static/images/default_profile_avatar.jpg', User.is_admin: 1
             }, synchronize_session=False)
             db.session.commit()
 
