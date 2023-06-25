@@ -1,6 +1,7 @@
 from flask import request, session, url_for, jsonify
 from flask import render_template, redirect
 from authlib.oauth2 import OAuth2Error
+from time import sleep
 from vr.api import api
 from vr.admin.models import User, OAuth2Client
 from vr.admin.oauth2 import authorization, require_oauth
@@ -46,12 +47,13 @@ def authorize():
 
 @api.route('/oauth/token', methods=['POST'])
 def issue_token():
-    max_attempts = 3
+    max_attempts = 5
     for attempt in range(max_attempts):
         try:
             return authorization.create_token_response()
         except Exception as e:
             if attempt < max_attempts - 1:  # i.e. if it's not the final attempt
+                sleep(1)
                 continue  # go to the next iteration of the loop
             else:  # if it's the final attempt
                 return jsonify(error=str(e)), 500
