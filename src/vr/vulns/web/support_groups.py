@@ -1,6 +1,7 @@
 from vr import db
 from vr.vulns import vulns
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter
+from vr.admin.functions import db_connection_handler
 from flask import render_template, session, redirect, url_for, request
 from flask_login import login_required
 from vr.assets.model.supportcontacts import SupportContacts, SupportContactsSchema, SupportContactsSchema
@@ -102,14 +103,14 @@ def add_contact(appid):
         Role=role
     )
     db.session.add(contact)
-    db.session.commit()
+    db_connection_handler(db)
     contact_id = contact.ID
     association = AppToSupportContactAssociations(
         ApplicationID = appid,
         SupportContactID = contact_id
     )
     db.session.add(association)
-    db.session.commit()
+    db_connection_handler(db)
     return '200', 200
 
 
@@ -121,5 +122,5 @@ def delete_contact():
     contacts = SupportContacts.query.filter(text(f"ID='{contact_id}'")).all()
     for contact in contacts:
         db.session.delete(contact)
-    db.session.commit()
+    db_connection_handler(db)
     return '200', 200

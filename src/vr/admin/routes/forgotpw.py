@@ -7,6 +7,7 @@ from vr.admin.email_alerts import send_email, generate_evnt_msg
 from vr.functions.timefunctions import return_datetime_now
 from vr.admin.helper_functions import hash_password
 from config_engine import SMTP_ADMIN_EMAIL
+from vr.admin.functions import db_connection_handler
 
 
 NAV_CAT= { "name": "Admin", "url": "admin.admin_dashboard"}
@@ -66,7 +67,7 @@ def resetpw(id, token):
 
                 user.password = hash_password(password)
                 db.session.add(user)
-                db.session.commit()
+                db_connection_handler(db)
                 del session['username']
                 # read config file
                 with open('su/config.json', 'r') as file:

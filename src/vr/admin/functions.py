@@ -1,4 +1,5 @@
 import jwt
+from flask import jsonify
 from time import time
 from datetime import datetime, timedelta
 import pyotp
@@ -160,7 +161,7 @@ class User(object):
             now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             db.session.query(User).filter(User.id == int(jwt_id)).update({User.email_confirmed_at: now},
                                                                      synchronize_session=False)
-            db.session.commit()
+            db_connection_handler(db)
             return 'valid'
         except RuntimeError:
             return
@@ -285,11 +286,13 @@ def _entity_page_permissions_filter(entity_id, user_roles, session, admin_role):
         status = 200
     return status
 
+
 def _add_page_permissions_filter(session, admin_role):
     status = 403
     if 'Admin' in session['roles'] or admin_role in session['roles']:
         status = 200
     return status
+
 
 def check_lockout(user_id,lo_length):
     now = datetime.utcnow()
@@ -317,6 +320,7 @@ def check_lockout(user_id,lo_length):
         return True
     else:
         return False
+
 
 def log_failed_attempt(failed_range,user_id,max_failed):
     now = datetime.utcnow()
@@ -399,4 +403,16 @@ def check_if_jira_enabled(app_id):
         status = rows
     db.close()
     return status
+
+
+def db_connection_handler(db_obj):
+    max_attempts = 3
+    for attempt in range(max_attempts):
+        try:
+            return db_obj.session.commit()
+        except Exception as e:
+            if attempt < max_attempts - 1:  # i.e. if it's not the final attempt
+                continue  # go to the next iteration of the loop
+            else:  # if it's the final attempt
+                return jsonify(error=str(e)), 500
 

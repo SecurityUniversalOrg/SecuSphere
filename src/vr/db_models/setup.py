@@ -1,5 +1,6 @@
 from datetime import datetime
 from sqlalchemy.types import TEXT, DECIMAL
+from flask import jsonify
 from config_engine import ENV
 if ENV == 'test':
     from sqlalchemy.dialects.sqlite import TEXT as LONGTEXT
@@ -131,4 +132,17 @@ def _init_db(db=None, app=None):
 
 
     db.create_all()
-    db.session.commit()
+
+    db_connection_handler(db)
+
+
+def db_connection_handler(db_obj):
+    max_attempts = 3
+    for attempt in range(max_attempts):
+        try:
+            return db_obj.session.commit()
+        except Exception as e:
+            if attempt < max_attempts - 1:  # i.e. if it's not the final attempt
+                continue  # go to the next iteration of the loop
+            else:  # if it's the final attempt
+                return jsonify(error=str(e)), 500

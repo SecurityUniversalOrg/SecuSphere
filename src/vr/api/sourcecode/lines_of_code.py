@@ -4,6 +4,7 @@ from sqlalchemy import text
 from vr.api import api
 from vr.assets.model.businessapplications import BusinessApplications
 from vr.sourcecode.model.appcodecomposition import AppCodeComposition
+from vr.admin.functions import db_connection_handler
 
 
 EXTENSION_LANGUAGE_MAP = {
@@ -83,6 +84,6 @@ def add_loc():
     application_id = app.ID
     new_entry = AppCodeComposition(ApplicationID=application_id, **language_stats)
     db.session.add(new_entry)
-    db.session.commit()
+    db_connection_handler(db)
 
     return {"status": "success"}, 200

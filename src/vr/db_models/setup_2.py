@@ -1,6 +1,7 @@
 from datetime import datetime
 from sqlalchemy.types import TEXT, DECIMAL
 from sqlalchemy import MetaData
+from vr.admin.functions import db_connection_handler
 from config_engine import ENV
 if ENV == 'test':
     from sqlalchemy.dialects.sqlite import TEXT as LONGTEXT
@@ -739,4 +740,4 @@ def _init_db(db):
 
 
     db.create_all()
-    db.session.commit()
+    db_connection_handler(db)

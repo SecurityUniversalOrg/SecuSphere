@@ -1,6 +1,7 @@
 from vr import db
 from vr.vulns import vulns
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter, _add_page_permissions_filter
+from vr.admin.functions import db_connection_handler
 from sqlalchemy import text, desc, and_, func
 from flask import render_template, session, redirect, url_for, request, jsonify
 from flask_login import login_required
@@ -179,7 +180,7 @@ def application_benchmarks(app_id, id):
         if request.method == 'POST':
             new_assessment, quick_note_str, update_map = _set_rule_list(app_id, user, id)
             db.session.add(new_assessment)
-            db.session.commit()
+            db_connection_handler(db)
             _add_rule_eval(update_map, app_id, new_assessment)
             _add_quick_notes(quick_note_str, app_id, user)
             return "success", 200
@@ -278,7 +279,7 @@ def _add_quick_notes(quick_note_str, app_id, user):
                 Type="User"
             )
             db.session.add(new_note)
-            db.session.commit()
+            db_connection_handler(db)
 
 
 def _add_rule_eval(update_map, app_id, new_assessment):
@@ -296,7 +297,7 @@ def _add_rule_eval(update_map, app_id, new_assessment):
                     PassingLevels=1
                 )
                 db.session.add(new_rule)
-                db.session.commit()
+                db_connection_handler(db)
 
 
 def _set_rule_list(app_id, user, id):
@@ -458,7 +459,7 @@ def add_benchmark_note():
                 Type = note_type
             )
             db.session.add(new_note)
-            db.session.commit()
+            db_connection_handler(db)
             return jsonify({'response': new_note.ID}), 200
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500
@@ -476,7 +477,7 @@ def delete_benchmark_note():
             note_id = request.form.get('note_id')
             del_note = AssessmentBenchmarkRuleAuditNotes.query.filter(text(f"ID={note_id} AND UserID={user.id}")).first()
             db.session.delete(del_note)
-            db.session.commit()
+            db_connection_handler(db)
             return str(200)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500

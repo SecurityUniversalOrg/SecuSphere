@@ -1,6 +1,7 @@
 from vr import db, app
 from vr.vulns import vulns
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter
+from vr.admin.functions import db_connection_handler
 from sqlalchemy import text
 from flask import request, render_template, session, redirect, url_for
 from flask_login import login_required
@@ -80,7 +81,7 @@ def tool_configurations_add(id):
                 ToolProjectID=tool_project_id
             )
             db.session.add(new_app)
-            db.session.commit()
+            db_connection_handler(db)
             return redirect(url_for('vulns.tool_configurations', id=id))
         components_all = Integrations.query.with_entities(
             Integrations.ID, Integrations.AuthenticationType, Integrations.ToolType, Integrations.Name,
@@ -178,7 +179,7 @@ def _set_application_config(request):
             BusinessApplications.Revenue: revenue
         },
         synchronize_session=False)
-    db.session.commit()
+    db_connection_handler(db)
 
 
 @vulns.route("/add_application_integrations", methods=['POST'])
@@ -212,7 +213,7 @@ def add_application_integrations():
                     KeyValuePairs = f"github_repo_name={github_repo_name},"
                 )
                 db.session.add(new_pair)
-                db.session.commit()
+                db_connection_handler(db)
             if cicd_int_id:
                 new_pair = VulnToolAppPairs(
                     ApplicationID=app_id,
@@ -220,7 +221,7 @@ def add_application_integrations():
                     KeyValuePairs = f"jenkins_pipeline_name={jenkins_pipeline_name},"
                 )
                 db.session.add(new_pair)
-                db.session.commit()
+                db_connection_handler(db)
             if issue_management_int_id:
                 new_pair = VulnToolAppPairs(
                     ApplicationID=app_id,
@@ -228,7 +229,7 @@ def add_application_integrations():
                     KeyValuePairs = f"jira_project_key={jira_project_key},"
                 )
                 db.session.add(new_pair)
-                db.session.commit()
+                db_connection_handler(db)
             if sast_int_id:
                 new_pair = VulnToolAppPairs(
                     ApplicationID=app_id,
@@ -236,7 +237,7 @@ def add_application_integrations():
                     KeyValuePairs = f"sonarqube_project_name={sonarqube_project_name},"
                 )
                 db.session.add(new_pair)
-                db.session.commit()
+                db_connection_handler(db)
             if container_int_id:
                 new_pair = VulnToolAppPairs(
                     ApplicationID=app_id,
@@ -244,7 +245,7 @@ def add_application_integrations():
                     KeyValuePairs = f"anchore_project_name={anchore_project_name},"
                 )
                 db.session.add(new_pair)
-                db.session.commit()
+                db_connection_handler(db)
             return redirect(url_for('vulns.all_applications'))
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500

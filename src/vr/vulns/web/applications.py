@@ -27,6 +27,7 @@ from vr.assets.model.sudatabases import SUDatabases
 from vr.vulns.model.assessmentbenchmarks import AssessmentBenchmarks
 from vr.vulns.model.assessmentbenchmarkruleaudits import AssessmentBenchmarkRuleAudits
 from vr.vulns.model.assessmentbenchmarkassessments import AssessmentBenchmarkAssessments
+from vr.admin.functions import db_connection_handler
 from vr.admin.models import User
 from math import ceil
 from io import BytesIO
@@ -516,20 +517,20 @@ def add_application():
         if request.method == 'POST':
             new_app, app_name, sla_configuration, regulations = _setup_new_app(request)
             db.session.add(new_app)
-            db.session.commit()
+            db_connection_handler(db)
             new_sla = VulnerabilitySLAAppPair(
                 ApplicationID = new_app.ID,
                 SlaID = sla_configuration
             )
             db.session.add(new_sla)
-            db.session.commit()
+            db_connection_handler(db)
             for i in regulations.split(','):
                 new_reg = ApplicationRegulations(
                     ApplicationID = new_app.ID,
                     RegulationID = i
                 )
                 db.session.add(new_reg)
-                db.session.commit()
+                db_connection_handler(db)
 
             all_integrations = Integrations.query.all()
             return render_template('add_application_integrations.html', user=user, NAV=NAV, new_app_name=app_name,
@@ -666,7 +667,7 @@ def delete_application(id):
         app = BusinessApplications.query.filter(text(f"ID={id}")).first()
         if app:
             db.session.delete(app)
-            db.session.commit()
+            db_connection_handler(db)
             return redirect(url_for('vulns.all_applications'))
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS)

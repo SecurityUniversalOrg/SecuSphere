@@ -9,6 +9,7 @@ from flask import session, redirect, url_for, render_template, request, json, fl
 from vr import db, app
 from vr.admin import admin
 from vr.admin.models import User, RegisterForm, UserStatus, UserRoles, UserRoleAssignments, AppConfig
+from vr.admin.functions import db_connection_handler
 from vr.admin.helper_functions import hash_password
 from vr.admin.email_alerts import send_registration_email
 from vr.functions.initial_setup import setup_core_db_tables, generate_key_pair
@@ -63,12 +64,12 @@ def register_user_submit():
         if user:
             hashed_pw = hash_password(password)
             db.session.query(User).filter(User.email == email).update({User.password: hashed_pw, User.is_active: True}, synchronize_session=False)
-            db.session.commit()
+            db_connection_handler(db)
 
             app_view_role = UserRoles.query.filter_by(name='Application Viewer').first()
             ura = UserRoleAssignments(user_id=user.id, role_id=app_view_role.id)
             db.session.add(ura)
-            db.session.commit()
+            db_connection_handler(db)
 
             session['username'] = user.username
             return redirect(url_for('vulns.all_applications'))
@@ -102,14 +103,14 @@ def register_submit():
             hashed_pw = hash_password(password)
             user = User(email=email)
             db.session.add(user)
-            db.session.commit()
+            db_connection_handler(db)
             db.session.query(User).filter(User.email == email).update({User.username: username,
                 User.password: hashed_pw, User.otp_secret: otp_secret, User.email: email, User.first_name: firstname,
                 User.last_name: lastname, User.auth_type: 'local', User.user_type: 'system',
                 User.email_updates: 'y', User.app_updates: 'y', User.text_updates: 'n',
                 User.avatar_path: '/static/images/default_profile_avatar.jpg', User.is_admin: 1
             }, synchronize_session=False)
-            db.session.commit()
+            db_connection_handler(db)
 
             _init_db(db=db)
 
@@ -118,7 +119,7 @@ def register_submit():
             admin_role = UserRoles.query.filter_by(name='Admin').first()
             ura = UserRoleAssignments(user_id=user.id, role_id=admin_role.id)
             db.session.add(ura)
-            db.session.commit()
+            db_connection_handler(db)
 
             session['username'] = username
         else:
@@ -133,7 +134,7 @@ def register_submit():
         #         'Expires': '0'}
         app_config = AppConfig()
         db.session.add(app_config)
-        db.session.commit()
+        db_connection_handler(db)
 
         warnmsg = ('regconf', 'success')
         return render_template('admin/login.html', form=form, warnmsg=warnmsg)
