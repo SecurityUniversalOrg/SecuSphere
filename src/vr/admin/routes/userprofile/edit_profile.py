@@ -5,6 +5,7 @@ from vr import db, app
 from vr.admin import admin
 from vr.admin.models import User, EditProfileForm
 from vr.admin.functions import _auth_user
+from vr.admin.functions import db_connection_handler
 
 
 
@@ -53,7 +54,7 @@ def edit_profile():
                 User.app_updates: user.app_updates,
                 User.text_updates: user.text_updates,
         }, synchronize_session=False)
-        db.session.commit()
+        db_connection_handler(db)
 
     NAV['curpage'] = {"name": "Edit Profile"}
 
@@ -76,7 +77,7 @@ def update_mfa_status():
         return render_template('403.html', user=user, NAV=NAV)
     # check user permissions
     user.mfa_enabled = int(request.form.get('mfa_enabled'))
-    db.session.commit()
+    db_connection_handler(db)
     return str(200)
 
 

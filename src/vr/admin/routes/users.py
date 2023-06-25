@@ -12,6 +12,7 @@ from config_engine import AUTH_TYPE
 from vr.functions.table_functions import load_table, update_table
 from vr.admin.email_alerts import send_registration_email
 from vr.assets.model.businessapplications import BusinessApplications
+from vr.admin.functions import db_connection_handler
 
 
 NAV = {
@@ -148,7 +149,7 @@ def add_user_role():
                 EntityID=i.lstrip().rstrip()
             )
             db.session.add(new_ent)
-            db.session.commit()
+            db_connection_handler(db)
     if add_new_assignment:
         user_role_q = UserRoles.query \
             .with_entities(UserRoles.id) \
@@ -158,17 +159,17 @@ def add_user_role():
             role_id=user_role_q[0]
         )
         db.session.add(new_app)
-        db.session.commit()
+        db_connection_handler(db)
     if new_grp == "Admin":
         db.session.query(User).filter(User.id == int(new_user_id)).update(
             {User.is_admin: True},
             synchronize_session=False)
-        db.session.commit()
+        db_connection_handler(db)
     elif new_grp == "Security":
         db.session.query(User).filter(User.id == int(new_user_id)).update(
             {User.is_security: True},
             synchronize_session=False)
-        db.session.commit()
+        db_connection_handler(db)
     return '200', 200
 
 
@@ -191,17 +192,17 @@ def remove_user_role():
             .filter(text(f"UserRoleAssignments.user_id={user_id} AND UserRoles.name='{role}'")).first()
         if del_pair:
             db.session.delete(del_pair)
-            db.session.commit()
+            db_connection_handler(db)
         if role == 'Admin':
             db.session.query(User).filter(User.id == int(user_id)).update(
                 {User.is_admin: False},
                 synchronize_session=False)
-            db.session.commit()
+            db_connection_handler(db)
         elif role == 'Security':
             db.session.query(User).filter(User.id == int(user_id)).update(
                 {User.is_security: False},
                 synchronize_session=False)
-            db.session.commit()
+            db_connection_handler(db)
         rsp_json = {'status': 'success'}
         response = app.response_class(
             response=json.dumps(rsp_json),
@@ -231,7 +232,7 @@ def remove_user_appview_role():
             .filter(text(f"EntityPermissions.UserID={user_id} AND EntityPermissions.EntityID='{app_id}' AND EntityPermissions.EntityType='Application'")).first()
         if del_pair:
             db.session.delete(del_pair)
-            db.session.commit()
+            db_connection_handler(db)
         rsp_json = {'status': 'success'}
         response = app.response_class(
             response=json.dumps(rsp_json),
@@ -260,7 +261,7 @@ def remove_user():
             .filter(text(f"User.id={user_id}")).first()
         if del_pair:
             db.session.delete(del_pair)
-            db.session.commit()
+            db_connection_handler(db)
         rsp_json = {'status': 'success'}
         response = app.response_class(
             response=json.dumps(rsp_json),
@@ -301,13 +302,13 @@ def add_new_user():
             avatar_path='/static/images/default_profile_avatar.jpg'
         )
         db.session.add(new_user)
-        db.session.commit()
+        db_connection_handler(db)
 
         token = user.get_delegated_registration_token(new_user.id)
         db.session.query(User).filter(User.id == int(new_user.id)).update(
             {User.auth_token: token},
             synchronize_session=False)
-        db.session.commit()
+        db_connection_handler(db)
 
         send_registration_email(app.config['APP_EXT_URL'], username, firstname, lastname, token, email)
 

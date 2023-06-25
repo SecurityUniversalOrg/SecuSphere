@@ -18,6 +18,7 @@ from vr.vulns.model.sgconfigsettingsperjob import SgConfigSettingsPerJob
 from vr.vulns.model.sgresultsperjob import SgResultsPerJob
 from vr.functions.routing_functions import check_entity_permissions
 from vr.admin.oauth2 import require_oauth
+from vr.admin.functions import db_connection_handler
 from authlib.integrations.flask_oauth2 import current_token
 from requests.auth import HTTPBasicAuth
 import requests
@@ -118,7 +119,7 @@ def update_vulnerabilities_status(app_cmdb_id, scan_id, req_raw):
             db.session.query(Vulnerabilities).filter(Vulnerabilities.VulnerabilityID == int(i.VulnerabilityID)).update(
                 {Vulnerabilities.Status: 'Closed-Mitigated', Vulnerabilities.LastModifiedDate: datetime.datetime.utcnow()},
                 synchronize_session=False)
-            db.session.commit()
+            db_connection_handler(db)
             closed_cnt += 1
 
 
@@ -172,7 +173,7 @@ def _update_reopened_vulns(reopened_vulns):
         db.session.query(Vulnerabilities).filter(text(f"Vulnerabilities.VulnerabilityID={i['VulnerabilityID']}")).update(
             values={"Status": "Open-New"},
             synchronize_session=False)
-        db.session.commit()
+        db_connection_handler(db)
 
 
 def get_docker_img_id(docker_img_and_tag, app_cmdb_id):
@@ -190,7 +191,7 @@ def get_docker_img_id(docker_img_and_tag, app_cmdb_id):
             ImageTag=img_tag
         )
         db.session.add(new_img)
-        db.session.commit()
+        db_connection_handler(db)
         docker_img_id = new_img.ID
         img_obj = new_img
     app_id_list = img_obj.AppIdList.split(',') if img_obj.AppIdList else []
@@ -206,13 +207,13 @@ def add_app_id_to_docker_img(docker_img_id, app_cmdb_id, app_id_list):
         app_id_list_str += ","
     db.session.query(DockerImages).filter(text(f"DockerImages.ID={docker_img_id}")).update(values={"AppIdList": app_id_list_str},
                                                                      synchronize_session=False)
-    db.session.commit()
+    db_connection_handler(db)
     new_pair = DockerImageAppPair(
         DockerImageID=docker_img_id,
         AppID=app_cmdb_id
     )
     db.session.add(new_pair)
-    db.session.commit()
+    db_connection_handler(db)
 
 
 def get_app_id(app_name, git_url):
@@ -228,7 +229,7 @@ def get_app_id(app_name, git_url):
             MalListingAddDate=now
         )
         db.session.add(new_app)
-        db.session.commit()
+        db_connection_handler(db)
         app_id = new_app.ID
         add_application_sla_policy(app_id)
     return app_id
@@ -238,13 +239,13 @@ def add_application_sla_policy(app_id):
     default_sla = VulnerabilitySLAs.query.filter(text("Name='Default'")).first()
     new_sla_pairing = VulnerabilitySLAAppPair(ApplicationID=app_id, SlaID=default_sla.ID)
     db.session.add(new_sla_pairing)
-    db.session.commit()
+    db_connection_handler(db)
 
 
 def _add_vulnerabilityscan(scan_dict):
     scan = MakeVulnerabilityScansSchema().load(scan_dict)
     db.session.add(scan)
-    db.session.commit()
+    db_connection_handler(db)
     return scan.ID
 
 
@@ -264,7 +265,7 @@ def _set_new_and_dup_vulns(new_vulns, dup_vulns, source_type, source, app_id):
 def _add_new_vulns(new_vulns, engine):
     with Session(engine) as s:
         s.bulk_save_objects(new_vulns)
-        s.commit()
+        db_connection_handler(s)
 
 
 def _setup_duplicate_vulns(source_type, dup_vulns):
@@ -490,7 +491,7 @@ def edit_vulnerabilities():
             filter_db = " AND ".join(filter_db_keys)
             db.session.query(Vulnerabilities).filter(text(filter_db)).update(values=req_dict,
                                                                              synchronize_session=False)
-            db.session.commit()
+            db_connection_handler(db)
             response = jsonify({"Status": "Success"}), 200
     return response
 
@@ -510,7 +511,7 @@ def delete_vulnerabilities():
                 vulns = Vulnerabilities.query.filter(text(f"{key}='{val}'")).all()
                 for vuln in vulns:
                     db.session.delete(vuln)
-                db.session.commit()
+                db_connection_handler(db)
             response = jsonify({"Status": "Deleted"}), 200
     return response
 

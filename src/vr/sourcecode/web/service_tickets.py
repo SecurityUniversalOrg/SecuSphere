@@ -14,6 +14,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from vr.functions.crypto_functions import decrypt_with_priv_key
 from vr.functions.table_functions import load_table, update_table
+from vr.admin.functions import db_connection_handler
 
 
 NAV = {
@@ -159,7 +160,7 @@ def add_service_ticket(app_id):
                     AppID = app_id
                 )
                 db.session.add(new_ticket)
-                db.session.commit()
+                db_connection_handler(db)
                 return {"status": "success"}, 200
             else:
                 return render_template('500.html'), 500

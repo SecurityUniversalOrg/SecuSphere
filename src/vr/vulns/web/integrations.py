@@ -6,6 +6,7 @@ from flask_login import login_required
 from vr.vulns.model.integrations import Integrations, IntegrationsSchema
 from vr.vulns.model.appintegrations import AppIntegrations, AppIntegrationsSchema
 from vr.assets.model.businessapplications import BusinessApplications
+from vr.admin.functions import db_connection_handler
 from vr.functions.crypto_functions import encrypt_with_pub_key, decrypt_with_priv_key
 import requests
 from sqlalchemy import text
@@ -63,7 +64,7 @@ def add_integration():
                 APIKey = api_key
             )
             db.session.add(new_app)
-            db.session.commit()
+            db_connection_handler(db)
             return redirect(url_for('vulns.all_integrations', user=user, NAV=NAV))
         assets_all = Integrations.query.all()
         schema = IntegrationsSchema(many=True)
@@ -206,7 +207,7 @@ def submit_app_integration(app_id):
             AppEntity = project_key
         )
         db.session.add(new_app)
-        db.session.commit()
+        db_connection_handler(db)
 
         return redirect(url_for('vulns.all_app_integrations', app_id=app_id))
     except RuntimeError:

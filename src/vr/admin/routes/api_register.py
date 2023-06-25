@@ -7,6 +7,7 @@ from vr.admin import admin
 from vr.admin.models import RegisterForm, UserAPIKeys, OAuth2Client
 from flask_login import login_required
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter, _add_page_permissions_filter
+from vr.admin.functions import db_connection_handler
 from authlib.integrations.flask_oauth2 import current_token
 from werkzeug.security import gen_salt
 import time
@@ -40,7 +41,7 @@ def api_register():
                 ApiKey=api_key
             )
             db.session.add(new_api_key)
-            db.session.commit()
+            db_connection_handler(db)
             return render_template('admin/api_register_confirm.html', form=form, user=user, api_key=api_key, user_roles=user_roles, NAV=NAV)
         else:
             return render_template('admin/api_register.html', form=form, user=user, user_roles=user_roles, NAV=NAV)
@@ -73,7 +74,7 @@ def create_client():
     client.set_client_metadata(client_metadata)
     client.client_secret = gen_salt(48)
     db.session.add(client)
-    db.session.commit()
+    db_connection_handler(db)
     return render_template('create_client_output.html', user=user, user_roles=user_roles,
                            NAV=NAV, client_id=client_id, client_secret=client.client_secret)
 

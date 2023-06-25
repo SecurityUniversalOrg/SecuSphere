@@ -6,6 +6,7 @@ from vr.functions.mysql_db import connect_to_db
 from datetime import datetime, timedelta
 import jwt
 from vr.admin.helper_functions import hash_password,verify_password
+from vr.admin.functions import db_connection_handler
 import pyotp
 from time import time
 from vr import login_manager
@@ -151,7 +152,7 @@ class User(UserMixin, db.Model):
             jwt_id = jwt.decode(token, app.config['SECRET_KEY'],  algorithms=['HS256'])['registration_token']
             now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             db.session.query(User).filter(User.id == int(jwt_id)).update({User.email_confirmed_at: now}, synchronize_session=False)
-            db.session.commit()
+            db_connection_handler(db)
             return 'valid'
         except RuntimeError:
             return

@@ -12,6 +12,7 @@ from authlib.oauth2.rfc6749 import grants
 from authlib.oauth2.rfc7636 import CodeChallenge
 from vr import db
 from vr.admin.models import User, OAuth2Client, OAuth2AuthorizationCode, OAuth2Token
+from vr.admin.functions import db_connection_handler
 
 
 class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
@@ -34,7 +35,7 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
             code_challenge_method=code_challenge_method,
         )
         db.session.add(auth_code)
-        db.session.commit()
+        db_connection_handler(db)
         return auth_code
 
     def query_authorization_code(self, code, client):
@@ -45,7 +46,7 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
 
     def delete_authorization_code(self, authorization_code):
         db.session.delete(authorization_code)
-        db.session.commit()
+        db_connection_handler(db)
 
     def authenticate_user(self, authorization_code):
         return User.query.get(authorization_code.user_id)
@@ -70,7 +71,7 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
     def revoke_old_credential(self, credential):
         credential.revoked = True
         db.session.add(credential)
-        db.session.commit()
+        db_connection_handler(db)
 
 class ClientCredentialsGrant(grants.ClientCredentialsGrant):
     TOKEN_ENDPOINT_AUTH_METHODS = [
