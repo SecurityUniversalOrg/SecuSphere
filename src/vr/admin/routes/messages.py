@@ -3,6 +3,7 @@ from flask import request, render_template, session, redirect, url_for, jsonify
 from vr.admin import admin
 from flask_login import login_required
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter, _add_page_permissions_filter
+from vr.admin.functions import db_connection_handler
 from vr.admin.models import User, Messages, MessagesSchema, MessagesStatus
 from math import ceil
 from vr.functions.table_functions import load_table, update_table
@@ -105,7 +106,7 @@ def suppress_msg():
             if msg.Status != None:
                 db.session.query(MessagesStatus).filter(text(f"MessagesStatus.MessageId={msg_id}")) \
                     .update({MessagesStatus.Status: "Closed"}, synchronize_session=False)
-                db.session.commit()
+                db_connection_handler(db)
             else:
                 new_msg = MessagesStatus(
                     MessageId=msg_id,
@@ -113,7 +114,7 @@ def suppress_msg():
                     UserId=msg.ReceiverUserId
                 )
                 db.session.add(new_msg)
-                db.session.commit()
+                db_connection_handler(db)
             return {
                        "Status": "Success"
                    }, 200

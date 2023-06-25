@@ -1105,7 +1105,7 @@ def add_issue_dispo():
                 vulns = Vulnerabilities.query.filter(text(f"VulnerabilityID={issue_id}")).all()
                 for vuln in vulns:
                     db.session.delete(vuln)
-                db.session.commit()
+                db_connection_handler(db)
             else:
                 now = datetime.datetime.utcnow()
                 # Add Notes and System Messages
@@ -1113,7 +1113,7 @@ def add_issue_dispo():
                     db.session.query(Vulnerabilities).filter(text(f"Vulnerabilities.VulnerabilityID={issue_id}")).update(
                         {Vulnerabilities.MitigationDate: now},
                         synchronize_session=False)
-                    db.session.commit()
+                    db_connection_handler(db)
                 elif dispo == 'Open-SecReview':
                     dispo_option = request.form.get('peerReviewOption')
                     issue_note = request.form.get('peerReviewnote')
@@ -1169,7 +1169,7 @@ def add_issue_dispo():
                         {Vulnerabilities.LastModifiedDate: now,
                          Vulnerabilities.Status: f"{dispo}-{dispo_option}"},
                         synchronize_session=False)
-                    db.session.commit()
+                    db_connection_handler(db)
 
             return str(200)
     except RuntimeError:
@@ -1184,13 +1184,13 @@ def _add_issue_note_from_dispo(role, issue_id, user_id, dispo_option, issue_note
         Note=f"New {role} Disposition: {dispo_option}\n NOTES: " + issue_note
     )
     db.session.add(new_app)
-    db.session.commit()
+    db_connection_handler(db)
 
 
 def _assign_msg_receiver(msg_id, receiver_user_id):
     db.session.query(Messages).filter(text(f"Messages.ID={msg_id}"))\
         .update({Messages.ReceiverUserId: receiver_user_id}, synchronize_session=False)
-    db.session.commit()
+    db_connection_handler(db)
 
 
 def _add_new_system_msg_status(msg_id, status, user_id):
@@ -1200,7 +1200,7 @@ def _add_new_system_msg_status(msg_id, status, user_id):
         UserId=user_id
     )
     db.session.add(new_msg)
-    db.session.commit()
+    db_connection_handler(db)
 
 
 def _add_new_system_msg(user, issue_id, msg_type, msg, receiver_id=None):
@@ -1214,7 +1214,7 @@ def _add_new_system_msg(user, issue_id, msg_type, msg, receiver_id=None):
     if receiver_id:
         new_msg.ReceiverUserId = receiver_id
     db.session.add(new_msg)
-    db.session.commit()
+    db_connection_handler(db)
     return new_msg.ID
 
 
@@ -1245,7 +1245,7 @@ def add_issue_note():
                     Note=note_val
                 )
                 db.session.add(new_app)
-                db.session.commit()
+                db_connection_handler(db)
                 return {
                            "ID": new_app.ID,
                            "AddDate": new_app.AddDate,
@@ -1276,7 +1276,7 @@ def delete_issue_note():
             if vuln:
                 del_note = IssueNotes.query.filter(text(f"ID={issue_id}")).first()
                 db.session.delete(del_note)
-                db.session.commit()
+                db_connection_handler(db)
                 return str(200)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS)

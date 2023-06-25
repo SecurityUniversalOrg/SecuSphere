@@ -5,6 +5,7 @@ from vr import db
 from vr.admin import admin
 from vr.admin.models import User, SuSiteConfiguration
 from vr.admin.functions import _auth_user, check_menu_tour_init
+from vr.admin.functions import db_connection_handler
 
 
 NAV = {
@@ -48,7 +49,7 @@ def onboarding_suppress():
     elif status == 403:
         return render_template('403.html', user=user, NAV=NAV)
     db.session.query(User).filter(User.id == user.id).update({User.onboarding_confirmed: 'y'}, synchronize_session=False)
-    db.session.commit()
+    db_connection_handler(db)
     return str(200)
 
 @admin.route('/onboarding_ud_menu_tour', methods=['POST'])
@@ -63,5 +64,5 @@ def onboarding_ud_menu_tour():
     new_config = SuSiteConfiguration(setting_name=f"menu_tour_init_{user.id}",
                            setting_key=f"menu_tour_init_{user.id}", setting_value="1")
     db.session.add(new_config)
-    db.session.commit()
+    db_connection_handler(db)
     return str(200)

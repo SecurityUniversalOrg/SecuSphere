@@ -6,6 +6,7 @@ from vr.vulns.model.pipelinejobs import PipelineJobs
 from vr.vulns.model.sgconfigsettingsperjob import SgConfigSettingsPerJob
 from vr.vulns.model.sgresultsperjob import SgResultsPerJob
 from vr.api.vulns.vulnerabilities import get_app_id
+from vr.admin.functions import db_connection_handler
 
 
 @api.route('/add_sg_results', methods=['POST'])
@@ -40,7 +41,7 @@ def _add_pipeline_job_data(job_data):
         GitUrl = job_data['gitUrl']
     )
     db.session.add(job)
-    db.session.commit()
+    db_connection_handler(db)
     return job.ID, app_id
 
 
@@ -82,7 +83,7 @@ def _add_sg_config_settings(config, job_id, app_id):
         ThreshSecretsCritical = config['thresholds']['secret']['critical'],
     )
     db.session.add(job)
-    db.session.commit()
+    db_connection_handler(db)
 
 
 def _add_sg_results(results, job_id, app_id):
@@ -123,4 +124,4 @@ def _add_sg_results(results, job_id, app_id):
         ResultSecretsCritical=results['report']['secret']['critical'],
     )
     db.session.add(job)
-    db.session.commit()
+    db_connection_handler(db)

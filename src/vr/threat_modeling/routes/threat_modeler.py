@@ -9,6 +9,7 @@ import datetime
 from math import ceil
 from vr.functions.table_functions import load_table, update_table
 from vr.assets.model.businessapplications import BusinessApplications
+from vr.admin.functions import db_connection_handler
 from vr.admin.models import User
 from vr.threat_modeling.model.tmthreatassessments import TmThreatAssessments, TmThreatAssessmentsSchema
 from vr.threat_modeling.model.tmidentifiedthreats import TmIdentifiedThreats
@@ -55,7 +56,7 @@ def threat_modeler(id):
                 Status='Submitted'
             )
             db.session.add(new_assessment)
-            db.session.commit()
+            db_connection_handler(db)
             for i in threats:
                 new_threat = TmIdentifiedThreats(
                     ApplicationID=id,
@@ -63,7 +64,7 @@ def threat_modeler(id):
                     ThreatID=i['SID']
                 )
                 db.session.add(new_threat)
-                db.session.commit()
+                db_connection_handler(db)
             for i in applied_solutions:
                 new_solution = TmIdentifiedSolutions(
                     ApplicationID=id,
@@ -71,7 +72,7 @@ def threat_modeler(id):
                     SolutionID=list(i.keys())[0]
                 )
                 db.session.add(new_solution)
-                db.session.commit()
+                db_connection_handler(db)
                 NAV['appbar'] = 'threat_models'
                 app = BusinessApplications.query.filter(text(f'ID={id}')).first()
                 app_data = {'ID': id, 'ApplicationName': app.ApplicationName}

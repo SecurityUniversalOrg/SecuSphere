@@ -6,6 +6,7 @@ from vr import db, app
 from vr.admin import admin
 from vr.admin.models import User, LoginForm, AuthAttempts, AppConfig
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter, check_lockout, log_failed_attempt
+from vr.admin.functions import db_connection_handler
 from config_engine import AUTH_TYPE
 if AUTH_TYPE == 'ldap':
     from flask_ldap3_login.forms import LDAPLoginForm
@@ -127,7 +128,7 @@ def _login_attempt(user, username, password, userid, form, mfa_password):
 def _handle_successful_login(userid, auth_success, user):
     loginattempt = AuthAttempts(user_id=userid, success=auth_success)
     db.session.add(loginattempt)
-    db.session.commit()
+    db_connection_handler(db)
     login_user(user, remember=False, force=True)
     session.permanent = True
     session.modified = True
@@ -139,7 +140,7 @@ def _handle_failed_mfa_login(userid):
     warnmsg = ('failedlogin', 'danger')
     loginattempt = AuthAttempts(user_id=userid, success=False)
     db.session.add(loginattempt)
-    db.session.commit()
+    db_connection_handler(db)
     log_failed_attempt(AUTH_FAILED_PW_WINDOW, int(userid), AUTH_FAILED_PW_ATT)
     return warnmsg
 
@@ -148,7 +149,7 @@ def _handle_failed_login(userid, auth_success):
     warnmsg = ('failedlogin', 'danger')
     loginattempt = AuthAttempts(user_id=userid, success=auth_success)
     db.session.add(loginattempt)
-    db.session.commit()
+    db_connection_handler(db)
     log_failed_attempt(AUTH_FAILED_PW_WINDOW, int(userid), AUTH_FAILED_PW_ATT)
     return warnmsg
 
@@ -157,7 +158,7 @@ def _handle_no_user(username):
     lo_ans = check_lockout(username, AUTH_FAILED_PW_LOCKOUT)
     loginattempt = AuthAttempts(success=False, username=username)
     db.session.add(loginattempt)
-    db.session.commit()
+    db_connection_handler(db)
     if lo_ans:
         warnmsg = ('lockedout', 'danger')
     else:
@@ -169,7 +170,7 @@ def _handle_lo_answer(userid):
     warnmsg = ('lockedout', 'danger')
     loginattempt = AuthAttempts(success=False, username=userid)
     db.session.add(loginattempt)
-    db.session.commit()
+    db_connection_handler(db)
     return warnmsg
 
 

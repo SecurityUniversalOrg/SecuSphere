@@ -1,4 +1,4 @@
-from flask import request, session, url_for
+from flask import request, session, url_for, jsonify
 from flask import render_template, redirect
 from authlib.oauth2 import OAuth2Error
 from vr.api import api
@@ -46,7 +46,15 @@ def authorize():
 
 @api.route('/oauth/token', methods=['POST'])
 def issue_token():
-    return authorization.create_token_response()
+    max_attempts = 3
+    for attempt in range(max_attempts):
+        try:
+            return authorization.create_token_response()
+        except Exception as e:
+            if attempt < max_attempts - 1:  # i.e. if it's not the final attempt
+                continue  # go to the next iteration of the loop
+            else:  # if it's the final attempt
+                return jsonify(error=str(e)), 500
 
 
 @api.route('/oauth/revoke', methods=['POST'])
