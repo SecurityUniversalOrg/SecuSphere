@@ -170,7 +170,7 @@ def setup_core_db_tables(ENV):
         if ENV == 'test':
             sql = 'INSERT INTO TmQuestions (AddDate, Question, Condition, Options, Type, Prereqs, Targets, Produces) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
         else:
-            sql = 'INSERT INTO TmQuestions (AddDate, Question, Condition, Options, Type, Prereqs, Targets, Produces) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
+            sql = 'INSERT INTO TmQuestions (AddDate, Question, `Condition`, `Options`, `Type`, Prereqs, Targets, Produces) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
         args = (
         now, i['Question'], i['Condition'], i['Options'], i['Type'], i['Prereqs'], i['Targets'], i['Produces'])
         cur.execute(sql, args)
