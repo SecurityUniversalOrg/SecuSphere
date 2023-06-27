@@ -18,36 +18,6 @@ NAV = {
     'CAT': { "name": "Admin", "url": "admin.dashboard"}
 }
 
-@admin.route('/api/register', methods=['GET', 'POST'])
-@login_required
-def api_register():
-    try:
-        role_req = ['Admin']
-        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req)
-        if status == 401:
-            return redirect(url_for('admin.login'))
-        elif status == 403:
-            return render_template('403.html', user=user, nav_cat={}, nav_subcat='', \
-                                   nav_subsubcat='', nav_curpage={"name": "Unauthorized"})
-        form = RegisterForm(request.form)
-        if request.method == 'POST':
-            keyname = request.form.get('keyname')
-            otp_secret = base64.b32encode(os.urandom(30)).decode('utf-8')
-            api_key = create_api_key(user.id, otp_secret)
-            new_api_key = UserAPIKeys(
-                user_id=user.id,
-                Name=keyname,
-                Otp=otp_secret,
-                ApiKey=api_key
-            )
-            db.session.add(new_api_key)
-            db_connection_handler(db)
-            return render_template('admin/api_register_confirm.html', form=form, user=user, api_key=api_key, user_roles=user_roles, NAV=NAV)
-        else:
-            return render_template('admin/api_register.html', form=form, user=user, user_roles=user_roles, NAV=NAV)
-    except RuntimeError:
-        return render_template('500.html'), 500
-
 
 @admin.route('/create_client', methods=('GET', 'POST'))
 @login_required

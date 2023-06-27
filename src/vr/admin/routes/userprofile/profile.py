@@ -22,7 +22,7 @@ NAV = {
 VULN_STATUS_IS_NOT_CLOSED = "Vulnerabilities.Status NOT LIKE 'Closed%'"
 
 
-@admin.route('/profile', methods=['GET', 'POST'])
+@admin.route('/profile', methods=['GET'])
 @login_required
 def profile():
     user, status, user_roles = _auth_user(session, 'No Role')
