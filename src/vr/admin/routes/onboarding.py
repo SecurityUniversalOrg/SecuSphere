@@ -12,7 +12,7 @@ NAV = {
     'CAT': { "name": "Onboarding", "url": "admin.admin_dashboard"}
 }
 
-@admin.route('/onboarding', methods=['GET', 'POST'])
+@admin.route('/onboarding', methods=['GET'])
 @login_required
 def onboarding():
     NAV['curpage'] = {"name": "Onboarding Tasks"}
@@ -39,7 +39,7 @@ def onboarding():
                            user=user,
                            task_list=task_list, total_done=total_done, tour_status=tour_status)
 
-@admin.route('/onboarding_suppress', methods=['GET', 'POST'])
+@admin.route('/onboarding_suppress', methods=['GET'])
 @login_required
 def onboarding_suppress():
     NAV['curpage'] = {"name": "Onboarding Tasks"}
@@ -52,17 +52,4 @@ def onboarding_suppress():
     db_connection_handler(db)
     return str(200)
 
-@admin.route('/onboarding_ud_menu_tour', methods=['POST'])
-@login_required
-def onboarding_ud_menu_tour():
-    NAV['curpage'] = {"name": "Onboarding Tasks"}
-    user, status, user_roles = _auth_user(session, 'No Role')
-    if status == 401:
-        return redirect(url_for('admin.login'))
-    elif status == 403:
-        return render_template('403.html', user=user, NAV=NAV)
-    new_config = SuSiteConfiguration(setting_name=f"menu_tour_init_{user.id}",
-                           setting_key=f"menu_tour_init_{user.id}", setting_value="1")
-    db.session.add(new_config)
-    db_connection_handler(db)
-    return str(200)
+

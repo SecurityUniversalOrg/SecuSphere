@@ -81,7 +81,7 @@ def update_mfa_status():
     return str(200)
 
 
-@admin.route('/display_mfa_qr', methods=['GET', 'POST'])
+@admin.route('/display_mfa_qr', methods=['GET'])
 @login_required
 def display_mfa_qr():
     user, status, user_roles = _auth_user(session, 'No Role')
@@ -96,7 +96,7 @@ def display_mfa_qr():
         'Expires': '0'}
 
 
-@admin.route('/mobile_sync', methods=['GET', 'POST'])
+@admin.route('/mobile_sync', methods=['GET'])
 @login_required
 def mobile_sync():
     user, status, user_roles = _auth_user(session, 'No Role')
