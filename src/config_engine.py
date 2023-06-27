@@ -2,7 +2,7 @@ import os
 from azure.keyvault.secrets import SecretClient
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy
-from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential, EnvironmentCredential
 from settings import SET_ENV, SET_AZURE_KEYVAULT_NAME, SET_AUTH_TYPE, SET_INSECURE_OAUTH, SET_SMTP_HOST, SET_SMTP_USER, \
     SET_SMTP_ADMIN_EMAIL, SET_LDAP_HOST, SET_LDAP_PORT, SET_LDAP_BASE_DN, SET_LDAP_USER_DN, SET_LDAP_GROUP_DN, \
     SET_LDAP_USER_RDN_ATTR, SET_LDAP_USER_LOGIN_ATTR, SET_LDAP_BIND_USER_DN, SET_LDAP_BIND_USER_PASSWORD, \
@@ -44,7 +44,13 @@ class KeyVaultManager(object):
             key_vault_uri = f"https://{os.getenv('AZURE_KEYVAULT_NAME')}.vault.azure.net"
         else:
             key_vault_uri = f"https://{AZURE_KEYVAULT_NAME}.vault.azure.net"
-        self.credential = DefaultAzureCredential()
+        if os.getenv('AZURE_AUTH_METHOD'):
+            if os.getenv('AZURE_AUTH_METHOD') == 'env':
+                self.credential = EnvironmentCredential(
+                    additionally_allowed_tenants=[os.getenv('AZURE_TENANT_ID')]
+                )
+        else:
+            self.credential = DefaultAzureCredential()
         self.secret_client = SecretClient(vault_url=key_vault_uri, credential=self.credential)
         self.key_client = KeyClient(vault_url=key_vault_uri, credential=self.credential)
         self.cert_client = CertificateClient(vault_url=key_vault_uri, credential=self.credential)
