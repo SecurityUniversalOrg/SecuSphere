@@ -26,7 +26,12 @@ def all_cheatsheets():
         elif status == 403:
             return render_template('403.html', user=user, NAV=NAV)
 
-        with open(f'vr/sourcecode/cheat_sheets/Index.md', 'r', encoding="utf8") as infile:
+        cwd = os.getcwd()
+        if 'var' in cwd and 'www' in cwd and 'html' in cwd:
+            filepath = f'/var/www/html/src/vr/sourcecode/cheat_sheets/Index.md'
+        else:
+            filepath = f'vr/sourcecode/cheat_sheets/Index.md'
+        with open(filepath, 'r', encoding="utf8") as infile:
             mkd_text = infile.read()
         return render_template('cheat_sheet.html', mkd_text=mkd_text, user=user, NAV=NAV)
     except RuntimeError:
@@ -48,7 +53,12 @@ def cheatsheets(sheet_name):
         elif status == 403:
             return render_template('403.html', user=user, NAV=NAV)
 
-        with open(f'vr/sourcecode/cheat_sheets/{sheet_name}.md', 'r', encoding="utf8") as infile:
+        cwd = os.getcwd()
+        if 'var' in cwd and 'www' in cwd and 'html' in cwd:
+            filepath = f'/var/www/html/src/vr/sourcecode/cheat_sheets/{sheet_name}.md'
+        else:
+            filepath = f'vr/sourcecode/cheat_sheets/{sheet_name}.md'
+        with open(filepath, 'r', encoding="utf8") as infile:
             mkd_text = infile.read()
         return render_template('cheat_sheet.html', mkd_text=mkd_text, user=user, NAV=NAV)
     except RuntimeError:
