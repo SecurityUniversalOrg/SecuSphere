@@ -2,7 +2,6 @@ from flask import Blueprint
 
 sourcecode = Blueprint('sourcecode', __name__)
 
-from vr.sourcecode.web import dashboard
 from vr.sourcecode.web import git_repos
 from vr.sourcecode.web import service_tickets
 from vr.sourcecode.web import imported_code

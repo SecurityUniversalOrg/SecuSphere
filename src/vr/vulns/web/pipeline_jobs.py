@@ -17,7 +17,7 @@ NAV = {
 APP_ADMIN = "Application Admin"
 
 
-@vulns.route("/all_pipeline_jobs")
+@vulns.route("/all_pipeline_jobs", methods=['GET', 'POST'])
 @login_required
 def all_pipeline_jobs():
     try:
@@ -138,7 +138,7 @@ def pipeline_jobs(id):
         return render_template('500.html'), 500
 
 
-@vulns.route("/add_cicd_pipeline_stage", methods=['GET', 'POST'])
+@vulns.route("/add_cicd_pipeline_stage", methods=['GET'])
 @login_required
 def add_cicd_pipeline_stage():
     NAV['curpage'] = {"name": "Add CI/CD Pipeline Stage"}
@@ -155,7 +155,7 @@ def add_cicd_pipeline_stage():
     return render_template('add_cicd_pipeline_stage.html', user=user, NAV=NAV)
 
 
-@vulns.route("/get_cicd_pipeline_stage_data", methods=['GET', 'POST'])
+@vulns.route("/get_cicd_pipeline_stage_data", methods=['POST'])
 @login_required
 def get_cicd_pipeline_stage_data():
     NAV['curpage'] = {"name": "Add CI/CD Pipeline Stage"}

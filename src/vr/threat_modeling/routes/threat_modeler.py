@@ -96,7 +96,7 @@ def threat_modeler(id):
         return render_template(SERVER_ERR_STATUS), 500
 
 
-@threat_modeling.route("/threat_assessments/<id>")
+@threat_modeling.route("/threat_assessments/<id>", methods=['GET', 'POST'])
 @login_required
 def threat_assessments(id):
     try:

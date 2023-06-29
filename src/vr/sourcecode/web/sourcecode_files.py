@@ -14,7 +14,7 @@ NAV = {
 }
 APP_ADMIN = "Application Admin"
 
-@sourcecode.route("/sourcecode_files/<id>")
+@sourcecode.route("/sourcecode_files/<id>", methods=['GET', 'POST'])
 @login_required
 def sourcecode_files(id):
     try:
