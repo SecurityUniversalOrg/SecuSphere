@@ -83,10 +83,16 @@ login_manager.login_view = 'admin.login'
 
 @app.template_filter('format_datetime')
 def format_datetime(value):
-    formatted = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
+    if ENV == 'test':
+        formatted = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+    else:
+        formatted = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
     return formatted
 
 @app.template_filter('base64encode')
 def base64encode(value):
-    return base64.b64encode(value.encode()).decode()
+    if value:
+        return base64.b64encode(value.encode()).decode()
+    else:
+        return None
 
