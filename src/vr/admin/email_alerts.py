@@ -21,9 +21,12 @@ def send_email(msg_fromaddr, msg_toaddr, msg_subject, msg_body):
 
 # Send Registration token
 def send_registration_email(ext_url, username, first_name, last_name, token, email_to):
-    msg_subject = "Security Universal User Registration"
+    msg_subject = "SecuSphere User Registration"
     msg_body = generate_registration_msg(ext_url, username, first_name, last_name, token)
-    send_email(SMTP_ADMIN_EMAIL, email_to, msg_subject, msg_body)
+    try:
+        send_email(SMTP_ADMIN_EMAIL, email_to, msg_subject, msg_body)
+    except:
+        return 'error'
 
 
 # Global Message Formatting
@@ -116,7 +119,7 @@ html_header = '<!DOCTYPE html>\
 msg_header = '<body>\
     \
     <div class="header">\
-      <h1><a href="https://www.securityuniversal.com"><img src="cid:image1" height="100" width="339" alt="logo" border="0"></a></h1>\
+      <h1><a href="https://www.securityuniversal.com/secusphere"><img src="https://www.securityuniversal.com/static/images/secusphere.png" height="80" width="80" alt="logo" border="0"></a></h1>\
     </div>\
     \
     <div class="topnav">\
@@ -412,8 +415,11 @@ def generate_registration_msg(ext_url, username, first_name, last_name, token):
         }\
         </style>\
         </head>'
-    msg_subject = 'Security Universal - User Account Registration'
+    msg_subject = 'SecuSphere - User Account Registration'
     evt_msg = '<div class="row"><div class="leftcolumn"><div class="card"><h2>{}</h2>'.format(msg_subject.upper())
-    evt_msg = evt_msg + f"<p>Dear {first_name} {last_name},</p><p>You have been invited to complete your Security Universal User Account Registration.  To complete your Account Registration, <a href=\"http://{ext_url}/register_user/{token}\">click here</a>.  </p><p><strong>Login Username:</strong> {username}</p><br><br><p>PLEASE NOTE: This one-time registration link will expire 30 minutes after your account activation signup.</p>"
+    if token:
+        evt_msg = evt_msg + f"<p>Dear {first_name} {last_name},</p><p>You have been invited to complete your SecuSphere User Account Registration.  To complete your Account Registration, <a href=\"http://{ext_url}/register_user/{token}\">click here</a>.  </p><p><strong>Login Username:</strong> {username}</p><br><br><p>PLEASE NOTE: This one-time registration link will expire 30 minutes after your account activation signup.</p>"
+    else:
+        evt_msg = evt_msg + f"<p>Dear {first_name} {last_name},</p><p>Thank you for completing the initial SecuSphere Administrator User Account Registration.  </p><p><strong>Login Username:</strong> {username}</p><br><br>"
     msg_body = html_header + evt_style + msg_header + evt_msg + html_footer
     return msg_body

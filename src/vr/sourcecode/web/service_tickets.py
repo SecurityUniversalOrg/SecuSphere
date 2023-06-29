@@ -23,7 +23,7 @@ NAV = {
 APP_ADMIN = "Application Admin"
 
 
-@sourcecode.route("/all_service_tickets")
+@sourcecode.route("/all_service_tickets", methods=['GET', 'POST'])
 @login_required
 def all_service_tickets():
     try:
@@ -118,7 +118,7 @@ def issue(appid, id):
         return render_template('500.html'), 500
 
 
-@sourcecode.route("/add_service_ticket/<app_id>", methods=['GET', 'POST'])
+@sourcecode.route("/add_service_ticket/<app_id>", methods=['POST'])
 @login_required
 def add_service_ticket(app_id):
     try:
@@ -129,41 +129,40 @@ def add_service_ticket(app_id):
             return redirect(url_for('admin.login'))
         elif status == 403:
             return render_template('403.html', user=user, NAV=NAV)
-        if request.method == 'POST':
-            issueTitle = request.form.get('issueTitle')
-            issueDescription = request.form.get('issueDescription')
-            appIntegrationId = request.form.get('appIntegrationId')
+        issueTitle = request.form.get('issueTitle')
+        issueDescription = request.form.get('issueDescription')
+        appIntegrationId = request.form.get('appIntegrationId')
 
-            asset = db.session.query(AppIntegrations, Integrations)\
-                  .filter(AppIntegrations.ID == appIntegrationId)\
-                  .filter(Integrations.ID == AppIntegrations.IntegrationID)\
-                  .first()
+        asset = db.session.query(AppIntegrations, Integrations)\
+              .filter(AppIntegrations.ID == appIntegrationId)\
+              .filter(Integrations.ID == AppIntegrations.IntegrationID)\
+              .first()
 
-            status = create_jira_issue(
-                asset.Integrations.Url,
-                asset.AppIntegrations.AppEntity,
-                decrypt_with_priv_key(asset.Integrations.Username),
-                decrypt_with_priv_key(asset.Integrations.Password),
-                issueTitle,
-                issueDescription
+        status = create_jira_issue(
+            asset.Integrations.Url,
+            asset.AppIntegrations.AppEntity,
+            decrypt_with_priv_key(asset.Integrations.Username),
+            decrypt_with_priv_key(asset.Integrations.Password),
+            issueTitle,
+            issueDescription
+        )
+
+        if status:
+            new_ticket = ServiceTickets(
+                TicketName = issueTitle,
+                Description = issueDescription,
+                Source = "JIRA",
+                SourceID = asset.Integrations.ID,
+                Reporter = user.username,
+                Status = "New",
+                IssueKey = status,
+                AppID = app_id
             )
-
-            if status:
-                new_ticket = ServiceTickets(
-                    TicketName = issueTitle,
-                    Description = issueDescription,
-                    Source = "JIRA",
-                    SourceID = asset.Integrations.ID,
-                    Reporter = user.username,
-                    Status = "New",
-                    IssueKey = status,
-                    AppID = app_id
-                )
-                db.session.add(new_ticket)
-                db_connection_handler(db)
-                return {"status": "success"}, 200
-            else:
-                return render_template('500.html'), 500
+            db.session.add(new_ticket)
+            db_connection_handler(db)
+            return {"status": "success"}, 200
+        else:
+            return render_template('500.html'), 500
     except RuntimeError:
         return render_template('500.html'), 500
 

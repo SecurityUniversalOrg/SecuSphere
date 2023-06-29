@@ -317,7 +317,7 @@ def _set_rule_list(app_id, user, id):
     return new_assessment, quick_note_str, update_map
 
 
-@vulns.route("/assessment_results/<app_id>/<id>", methods=['GET', 'POST'])
+@vulns.route("/assessment_results/<app_id>/<id>", methods=['GET'])
 @login_required
 def assessment_results(app_id, id):
     try:
@@ -332,38 +332,26 @@ def assessment_results(app_id, id):
             return redirect(url_for(ADMIN_LOGIN))
         elif status == 403:
             return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
-        if request.method == 'POST':
-            update_map = request.form.get('update_map')
-            metadata = update_map.split(';;')[0]
-            benchmark_id = metadata.split('_')[0]
-            target_level = metadata.split('_')[1]
-            rules = update_map.split(';;')[1]
-            rule_list = rules.split(';')
-            for i in rule_list:
-                rule_id = i.split('_')[0]
-                applicable = i.split('_')[1]
-                passed = i.split('_')[2]
-                print(benchmark_id, target_level, rule_id, applicable, passed)
-        else:
-            benchmark_dict = {}
-            benchmarks = AssessmentBenchmarks.query\
-                .with_entities(
-                AssessmentBenchmarks.ID, AssessmentBenchmarkAssessments.AddDate, AssessmentBenchmarks.Name,
-                AssessmentBenchmarks.Description, AssessmentBenchmarks.Version, User.username
-            )\
-                .join(AssessmentBenchmarkAssessments, AssessmentBenchmarkAssessments.BenchmarkID== AssessmentBenchmarks.ID) \
-                .join(User, AssessmentBenchmarkAssessments.UserID == User.id) \
-                .filter(text(f"AssessmentBenchmarkAssessments.ID = '{id}'")).all()
-            for i in benchmarks:
-                benchmark_dict, benchmark_id = _set_assessment_benchmarks(i, benchmark_dict, app_id, id)
-            for i in benchmark_dict:
-                benchmark_dict = _handle_level_pass(benchmark_dict, i)
-            default_benchmark = 'OWASP ASVS v. 3.1'
-            NAV['appbar'] = 'benchmarks'
-            app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
-            app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
-            return render_template('assessment_results.html', benchmarks=benchmark_dict[benchmark_id], default_benchmark=default_benchmark,
-                                   app_data=app_data, user=user, NAV=NAV)
+
+        benchmark_dict = {}
+        benchmarks = AssessmentBenchmarks.query\
+            .with_entities(
+            AssessmentBenchmarks.ID, AssessmentBenchmarkAssessments.AddDate, AssessmentBenchmarks.Name,
+            AssessmentBenchmarks.Description, AssessmentBenchmarks.Version, User.username
+        )\
+            .join(AssessmentBenchmarkAssessments, AssessmentBenchmarkAssessments.BenchmarkID== AssessmentBenchmarks.ID) \
+            .join(User, AssessmentBenchmarkAssessments.UserID == User.id) \
+            .filter(text(f"AssessmentBenchmarkAssessments.ID = '{id}'")).all()
+        for i in benchmarks:
+            benchmark_dict, benchmark_id = _set_assessment_benchmarks(i, benchmark_dict, app_id, id)
+        for i in benchmark_dict:
+            benchmark_dict = _handle_level_pass(benchmark_dict, i)
+        default_benchmark = 'OWASP ASVS v. 3.1'
+        NAV['appbar'] = 'benchmarks'
+        app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
+        return render_template('assessment_results.html', benchmarks=benchmark_dict[benchmark_id], default_benchmark=default_benchmark,
+                               app_data=app_data, user=user, NAV=NAV)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500
 
@@ -482,25 +470,3 @@ def delete_benchmark_note():
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500
 
-@vulns.route("/add_assessment_benchmark", methods=['GET', 'POST'])
-@login_required
-def add_assessment_benchmark():
-    try:
-        NAV['curpage'] = {"name": "Add Assessment Benchmark"}
-        admin_role = APP_ADMIN
-        role_req = [APP_ADMIN, APP_VIEWER]
-        perm_entity = 'Application'
-        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
-                                              permissions_entity=perm_entity)
-        status = _add_page_permissions_filter(session, admin_role)
-        if status == 401:
-            return redirect(url_for(ADMIN_LOGIN))
-        elif status == 403:
-            return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
-        if request.method == 'POST':
-            app_id = request.form.get('app_id')
-            print(app_id)
-
-        return render_template('add_assessment_benchmark.html', user=user, NAV=NAV)
-    except RuntimeError:
-        return render_template(SERVER_ERR_STATUS), 500

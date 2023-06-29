@@ -13,7 +13,7 @@ NAV = {
     'CAT': { "name": "Applications", "url": "sourcecode.dashboard"}
 }
 
-@vulns.route("/securitygatescorecard/<id>", methods=['GET', 'POST'])
+@vulns.route("/securitygatescorecard/<id>", methods=['GET'])
 @login_required
 def securitygatescorecard(id):
     try:
@@ -87,6 +87,8 @@ def securitygatescorecard(id):
         NAV['appbar'] = 'scorecard'
         if assets:
             app_data = {'ID': assets[0]['ID'], 'ApplicationName': assets[0]['ApplicationName']}
+        else:
+            app_data = {}
         if assets_all:
             scorecard_results = {
                 "secrets": "Pass",
@@ -182,8 +184,10 @@ def securitygatescorecard(id):
             if contains_fail:
                 scorecard_results['OVERALL'] = 'Fail'
         else:
-            entities = []
-        return render_template('securitygatescorecard.html', app_data=app_data, entities=entities[0], user=user, NAV=NAV,
+            entity = []
+            scorecard_results = {}
+            scorecard_results['OVERALL'] = 'No Tests'
+        return render_template('securitygatescorecard.html', app_data=app_data, entities=entity, user=user, NAV=NAV,
                                scorecard_results=scorecard_results)
     except RuntimeError:
         return render_template('500.html'), 500

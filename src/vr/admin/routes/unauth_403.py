@@ -5,12 +5,15 @@ from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_p
 from vr.admin import admin
 
 
-NAV_CAT= { "name": "Admin", "url": "admin.admin_dashboard"}
+NAV = {
+    'CAT': { "name": "Admin", "url": "admin.admin_dashboard"}
+}
 
 @admin.route('/unauth_403', methods=['GET'])
 @login_required
 def unauth_403():
-    user, status, new_msg_cnt, messages, user_roles = _auth_user(session, NAV_CAT['name'])
+    NAV['curpage'] = {"name": "Unauthorized"}
+    user, status, user_roles = _auth_user(session, 'No Role')
     if status == 401:
         return redirect(url_for('admin.login'))
     elif status == 403:

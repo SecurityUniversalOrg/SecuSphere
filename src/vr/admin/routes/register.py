@@ -121,6 +121,8 @@ def register_submit():
             db.session.add(ura)
             db_connection_handler(db)
 
+            send_registration_email(app.config['APP_EXT_URL'], username, firstname, lastname, '', email)
+
             session['username'] = username
         else:
             warnmsg = ('regfail', 'danger')

@@ -22,84 +22,6 @@ UNAUTH_STATUS = "403.html"
 SERVER_ERR_STATUS = "500.html"
 
 
-@vulns.route("/endpoint/<appid>/<id>")
-@login_required
-def endpoint(appid, id):
-    try:
-        NAV['curpage'] = {"name": "Endpoint"}
-        admin_role = APP_ADMIN
-        role_req = [APP_ADMIN, APP_VIEWER]
-        perm_entity = 'Application'
-        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
-                                              permissions_entity=perm_entity)
-        status = _entity_page_permissions_filter(appid, user_roles, session, admin_role)
-
-        if status == 401:
-            return redirect(url_for(ADMIN_LOGIN))
-        elif status == 403:
-            return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
-        details = {}
-        key = 'ID'
-        val = id
-        filter_list = [f"{key} = '{val}'"]
-        endpoints_all = ApplicationEndpoints.query.filter(text("".join(filter_list))).all()
-        schema = ApplicationEndpointsSchema(many=True)
-        assets = schema.dump(endpoints_all)
-        details['details'] = assets[0]
-        vulns_all = Vulnerabilities.query \
-            .join(ApplicationEndpoints, and_(ApplicationEndpoints.Endpoint == Vulnerabilities.Uri, ApplicationEndpoints.ApplicationID == appid)) \
-            .all()
-        details['vulns_all'] = vulns_all
-
-        NAV['appbar'] = 'endpoints'
-        app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
-        app_data = {'ID': appid, 'ApplicationName': app.ApplicationName}
-
-        return render_template('endpoint.html', details=details, app_data=app_data, user=user, NAV=NAV)
-    except RuntimeError:
-        return render_template(SERVER_ERR_STATUS), 500
-
-@vulns.route("/endpoint/host/<id>")
-@login_required
-def endpoint_host(id):
-    try:
-        NAV['curpage'] = {"name": "Endpoint Host"}
-        admin_role = APP_ADMIN
-        role_req = [APP_ADMIN, APP_VIEWER]
-        perm_entity = 'Application'
-        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
-                                              permissions_entity=perm_entity)
-        status = _entity_page_permissions_filter(id, user_roles, session, admin_role)
-
-        if status == 401:
-            return redirect(url_for(ADMIN_LOGIN))
-        elif status == 403:
-            return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
-        details = {}
-        key = 'ID'
-        val = id
-        filter_list = [f"{key} = '{val}'"]
-        endpoints_all = IPAssets.query.filter(text("".join(filter_list))).all()
-        schema = IPAssetsSchema(many=True)
-        assets = schema.dump(endpoints_all)
-        details['details'] = assets[0]
-        key = 'AssetID'
-        val = id
-        filter_list = [f"{key} = '{val}'"]
-        endpoints_all = ApplicationEndpoints.query.filter(text("".join(filter_list))).all()
-        schema = ApplicationEndpointsSchema(many=True)
-        assets = schema.dump(endpoints_all)
-        details['endpoints'] = assets
-
-        vulns_all = Vulnerabilities.query\
-            .join(ApplicationEndpoints, Vulnerabilities.Uri == ApplicationEndpoints.Endpoint, isouter=True) \
-            .filter(text(f"ApplicationEndpoints.AssetID = {id}")).all()
-        details['vulns_all'] = vulns_all
-
-
-        return render_template('endpoint_host.html', details=details, user=user, NAV=NAV)
-    except RuntimeError:
-        return render_template(SERVER_ERR_STATUS), 500
 
 @vulns.route("/application_endpoints/<id>", methods=['GET', 'POST'])
 @login_required
@@ -164,38 +86,5 @@ def application_endpoints(id):
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500
 
-@vulns.route("/application_hosts/<id>")
-@login_required
-def application_hosts(id):
-    try:
-        NAV['curpage'] = {"name": "Application Hosts"}
-        admin_role = APP_ADMIN
-        role_req = [APP_ADMIN, APP_VIEWER]
-        perm_entity = 'Application'
-        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
-                                              permissions_entity=perm_entity)
-        status = _entity_page_permissions_filter(id, user_roles, session, admin_role)
-        if status == 401:
-            return redirect(url_for(ADMIN_LOGIN))
-        elif status == 403:
-            return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
 
-        key = 'AssetApplications.ApplicationID'
-        val = id
-        filter_list = [f"{key} = '{val}'"]
-        components_all = AssetApplications.query.with_entities(
-            AssetApplications.ID,
-            IPAssets.Hostname,
-            func.count(Vulnerabilities.VulnerabilityID).label('findings_cnt'),
-        ) \
-            .join(Vulnerabilities, Vulnerabilities.HostId == AssetApplications.TechnologyID, isouter=True) \
-            .join(IPAssets, IPAssets.ID == AssetApplications.TechnologyID) \
-            .group_by(AssetApplications.ID) \
-            .filter(text("".join(filter_list))).all()
-        NAV['appbar'] = 'endpoints'
-        app = BusinessApplications.query.filter(text(f'ID={id}')).first()
-        app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
-        return render_template('application_hosts.html', entities=components_all, app_data=app_data, user=user, NAV=NAV)
-    except RuntimeError:
-        return render_template(SERVER_ERR_STATUS), 500
 

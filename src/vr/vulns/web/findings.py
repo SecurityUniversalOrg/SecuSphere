@@ -17,12 +17,14 @@ from vr.sourcecode.model.importedcode import ImportedCode
 from vr.vulns.model.issuenotes import IssueNotes
 from vr.vulns.model.applicationendpoints import ApplicationEndpoints
 from vr.vulns.model.vulnerabilityscans import VulnerabilityScans
+from vr.admin.functions import db_connection_handler
 from io import BytesIO
 from xhtml2pdf import pisa
 import csv
 import base64
 from io import StringIO
 from flask import Response
+from config_engine import ENV
 
 
 NAV = {
@@ -35,7 +37,11 @@ ADMIN_LOGIN = "admin.login"
 UNAUTH_STATUS = "403.html"
 SERVER_ERR_STATUS = "500.html"
 VULN_STATUS_IS_NOT_CLOSED = "Vulnerabilities.Status NOT LIKE 'Closed-%' AND Vulnerabilities.Status NOT LIKE 'Open-RiskAccepted-%'"
-ISO_FORMAT = '%Y-%m-%dT%H:%M:%S'
+test = ENV
+if test == 'test':
+    ISO_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
+else:
+    ISO_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 
 @vulns.route("/open_findings/<id>", methods=['GET', 'POST'])
