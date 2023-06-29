@@ -36,6 +36,7 @@ import csv
 from io import StringIO
 from flask import Response
 from datetime import datetime
+import traceback
 
 
 NAV = {
@@ -546,6 +547,7 @@ def add_application():
 
 
 def _setup_new_app(request):
+    now = datetime.utcnow()
     app_name = request.form.get('name')
     description = request.form.get('description')
     app_value = request.form.get('business_criticality')
@@ -581,12 +583,15 @@ def _setup_new_app(request):
         Lifecycle=lifecycle,
         Origin=origin,
         UserRecords=user_records,
-        Revenue=revenue
+        Revenue=revenue,
+        AssignmentChangedDate=now,
+        RegDate=now,
+        MalListingAddDate=now
     )
     return new_app, app_name, sla_configuration, regulations
 
 
-@vulns.route("/application_issues/<id>")
+@vulns.route("/application_issues/<id>", methods=['GET', 'POST'])
 @login_required
 def application_issues(id):
     try:

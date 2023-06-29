@@ -22,7 +22,7 @@ UNAUTH_URL = "403.html"
 SERVER_ERR_URL = "500.html"
 
 
-@orchestration.route("/all_dockerimages")
+@orchestration.route("/all_dockerimages", methods=['GET', 'POST'])
 @login_required
 def all_dockerimages():
     try:
@@ -98,7 +98,7 @@ def all_dockerimages():
         return render_template(SERVER_ERR_URL), 500
 
 
-@orchestration.route("/dockerimages/<appid>")
+@orchestration.route("/dockerimages/<appid>", methods=['GET', 'POST'])
 @login_required
 def dockerimages(appid):
     try:

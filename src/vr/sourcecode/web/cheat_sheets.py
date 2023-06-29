@@ -11,7 +11,7 @@ NAV = {
 APP_ADMIN = "Application Admin"
 
 
-@sourcecode.route("/all_cheatsheets")
+@sourcecode.route("/all_cheatsheets", methods=['GET'])
 @login_required
 def all_cheatsheets():
     try:
@@ -38,7 +38,7 @@ def all_cheatsheets():
         return render_template('500.html'), 500
 
 
-@sourcecode.route("/cheatsheets/<sheet_name>")
+@sourcecode.route("/cheatsheets/<sheet_name>", methods=['GET'])
 @login_required
 def cheatsheets(sheet_name):
     try:

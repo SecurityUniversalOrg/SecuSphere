@@ -11,7 +11,7 @@ NAV = {
     'CAT': { "name": "Source Code", "url": "sourcecode.dashboard"}
 }
 
-@sourcecode.route("/all_git_repos")
+@sourcecode.route("/all_git_repos", methods=['GET'])
 @login_required
 def all_git_repos():
     try:

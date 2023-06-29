@@ -65,6 +65,7 @@ def application_metrics(id):
     except RuntimeError:
         return render_template('500.html'), 500
 
+
 def get_finding_by_cwe_type(details_map, all_vulns):
     cwe_types = {}
     for i in all_vulns:
@@ -90,6 +91,7 @@ def get_finding_by_cwe_type(details_map, all_vulns):
         details_map['cwe_types_total_cnt'] += eval
     return details_map
 
+
 def get_finding_by_test_type(details_map, all_vulns):
     test_types = {}
     for i in all_vulns:
@@ -99,6 +101,7 @@ def get_finding_by_test_type(details_map, all_vulns):
         test_types[class_type] +=1
     details_map['test_types'] = test_types
     return details_map
+
 
 def get_finding_by_dow(details_map, all_vulns):
     dow = {'Monday': 0, 'Tuesday': 0, 'Wednesday': 0, 'Thursday': 0, 'Friday': 0, 'Saturday': 0, 'Sunday': 0}
@@ -120,6 +123,7 @@ def get_finding_by_dow(details_map, all_vulns):
             dow['Sunday'] += 1
     details_map['dow'] = dow
     return details_map
+
 
 def get_finding_age(details_map, all_vulns):
     now = datetime.datetime.utcnow()
@@ -195,7 +199,6 @@ def parse_vuln_findings(all_vulns, filter_type):
             findings = _set_vuln_findings(findings, vuln)
 
     return findings
-
 
 
 def _set_vuln_findings(findings, vuln):
