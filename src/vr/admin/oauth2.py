@@ -73,6 +73,7 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
         db.session.add(credential)
         db_connection_handler(db)
 
+
 class ClientCredentialsGrant(grants.ClientCredentialsGrant):
     TOKEN_ENDPOINT_AUTH_METHODS = [
         'client_secret_basic', 'client_secret_post'
