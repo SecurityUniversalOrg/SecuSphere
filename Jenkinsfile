@@ -151,8 +151,8 @@ pipeline {
                  }
             }
             steps {
-                jslDynamicApplicationSecurityTesting("http://localhost:5010")
-                jslDynamicApiSecurityTesting("http://localhost:5010")
+                jslDynamicApplicationSecurityTesting("http://secusphere:5010")
+                jslDynamicApiSecurityTesting("http://secusphere:5010")
             }
             post {
                  always {
