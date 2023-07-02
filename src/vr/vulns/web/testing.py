@@ -49,9 +49,9 @@ def vulnerability_scans(id):
             .with_entities(VulnerabilityScans.ID, VulnerabilityScans.ScanName, VulnerabilityScans.ScanType,
                            VulnerabilityScans.ScanTargets, VulnerabilityScans.ScanStartDate,
                            func.count(Vulnerabilities.VulnerabilityID).label('issue_cnt'),
-                           func.sum(case([(Vulnerabilities.Status.like("Open-%"), 1)], else_=0)).label('open_issue_cnt'),
-                           func.sum(case([(Vulnerabilities.Status.like("Closed-%"), 1)], else_=0)).label('closed_issue_cnt'),
-                           func.sum(case([(Vulnerabilities.Status.like("Open-RiskAccepted%"), 1)], else_=0)).label('ra_issue_cnt')
+                           func.sum(case((Vulnerabilities.Status.like("Open-%"), 1), else_=0)).label('open_issue_cnt'),
+                           func.sum(case((Vulnerabilities.Status.like("Closed-%"), 1), else_=0)).label('closed_issue_cnt'),
+                           func.sum(case((Vulnerabilities.Status.like("Open-RiskAccepted%"), 1), else_=0)).label('ra_issue_cnt')
                            ) \
             .join(Vulnerabilities, Vulnerabilities.InitialScanId == VulnerabilityScans.ID, isouter=True) \
             .group_by(VulnerabilityScans.ID) \
