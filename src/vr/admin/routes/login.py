@@ -117,6 +117,7 @@ def _login_attempt(user, username, password, userid, form, mfa_password):
         if request.referrer and 'login?next=' in request.referrer:
             next_pg = request.referrer.replace(request.root_url, '').split('login?next=%2F')[1]
             if next_pg is not None:
+                next_pg = next_pg.replace('%2F', '/')
                 return redirect(next_pg)
     except RuntimeError:
         pass
