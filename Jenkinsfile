@@ -61,7 +61,7 @@ pipeline {
                  }
             }
             steps {
-                echo "Placeholder for Unit Testing"
+                jslPythonUnitTesting()
             }
         }
 
