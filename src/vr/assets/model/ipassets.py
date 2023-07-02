@@ -29,7 +29,7 @@ class IPAssets(db.Model):
     Active = db.Column(db.String(1))
     RegComplete = db.Column(db.String(1))
     RegDate = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
-    SubnetID = db.Column(db.Integer, db.ForeignKey('PrivateNetworks.ID', ondelete='CASCADE'))
+    SubnetID = db.Column(db.Integer)
     Authorized = db.Column(db.Integer)
     OSUpdate = db.Column(db.String(80))
     OSEdition = db.Column(db.String(80))
