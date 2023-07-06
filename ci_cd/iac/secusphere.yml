@@ -1,6 +1,7 @@
 version: '3'
 services:
   secusphere:
+    container_name: secusphere
     image: securityuniversal/secusphere:latest
     restart: always
     environment:
