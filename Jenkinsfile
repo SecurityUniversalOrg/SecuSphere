@@ -151,8 +151,9 @@ pipeline {
                  }
             }
             steps {
-                jslDynamicApplicationSecurityTesting("http://secusphere:5010")
-                jslDynamicApiSecurityTesting("http://secusphere:5010")
+                def agentIp = InetAddress.localHost.hostAddress
+                jslDynamicApplicationSecurityTesting("http://${agentIp}:5010")
+                jslDynamicApiSecurityTesting("http://${agentIp}:5010")
             }
             post {
                  always {
