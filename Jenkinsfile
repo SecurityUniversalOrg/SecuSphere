@@ -30,6 +30,7 @@ pipeline {
         SOURCE_DIR = "src"
         API_DEFINITION_FILE = "src/vr/templates/openapi.yaml"
         KUBECONFIG = "${WORKSPACE}/kubeconfig"
+        NODE_IP = InetAddress.localHost.hostAddress
     }
 
 
@@ -155,8 +156,8 @@ pipeline {
                     // Get agent IP address using shell command
                     def agentIp = sh(script: 'hostname -i', returnStdout: true).trim()
                     // Use agentIp in other steps
-                    jslDynamicApplicationSecurityTesting("http://${agentIp}:5010")
-                    jslDynamicApiSecurityTesting("http://${agentIp}:5010")
+                    jslDynamicApplicationSecurityTesting("http://${env.NODE_IP}:5010")
+                    jslDynamicApiSecurityTesting("http://${env.NODE_IP}:5010")
                 }
             }
             post {
