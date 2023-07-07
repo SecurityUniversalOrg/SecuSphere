@@ -151,9 +151,13 @@ pipeline {
                  }
             }
             steps {
-                agentIp = sh(script: 'hostname -i', returnStdout: true).trim()
-                jslDynamicApplicationSecurityTesting("http://${agentIp}:5010")
-                jslDynamicApiSecurityTesting("http://${agentIp}:5010")
+                script {
+                    // Get agent IP address using shell command
+                    def agentIp = sh(script: 'hostname -i', returnStdout: true).trim()
+                    // Use agentIp in other steps
+                    jslDynamicApplicationSecurityTesting("http://${agentIp}:5010")
+                    jslDynamicApiSecurityTesting("http://${agentIp}:5010")
+                }
             }
             post {
                  always {
