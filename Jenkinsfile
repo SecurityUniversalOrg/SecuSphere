@@ -1,5 +1,7 @@
 @Library('security-pipeline-library')_
 
+
+
 pipeline {
 
     options {
@@ -30,7 +32,6 @@ pipeline {
         SOURCE_DIR = "src"
         API_DEFINITION_FILE = "src/vr/templates/openapi.yaml"
         KUBECONFIG = "${WORKSPACE}/kubeconfig"
-        NODE_IP = InetAddress.localHost.hostAddress
     }
 
 
@@ -153,8 +154,8 @@ pipeline {
             }
             steps {
                 script {
-                    // Get agent IP address using shell command
-                    def agentIp = sh(script: 'hostname -i', returnStdout: true).trim()
+                    // Get agent IP
+                    getBuildAgentIp()
                     // Use agentIp in other steps
                     jslDynamicApplicationSecurityTesting("http://${env.NODE_IP}:5010")
                     jslDynamicApiSecurityTesting("http://${env.NODE_IP}:5010")
@@ -190,4 +191,8 @@ pipeline {
         }
 
     }
+}
+
+def getBuildAgentIp() {
+    env.NODE_IP = InetAddress.localHost.hostAddress
 }
