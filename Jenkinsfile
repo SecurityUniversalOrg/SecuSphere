@@ -186,7 +186,7 @@ pipeline {
                 branch 'release/*/PROD'
             }
             steps {
-                jslDeployToProdWithSecrets()
+                jslDeployToAzureKSWithSecrets()
             }
         }
 
