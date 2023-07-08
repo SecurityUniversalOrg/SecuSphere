@@ -30,7 +30,6 @@ pipeline {
         SOURCE_DIR = "src"
         API_DEFINITION_FILE = "src/vr/templates/openapi.yaml"
         KUBECONFIG = "${WORKSPACE}/kubeconfig"
-        NODE_IP = InetAddress.localHost.hostAddress
     }
 
 
