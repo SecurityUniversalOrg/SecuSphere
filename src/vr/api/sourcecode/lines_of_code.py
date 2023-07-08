@@ -1,10 +1,9 @@
 from vr import db, app
 from flask import request
-from sqlalchemy import text
 from vr.api import api
-from vr.assets.model.businessapplications import BusinessApplications
 from vr.sourcecode.model.appcodecomposition import AppCodeComposition
 from vr.admin.functions import db_connection_handler
+from vr.api.vulns.vulnerabilities import get_app_id
 
 
 EXTENSION_LANGUAGE_MAP = {
@@ -80,8 +79,7 @@ def add_loc():
             language_stats[f"{language}Loc"] += loc
 
     app_name = form['appName']
-    app = BusinessApplications.query.filter(text(f"ApplicationName='{app_name}'")).first()
-    application_id = app.ID
+    application_id = get_app_id(app_name, '')
     new_entry = AppCodeComposition(ApplicationID=application_id, **language_stats)
     db.session.add(new_entry)
     db_connection_handler(db)
