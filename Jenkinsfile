@@ -1,5 +1,7 @@
 @Library('security-pipeline-library')_
 
+
+
 pipeline {
 
     options {
@@ -156,8 +158,8 @@ pipeline {
                     // Get agent IP address using shell command
                     def agentIp = sh(script: "ip -4 addr show enp0s3 | grep -oP '(?<=inet\\s)\\d+(\\.\\d+){3}'", returnStdout: true).trim()
                     // Use agentIp in other steps
-                    jslDynamicApplicationSecurityTesting("http://${agentIp}:5010")
-                    jslDynamicApiSecurityTesting("http://${agentIp}:5010")
+                    jslDynamicApplicationSecurityTesting("http://${env.NODE_IP}:5010")
+                    jslDynamicApiSecurityTesting("http://${env.NODE_IP}:5010")
                 }
             }
             post {
@@ -185,9 +187,13 @@ pipeline {
                 branch 'release/*/PROD'
             }
             steps {
-                jslDeployToProdWithSecrets()
+                jslDeployToAzureKSWithSecrets()
             }
         }
 
     }
+}
+
+def getBuildAgentIp() {
+    env.NODE_IP = InetAddress.localHost.hostAddress
 }
