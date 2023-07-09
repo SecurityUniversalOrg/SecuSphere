@@ -33,7 +33,7 @@ class Vulnerabilities(db.Model):
     SourceCodeFileEndCol = db.Column(db.Integer)
     DockerImageId = db.Column(db.Integer, db.ForeignKey('DockerImages.ID', ondelete='CASCADE'))
     ApplicationId = db.Column(db.Integer, db.ForeignKey('BusinessApplications.ID', ondelete='CASCADE'))
-    HostId = db.Column(db.Integer, db.ForeignKey('IPAssets.ID', ondelete='CASCADE'))
+    HostId = db.Column(db.Integer)
     Uri = db.Column(TEXT)
     HtmlMethod = db.Column(db.String(20))
     Param = db.Column(TEXT)

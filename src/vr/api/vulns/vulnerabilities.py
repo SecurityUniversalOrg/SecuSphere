@@ -1,7 +1,7 @@
 import datetime
 from vr import db, app
-from flask import jsonify, request, json
-from sqlalchemy import text, bindparam, create_engine, update
+from flask import jsonify, request
+from sqlalchemy import text, bindparam, update, create_engine
 from sqlalchemy.orm import Session
 from vr.api import api
 from vr.admin.auth_functions import verify_api_key, get_token_auth_header
@@ -10,19 +10,12 @@ from vr.assets.model.businessapplications import BusinessApplications
 from vr.vulns.model.vulnerabilityscans import MakeVulnerabilityScansSchema, VulnerabilityScans
 from vr.vulns.model.vulnerabilityslas import VulnerabilitySLAs
 from vr.vulns.model.vulnerabilityslaapppair import VulnerabilitySLAAppPair
-from vr.sourcecode.model.appcodecomposition import AppCodeComposition
 from vr.orchestration.model.dockerimages import DockerImages
 from vr.orchestration.model.dockerimageapppair import DockerImageAppPair
-from vr.vulns.model.pipelinejobs import PipelineJobs
-from vr.vulns.model.sgconfigsettingsperjob import SgConfigSettingsPerJob
-from vr.vulns.model.sgresultsperjob import SgResultsPerJob
 from vr.functions.routing_functions import check_entity_permissions
 from vr.admin.oauth2 import require_oauth
 from vr.admin.functions import db_connection_handler
 from authlib.integrations.flask_oauth2 import current_token
-from requests.auth import HTTPBasicAuth
-import requests
-from config_engine import JENKINS_USER, JENKINS_PW, JENKINS_KEY
 
 
 ERROR_RESP = "Error: Invalid API Request"
@@ -102,7 +95,7 @@ def update_vulnerabilities_status(app_cmdb_id, scan_id, req_raw):
     previous_vulns = Vulnerabilities\
         .query\
         .join(VulnerabilityScans, VulnerabilityScans.ID==Vulnerabilities.ScanId)\
-        .filter(text(f"(Vulnerabilities.Status NOT LIKE 'Closed-%' OR Vulnerabilities.Status='Closed-Mitigated') AND (Vulnerabilities.ApplicationId='{app_cmdb_id}') AND (Vulnerabilities.SourceType='{scan_type.split('CI/CD-')[1]}')"))\
+        .filter(text(f"(Vulnerabilities.Status NOT LIKE 'Closed-%' OR Vulnerabilities.Status='Closed-Mitigated') AND (Vulnerabilities.ApplicationId='{app_cmdb_id}') AND (Vulnerabilities.SourceType='{scan_type.split('CI/CD-')[1]}') AND (Vulnerabilities.InitialScanId!='{scan_id}')"))\
         .all()
     closed_cnt = 0
     new_vulns = req_raw['findings']
@@ -217,7 +210,7 @@ def add_app_id_to_docker_img(docker_img_id, app_cmdb_id, app_id_list):
 
 
 def get_app_id(app_name, git_url):
-    app = BusinessApplications.query.filter(text(f"BusinessApplications.RepoURL='{git_url}' AND BusinessApplications.ApplicationName='{app_name}'")).first()
+    app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{app_name}'")).first()
     if app:
         app_id = app.ID
     else:
@@ -265,7 +258,7 @@ def _set_new_and_dup_vulns(new_vulns, dup_vulns, source_type, source, app_id):
 def _add_new_vulns(new_vulns, engine):
     with Session(engine) as s:
         s.bulk_save_objects(new_vulns)
-        db_connection_handler(s)
+        s.commit()
 
 
 def _setup_duplicate_vulns(source_type, dup_vulns):
