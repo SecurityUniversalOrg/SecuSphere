@@ -1,6 +1,7 @@
 import jwt
 from time import time
 from vr.functions.mysql_db import connect_to_db
+from config_engine import ENV
 
 
 # Error handler
@@ -48,7 +49,10 @@ def create_api_key(user_id, otp_secret, expires_in=2592000):
 def verify_api_key(token):
     try:
         cur, db = connect_to_db()
-        sql = 'SELECT oc.user_id, u.is_admin FROM oauth2_client oc JOIN oauth2_token ot ON oc.client_id=ot.client_id JOIN User u ON oc.user_id=u.id WHERE ot.id=%s'
+        if ENV == 'test':
+            sql = 'SELECT oc.user_id, u.is_admin FROM oauth2_client oc JOIN oauth2_token ot ON oc.client_id=ot.client_id JOIN User u ON oc.user_id=u.id WHERE ot.id=?'
+        else:
+            sql = 'SELECT oc.user_id, u.is_admin FROM oauth2_client oc JOIN oauth2_token ot ON oc.client_id=ot.client_id JOIN User u ON oc.user_id=u.id WHERE ot.id=%s'
         args = (token.id,)
         cur.execute(sql, args)
         row = cur.fetchone()
