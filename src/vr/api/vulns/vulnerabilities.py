@@ -1,7 +1,7 @@
 import datetime
 from vr import db, app
 from flask import jsonify, request
-from sqlalchemy import text, bindparam, update, create_engine
+from sqlalchemy import text, bindparam, update
 from sqlalchemy.orm import Session
 from vr.api import api
 from vr.admin.auth_functions import verify_api_key, get_token_auth_header
@@ -16,6 +16,7 @@ from vr.functions.routing_functions import check_entity_permissions
 from vr.admin.oauth2 import require_oauth
 from vr.admin.functions import db_connection_handler
 from authlib.integrations.flask_oauth2 import current_token
+from config_engine import ENV
 
 
 ERROR_RESP = "Error: Invalid API Request"
@@ -264,7 +265,14 @@ def _add_new_vulns(new_vulns, engine):
 def _setup_duplicate_vulns(source_type, dup_vulns):
     sourced_dup_vulns = []
     for vuln in dup_vulns:
-        vuln['LastModifiedDate'] = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        if ENV == 'test':
+            vuln['LastModifiedDate'] = datetime.datetime.utcnow().replace(microsecond=0)
+            if vuln['ReleaseDate']:
+                vuln['ReleaseDate'] = datetime.datetime.strptime(vuln['ReleaseDate'], '%Y-%m-%d %H:%M:%S')
+            if vuln['AddDate']:
+                vuln['AddDate'] = datetime.datetime.strptime(vuln['AddDate'], '%Y-%m-%d %H:%M:%S')
+        else:
+            vuln['LastModifiedDate'] = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         vuln['b_VulnerabilityID'] = vuln['VulnerabilityID']
         vuln['b_Status'] = vuln['Status']
         del vuln["VulnerabilityID"]
