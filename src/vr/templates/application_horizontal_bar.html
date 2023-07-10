@@ -108,6 +108,7 @@
             <span class="hidden-xs">Testing</span>
             <span class="caret"></span>
         </a>
+
         <ul class="dropdown-menu">
             <li>
                 <a href="/vulnerability_scans/{{ app_data.ID }}">
@@ -115,8 +116,66 @@
                     View Tests and Scans
                 </a>
             </li>
-
+            <li role="separator" class="divider"></li>
+            <li data-toggle="modal" data-target="#securityTestModal">
+                <a href="#">
+                    <div class="fas fa-shield-alt"></div>
+                    Run On-Demand Security Tests
+                </a>
+            </li>
         </ul>
+
+        <!-- Modal -->
+        <div id="securityTestModal" class="modal fade" role="dialog">
+            <div class="modal-dialog" style="width: 70%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Run On-Demand Security Tests</h4>
+                    </div>
+                    <form action="/on_demand_testing" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <input type="hidden" name="app_name" value="{{ app_data.ApplicationName }}"/>
+                        <div class="modal-body">
+
+                                <div class="form-group">
+                                    <label for="gitUrl" style="margin-right: 64px;">Git URL:</label>
+                                    <input type="text" class="form-control" id="gitUrl" name="gitUrl" value="{{ app_data.RepoURL }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="gitBranch" style="margin-right: 42px;">Git Branch:</label>
+                                    <input type="text" class="form-control" id="gitBranch" name="gitBranch" value="main">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tests">Tests to Run:</label>
+                                    <select multiple class="form-control" id="tests" name="tests[]">
+                                        <option value="ALL">ALL</option>
+                                        <option value="SECRET">Secret Scanning</option>
+                                        <option value="SAST">Static Application Security Testing (SAST)</option>
+                                        <option value="IAC">Infrastructure-as-Code Security Scanning</option>
+                                        <option value="DOCKER">Container Security Scanning</option>
+                                        <option value="DAST">Dynamic Application Security Testing (DAST)</option>
+                                        <option value="DAST-API">Dynamic API Security Testing (DAST-API)</option>
+                                    </select>
+                                </div>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <p style="display: flex;">WARNING: By clicking the Submit button below, the Security Assessments you selected will be executed by your Jenkins Integration!</p>
+                            <button type="submit" id="submitConfirm" class="btn btn-default">Submit</button>
+                        </div>
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+
     </li>
     <!-- Threat Models Tab -->
     <li role="presentation" class="dropdown{% if NAV['appbar'] == 'threat_models' %} active{% endif %}" >
@@ -330,3 +389,5 @@
     </li>
 
 </ul>
+
+
