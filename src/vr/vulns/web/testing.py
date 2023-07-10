@@ -1,3 +1,4 @@
+import requests
 from math import ceil
 from sqlalchemy.sql.expression import case
 from vr.vulns import vulns
@@ -9,6 +10,8 @@ from vr.assets.model.businessapplications import BusinessApplications, MakeBusin
 from vr.vulns.model.vulnerabilities import Vulnerabilities, VulnerabilitiesSchema
 from vr.vulns.model.vulnerabilityscans import VulnerabilityScans, VulnerabilityScansSchema
 from vr.functions.table_functions import load_table, update_table
+from requests.auth import HTTPBasicAuth
+from config_engine import JENKINS_USER, JENKINS_KEY, JENKINS_PROJECT, JENKINS_HOST, JENKINS_TOKEN
 
 
 NAV = {
@@ -79,3 +82,45 @@ def vulnerability_scans(id):
                                table_details= table_details)
     except RuntimeError:
         return render_template('500.html'), 500
+
+
+@vulns.route("/on_demand_testing", methods=['POST'])
+@login_required
+def on_demand_testing():
+    NAV['curpage'] = {"name": "Vulnerability Scans"}
+    admin_role = 'Application Admin'
+    role_req = ['Application Admin', 'Application Viewer']
+    perm_entity = 'Application'
+    user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
+                                          permissions_entity=perm_entity)
+    status = _entity_page_permissions_filter(id, user_roles, session, admin_role)
+
+    if status == 401:
+        return redirect(url_for('admin.login'))
+    elif status == 403:
+        return render_template('403.html', user=user, NAV=NAV)
+
+    git_url = request.form.get('gitUrl')
+    git_branch = request.form.get('gitBranch')
+    app_name = request.form.get('app_name')
+    tests = request.form.getlist('tests[]')
+    if 'ALL' in tests:
+        tests_to_run = 'ALL'
+    else:
+        tests_to_run = ','.join(tests)
+
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    data = {
+        'token': JENKINS_TOKEN,
+        'GIT_URL': git_url,
+        'TESTS': tests_to_run.upper(),
+        'GIT_BRANCH': git_branch,
+        'APP_NAME': app_name
+    }
+    url = f'{JENKINS_HOST}/job/{JENKINS_PROJECT}/buildWithParameters'
+    resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(JENKINS_USER, JENKINS_KEY))
+
+    return redirect(request.referrer)
