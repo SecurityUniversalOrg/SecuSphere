@@ -162,12 +162,14 @@ def all_applications():
         sql_filter = f"({sql_filter}) AND ({VULN_OPEN_STATUS})"
         vuln_all = Vulnerabilities.query.filter(text(sql_filter)).all()
         for vuln in vuln_all:
-            entity_details[vuln.ApplicationId]['finding_cnt'] += 1
+            if vuln.ApplicationId in entity_details:
+                entity_details[vuln.ApplicationId]['finding_cnt'] += 1
         sql_filter = _entity_permissions_filter(user_roles, session, admin_role, filter_key='Vulnerabilities.ApplicationId')
         sql_filter = f"({sql_filter}) AND ({VULN_OPEN_STATUS})"
         endpoints_all = Vulnerabilities.query.with_entities(Vulnerabilities.Uri, Vulnerabilities.ApplicationId).filter(text("Vulnerabilities.Classification LIKE 'DAST%'")).filter(text(sql_filter)).filter(text(VULN_OPEN_STATUS)).group_by(Vulnerabilities.Uri, Vulnerabilities.ApplicationId).all()
         for pair in endpoints_all:
-            entity_details[pair.ApplicationId]['endpoint_cnt'] += 1
+            if pair.ApplicationId in entity_details:
+                entity_details[pair.ApplicationId]['endpoint_cnt'] += 1
 
         table_details = {
             "pg_cnt": pg_cnt,
