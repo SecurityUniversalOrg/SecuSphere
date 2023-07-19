@@ -42,6 +42,7 @@ if test == 'test':
     ISO_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 else:
     ISO_FORMAT = '%Y-%m-%dT%H:%M:%S'
+ISO_FORMAT_BASE = '%Y-%m-%dT%H:%M:%S'
 
 
 @vulns.route("/open_findings/<id>", methods=['GET', 'POST'])
@@ -96,7 +97,10 @@ def open_findings(id):
     now = datetime.datetime.utcnow()
     vulns = []
     for vuln in assets:
-        time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+        try:
+            time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+        except:
+            time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT_BASE)).days
         severity = vuln['Severity']
         if severity == 'Critical':
             sla = sla_policy[1]
@@ -173,7 +177,10 @@ def open_findings_export(id):
     now = datetime.datetime.utcnow()
     vulns = []
     for vuln in assets:
-        time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+        try:
+            time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+        except:
+            time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT_BASE)).days
         severity = vuln['Severity']
         if severity == 'Critical':
             sla = sla_policy[1]
@@ -265,7 +272,10 @@ def open_findings_csv(id):
     now = datetime.datetime.utcnow()
     vulns = []
     for vuln in assets:
-        time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+        try:
+            time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+        except:
+            time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT_BASE)).days
         severity = vuln['Severity']
         if severity == 'Critical':
             sla = sla_policy[1]
@@ -374,7 +384,10 @@ def open_findings_for_scan(appid, id):
         now = datetime.datetime.utcnow()
         vulns = []
         for vuln in assets:
-            time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+            try:
+                time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+            except:
+                time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT_BASE)).days
             severity = vuln['Severity']
             if severity == 'Critical':
                 sla = sla_policy[1]
@@ -455,7 +468,10 @@ def open_findings_for_scan_export(appid, id):
         now = datetime.datetime.utcnow()
         vulns = []
         for vuln in assets:
-            time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+            try:
+                time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+            except:
+                time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT_BASE)).days
             severity = vuln['Severity']
             if severity == 'Critical':
                 sla = sla_policy[1]
@@ -552,7 +568,10 @@ def open_findings_for_scan_csv(appid, id):
         now = datetime.datetime.utcnow()
         vulns = []
         for vuln in assets:
-            time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+            try:
+                time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+            except:
+                time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT_BASE)).days
             severity = vuln['Severity']
             if severity == 'Critical':
                 sla = sla_policy[1]
@@ -1059,7 +1078,10 @@ def _set_table_details(assets, sla_policy, pg_cnt, page, vuln_all, per_page, ord
     now = datetime.datetime.utcnow()
     vulns = []
     for vuln in assets:
-        time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+        try:
+            time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT)).days
+        except:
+            time_since_found = (now - datetime.datetime.strptime(vuln['AddDate'], ISO_FORMAT_BASE)).days
         severity = vuln['Severity']
         if severity == 'Critical':
             sla = sla_policy[1]
