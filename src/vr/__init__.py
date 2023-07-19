@@ -84,7 +84,10 @@ login_manager.login_view = 'admin.login'
 @app.template_filter('format_datetime')
 def format_datetime(value):
     if ENV == 'test':
-        formatted = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
+        try:
+            formatted = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+        except:
+            formatted = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
     else:
         formatted = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
     return formatted
