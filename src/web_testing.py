@@ -3,7 +3,6 @@ import base64
 import os
 from flask import current_app
 from datetime import datetime
-
 from vr import app, db
 from vr.admin.models import User, Messages
 from vr.assets.model.businessapplications import BusinessApplications
@@ -214,6 +213,16 @@ class TestWebApp(unittest.TestCase):
         assert response.status_code == 302
         assert response.headers['Location'].startswith('/all_integrations')
 
+    def test_A4_create_client_post(self):
+        route = "/create_client"
+        data_dict = {
+            'client_name': 'Test',
+            'read:vulnerabilities': 'on',
+            'write:vulnerabilities': 'on',
+        }
+        response = self._post_test_handler(route, data_dict)
+        assert response.status_code == 200
+
     def test_login(self):
         response = self._login()
         self._logout()
@@ -344,16 +353,6 @@ class TestWebApp(unittest.TestCase):
     def test_create_client_get(self):
         route = "/create_client"
         response = self._get_test_handler(route)
-        assert response.status_code == 200
-
-    def test_create_client_post(self):
-        route = "/create_client"
-        data_dict = {
-            'client_name': 'Test',
-            'read:vulnerabilities': 'on',
-            'write:vulnerabilities': 'on',
-        }
-        response = self._post_test_handler(route, data_dict)
         assert response.status_code == 200
 
     def test_api_documentation_get(self):
@@ -1321,6 +1320,71 @@ class TestWebApp(unittest.TestCase):
             'cur_per_page': '25',
             'new_per_page': '25',
             'cur_orderby': 'Vulnerabilities.VulnerabilityID desc',
+        }
+        response = self._post_test_handler(route, data_dict)
+        assert response.status_code == 200
+
+    def test_add_application_environment_post(self):
+        route = f"/add_application_environment/1"
+        data_dict = {
+            'AppID': 1,
+            'EnvironmentName': "Test",
+            'EnvironmentClassification': "Test",
+            'Status': "Active",
+            'ImplementsWebApp': "Yes",
+            'ImplementsAPI': "Yes",
+            'PublicFacingWebApp': "Yes",
+            'PublicFacingAPI': "Yes",
+            'WebURL': "https://www.acme.com",
+            'OpenAPISpecURL': "https://www.acme.com/openapi.yaml",
+            'AuthType': "Basic",
+            'TestUsername': "JohnDoe",
+            'TestPasswordReference': "AzureKeyVaultRef",
+        }
+        response = self._post_test_handler(route, data_dict)
+        match = _three_o_two_handler(response.headers, '/all_application_environments')
+        assert response.status_code == 302
+        assert response.headers['Location'].startswith('/all_application_environments')
+
+    def test_add_application_environment_get(self):
+        route = f"/add_application_environment/1"
+        response = self._get_test_handler(route)
+        assert response.status_code == 200
+
+    def test_all_application_environments_get(self):
+        route = f"/all_application_environments/1"
+        response = self._get_test_handler(route)
+        assert response.status_code == 200
+
+    def test_remove_application_environment_post(self):
+        route = f"/remove_application_environment"
+        data_dict = {
+            'env_id': 1
+        }
+        response = self._post_test_handler(route, data_dict)
+        assert response.status_code == 200
+
+    def test_edit_application_environment_get(self):
+        route = f"/edit_application_environment/1/1"
+        response = self._get_test_handler(route)
+        assert response.status_code == 200
+
+    def test_edit_application_environment_post(self):
+        route = f"/edit_application_environment/1/1"
+        data_dict = {
+            'AppID': 1,
+            'EnvironmentName': "Staging",
+            'EnvironmentClassification': "Staging",
+            'Status': "Active",
+            'ImplementsWebApp': "Yes",
+            'ImplementsAPI': "Yes",
+            'PublicFacingWebApp': "Yes",
+            'PublicFacingAPI': "Yes",
+            'WebURL': "https://www.acme.com",
+            'OpenAPISpecURL': "https://www.acme.com/openapi.yaml",
+            'AuthType': "Basic",
+            'TestUsername': "JohnDoe",
+            'TestPasswordReference': "AzureKeyVaultRef",
         }
         response = self._post_test_handler(route, data_dict)
         assert response.status_code == 200
