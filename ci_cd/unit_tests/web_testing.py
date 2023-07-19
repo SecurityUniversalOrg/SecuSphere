@@ -1324,6 +1324,71 @@ class TestWebApp(unittest.TestCase):
         response = self._post_test_handler(route, data_dict)
         assert response.status_code == 200
 
+    def test_add_application_environment_post(self):
+        route = f"/add_application_environment/1"
+        data_dict = {
+            'AppID': 1,
+            'EnvironmentName': "Test",
+            'EnvironmentClassification': "Test",
+            'Status': "Active",
+            'ImplementsWebApp': "Yes",
+            'ImplementsAPI': "Yes",
+            'PublicFacingWebApp': "Yes",
+            'PublicFacingAPI': "Yes",
+            'WebURL': "https://www.acme.com",
+            'OpenAPISpecURL': "https://www.acme.com/openapi.yaml",
+            'AuthType': "Basic",
+            'TestUsername': "JohnDoe",
+            'TestPasswordReference': "AzureKeyVaultRef",
+        }
+        response = self._post_test_handler(route, data_dict)
+        match = _three_o_two_handler(response.headers, '/all_application_environments')
+        assert response.status_code == 302
+        assert response.headers['Location'].startswith('/all_application_environments')
+
+    def test_add_application_environment_get(self):
+        route = f"/add_application_environment/1"
+        response = self._get_test_handler(route)
+        assert response.status_code == 200
+
+    def test_all_application_environments_get(self):
+        route = f"/all_application_environments/1"
+        response = self._get_test_handler(route)
+        assert response.status_code == 200
+
+    def test_remove_application_environment_post(self):
+        route = f"/remove_application_environment"
+        data_dict = {
+            'env_id': 1
+        }
+        response = self._post_test_handler(route, data_dict)
+        assert response.status_code == 200
+
+    def test_edit_application_environment_get(self):
+        route = f"/edit_application_environment/1/1"
+        response = self._get_test_handler(route)
+        assert response.status_code == 200
+
+    def test_edit_application_environment_post(self):
+        route = f"/edit_application_environment/1/1"
+        data_dict = {
+            'AppID': 1,
+            'EnvironmentName': "Staging",
+            'EnvironmentClassification': "Staging",
+            'Status': "Active",
+            'ImplementsWebApp': "Yes",
+            'ImplementsAPI': "Yes",
+            'PublicFacingWebApp': "Yes",
+            'PublicFacingAPI': "Yes",
+            'WebURL': "https://www.acme.com",
+            'OpenAPISpecURL': "https://www.acme.com/openapi.yaml",
+            'AuthType': "Basic",
+            'TestUsername': "JohnDoe",
+            'TestPasswordReference': "AzureKeyVaultRef",
+        }
+        response = self._post_test_handler(route, data_dict)
+        assert response.status_code == 200
+
 
 def _three_o_two_handler(headers, target):
     match = False

@@ -1,0 +1,190 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
+
+                </h3>
+                {% include "application_horizontal_bar.html" %}
+            </div>
+        </div>
+
+
+        <div class="row hidden-xs">
+            <div class="col-lg-12">
+                <ul class="breadcrumb main">
+                    <li class="">
+                        <a class="" href="/">Home</a>
+                    </li>
+                    <li class="">
+                        <a class="" href="#">Settings</a>
+                    </li>
+                    <li class="active">
+                        <a class="active" href="#">Edit Application Environment</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12"></div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+                <form class="form-horizontal" action="/edit_application_environment/{{ app_data.AppID }}/{{ app_data.envID }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <link href="/static/tagulous/lib/select2-4/css/select2.min.css" type="text/css" media="all" rel="stylesheet">
+                    <script src="/static/tagulous/lib/select2-4/js/select2.full.min.js"></script>
+                    <script src="/static/tagulous/tagulous.js"></script>
+                    <script src="/static/tagulous/adaptor/select2-4.js"></script>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="EnvironmentName" style="color:white;">Environment Name<sup>*</sup></label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="EnvironmentName" maxlength="255" class="form-control" required="" id="EnvironmentName" value="{{ app_data.EnvironmentName }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="EnvironmentClassification" style="color:white;">Environment Classification</label>
+                        <div class="col-sm-10  ">
+                            <select name="EnvironmentClassification" class="form-control selectpicker" id="EnvironmentClassification"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected disabled>---------</option>
+                                {% for i in all_env_class %}
+                                    <option value="{{ i }}" {% if i == app_data.EnvironmentClassification %}selected=""{% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="Status" style="color:white;">Status</label>
+                        <div class="col-sm-10  ">
+                            <select name="Status" class="form-control selectpicker" id="Status"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected disabled>---------</option>
+                                {% for i in all_status %}
+                                    <option value="{{ i }}" {% if i == app_data.Status %}selected=""{% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="ImplementsWebApp" style="color:white;">Implements Web App</label>
+                        <div class="col-sm-10  ">
+                            <select name="ImplementsWebApp" class="form-control selectpicker" id="ImplementsWebApp"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected disabled>---------</option>
+                                {% for i in all_yes_no %}
+                                    <option value="{{ i }}" {% if i == app_data.ImplementsWebApp %}selected=""{% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="PublicFacingWebApp" style="color:white;">Public Facing Web App</label>
+                        <div class="col-sm-10  ">
+                            <select name="PublicFacingWebApp" class="form-control selectpicker" id="PublicFacingWebApp"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected disabled>---------</option>
+                                {% for i in all_yes_no %}
+                                    <option value="{{ i }}" {% if i == app_data.PublicFacingWebApp %}selected=""{% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="ImplementsAPI" style="color:white;">Implements API</label>
+                        <div class="col-sm-10  ">
+                            <select name="ImplementsAPI" class="form-control selectpicker" id="ImplementsAPI"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected disabled>---------</option>
+                                {% for i in all_yes_no %}
+                                    <option value="{{ i }}" {% if i == app_data.ImplementsAPI %}selected=""{% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="PublicFacingAPI" style="color:white;">Public Facing API</label>
+                        <div class="col-sm-10  ">
+                            <select name="PublicFacingAPI" class="form-control selectpicker" id="PublicFacingAPI"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected disabled>---------</option>
+                                {% for i in all_yes_no %}
+                                    <option value="{{ i }}" {% if i == app_data.PublicFacingAPI %}selected=""{% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="WebURL" style="color:white;">Web URL</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="WebURL" maxlength="255" class="form-control" required="" id="WebURL" value="{{ app_data.WebURL }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="OpenAPISpecURL" style="color:white;">OpenAPI Spec URL</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="OpenAPISpecURL" maxlength="255" class="form-control" required="" id="OpenAPISpecURL" value="{{ app_data.OpenAPISpecURL }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="AuthType" style="color:white;">Auth Type</label>
+                        <div class="col-sm-10  ">
+                            <select name="AuthType" class="form-control selectpicker" id="AuthType"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                {% for i in all_auth_type %}
+                                    <option value="{{ i }}" {% if i == app_data.AuthType %}selected=""{% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="TestUsername" style="color:white;">Test Username</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="TestUsername" maxlength="255" class="form-control" id="TestUsername" value="{{ app_data.TestUsername }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="TestPasswordReference" style="color:white;">Test Password Reference</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="TestPasswordReference" maxlength="255" class="form-control" id="TestPasswordReference" value="{{ app_data.TestPasswordReference }}">
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <input style="width: max-content;margin-left: 94px;margin-top: 1rem;" class="btn btn-primary" type="submit" value="Submit">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+<script src="/static/js/index.js"></script>
+
+
+{% endblock %}
+
