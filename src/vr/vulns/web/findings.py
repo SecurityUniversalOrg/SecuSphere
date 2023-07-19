@@ -39,7 +39,7 @@ SERVER_ERR_STATUS = "500.html"
 VULN_STATUS_IS_NOT_CLOSED = "Vulnerabilities.Status NOT LIKE 'Closed-%' AND Vulnerabilities.Status NOT LIKE 'Open-RiskAccepted-%'"
 test = ENV
 if test == 'test':
-    ISO_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
+    ISO_FORMAT = "%Y-%m-%dT%H:%M:%S"
 else:
     ISO_FORMAT = '%Y-%m-%dT%H:%M:%S'
 ISO_FORMAT_BASE = '%Y-%m-%dT%H:%M:%S'
