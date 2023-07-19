@@ -397,27 +397,6 @@ def _init_db(db):
 
     DockerImageAppPair()
 
-    class AppEnvironmentData(db.Model):
-        __tablename__ = 'AppEnvironmentData'
-        __table_args__ = {'extend_existing': True}
-        ID = db.Column(db.Integer, primary_key=True)
-        AppID = db.Column(db.Integer, db.ForeignKey('BusinessApplications.ID', ondelete='CASCADE'))
-        EnvironmentName = db.Column(db.String(100))
-        AddDate = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
-        EnvironmentClassification = db.Column(db.String(100))
-        Status = db.Column(db.String(20))
-        ImplementsWebApp = db.Column(db.String(1))
-        ImplementsAPI = db.Column(db.String(1))
-        PublicFacingWebApp = db.Column(db.String(1))
-        PublicFacingAPI = db.Column(db.String(1))
-        WebURL = db.Column(db.String(500))
-        OpenAPISpecURL = db.Column(db.String(500))
-        AuthType = db.Column(db.String(100))
-        TestUsername = db.Column(db.String(200))
-        TestPasswordReference = db.Column(db.String(200))
-
-    AppEnvironmentData()
-
 
     db.create_all()
     db_connection_handler(db)
