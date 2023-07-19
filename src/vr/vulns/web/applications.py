@@ -36,7 +36,6 @@ import csv
 from io import StringIO
 from flask import Response
 from datetime import datetime
-import traceback
 
 
 NAV = {
