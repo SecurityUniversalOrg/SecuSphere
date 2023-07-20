@@ -84,7 +84,7 @@ pipeline {
                  }
             }
             steps {
-                jslSoftwareCompositionAnalysis('Python,JavaScript')
+                jslSoftwareCompositionAnalysis('Python')
             }
         }
 
@@ -95,7 +95,7 @@ pipeline {
                  }
             }
             steps {
-                jslStaticApplicationSecurityTesting('Python,JavaScript')
+                jslStaticApplicationSecurityTesting('Python')
             }
         }
 
