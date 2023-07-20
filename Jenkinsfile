@@ -84,7 +84,7 @@ pipeline {
                  }
             }
             steps {
-                jslPythonSoftwareCompositionAnalysis()
+                jslSoftwareCompositionAnalysis('Python,JavaScript')
             }
         }
 
@@ -95,7 +95,7 @@ pipeline {
                  }
             }
             steps {
-                jslStaticApplicationSecurityTesting()
+                jslStaticApplicationSecurityTesting('Python,JavaScript')
             }
         }
 
@@ -129,7 +129,7 @@ pipeline {
                  }
             }
             steps {
-                jslContainerSecurityScanning(env.K8_NAMESPACE)
+                jslContainerSecurityScanning('Dockerfile', env.K8_NAMESPACE)
             }
         }
 
