@@ -141,8 +141,11 @@ def get_finding_age(details_map, all_vulns):
 
 def get_week_metadata(details_map, all_vulns):
     all_weeks = {}
-    for i in all_vulns:
-        all_weeks = _get_vulns_per_week(i, all_weeks)
+    try:
+        for i in all_vulns:
+            all_weeks = _get_vulns_per_week(i, all_weeks)
+    except:
+        pass
     details_map['all_weeks'] = all_weeks
     return details_map
 
@@ -235,8 +238,6 @@ def all_application_metrics():
             return redirect(url_for('admin.login'))
         elif status == 403:
             return render_template('403.html', user=user, NAV=NAV)
-        key = 'ApplicationId'
-        val = id
         vuln_all = Vulnerabilities.query.all()
         schema = VulnerabilitiesSchema(many=True)
         assets = schema.dump(vuln_all)
