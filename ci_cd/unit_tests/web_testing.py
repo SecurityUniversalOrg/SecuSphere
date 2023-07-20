@@ -223,6 +223,11 @@ class TestWebApp(unittest.TestCase):
         response = self._post_test_handler(route, data_dict)
         assert response.status_code == 200
 
+    def test_A5_all_application_metrics_get(self):
+        route = f"/all_application_metrics"
+        response = self._get_test_handler(route)
+        assert response.status_code == 200
+
     def test_login(self):
         response = self._login()
         self._logout()
@@ -1393,6 +1398,8 @@ class TestWebApp(unittest.TestCase):
         route = f"/all_application_metrics"
         response = self._get_test_handler(route)
         assert response.status_code == 200
+
+
 
 
 def _three_o_two_handler(headers, target):
