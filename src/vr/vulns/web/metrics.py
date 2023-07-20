@@ -221,7 +221,7 @@ def parse_vuln_severity(vuln, findings):
     return findings
 
 
-@vulns.route("/metrics")
+@vulns.route("/all_application_metrics")
 @login_required
 def all_application_metrics():
     try:
