@@ -84,7 +84,7 @@ pipeline {
                  }
             }
             steps {
-                jslSoftwareCompositionAnalysis('Python')
+                jslSoftwareCompositionAnalysis(languagesList: 'Python')
             }
         }
 
