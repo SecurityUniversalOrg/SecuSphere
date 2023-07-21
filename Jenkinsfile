@@ -129,7 +129,7 @@ pipeline {
                  }
             }
             steps {
-                jslContainerSecurityScanning('Dockerfile', env.K8_NAMESPACE)
+                jslContainerSecurityScanning(env.K8_NAMESPACE, 'latest', 'securityuniversal')
             }
         }
 
