@@ -182,8 +182,9 @@ pipeline {
                     // Read the JSON report
                     def jsonReport = readFile(file: "${WORKSPACE}/threatbuster_results.json")
 
-                    // Parse the JSON content
-                    def jsonContent = readJSON text: jsonReport
+                    // Parse the JSON content using Groovy's JSONSlurper
+                    def jsonSlurper = new groovy.json.JsonSlurper()
+                    def jsonContent = jsonSlurper.parseText(jsonReport)
 
                     // Generate a simple HTML summary from the JSON report
                     def htmlSummary = """
@@ -199,7 +200,7 @@ pipeline {
                         to: 'brian@jbfinegoods.com',
                         subject: 'Report Summary',
                         body: '${FILE,path="${WORKSPACE}/summary.html"}',
-                        attachmentsPattern: "${WORKSPACE}/report.json",
+                        attachmentsPattern: "${WORKSPACE}/threatbuster_results.json",
                         mimeType: 'text/html'
                     )
                 }
