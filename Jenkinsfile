@@ -176,6 +176,35 @@ pipeline {
             }
         }
 
+        stage('Send report') {
+            steps {
+                script {
+                    // assume that your json report is generated and located at ${WORKSPACE}/report.json
+                    def jsonReport = readFile(file: "${WORKSPACE}/threatbuster_results.json")
+                    def jsonSlurper = new groovy.json.JsonSlurper()
+                    def jsonContent = jsonSlurper.parseText(jsonReport)
+
+                    // generate a simple HTML summary from the JSON report
+                    def htmlSummary = """
+                    <h1>Report Summary</h1>
+                    <p>${jsonContent.summary}</p>
+                    """
+
+                    // write the HTML summary to a file
+                    writeFile(file: "${WORKSPACE}/summary.html", text: htmlSummary)
+
+                    // send an email with the HTML summary as the body and the JSON report as an attachment
+                    emailext (
+                        to: 'brian@jbfinegoods.com',
+                        subject: 'Report Summary',
+                        body: '${FILE,path="${WORKSPACE}/summary.html"}',
+                        attachmentsPattern: "${WORKSPACE}/report.json",
+                        mimeType: 'text/html'
+                    )
+                }
+            }
+        }
+
         ////////// Deploy to Production //////////
         stage('Deploy') {
             when {
