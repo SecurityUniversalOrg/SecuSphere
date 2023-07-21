@@ -180,7 +180,7 @@ pipeline {
             steps {
                 script {
                     // Read the JSON report
-                    def jsonReport = readFile(file: "${WORKSPACE}/threatbuster-results.json")
+                    def jsonReport = readFile(file: "${WORKSPACE}/threatbuster_results.json")
 
                     // Parse the JSON content
                     def jsonContent = readJSON text: jsonReport
