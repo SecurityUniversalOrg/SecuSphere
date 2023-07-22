@@ -1,5 +1,9 @@
 @Library('security-pipeline-library')_
 
+def parseJson(String jsonText) {
+    new groovy.json.JsonSlurper().parseText(jsonText)
+}
+
 pipeline {
 
     options {
@@ -176,10 +180,8 @@ pipeline {
             }
         }
 
-        def parseJson(String jsonText) {
-            new groovy.json.JsonSlurper().parseText(jsonText)
-        }
-        
+
+
         stage('Send report') {
             steps {
                 script {
