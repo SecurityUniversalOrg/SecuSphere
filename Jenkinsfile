@@ -196,7 +196,7 @@ pipeline {
             steps {
                 script {
                     // Read the JSON report
-                    def jsonReport = readFile(file: "${WORKSPACE}/threatbuster_results.json")
+                    def jsonReport = readFile(file: "threatbuster_results.json")
 
                     // Parse the JSON content using Groovy's JSONSlurper
                     def jsonContent = parseJson(jsonReport)
@@ -208,14 +208,14 @@ pipeline {
                     """
 
                     // Write the HTML summary to a file
-                    writeFile(file: "${WORKSPACE}/summary.html", text: htmlSummary)
+                    writeFile(file: "summary.html", text: htmlSummary)
 
                     // Send an email with the HTML summary as the body and the JSON report as an attachment
                     emailext (
                         to: 'brian@jbfinegoods.com',
                         subject: 'Report Summary',
-                        body: '${FILE,path="${WORKSPACE}/summary.html"}',
-                        attachmentsPattern: "${WORKSPACE}/threatbuster_results.json",
+                        body: '${FILE,path="summary.html"}',
+                        attachmentsPattern: "threatbuster_results.json",
                         mimeType: 'text/html'
                     )
                 }
