@@ -154,7 +154,7 @@ pipeline {
             steps {
                 script {
                     jslDynamicApplicationSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010")
-                    jslDynamicApiSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010")
+                    jslDynamicApiSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010/openapi.yaml")
                 }
             }
             post {
@@ -176,6 +176,10 @@ pipeline {
             }
         }
 
+        def parseJson(String jsonText) {
+            new groovy.json.JsonSlurper().parseText(jsonText)
+        }
+        
         stage('Send report') {
             steps {
                 script {
@@ -183,8 +187,7 @@ pipeline {
                     def jsonReport = readFile(file: "${WORKSPACE}/threatbuster_results.json")
 
                     // Parse the JSON content using Groovy's JSONSlurper
-                    def jsonSlurper = new groovy.json.JsonSlurper()
-                    def jsonContent = jsonSlurper.parseText(jsonReport)
+                    def jsonContent = parseJson(jsonReport)
 
                     // Generate a simple HTML summary from the JSON report
                     def htmlSummary = """
