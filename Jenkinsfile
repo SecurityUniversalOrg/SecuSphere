@@ -1,7 +1,16 @@
 @Library('security-pipeline-library')_
 
 def parseJson(String jsonText) {
-    new groovy.json.JsonSlurper().parseText(jsonText)
+    def lazyMap = new groovy.json.JsonSlurper().parseText(jsonText)
+    return convertToSerializableMap(lazyMap)
+}
+
+def convertToSerializableMap(def lazyMap) {
+    def serializableMap = [:]
+    lazyMap.each { key, value ->
+        serializableMap[key] = (value instanceof Map) ? convertToSerializableMap(value) : value
+    }
+    return serializableMap
 }
 
 pipeline {
