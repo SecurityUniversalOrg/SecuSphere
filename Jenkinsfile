@@ -209,18 +209,22 @@ pipeline {
 
                     // Write the HTML summary to a file
                     writeFile(file: "summary.html", text: htmlSummary)
+        
+                    // Read the content of the summary.html file
+                    def emailBody = readFile('summary.html')
 
                     // Send an email with the HTML summary as the body and the JSON report as an attachment
                     emailext (
                         to: 'brian@jbfinegoods.com',
                         subject: 'Report Summary',
-                        body: '${FILE,path="summary.html"}',
+                        body: emailBody,
                         attachmentsPattern: "threatbuster_results.json",
                         mimeType: 'text/html'
                     )
                 }
             }
         }
+
 
         ////////// Deploy to Production //////////
         stage('Deploy') {
