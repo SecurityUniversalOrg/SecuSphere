@@ -222,10 +222,10 @@ pipeline {
                         htmlTable += """
                         <tr>
                             <td>${data.assessment_category}</td>
-                            <td>${data.high}</td>
                             <td>${data.critical}</td>
-                            <td>${data.low}</td>
+                            <td>${data.high}</td>
                             <td>${data.medium}</td>
+                            <td>${data.low}</td>
                         </tr>
                         """
                     }
