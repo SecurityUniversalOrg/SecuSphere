@@ -196,7 +196,7 @@ pipeline {
             steps {
                 script {
                     // Read the JSON report
-                    def jsonReport = readFile(file: "threatbuster_results.json")
+                    def jsonReport = readFile(file: "${WORKSPACE}/threatbuster_results.json")
 
                     // Parse the JSON content using Groovy's JSONSlurper
                     def jsonContent = parseJson(jsonReport)
