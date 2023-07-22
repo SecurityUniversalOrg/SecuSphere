@@ -199,21 +199,47 @@ pipeline {
                     def jsonReport = readFile(file: "${WORKSPACE}/threatbuster_results.json")
 
                     // Parse the JSON content using Groovy's JSONSlurper
-                    def jsonContent = parseJson(jsonReport)
+                    def jsonData = parseJson(jsonReport)
 
-                    // Generate a simple HTML summary from the JSON report
-                    def htmlSummary = """
+                    // Extract the report data
+                    def jsonContent = jsonData.report
+
+                    // Start of the HTML table
+                    def htmlTable = """
                     <h1>Report Summary</h1>
-                    <p>${jsonContent.report}</p>
+                    <table>
+                        <tr>
+                            <th>Assessment Category</th>
+                            <th>High</th>
+                            <th>Critical</th>
+                            <th>Low</th>
+                            <th>Medium</th>
+                        </tr>
                     """
 
-                    // Write the HTML summary to a file
-                    writeFile(file: "summary.html", text: htmlSummary)
-        
+                    // Create table rows from JSON content
+                    jsonContent.each { category, data ->
+                        htmlTable += """
+                        <tr>
+                            <td>${data.assessment_category}</td>
+                            <td>${data.high}</td>
+                            <td>${data.critical}</td>
+                            <td>${data.low}</td>
+                            <td>${data.medium}</td>
+                        </tr>
+                        """
+                    }
+
+                    // End of table
+                    htmlTable += "</table>"
+
+                    // Write the HTML table to a file
+                    writeFile(file: "summary.html", text: htmlTable)
+
                     // Read the content of the summary.html file
                     def emailBody = readFile('summary.html')
 
-                    // Send an email with the HTML summary as the body and the JSON report as an attachment
+                    // Send an email with the HTML table as the body and the JSON report as an attachment
                     emailext (
                         to: 'brian@jbfinegoods.com',
                         subject: 'Report Summary',
@@ -224,6 +250,7 @@ pipeline {
                 }
             }
         }
+
 
 
         ////////// Deploy to Production //////////
