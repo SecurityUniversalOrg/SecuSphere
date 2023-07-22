@@ -204,7 +204,7 @@ pipeline {
                     // Generate a simple HTML summary from the JSON report
                     def htmlSummary = """
                     <h1>Report Summary</h1>
-                    <p>${jsonContent.summary}</p>
+                    <p>${jsonContent.report}</p>
                     """
 
                     // Write the HTML summary to a file
