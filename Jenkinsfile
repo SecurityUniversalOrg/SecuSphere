@@ -204,12 +204,15 @@ pipeline {
                     // Generate a simple HTML summary from the JSON report
                     def htmlSummary = """
                     <h1>Report Summary</h1>
-                    <p>${jsonContent.summary}</p>
+                    <p>${jsonContent.report}</p>
                     """
 
                     // Write the HTML summary to a file
                     writeFile(file: "summary.html", text: htmlSummary)
         
+                    // Read the content of the summary.html file
+                    def emailBody = readFile('summary.html')
+
                     // Read the content of the summary.html file
                     def emailBody = readFile('summary.html')
 
