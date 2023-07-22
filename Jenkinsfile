@@ -216,6 +216,9 @@ pipeline {
                     // Read the content of the summary.html file
                     def emailBody = readFile('summary.html')
 
+                    // Read the content of the summary.html file
+                    def emailBody = readFile('summary.html')
+
                     // Send an email with the HTML summary as the body and the JSON report as an attachment
                     emailext (
                         to: 'brian@jbfinegoods.com',
