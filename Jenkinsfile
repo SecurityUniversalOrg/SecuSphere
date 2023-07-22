@@ -1,17 +1,6 @@
 @Library('security-pipeline-library')_
 
-def parseJson(String jsonText) {
-    def lazyMap = new groovy.json.JsonSlurper().parseText(jsonText)
-    return convertToSerializableMap(lazyMap)
-}
 
-def convertToSerializableMap(def lazyMap) {
-    def serializableMap = [:]
-    lazyMap.each { key, value ->
-        serializableMap[key] = (value instanceof Map) ? convertToSerializableMap(value) : value
-    }
-    return serializableMap
-}
 
 pipeline {
 
@@ -195,58 +184,7 @@ pipeline {
         stage('Send report') {
             steps {
                 script {
-                    // Read the JSON report
-                    def jsonReport = readFile(file: "${WORKSPACE}/threatbuster_results.json")
-
-                    // Parse the JSON content using Groovy's JSONSlurper
-                    def jsonData = parseJson(jsonReport)
-
-                    // Extract the report data
-                    def jsonContent = jsonData.report
-
-                    // Start of the HTML table
-                    def htmlTable = """
-                    <h1>Report Summary</h1>
-                    <table>
-                        <tr>
-                            <th>Assessment Category</th>
-                            <th>High</th>
-                            <th>Critical</th>
-                            <th>Low</th>
-                            <th>Medium</th>
-                        </tr>
-                    """
-
-                    // Create table rows from JSON content
-                    jsonContent.each { category, data ->
-                        htmlTable += """
-                        <tr>
-                            <td>${data.assessment_category}</td>
-                            <td>${data.critical}</td>
-                            <td>${data.high}</td>
-                            <td>${data.medium}</td>
-                            <td>${data.low}</td>
-                        </tr>
-                        """
-                    }
-
-                    // End of table
-                    htmlTable += "</table>"
-
-                    // Write the HTML table to a file
-                    writeFile(file: "summary.html", text: htmlTable)
-
-                    // Read the content of the summary.html file
-                    def emailBody = readFile('summary.html')
-
-                    // Send an email with the HTML table as the body and the JSON report as an attachment
-                    emailext (
-                        to: 'brian@jbfinegoods.com',
-                        subject: 'Report Summary',
-                        body: emailBody,
-                        attachmentsPattern: "threatbuster_results.json",
-                        mimeType: 'text/html'
-                    )
+                    jslSendSecurityReportEmail()
                 }
             }
         }
