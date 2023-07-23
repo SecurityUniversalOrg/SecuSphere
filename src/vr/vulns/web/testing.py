@@ -12,6 +12,7 @@ from vr.vulns.model.vulnerabilityscans import VulnerabilityScans, VulnerabilityS
 from vr.functions.table_functions import load_table, update_table
 from requests.auth import HTTPBasicAuth
 from config_engine import JENKINS_USER, JENKINS_KEY, JENKINS_PROJECT, JENKINS_HOST, JENKINS_TOKEN
+from vr.assets.model.applicationprofiles import ApplicationProfiles, ApplicationProfilesSchema
 
 
 NAV = {
@@ -124,3 +125,31 @@ def on_demand_testing():
     resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(JENKINS_USER, JENKINS_KEY))
 
     return redirect(request.referrer)
+
+
+@vulns.route("/application_profile/<app_id>")
+@login_required
+def application_profile(app_id):
+    try:
+        NAV['curpage'] = {"name": "Application Profile"}
+        role_req = ['Admin']
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req)
+        if status == 401:
+            return redirect(url_for('admin.login'))
+        elif status == 403:
+            return render_template('403.html', user=user, NAV=NAV)
+
+        assets_all = ApplicationProfiles.query.filter(ApplicationProfiles.AppID==app_id).all()
+        schema = ApplicationProfilesSchema(many=True)
+        assets = schema.dump(
+            filter(lambda t: t.ID != '', assets_all)
+        )
+        app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
+        NAV['appbar'] = 'settings'
+        return render_template('application_profile.html', entities=assets, user=user,
+                               NAV=NAV, app_data=app_data)
+    except RuntimeError:
+        return render_template('500.html'), 500
+
+

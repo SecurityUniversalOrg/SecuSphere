@@ -70,6 +70,10 @@
                                             colspan="1" style="width: 79.1667px;" data-column-index="1"
                                             aria-label="Product&amp;nbsp;: activate to sort column ascending">Application&nbsp;<div
                                                 class="fa fa-sort-asc dd-sort"></div></th>
+                                        <th id="hdr_component" class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            colspan="1" style="width: 32px;" data-column-index="2"
+                                            aria-label="Tags: activate to sort column ascending">Component
+                                        </th>
                                         <th id="hdr_tags" class="sorting" tabindex="0" aria-controls="products" rowspan="1"
                                             colspan="1" style="width: 32px;" data-column-index="2"
                                             aria-label="Tags: activate to sort column ascending">Tags
@@ -122,7 +126,11 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td><a href="/application/{{ i.ID }}" class="help_app_link"><strong>{{ i.ApplicationName }}</strong></a>
+                                        <td><a href="/application/{{ i.ID }}/App/{{ i.ApplicationName }}" class="help_app_link"><strong>{{ i.ApplicationName }}</strong></a>
+
+
+                                           </td>
+                                        <td><a href="/application/{{ i.ID }}/Component/main" class="help_app_link"><strong>{{ i.ApplicationAcronym.lower() }}</strong></a>
 
 
                                            </td>
@@ -227,7 +235,7 @@
                                         <td class="text-center">
                                             <a href="/application_endpoints/{{ i.ID }}" class="help_vuln_eps_link">{{ entity_details[i.ID]['endpoint_cnt'] }}</a>
                                         </td>
-                                        <td>{{ i.TAWG }}</td>
+                                        <td>{{ i.Type }}</td>
                                     </tr>
                                     {% endfor %}
 
