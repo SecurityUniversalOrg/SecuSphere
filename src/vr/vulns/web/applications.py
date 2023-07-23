@@ -351,6 +351,7 @@ def _application_data_handler(id, app_type=None, entity_name=None):
             vuln_data['dast'] += 1
         elif vuln_type == 'DASTAPI':
             vuln_data['dastapi'] += 1
+    app_components = []
     if app_type == 'App':
         regs_all = ApplicationRegulations.query \
             .with_entities(ApplicationRegulations.ID, Regulations.ID, Regulations.Regulation,
@@ -399,8 +400,7 @@ def _application_data_handler(id, app_type=None, entity_name=None):
 
         ## Relationships
         # These apps depend on this app
-        app2app_rels_downstream = []
-        app2app_rels_downstream_main = AppToAppAssociations.query \
+        app2app_rels_downstream = AppToAppAssociations.query \
             .with_entities(
             AppToAppAssociations.ID,
             BusinessApplications.ApplicationName
@@ -411,10 +411,6 @@ def _application_data_handler(id, app_type=None, entity_name=None):
             BusinessApplications.ID,
             BusinessApplications.ApplicationName
         ).filter(text(f"BusinessApplications.ApplicationName = '{entity_name}'")).all()
-        for i in app2app_rels_downstream_main:
-            app2app_rels_downstream.append(i)
-        for i in app_components:
-            app2app_rels_downstream.append(i)
         # This app depends on these apps
         app2app_rels_upstream = AppToAppAssociations.query \
             .with_entities(
@@ -447,7 +443,8 @@ def _application_data_handler(id, app_type=None, entity_name=None):
             "app2app_rels_downstream": app2app_rels_downstream,
             "app2app_rels_upstream": app2app_rels_upstream,
             "app2server_rels": app2server_rels,
-            "app2db_rels": app2db_rels
+            "app2db_rels": app2db_rels,
+            "app_components": app_components
         }
         key = 'BusinessApplications.ApplicationName'
         val = entity_name
@@ -554,7 +551,8 @@ def _application_data_handler(id, app_type=None, entity_name=None):
             "app2app_rels_downstream": app2app_rels_downstream,
             "app2app_rels_upstream": app2app_rels_upstream,
             "app2server_rels": app2server_rels,
-            "app2db_rels": app2db_rels
+            "app2db_rels": app2db_rels,
+            "app_components": app_components
         }
         key = 'AssessmentBenchmarkAssessments.ApplicationID'
         val = id

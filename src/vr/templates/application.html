@@ -211,8 +211,16 @@
                                     <h3 class="panel-title"><span class="fa-solid fa-repeat" aria-hidden="true"></span>&nbsp;&nbsp;Entity Relationships</h3>
                                   </div>
 
-                                    {% if dependency_map['app2app_rels_downstream'] or dependency_map['app2app_rels_upstream'] or dependency_map['app2server_rels'] or dependency_map['app2db_rels'] %}
+                                    {% if dependency_map['app2app_rels_downstream'] or dependency_map['app2app_rels_upstream'] or dependency_map['app2server_rels'] or dependency_map['app2db_rels'] or dependency_map['app_components'] %}
                                     <ul class="list-group">
+
+                                        {% for i in dependency_map['app_components'] %}
+                                          <li class="list-group-item">
+                                              <span class="badge">App - Component</span>
+                                              <a href="/application/{{ i.ID }}/Component/main"><span data-toggle="tooltip" data-placement="bottom" title="">{{ i.ApplicationName }}</span></a>
+{#                                              <small class="text-muted">{{ i.Jusisdiction }}</small>#}
+                                          </li>
+                                        {% endfor %}
 
                                         {% for i in dependency_map['app2app_rels_downstream'] %}
                                           <li class="list-group-item">
