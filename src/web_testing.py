@@ -79,6 +79,7 @@ class TestWebApp(unittest.TestCase):
         now = datetime.utcnow()
         new_app = BusinessApplications(
             ApplicationName=TEST_APP_NAME,
+            ApplicationAcronym='Test Component',
             RegDate=now,
             AssignmentChangedDate=now,
             MalListingAddDate=now
@@ -688,7 +689,10 @@ class TestWebApp(unittest.TestCase):
 
     def test_application_get(self):
         app = BusinessApplications.query.filter_by(ApplicationName=TEST_APP_NAME).first()
-        route = f"/application/{app.ID}"
+        route = f"/application/{app.ID}/App/{TEST_APP_NAME }"
+        response = self._get_test_handler(route)
+        assert response.status_code == 200
+        route = f"/application/{app.ID}/Component/main"
         response = self._get_test_handler(route)
         assert response.status_code == 200
 
@@ -756,6 +760,7 @@ class TestWebApp(unittest.TestCase):
         now = datetime.utcnow()
         new_app = BusinessApplications(
             ApplicationName='New App 2',
+            ApplicationAcronym='Test Component',
             RegDate=now,
             AssignmentChangedDate=now,
             MalListingAddDate=now

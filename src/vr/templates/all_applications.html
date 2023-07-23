@@ -130,7 +130,7 @@
 
 
                                            </td>
-                                        <td><a href="/application/{{ i.ID }}/Component/main" class="help_app_link"><strong>{{ i.ApplicationAcronym.lower() }}</strong></a>
+                                        <td><a href="/application/{{ i.ID }}/Component/main" class="help_app_link"><strong>{% if i.ApplicationAcronym %}{{ i.ApplicationAcronym.lower() }}{% endif %}</strong></a>
 
 
                                            </td>
