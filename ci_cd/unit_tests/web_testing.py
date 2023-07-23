@@ -10,7 +10,6 @@ from vr.vulns.model.vulnerabilities import Vulnerabilities
 from vr.vulns.model.vulnerabilityscans import VulnerabilityScans
 from vr.vulns.model.vulnerabilityslaapppair import VulnerabilitySLAAppPair
 
-
 ADMIN_USER_FIRST_NAME = 'testadmin'
 ADMIN_USER_LAST_NAME = 'user'
 ADMIN_USER_USERNAME = f"{ADMIN_USER_FIRST_NAME}.{ADMIN_USER_LAST_NAME}"
@@ -38,16 +37,12 @@ class TestWebApp(unittest.TestCase):
         self.client = self.app.test_client()
         self.db = db
 
-
     def tearDown(self):
         self.appctx.pop()
         self.app = None
         self.appctx = None
         self.client = None
         self.db = None
-
-
-
 
     def _login(self):
         response = self.client.post('/login', data={
@@ -84,6 +79,7 @@ class TestWebApp(unittest.TestCase):
         now = datetime.utcnow()
         new_app = BusinessApplications(
             ApplicationName=TEST_APP_NAME,
+            ApplicationAcronym='Test Component',
             RegDate=now,
             AssignmentChangedDate=now,
             MalListingAddDate=now
@@ -386,12 +382,12 @@ class TestWebApp(unittest.TestCase):
 
     def test_suppress_msg_post(self):
         msg = Messages(
-            SenderUserId = 1,
-            ReceiverUserId = 1,
-            MessageType = 'Test',
-            EntityType = 'Application',
-            EntityID = 1,
-            Message = 'This is a test message for Unit Testing'
+            SenderUserId=1,
+            ReceiverUserId=1,
+            MessageType='Test',
+            EntityType='Application',
+            EntityID=1,
+            Message='This is a test message for Unit Testing'
         )
         self.db.session.add(msg)
         self.db.session.commit()
@@ -413,7 +409,6 @@ class TestWebApp(unittest.TestCase):
         route = "/onboarding_suppress"
         response = self._get_test_handler(route)
         assert response.status_code == 200
-
 
     def test_register_user_get(self):
         otp_secret = base64.b32encode(os.urandom(10)).decode('utf-8')
@@ -694,7 +689,10 @@ class TestWebApp(unittest.TestCase):
 
     def test_application_get(self):
         app = BusinessApplications.query.filter_by(ApplicationName=TEST_APP_NAME).first()
-        route = f"/application/{app.ID}"
+        route = f"/application/{app.ID}/App/{TEST_APP_NAME }"
+        response = self._get_test_handler(route)
+        assert response.status_code == 200
+        route = f"/application/{app.ID}/Component/main"
         response = self._get_test_handler(route)
         assert response.status_code == 200
 
@@ -762,6 +760,7 @@ class TestWebApp(unittest.TestCase):
         now = datetime.utcnow()
         new_app = BusinessApplications(
             ApplicationName='New App 2',
+            ApplicationAcronym='Test Component',
             RegDate=now,
             AssignmentChangedDate=now,
             MalListingAddDate=now
@@ -878,8 +877,6 @@ class TestWebApp(unittest.TestCase):
         route = f"/open_findings/{app.ID}/csv"
         response = self._get_test_handler(route)
         assert response.status_code == 200
-
-
 
     def test_open_findings_for_scan_post(self):
         app = BusinessApplications.query.filter_by(ApplicationName=TEST_APP_NAME).first()
@@ -1403,8 +1400,6 @@ class TestWebApp(unittest.TestCase):
         route = f"/application_profile/1"
         response = self._get_test_handler(route)
         assert response.status_code == 200
-
-
 
 
 def _three_o_two_handler(headers, target):
