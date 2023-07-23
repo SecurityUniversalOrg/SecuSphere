@@ -5,11 +5,19 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 active">
-                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">
+                    {% if app_type == 'App' %}
+                        {{ app_data.ApplicationName }}
+                    {% else %}
+                        {{ app_data.ApplicationName }}:{{ app_data.ApplicationAcronym }}
+                    {% endif %}
 
                 </h3>
-                {% include "application_horizontal_bar.html" %}
-
+                {% if app_type == 'App' %}
+                    {% include "application_horizontal_bar.html" %}
+                {% else %}
+                    {% include "component_horizontal_bar.html" %}
+                {% endif %}
             </div>
         </div>
 
@@ -209,7 +217,7 @@
                                         {% for i in dependency_map['app2app_rels_downstream'] %}
                                           <li class="list-group-item">
                                               <span class="badge">App - Downstream</span>
-                                              <span data-toggle="tooltip" data-placement="bottom" title="">{{ i.ApplicationName }}</span>
+                                              <a href="/application/{{ i.ID }}/Component/main"><span data-toggle="tooltip" data-placement="bottom" title="">{{ i.ApplicationName }}</span></a>
 {#                                              <small class="text-muted">{{ i.Jusisdiction }}</small>#}
                                           </li>
                                         {% endfor %}
@@ -403,12 +411,22 @@
                                             <td>{{ app_data.SysgenID }}</td>
                                           </tr>
                                       {% endif %}
-                                      {% if app_data.ApplicationAcronym %}
+                                      {% if app_data.ApplicationName %}
                                           <tr>
-                                            <td style="width: 160px;"><strong>Application Acronym</strong></td>
+                                            <td style="width: 160px;"><strong>Application</strong></td>
+                                              <td><a href="/application/{{ app_data.ID }}/App/{{ app_data.ApplicationName }}">{{ app_data.ApplicationName }}</a></td>
+                                          </tr>
+                                      {% endif %}
+                                      {% if app_data.ApplicationAcronym and app_type != 'App' %}
+                                          <tr>
+                                            <td style="width: 160px;"><strong>Application Component</strong></td>
                                             <td>{{ app_data.ApplicationAcronym }}</td>
                                           </tr>
                                       {% endif %}
+                                        <tr>
+                                            <td style="width: 160px;"><strong>Type</strong></td>
+                                            <td>{% if app_type == 'App' %}Top-Level Application{% else %}Component{% endif %}</td>
+                                        </tr>
                                       {% if app_data.LctlAppID %}
                                           <tr>
                                             <td style="width: 160px;"><strong>LctlAppID</strong></td>
