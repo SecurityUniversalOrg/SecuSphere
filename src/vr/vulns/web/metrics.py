@@ -271,3 +271,57 @@ def all_application_metrics():
         return render_template('500.html'), 500
 
 
+@vulns.route("/applevel_metrics/<app_name>")
+@login_required
+def applevel_metrics(app_name):
+    try:
+        NAV['curpage'] = {"name": "Metrics"}
+        admin_role = 'Application Admin'
+        role_req = ['Application Admin', 'Application Viewer']
+        perm_entity = 'Application'
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
+                                              permissions_entity=perm_entity)
+        status = _entity_page_permissions_filter(id, user_roles, session, admin_role)
+
+        if status == 401:
+            return redirect(url_for('admin.login'))
+        elif status == 403:
+            return render_template('403.html', user=user, NAV=NAV)
+        key = 'BusinessApplications.ApplicationName'
+        val = app_name
+        filter_list = [f"{key} = '{val}'"]
+        vuln_all = Vulnerabilities.query\
+            .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId)\
+            .filter(text("".join(filter_list))).all()
+        schema = VulnerabilitiesSchema(many=True)
+        assets = schema.dump(vuln_all)
+        NAV['appbar'] = 'metrics'
+        app = BusinessApplications.query.filter(text(f'ApplicationName="{app_name}"')).first()
+        app_data = {'ID': app.ID, 'ApplicationName': app.ApplicationName}
+        findings_map = {}
+        reviewed_findings = parse_vuln_findings(vuln_all, 'reviewed')
+        findings_map['reviewed_findings'] = reviewed_findings
+        open_findings = parse_vuln_findings(vuln_all, 'open')
+        findings_map['open_findings'] = open_findings
+        risk_accepted_findings = parse_vuln_findings(vuln_all, 'risk_accepted')
+        findings_map['risk_accepted_findings'] = risk_accepted_findings
+        closed_findings = parse_vuln_findings(vuln_all, 'closed')
+        findings_map['closed_findings'] = closed_findings
+        closed_manually = parse_vuln_findings(vuln_all, 'closed_manually')
+        findings_map['closed_manually'] = closed_manually
+        total_findings = parse_vuln_findings(vuln_all, 'total')
+        findings_map['total_findings'] = total_findings
+        secreview_findings = parse_vuln_findings(vuln_all, 'secreview_findings')
+        findings_map['secreview_findings'] = secreview_findings
+        false_positive_findings = parse_vuln_findings(vuln_all, 'false_positive')
+        findings_map['false_positive_findings'] = false_positive_findings
+        details_map = {}
+        details_map = get_week_metadata(details_map, vuln_all)
+        details_map = get_finding_age(details_map, vuln_all)
+        details_map = get_finding_by_dow(details_map, vuln_all)
+        details_map = get_finding_by_test_type(details_map, vuln_all)
+        details_map = get_finding_by_cwe_type(details_map, vuln_all)
+        return render_template('application_metrics.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
+                               findings_map=findings_map, details_map=details_map)
+    except RuntimeError:
+        return render_template('500.html'), 500

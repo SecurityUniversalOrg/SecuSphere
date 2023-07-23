@@ -1399,6 +1399,11 @@ class TestWebApp(unittest.TestCase):
         response = self._get_test_handler(route)
         assert response.status_code == 200
 
+    def test_application_profile_get(self):
+        route = f"/application_profile/1"
+        response = self._get_test_handler(route)
+        assert response.status_code == 200
+
 
 
 

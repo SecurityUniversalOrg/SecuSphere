@@ -40,6 +40,29 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_component_name" style="color:white;">Component Name</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="component_name" maxlength="255" class="form-control" id="id_component_name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_component_type" style="color:white;">Component Type</label>
+                        <div class="col-sm-10  ">
+                            <select name="component_type" class="form-control selectpicker" id="id_component_type" data-live-search="true"
+                                    data-container="body" style="width: 70%;">
+                                <option value="" selected="">---------</option>
+                                <option value="Microservice">Microservice</option>
+                                <option value="Frontend Application">Frontend Application</option>
+                                <option value="Backend Application">Backend Application</option>
+                                <option value="Shared Libraries">Shared Libraries</option>
+                                <option value="Infrastructure as Code (IaC)">Infrastructure as Code (IaC)</option>
+                                <option value="Configuration">Configuration</option>
+                                <option value="CI/CD Configuration">CI/CD Configuration</option>
+                                <option value="Documentation">Documentation</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-2 control-label" for="id_description" style="color:white;">Description<sup>*</sup></label>
                         <div class="col-sm-10  ">
                             <textarea name="description" cols="40" rows="10" class="form-control" id="req"></textarea>

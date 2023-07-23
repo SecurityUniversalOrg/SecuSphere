@@ -185,15 +185,15 @@ def all_applications():
         return render_template(SERVER_ERR_STATUS), 500
 
 
-@vulns.route("/application/<id>")
+@vulns.route("/application/<component_id>/<app_type>/<entity_name>")
 @login_required
-def application(id):
+def application(component_id, app_type, entity_name):
     try:
-        data_map = _application_data_handler(id)
+        data_map = _application_data_handler(component_id, app_type, entity_name)
         return render_template('application.html', regs_all=data_map['regs_all'], vuln_data=data_map['vuln_data'], app_data=data_map['app_data'],
                                sla_data=data_map['sla_data'], ld=data_map['ld'], color_wheel=data_map['color_wheel'],
                                user=data_map['user'], NAV=data_map['NAV'], contacts=data_map['contacts'], dependency_map=data_map['dependency_map'],
-                               bm_assessments=data_map['bm_assessments'])
+                               bm_assessments=data_map['bm_assessments'], app_type=app_type)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500
 
@@ -284,9 +284,11 @@ def application_csv(id):
         return render_template(SERVER_ERR_STATUS), 500
 
 
-
-def _application_data_handler(id):
-    NAV['curpage'] = {"name": "Application Details"}
+def _application_data_handler(id, app_type=None, entity_name=None):
+    if app_type == 'App':
+        NAV['curpage'] = {"name": "Application Details"}
+    else:
+        NAV['curpage'] = {"name": "Application Component Details"}
     admin_role = APP_ADMIN
     role_req = [APP_ADMIN, APP_VIEWER]
     perm_entity = 'Application'
@@ -297,8 +299,12 @@ def _application_data_handler(id):
         return redirect(url_for(ADMIN_LOGIN))
     elif status == 403:
         return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
-    key = 'ID'
-    val = id
+    if app_type == 'App':
+        key = 'ApplicationName'
+        val = entity_name
+    else:
+        key = 'ID'
+        val = id
     filter_list = [f"{key} = '{val}'"]
     assets_all = BusinessApplications.query.filter(text("".join(filter_list))).all()
     schema = BusinessApplicationsSchema(many=True)
@@ -307,7 +313,14 @@ def _application_data_handler(id):
         response = assets[0]
     else:
         response = []
-    vuln_all = Vulnerabilities.query.filter(text(VULN_OPEN_STATUS)).filter(text(f"ApplicationId={id}")).all()
+    if app_type == 'App':
+        field_filter = f"BusinessApplications.ApplicationName='{entity_name}'"
+        vuln_all = Vulnerabilities.query.filter(text(VULN_OPEN_STATUS)) \
+            .join(BusinessApplications, Vulnerabilities.ApplicationId == BusinessApplications.ID, isouter=True) \
+            .filter(text(field_filter)).all()
+    else:
+        field_filter = f"ApplicationId={id}"
+        vuln_all = Vulnerabilities.query.filter(text(VULN_OPEN_STATUS)).filter(text(field_filter)).all()
     vuln_data = {'critical': 0, 'high': 0, 'medium': 0, 'low': 0, 'informational': 0, 'total': 0, 'secrets': 0,
                  'sca': 0, 'sast': 0, 'iac': 0, 'container': 0, 'dast': 0, 'dastapi': 0}
     for vuln in vuln_all:
@@ -338,109 +351,232 @@ def _application_data_handler(id):
             vuln_data['dast'] += 1
         elif vuln_type == 'DASTAPI':
             vuln_data['dastapi'] += 1
-    regs_all = ApplicationRegulations.query\
-        .with_entities(ApplicationRegulations.ID, Regulations.ID, Regulations.Regulation,
-                       Regulations.Acronym, Regulations.Category,
-                       Regulations.Jurisdiction)\
-        .join(Regulations, ApplicationRegulations.RegulationID==Regulations.ID, isouter=True)\
-        .filter(text(f"ApplicationRegulations.ApplicationID={id}")).all()
-    sla_data = VulnerabilitySLAs.query\
-        .with_entities(VulnerabilitySLAAppPair.ID, VulnerabilitySLAs.ID, VulnerabilitySLAs.Name,
-                       VulnerabilitySLAs.Description, VulnerabilitySLAs.CriticalSetting,
-                       VulnerabilitySLAs.HighSetting, VulnerabilitySLAs.MediumSetting, VulnerabilitySLAs.LowSetting)\
-        .join(VulnerabilitySLAAppPair, VulnerabilitySLAAppPair.SlaID==VulnerabilitySLAs.ID, isouter=True)\
-        .filter(text(f"VulnerabilitySLAAppPair.ApplicationID={id}")).first()
-    loc_data = AppCodeComposition.query \
-        .filter(text(f"AppCodeComposition.ApplicationID={id}"))\
-        .order_by(desc(AppCodeComposition.AddDate)).first()
-    ld = calculate_loc_stats(loc_data)
-    color_wheel = {
-        "JSON": 'green',
-        "Javascript": 'red',
-        "Python": 'blue',
-        "YAML": 'yellow',
-        "CONF": 'purple',
-        "XML": 'grey'
-    }
-    contacts = SupportContacts.query \
-        .with_entities(
-        SupportContacts.ID,
-        AppToSupportContactAssociations.AddDate,
-        SupportContacts.Assignment,
-        SupportContacts.CUID,
-        SupportContacts.Name,
-        SupportContacts.Email,
-        SupportContacts.Role,
+    if app_type == 'App':
+        regs_all = ApplicationRegulations.query \
+            .with_entities(ApplicationRegulations.ID, Regulations.ID, Regulations.Regulation,
+                           Regulations.Acronym, Regulations.Category,
+                           Regulations.Jurisdiction) \
+            .join(Regulations, ApplicationRegulations.RegulationID == Regulations.ID, isouter=True) \
+            .join(BusinessApplications, ApplicationRegulations.ApplicationID == BusinessApplications.ID, isouter=True) \
+            .filter(text(field_filter)).all()
+        sla_data = VulnerabilitySLAs.query \
+            .with_entities(VulnerabilitySLAAppPair.ID, VulnerabilitySLAs.ID, VulnerabilitySLAs.Name,
+                           VulnerabilitySLAs.Description, VulnerabilitySLAs.CriticalSetting,
+                           VulnerabilitySLAs.HighSetting, VulnerabilitySLAs.MediumSetting, VulnerabilitySLAs.LowSetting) \
+            .join(VulnerabilitySLAAppPair, VulnerabilitySLAAppPair.SlaID == VulnerabilitySLAs.ID, isouter=True) \
+            .join(BusinessApplications, VulnerabilitySLAAppPair.ApplicationID == BusinessApplications.ID, isouter=True) \
+            .filter(text(field_filter)).first()
+        loc_data = AppCodeComposition.query \
+            .join(BusinessApplications, AppCodeComposition.ApplicationID == BusinessApplications.ID, isouter=True) \
+            .filter(text(field_filter)) \
+            .order_by(desc(AppCodeComposition.AddDate)).first()
+        ld = calculate_loc_stats(loc_data)
+        color_wheel = {
+            "JSON": 'green',
+            "Javascript": 'red',
+            "Python": 'blue',
+            "YAML": 'yellow',
+            "CONF": 'purple',
+            "XML": 'grey'
+        }
+        contacts = SupportContacts.query \
+            .with_entities(
+            SupportContacts.ID,
+            AppToSupportContactAssociations.AddDate,
+            SupportContacts.Assignment,
+            SupportContacts.CUID,
+            SupportContacts.Name,
+            SupportContacts.Email,
+            SupportContacts.Role,
 
-        BusinessApplications.ApplicationName
-    ) \
-        .join(AppToSupportContactAssociations, AppToSupportContactAssociations.SupportContactID == SupportContacts.ID) \
-        .join(BusinessApplications, AppToSupportContactAssociations.ApplicationID == BusinessApplications.ID,
-              isouter=True) \
-        .filter(text("".join([f"BusinessApplications.ID = '{id}'"]))).all()
+            BusinessApplications.ApplicationName
+        ) \
+            .join(AppToSupportContactAssociations,
+                  AppToSupportContactAssociations.SupportContactID == SupportContacts.ID) \
+            .join(BusinessApplications, AppToSupportContactAssociations.ApplicationID == BusinessApplications.ID,
+                  isouter=True) \
+            .filter(text(f"BusinessApplications.ApplicationName = '{entity_name}'")).all()
 
-    ## Relationships
-    # These apps depend on this app
-    app2app_rels_downstream = AppToAppAssociations.query \
-        .with_entities(
-        AppToAppAssociations.ID,
-        BusinessApplications.ApplicationName
-    )\
-        .join(BusinessApplications, BusinessApplications.ID==AppToAppAssociations.AppIDB)\
-        .filter(text("".join([f"AppToAppAssociations.AppIDA = '{id}'"]))).all()
-    # This app depends on these apps
-    app2app_rels_upstream = AppToAppAssociations.query \
-        .with_entities(
-        AppToAppAssociations.ID,
-        BusinessApplications.ApplicationName
-    ) \
-        .join(BusinessApplications, BusinessApplications.ID == AppToAppAssociations.AppIDA) \
-        .filter(text("".join([f"AppToAppAssociations.AppIDB = '{id}'"]))).all()
-    # Server and cluster dependencies
-    app2server_rels = AppToServersAndClusters.query \
-        .with_entities(
-        AppToServersAndClusters.ID,
-        IPAssets.ServerName,
-        AppToServersAndClusters.EnvAssociation
-    ) \
-        .join(IPAssets, IPAssets.ID == AppToServersAndClusters.ServerID) \
-        .filter(text("".join([f"AppToServersAndClusters.ApplicationID = '{id}'"]))).all()
-    # Database dependencies
-    app2db_rels = DbToAppAssociations.query \
-        .with_entities(
-        DbToAppAssociations.ID,
-        SUDatabases.DatabaseName,
-        DbToAppAssociations.Environment
-    ) \
-        .join(SUDatabases, SUDatabases.ID == DbToAppAssociations.DatabaseID) \
-        .filter(text("".join([f"DbToAppAssociations.ApplicationID = '{id}'"]))).all()
-    dependency_map = {
-        "app2app_rels_downstream": app2app_rels_downstream,
-        "app2app_rels_upstream": app2app_rels_upstream,
-        "app2server_rels": app2server_rels,
-        "app2db_rels": app2db_rels
-    }
-    key = 'AssessmentBenchmarkAssessments.ApplicationID'
-    val = id
-    filter_list = [f"{key} = '{val}'"]
-    bm_assessments = AssessmentBenchmarkAssessments.query \
-        .with_entities(
-        AssessmentBenchmarks.Name,
-        AssessmentBenchmarks.Version,
-        AssessmentBenchmarkAssessments.ID,
-        AssessmentBenchmarkAssessments.AddDate,
-        AssessmentBenchmarkAssessments.Type,
-        User.username,
-        func.count(AssessmentBenchmarkRuleAudits.ID).label('findings_cnt')
-    ) \
-        .join(AssessmentBenchmarks, AssessmentBenchmarkAssessments.BenchmarkID == AssessmentBenchmarks.ID, isouter=True) \
-        .join(User, AssessmentBenchmarkAssessments.UserID == User.id, isouter=True) \
-        .join(AssessmentBenchmarkRuleAudits,
-              and_(AssessmentBenchmarkRuleAudits.AssessmentID == AssessmentBenchmarkAssessments.ID,
-                   AssessmentBenchmarkRuleAudits.PassingLevels != ""), isouter=True) \
-        .group_by(AssessmentBenchmarkAssessments.ID) \
-        .filter(text("".join(filter_list))) \
-        .all()
+        ## Relationships
+        # These apps depend on this app
+        app2app_rels_downstream = []
+        app2app_rels_downstream_main = AppToAppAssociations.query \
+            .with_entities(
+            AppToAppAssociations.ID,
+            BusinessApplications.ApplicationName
+        ) \
+            .join(BusinessApplications, BusinessApplications.ID == AppToAppAssociations.AppIDB) \
+            .filter(text(f"BusinessApplications.ApplicationName = '{entity_name}'")).all()
+        app_components = BusinessApplications.query.with_entities(
+            BusinessApplications.ID,
+            BusinessApplications.ApplicationName
+        ).filter(text(f"BusinessApplications.ApplicationName = '{entity_name}'")).all()
+        for i in app2app_rels_downstream_main:
+            app2app_rels_downstream.append(i)
+        for i in app_components:
+            app2app_rels_downstream.append(i)
+        # This app depends on these apps
+        app2app_rels_upstream = AppToAppAssociations.query \
+            .with_entities(
+            AppToAppAssociations.ID,
+            BusinessApplications.ApplicationName
+        ) \
+            .join(BusinessApplications, BusinessApplications.ID == AppToAppAssociations.AppIDA) \
+            .filter(text(f"BusinessApplications.ApplicationName = '{entity_name}'")).all()
+        # Server and cluster dependencies
+        app2server_rels = AppToServersAndClusters.query \
+            .with_entities(
+            AppToServersAndClusters.ID,
+            IPAssets.ServerName,
+            AppToServersAndClusters.EnvAssociation
+        ) \
+            .join(IPAssets, IPAssets.ID == AppToServersAndClusters.ServerID) \
+            .join(BusinessApplications, BusinessApplications.ID == AppToServersAndClusters.ApplicationID) \
+            .filter(text(f"BusinessApplications.ApplicationName = '{entity_name}'")).all()
+        # Database dependencies
+        app2db_rels = DbToAppAssociations.query \
+            .with_entities(
+            DbToAppAssociations.ID,
+            SUDatabases.DatabaseName,
+            DbToAppAssociations.Environment
+        ) \
+            .join(SUDatabases, SUDatabases.ID == DbToAppAssociations.DatabaseID) \
+            .join(BusinessApplications, BusinessApplications.ID == DbToAppAssociations.ApplicationID) \
+            .filter(text(f"BusinessApplications.ApplicationName = '{entity_name}'")).all()
+        dependency_map = {
+            "app2app_rels_downstream": app2app_rels_downstream,
+            "app2app_rels_upstream": app2app_rels_upstream,
+            "app2server_rels": app2server_rels,
+            "app2db_rels": app2db_rels
+        }
+        key = 'BusinessApplications.ApplicationName'
+        val = entity_name
+        filter_list = [f"{key} = '{val}'"]
+        bm_assessments = AssessmentBenchmarkAssessments.query \
+            .with_entities(
+            AssessmentBenchmarks.Name,
+            AssessmentBenchmarks.Version,
+            AssessmentBenchmarkAssessments.ID,
+            AssessmentBenchmarkAssessments.AddDate,
+            AssessmentBenchmarkAssessments.Type,
+            User.username,
+            func.count(AssessmentBenchmarkRuleAudits.ID).label('findings_cnt')
+        ) \
+            .join(AssessmentBenchmarks, AssessmentBenchmarkAssessments.BenchmarkID == AssessmentBenchmarks.ID,
+                  isouter=True) \
+            .join(User, AssessmentBenchmarkAssessments.UserID == User.id, isouter=True) \
+            .join(AssessmentBenchmarkRuleAudits,
+                  and_(AssessmentBenchmarkRuleAudits.AssessmentID == AssessmentBenchmarkAssessments.ID,
+                       AssessmentBenchmarkRuleAudits.PassingLevels != ""), isouter=True) \
+            .join(BusinessApplications, AssessmentBenchmarkAssessments.ApplicationID == BusinessApplications.ID,
+                  isouter=True) \
+            .group_by(AssessmentBenchmarkAssessments.ID) \
+            .filter(text("".join(filter_list))) \
+            .all()
+    else:
+        regs_all = ApplicationRegulations.query\
+            .with_entities(ApplicationRegulations.ID, Regulations.ID, Regulations.Regulation,
+                           Regulations.Acronym, Regulations.Category,
+                           Regulations.Jurisdiction)\
+            .join(Regulations, ApplicationRegulations.RegulationID==Regulations.ID, isouter=True)\
+            .filter(text(f"ApplicationRegulations.ApplicationID={id}")).all()
+        sla_data = VulnerabilitySLAs.query\
+            .with_entities(VulnerabilitySLAAppPair.ID, VulnerabilitySLAs.ID, VulnerabilitySLAs.Name,
+                           VulnerabilitySLAs.Description, VulnerabilitySLAs.CriticalSetting,
+                           VulnerabilitySLAs.HighSetting, VulnerabilitySLAs.MediumSetting, VulnerabilitySLAs.LowSetting)\
+            .join(VulnerabilitySLAAppPair, VulnerabilitySLAAppPair.SlaID==VulnerabilitySLAs.ID, isouter=True)\
+            .filter(text(f"VulnerabilitySLAAppPair.ApplicationID={id}")).first()
+        loc_data = AppCodeComposition.query \
+            .filter(text(f"AppCodeComposition.ApplicationID={id}"))\
+            .order_by(desc(AppCodeComposition.AddDate)).first()
+        ld = calculate_loc_stats(loc_data)
+        color_wheel = {
+            "JSON": 'green',
+            "Javascript": 'red',
+            "Python": 'blue',
+            "YAML": 'yellow',
+            "CONF": 'purple',
+            "XML": 'grey'
+        }
+        contacts = SupportContacts.query \
+            .with_entities(
+            SupportContacts.ID,
+            AppToSupportContactAssociations.AddDate,
+            SupportContacts.Assignment,
+            SupportContacts.CUID,
+            SupportContacts.Name,
+            SupportContacts.Email,
+            SupportContacts.Role,
+
+            BusinessApplications.ApplicationName
+        ) \
+            .join(AppToSupportContactAssociations, AppToSupportContactAssociations.SupportContactID == SupportContacts.ID) \
+            .join(BusinessApplications, AppToSupportContactAssociations.ApplicationID == BusinessApplications.ID,
+                  isouter=True) \
+            .filter(text("".join([f"BusinessApplications.ID = '{id}'"]))).all()
+
+        ## Relationships
+        # These apps depend on this app
+        app2app_rels_downstream = AppToAppAssociations.query \
+            .with_entities(
+            AppToAppAssociations.ID,
+            BusinessApplications.ApplicationName
+        )\
+            .join(BusinessApplications, BusinessApplications.ID==AppToAppAssociations.AppIDB)\
+            .filter(text("".join([f"AppToAppAssociations.AppIDA = '{id}'"]))).all()
+        # This app depends on these apps
+        app2app_rels_upstream = AppToAppAssociations.query \
+            .with_entities(
+            AppToAppAssociations.ID,
+            BusinessApplications.ApplicationName
+        ) \
+            .join(BusinessApplications, BusinessApplications.ID == AppToAppAssociations.AppIDA) \
+            .filter(text("".join([f"AppToAppAssociations.AppIDB = '{id}'"]))).all()
+        # Server and cluster dependencies
+        app2server_rels = AppToServersAndClusters.query \
+            .with_entities(
+            AppToServersAndClusters.ID,
+            IPAssets.ServerName,
+            AppToServersAndClusters.EnvAssociation
+        ) \
+            .join(IPAssets, IPAssets.ID == AppToServersAndClusters.ServerID) \
+            .filter(text("".join([f"AppToServersAndClusters.ApplicationID = '{id}'"]))).all()
+        # Database dependencies
+        app2db_rels = DbToAppAssociations.query \
+            .with_entities(
+            DbToAppAssociations.ID,
+            SUDatabases.DatabaseName,
+            DbToAppAssociations.Environment
+        ) \
+            .join(SUDatabases, SUDatabases.ID == DbToAppAssociations.DatabaseID) \
+            .filter(text("".join([f"DbToAppAssociations.ApplicationID = '{id}'"]))).all()
+        dependency_map = {
+            "app2app_rels_downstream": app2app_rels_downstream,
+            "app2app_rels_upstream": app2app_rels_upstream,
+            "app2server_rels": app2server_rels,
+            "app2db_rels": app2db_rels
+        }
+        key = 'AssessmentBenchmarkAssessments.ApplicationID'
+        val = id
+        filter_list = [f"{key} = '{val}'"]
+        bm_assessments = AssessmentBenchmarkAssessments.query \
+            .with_entities(
+            AssessmentBenchmarks.Name,
+            AssessmentBenchmarks.Version,
+            AssessmentBenchmarkAssessments.ID,
+            AssessmentBenchmarkAssessments.AddDate,
+            AssessmentBenchmarkAssessments.Type,
+            User.username,
+            func.count(AssessmentBenchmarkRuleAudits.ID).label('findings_cnt')
+        ) \
+            .join(AssessmentBenchmarks, AssessmentBenchmarkAssessments.BenchmarkID == AssessmentBenchmarks.ID, isouter=True) \
+            .join(User, AssessmentBenchmarkAssessments.UserID == User.id, isouter=True) \
+            .join(AssessmentBenchmarkRuleAudits,
+                  and_(AssessmentBenchmarkRuleAudits.AssessmentID == AssessmentBenchmarkAssessments.ID,
+                       AssessmentBenchmarkRuleAudits.PassingLevels != ""), isouter=True) \
+            .group_by(AssessmentBenchmarkAssessments.ID) \
+            .filter(text("".join(filter_list))) \
+            .all()
     NAV['appbar'] = 'application'
     data_map = {
         "regs_all": regs_all,
@@ -456,6 +592,7 @@ def _application_data_handler(id):
         "bm_assessments": bm_assessments
     }
     return data_map
+
 
 def calculate_loc_stats(ld):
     tot_files = 0
@@ -550,6 +687,8 @@ def add_application():
 def _setup_new_app(request):
     now = datetime.utcnow()
     app_name = request.form.get('name')
+    component_name = request.form.get('component_name')
+    component_type = request.form.get('component_type')
     description = request.form.get('description')
     app_value = request.form.get('business_criticality')
     version = request.form.get('initial_version')
@@ -566,6 +705,7 @@ def _setup_new_app(request):
     regulations = request.form.get('regulations')
     new_app = BusinessApplications(
         ApplicationName=app_name,
+        ApplicationAcronym=component_name,
         Description=description,
         AppValue=app_value,
         Version=version,
@@ -576,7 +716,7 @@ def _setup_new_app(request):
         PII=1 if 'PII' in data_types else 0,
         PCI=1 if 'PCI' in data_types else 0,
         MiscCustomerData=1 if 'MiscCustomerData' in data_types else 0,
-        Type=platform,
+        Type=component_type,
         WebEnabled=1 if internet_access == 'on' else 0,
         RepoURL=repo_url,
         ApplicationType=platform,
