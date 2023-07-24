@@ -25,7 +25,6 @@
     <div class="row">
         <div id="base-content" class="col-lg-12">
 
-
             <div class="panel panel-default">
                 <div class="panel-heading tight">
                     <div class="clearfix">
@@ -47,8 +46,77 @@
                                         <div class="fa fa-crosshairs fa-2x"></div>
 
                                         <div class="pull-right inline-block text-right">
+                                            <span class=" fa-2x">{{ mttr_days }} days</span>
+                                            <span>Mean Time to Remediate</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="fa fa-crosshairs fa-2x"></div>
+
+                                        <div class="pull-right inline-block text-right">
+                                            <span class=" fa-2x">{{ mttr_days }} %</span>
+                                            <span>Detection Accuracy Rate</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="fa fa-crosshairs fa-2x"></div>
+
+                                        <div class="pull-right inline-block text-right">
+                                            <span class=" fa-2x">{{ mttr_days }} %</span>
+                                            <span>False Positive Rate</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="fa fa-crosshairs fa-2x"></div>
+
+                                        <div class="pull-right inline-block text-right">
+                                            <span class=" fa-2x">{{ mttr_days }} %</span>
+                                            <span>False Negative Rate</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="fa fa-crosshairs fa-2x"></div>
+
+                                        <div class="pull-right inline-block text-right">
                                             <span class=" fa-2x">{{ findings_map['reviewed_findings']['total'] }}</span>
-                                            <span><a href="/filtered_findings/{{ app_data.ID }}/status/Open-Reviewed">Reviewed
+                                            <span><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/status/Open-Reviewed">Reviewed
                                         Findings <div class="fa fa-arrow-circle-right"></div></a>
                                     </span>
                                         </div>
@@ -73,7 +141,7 @@
 
                                         <div class="pull-right inline-block text-right">
                                             <span class=" fa-2x">{{ findings_map['open_findings']['total'] }}</span>
-                                            <span><a href="/filtered_findings/{{ app_data.ID }}/status/Open-">Open
+                                            <span><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/status/Open-">Open
                                         Findings <div class="fa fa-arrow-circle-right"></div></a>
                                     </span>
                                         </div>
@@ -97,7 +165,7 @@
 
                                         <div class="pull-right text-right">
                                             <span class="fa-2x">{{ findings_map['risk_accepted_findings']['total'] }}</span>
-                                            <span><a href="/filtered_findings/{{ app_data.ID }}/status/Open-RiskAccepted">Risk Accepted
+                                            <span><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/Open-RiskAccepted">Risk Accepted
                                     Findings <div class="fa fa-arrow-circle-right"></div></a>
                                 </span>
                                         </div>
@@ -121,7 +189,7 @@
 
                                         <div class="text-right pull-right">
                                             <span class="fa-2x">{{ findings_map['closed_findings']['total'] }}</span>
-                                            <span><a href="/filtered_findings/{{ app_data.ID }}/status/Closed-">Closed
+                                            <span><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/status/Closed-">Closed
                                         Findings <div class="fa fa-arrow-circle-right"></div></a>
                                     </span>
                                         </div>
@@ -146,7 +214,7 @@
                                         <div class="text-right pull-right">
                                             <span class="fa-2x">{{ findings_map['false_positive_findings']['total'] }}</span>
                                             <span><a
-                                                    href="/filtered_findings/{{ app_data.ID }}/status/Closed-FP">False-postive
+                                                    href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/status/Closed-FP">False-postive
                                         Findings <div class="fa fa-arrow-circle-right"></div></a>
                                     </span>
                                         </div>
@@ -170,7 +238,7 @@
 
                                         <div class="pull-right inline-block text-right">
                                             <span class=" fa-2x">{{ findings_map['closed_manually']['total'] }}</span>
-                                            <span><a href="/filtered_findings/{{ app_data.ID }}/status/Closed-Manual">Manually Closed
+                                            <span><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/status/Closed-Manual">Manually Closed
                                         Findings <div class="fa fa-arrow-circle-right"></div></a>
                                     </span>
                                         </div>
@@ -194,7 +262,7 @@
 
                                         <div class="text-right pull-right">
                                             <span class="fa-2x">{{ findings_map['total_findings']['total'] }}</span>
-                                            <span><a href="/filtered_findings/{{ app_data.ID }}/status/ALL">Total
+                                            <span><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/status/ALL">Total
                                         Findings <div class="fa fa-arrow-circle-right"></div></a>
                                     </span>
                                         </div>
@@ -218,7 +286,7 @@
 
                                         <div class="pull-right inline-block text-right">
                                             <span class=" fa-2x">{{ findings_map['secreview_findings']['total'] }}</span>
-                                            <span><a href="/filtered_findings/{{ app_data.ID }}/status/Open-SecReview">Needs Security Review
+                                            <span><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/status/Open-SecReview">Needs Security Review
                                         Findings <div class="fa fa-arrow-circle-right"></div></a>
                                     </span>
                                         </div>

@@ -106,6 +106,7 @@ class VulnerabilitiesSchema(Schema):
     pkg_name = fields.Str()
     pkg_version = fields.Str()
     ApplicationName = fields.Str()
+    ApplicationAcronym = fields.Str()
 
 class MakeVulnerabilitiesSchema(VulnerabilitiesSchema):
     @post_load
