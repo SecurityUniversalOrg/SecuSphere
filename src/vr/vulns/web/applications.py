@@ -409,7 +409,7 @@ def _application_data_handler(id, app_type=None, entity_name=None):
             .filter(text(f"BusinessApplications.ApplicationName = '{entity_name}'")).all()
         app_components = BusinessApplications.query.with_entities(
             BusinessApplications.ID,
-            BusinessApplications.ApplicationName
+            BusinessApplications.ApplicationAcronym
         ).filter(text(f"BusinessApplications.ApplicationName = '{entity_name}'")).all()
         # This app depends on these apps
         app2app_rels_upstream = AppToAppAssociations.query \

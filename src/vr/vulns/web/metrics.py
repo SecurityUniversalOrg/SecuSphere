@@ -321,7 +321,24 @@ def applevel_metrics(app_name):
         details_map = get_finding_by_dow(details_map, vuln_all)
         details_map = get_finding_by_test_type(details_map, vuln_all)
         details_map = get_finding_by_cwe_type(details_map, vuln_all)
+        now = datetime.datetime.utcnow()
+        mttr = get_mean_time_to_remediate_kpi('All', vuln_all, now)
         return render_template('application_metrics.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
-                               findings_map=findings_map, details_map=details_map)
+                               findings_map=findings_map, details_map=details_map, mttr_days=mttr)
     except RuntimeError:
         return render_template('500.html'), 500
+
+
+def get_mean_time_to_remediate_kpi(time_frame, vuln_data, now_dt_obj):
+    total_time = 0
+    total_eligible = 0
+    for vuln in vuln_data:
+        if vuln.MitigationDate:
+            remediation_time = (vuln.MitigationDate - vuln.AddDate).days
+            total_time += remediation_time
+            total_eligible += 1
+    if total_eligible:
+        mttr = total_time / total_eligible
+    else:
+        mttr = 0
+    return mttr
