@@ -26,7 +26,7 @@ pipeline {
         SONARQUBE_AUTH_TOKEN = credentials('SonarQube Global Analysis')
         SNYK_API_KEY = credentials('snyk-api-key')
         // App-specific settings
-        appName = "SECUSPHERE"
+        appName = "SECUSPHERE-${env.GIT_URL.split('/')[-1].split('\\.')[0]}"
         K8_ENV = "su_pubweb"
         K8_NAMESPACE = "secusphere"
         SOURCE_DIR = "src"
