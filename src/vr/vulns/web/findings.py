@@ -1044,30 +1044,56 @@ def filtered_findings_csv(appid, type, val):
 def _get_assets(val, orderby, per_page, page, filter_list, app_id, type=None ):
     if type == 'Branch':
         new_val = val.replace('_', '/')
-        vuln_all = Vulnerabilities \
-            .query \
-            .with_entities(Vulnerabilities.VulnerabilityName, Vulnerabilities.VulnerabilityID, Vulnerabilities.CWEID,
-                           Vulnerabilities.CVEID, Vulnerabilities.ReleaseDate,
-                           Vulnerabilities.Source, Vulnerabilities.Status, Vulnerabilities.Classification,
-                           Vulnerabilities.VulnerableFileName, Vulnerabilities.SourceCodeFileStartLine,
-                           Vulnerabilities.SourceCodeFileEndLine, Vulnerabilities.VulnerablePackage,
-                           Vulnerabilities.Uri, Vulnerabilities.AddDate, Vulnerabilities.Severity) \
-            .join(VulnerabilityScans, VulnerabilityScans.ID == Vulnerabilities.ScanId) \
-            .filter(text(VULN_STATUS_IS_NOT_CLOSED)) \
-            .filter(text(f"VulnerabilityScans.Branch LIKE '{new_val}'")) \
-            .filter(text(f"Vulnerabilities.ApplicationId={app_id}")) \
-            .order_by(text(orderby)) \
-            .yield_per(per_page) \
-            .paginate(page=page, per_page=per_page, error_out=False)
+        if filter_list and filter_list[0] == "Status LIKE 'Closed-%'":
+            vuln_all = Vulnerabilities \
+                .query \
+                .with_entities(Vulnerabilities.VulnerabilityName, Vulnerabilities.VulnerabilityID, Vulnerabilities.CWEID,
+                               Vulnerabilities.CVEID, Vulnerabilities.ReleaseDate,
+                               Vulnerabilities.Source, Vulnerabilities.Status, Vulnerabilities.Classification,
+                               Vulnerabilities.VulnerableFileName, Vulnerabilities.SourceCodeFileStartLine,
+                               Vulnerabilities.SourceCodeFileEndLine, Vulnerabilities.VulnerablePackage,
+                               Vulnerabilities.Uri, Vulnerabilities.AddDate, Vulnerabilities.Severity) \
+                .join(VulnerabilityScans, VulnerabilityScans.ID == Vulnerabilities.ScanId) \
+                .filter(text(f"VulnerabilityScans.Branch LIKE '{new_val}'")) \
+                .filter(text(f"Vulnerabilities.ApplicationId={app_id}")) \
+                .order_by(text(orderby)) \
+                .yield_per(per_page) \
+                .paginate(page=page, per_page=per_page, error_out=False)
+        else:
+            vuln_all = Vulnerabilities \
+                .query \
+                .with_entities(Vulnerabilities.VulnerabilityName, Vulnerabilities.VulnerabilityID,
+                               Vulnerabilities.CWEID,
+                               Vulnerabilities.CVEID, Vulnerabilities.ReleaseDate,
+                               Vulnerabilities.Source, Vulnerabilities.Status, Vulnerabilities.Classification,
+                               Vulnerabilities.VulnerableFileName, Vulnerabilities.SourceCodeFileStartLine,
+                               Vulnerabilities.SourceCodeFileEndLine, Vulnerabilities.VulnerablePackage,
+                               Vulnerabilities.Uri, Vulnerabilities.AddDate, Vulnerabilities.Severity) \
+                .join(VulnerabilityScans, VulnerabilityScans.ID == Vulnerabilities.ScanId) \
+                .filter(text(VULN_STATUS_IS_NOT_CLOSED)) \
+                .filter(text(f"VulnerabilityScans.Branch LIKE '{new_val}'")) \
+                .filter(text(f"Vulnerabilities.ApplicationId={app_id}")) \
+                .order_by(text(orderby)) \
+                .yield_per(per_page) \
+                .paginate(page=page, per_page=per_page, error_out=False)
     else:
-        vuln_all = Vulnerabilities \
-            .query \
-            .filter(text(VULN_STATUS_IS_NOT_CLOSED)) \
-            .filter(text("".join(filter_list))) \
-            .filter(text(f"Vulnerabilities.ApplicationId={app_id}")) \
-            .order_by(text(orderby)) \
-            .yield_per(per_page) \
-            .paginate(page=page, per_page=per_page, error_out=False)
+        if filter_list and filter_list[0] ==  "Status LIKE 'Closed-%'":
+            vuln_all = Vulnerabilities \
+                .query \
+                .filter(text("".join(filter_list))) \
+                .filter(text(f"Vulnerabilities.ApplicationId={app_id}")) \
+                .order_by(text(orderby)) \
+                .yield_per(per_page) \
+                .paginate(page=page, per_page=per_page, error_out=False)
+        else:
+            vuln_all = Vulnerabilities \
+                .query \
+                .filter(text(VULN_STATUS_IS_NOT_CLOSED)) \
+                .filter(text("".join(filter_list))) \
+                .filter(text(f"Vulnerabilities.ApplicationId={app_id}")) \
+                .order_by(text(orderby)) \
+                .yield_per(per_page) \
+                .paginate(page=page, per_page=per_page, error_out=False)
     pg_cnt = ceil((vuln_all.total / per_page))
     schema = VulnerabilitiesSchema(many=True)
     assets = schema.dump(vuln_all.items)

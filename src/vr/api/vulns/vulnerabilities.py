@@ -110,8 +110,9 @@ def update_vulnerabilities_status(app_cmdb_id, scan_id, req_raw):
                 found = True
                 break
         if not found and i.Status != "Closed-Mitigated":
+            now = datetime.datetime.utcnow()
             db.session.query(Vulnerabilities).filter(Vulnerabilities.VulnerabilityID == int(i.VulnerabilityID)).update(
-                {Vulnerabilities.Status: 'Closed-Mitigated', Vulnerabilities.LastModifiedDate: datetime.datetime.utcnow()},
+                {Vulnerabilities.Status: 'Closed-Mitigated', Vulnerabilities.LastModifiedDate: now, Vulnerabilities.MitigationDate: now},
                 synchronize_session=False)
             db_connection_handler(db)
             closed_cnt += 1
