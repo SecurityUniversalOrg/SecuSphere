@@ -46,8 +46,42 @@
                                             </li>
 
                                         </ul>
+                                        <!-- Filter Button -->
+                                        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#filterModal">
+                                            <span class="fa fa-filter"></span> Filter
+                                        </button>
+
                                     </div>
                                 </h3>
+
+                                <!-- Filter Modal -->
+                                <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="filterModalLabel">Filter Applications</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <label for="filterField">Field:</label>
+                                                <select id="filterField" class="form-control">
+                                                    <option value="ApplicationName">Application Name</option>
+                                                    <option value="ApplicationAcronym">Component</option>
+                                                    <option value="Criticality">Criticality</option>
+                                                </select>
+                                                <label for="filterValue">Value:</label>
+                                                <input type="text" id="filterValue" class="form-control" placeholder="Enter filter value">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                <button type="button" class="btn btn-primary" onclick="setFilter()">Apply Filter</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
 
                         </div>
@@ -66,13 +100,21 @@
 
                                         <th id="hdr_btn" class="noVis sorting_disabled" rowspan="1" colspan="1"
                                             style="width: 0.0833333px;" data-column-index="0" aria-label=""></th>
-                                        <th id="hdr_app" class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                        <th onclick="fieldSorter('ApplicationName', 'dynamic')"  id="hdr_app" class="sorting" tabindex="0" aria-controls="products" rowspan="1"
                                             colspan="1" style="width: 79.1667px;" data-column-index="1"
-                                            aria-label="Product&amp;nbsp;: activate to sort column ascending">Application&nbsp;<div
-                                                class="fa fa-sort-asc dd-sort"></div></th>
-                                        <th id="hdr_component" class="sorting" tabindex="0" aria-controls="products" rowspan="1"
+                                            aria-label="Product&amp;nbsp;: activate to sort column ascending">
+                                            <a
+                                                title="Click to sort ascending"
+                                                href="#">Application&nbsp;<div
+                                                class="fa fa-sort-asc dd-sort"></div></a>
+                                        </th>
+                                        <th onclick="fieldSorter('ApplicationAcronym', 'dynamic')"  id="hdr_component" class="sorting" tabindex="0" aria-controls="products" rowspan="1"
                                             colspan="1" style="width: 32px;" data-column-index="2"
-                                            aria-label="Tags: activate to sort column ascending">Component
+                                            aria-label="Tags: activate to sort column ascending">
+                                            <a
+                                                title="Click to sort ascending"
+                                                href="#">Component&nbsp;<div
+                                                class="fa fa-sort-asc dd-sort"></div></a>
                                         </th>
                                         <th id="hdr_tags" class="sorting" tabindex="0" aria-controls="products" rowspan="1"
                                             colspan="1" style="width: 32px;" data-column-index="2"
@@ -356,6 +398,12 @@ function startIntroTour() {
 </script>
 
 <script>
+function setFilter() {
+    var field = document.getElementById('filterField').value;
+    var val = document.getElementById('filterValue').value;
+    window.location.href = "/all_applications_filtered/" + field + "/" + val;
+}
+
 function updatePerPage(app_id, new_per_page) {
     var cur_page = document.getElementById('val_page').value;
     var cur_per_page = document.getElementById('val_per_page').value;
@@ -392,7 +440,7 @@ function updatePagination(app_id, new_page) {
   xhttp.send("cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_page=" + new_page);
 }
 
-function fieldSorter(app_id, field_name, new_dir) {
+function fieldSorter(field_name, new_dir) {
     var cur_page = document.getElementById('val_page').value;
     var cur_per_page = document.getElementById('val_per_page').value;
     var cur_orderby = document.getElementById('val_orderby').value;
