@@ -46,7 +46,12 @@
             {% if 'name' in NAV['CAT'] %}
             {% if NAV['CAT']['name'] == NAV['curpage']['name'] %}
             {% else %}
-            <li>{{ NAV['CAT']['name'] }}</li>
+                {% if 'url' in NAV['CAT'] %}
+                    <li><a href="{{ NAV['CAT']['url'] }}">{{ NAV['CAT']['name'] }}</a></li>
+                {% else %}
+                    <li>{{ NAV['CAT']['name'] }}</li>
+                {% endif %}
+
             {% endif %}
             {% endif %}
             <li>{{ NAV['curpage']['name'] }}</li>

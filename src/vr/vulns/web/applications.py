@@ -185,6 +185,145 @@ def all_applications():
         return render_template(SERVER_ERR_STATUS), 500
 
 
+@vulns.route("/all_applications_filtered/<type>/<val>", methods=['GET', 'POST'])
+@login_required
+def all_applications_filtered(type, val):
+    try:
+        NAV['curpage'] = {"name": "All Applications"}
+        admin_role = APP_ADMIN
+        role_req = [APP_ADMIN, APP_VIEWER]
+        perm_entity = 'Application'
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req, permissions_entity=perm_entity)
+        if status == 401:
+            return redirect(url_for(ADMIN_LOGIN))
+        elif status == 403:
+            return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
+        new_dict = {
+            'db_name': 'BusinessApplications',
+            "sort_field": "ApplicationName"
+        }
+        if request.method == 'POST':
+            # sort
+            page, per_page, orderby_dict, orderby = update_table(request, new_dict)
+        else:
+            page, per_page, orderby_dict, orderby = load_table(new_dict)
+        sql_filter = _entity_permissions_filter(user_roles, session, admin_role, filter_key='BusinessApplications.ID')
+
+        sql_filter = f"({sql_filter}) AND ({type} LIKE '%{val}%')"
+
+        assets_all = BusinessApplications.query.with_entities(
+            BusinessApplications.ID,
+            BusinessApplications.TechnologyID,
+            BusinessApplications.ApplicationName,
+            BusinessApplications.Version,
+            BusinessApplications.Vendor,
+            BusinessApplications.Language,
+            BusinessApplications.InHouseDev,
+            BusinessApplications.VendorDev,
+            BusinessApplications.Customization,
+            BusinessApplications.DatabaseName,
+            BusinessApplications.AppValue,
+            BusinessApplications.Owner,
+            BusinessApplications.Custodian,
+            BusinessApplications.Hosting,
+            BusinessApplications.Description,
+            BusinessApplications.PHI,
+            BusinessApplications.PII,
+            BusinessApplications.PCI,
+            BusinessApplications.MiscCustomerData,
+            BusinessApplications.Type,
+            BusinessApplications.RegDate,
+            BusinessApplications.Edition,
+            BusinessApplications.WebEnabled,
+            BusinessApplications.ApplicationURL,
+            BusinessApplications.RepoURL,
+            BusinessApplications.ApplicationType,
+            BusinessApplications.ProductType,
+            BusinessApplications.Lifecycle,
+            BusinessApplications.Origin,
+            BusinessApplications.UserRecords,
+            BusinessApplications.Revenue,
+            BusinessApplications.SysgenID,
+            BusinessApplications.ApplicationAcronym,
+            BusinessApplications.LctlAppID,
+            BusinessApplications.Assignment,
+            BusinessApplications.AssignmentChangedDate,
+            BusinessApplications.LifecycleStatus,
+            BusinessApplications.Disposition,
+            BusinessApplications.TAWG,
+            BusinessApplications.Criticality,
+            BusinessApplications.PrioritizedForStability,
+            BusinessApplications.BiaCritical,
+            BusinessApplications.SoxCritical,
+            BusinessApplications.Region,
+            BusinessApplications.HostingPlatform,
+            BusinessApplications.PrimaryLob,
+            BusinessApplications.UsedByMultipleLob,
+            BusinessApplications.MalListingAddDate,
+            BusinessApplications.PreprodDate,
+            BusinessApplications.ProductionDate,
+            BusinessApplications.RetirementDate,
+            BusinessApplications.TargetRetirementDate,
+            BusinessApplications.AppSupportType,
+            BusinessApplications.BusinessImpactDesc,
+            BusinessApplications.WorkaroundDesc,
+            BusinessApplications.AssetSystem,
+            BusinessApplications.LogicalAccessControlUrl,
+            BusinessApplications.MalAddReason,
+            BusinessApplications.MalAddReasonDetails,
+            BusinessApplications.SupportEngApprReq,
+            BusinessApplications.QaActivelyTested,
+            BusinessApplications.PrimaryProdUrl,
+            BusinessApplications.AppMetricCat,
+            BusinessApplications.OfficialBusinessRecord,
+            BusinessApplications.RetentionPeriod,
+            BusinessApplications.SubjectToLegalHold,
+            BusinessApplications.EmployeeData,
+            BusinessApplications.UserAccessRestrictions,
+            BusinessApplications.UserAccessControl,
+            BusinessApplications.PMUCNUSGOVT,
+            BusinessApplications.RopaExists,
+            BusinessApplications.AccountProvisionAndDeprovision,
+            BusinessApplications.AccountProvisionSupportGrp,
+            BusinessApplications.CicdStatus
+        ) \
+            .filter(text(sql_filter)) \
+            .order_by(text(orderby)) \
+            .yield_per(per_page) \
+            .paginate(page=page, per_page=per_page, error_out=False)
+        pg_cnt = ceil((assets_all.total / per_page))
+        entity_details = {}
+        for i in assets_all.items:
+            entity_details[i.ID] = {'finding_cnt': 0, 'endpoint_cnt': 0}
+        sql_filter = _entity_permissions_filter(user_roles, session, admin_role, filter_key='Vulnerabilities.ApplicationId')
+        sql_filter = f"({sql_filter}) AND ({VULN_OPEN_STATUS})"
+        vuln_all = Vulnerabilities.query.filter(text(sql_filter)).all()
+        for vuln in vuln_all:
+            if vuln.ApplicationId in entity_details:
+                entity_details[vuln.ApplicationId]['finding_cnt'] += 1
+        sql_filter = _entity_permissions_filter(user_roles, session, admin_role, filter_key='Vulnerabilities.ApplicationId')
+        sql_filter = f"({sql_filter}) AND ({VULN_OPEN_STATUS})"
+        endpoints_all = Vulnerabilities.query.with_entities(Vulnerabilities.Uri, Vulnerabilities.ApplicationId).filter(text("Vulnerabilities.Classification LIKE 'DAST%'")).filter(text(sql_filter)).filter(text(VULN_OPEN_STATUS)).group_by(Vulnerabilities.Uri, Vulnerabilities.ApplicationId).all()
+        for pair in endpoints_all:
+            if pair.ApplicationId in entity_details:
+                entity_details[pair.ApplicationId]['endpoint_cnt'] += 1
+
+        table_details = {
+            "pg_cnt": pg_cnt,
+            "page": int(page),
+            "item_tot": assets_all.total,
+            "per_page": per_page,
+            "orderby": orderby,
+            "rec_start": (int(page) - 1) * per_page + 1 if int(page) != 1 else 1,
+            "rec_end": int(page) * per_page if (int(page) * per_page) < assets_all.total else assets_all.total
+        }
+        return render_template('all_applications.html', entity_details=entity_details, entities=assets_all.items, user=user,
+                               NAV=NAV, table_details= table_details, app_data={"ID": 0})
+    except RuntimeError:
+        return render_template(SERVER_ERR_STATUS), 500
+
+
+
 @vulns.route("/application/<component_id>/<app_type>/<entity_name>")
 @login_required
 def application(component_id, app_type, entity_name):
@@ -589,6 +728,7 @@ def _application_data_handler(id, app_type=None, entity_name=None):
         "dependency_map": dependency_map,
         "bm_assessments": bm_assessments
     }
+    NAV['CAT']['url'] = '/all_applications'
     return data_map
 
 
