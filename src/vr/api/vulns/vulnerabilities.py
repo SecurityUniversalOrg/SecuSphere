@@ -214,15 +214,15 @@ def add_app_id_to_docker_img(docker_img_id, app_cmdb_id, app_id_list):
 def get_app_id(app_name, git_url):
     app_component = ''
     if '--' in app_name:
-        app_name = app_name.split('--')[0]
+        a_name = app_name.split('--')[0]
         app_component = app_name.split('--')[1]
-    app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{app_name}' AND BusinessApplications.ApplicationAcronym='{app_component}'")).first()
+    app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{a_name}' AND BusinessApplications.ApplicationAcronym='{app_component}'")).first()
     if app:
         app_id = app.ID
     else:
         now = datetime.datetime.utcnow()
         new_app = BusinessApplications(
-            ApplicationName=app_name,
+            ApplicationName=a_name,
             RepoURL=git_url,
             AssignmentChangedDate=now,
             MalListingAddDate=now,

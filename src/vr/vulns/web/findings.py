@@ -782,13 +782,13 @@ def filtered_findings(appid, type, val):
             val = image.ID
         elif type == 'Application Name':
             key = 'ApplicationId'
-            app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName={val}")).first()
+            app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{val}'")).first()
             val = app.ID
         else:
             key = type.capitalize()
-        if val.endswith("-"):
+        if isinstance(val, str) and val.endswith("-"):
             filter_list = [f"{key} LIKE '{val}%'"]
-        elif val == 'ALL':
+        elif isinstance(val, str) and val == 'ALL':
             filter_list = [f"{key} LIKE '%-%'"]
         else:
             filter_list = [f"{key} = '{val}'"]
