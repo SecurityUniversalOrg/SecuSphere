@@ -159,11 +159,11 @@ pipeline {
                     jslDynamicApiSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010/api/openapi.yaml")
                 }
             }
-            post {
-                 always {
+            //post {
+            //     always {
                      //jslTestReleasePost()
-                 }
-            }
+            //     }
+            //}
         }
 
         ////////// Quality Gate //////////
