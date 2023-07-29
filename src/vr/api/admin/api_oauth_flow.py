@@ -66,7 +66,5 @@ def revoke_token():
 
 @api.route('/api/openapi.yaml')
 def api_me():
-    yaml_content = render_template('openapi_spec.yaml')
-    response = Response(yaml_content, content_type="application/x-yaml")
-    return response, 200
+    return render_template('openapi_spec.yaml'), 200
 
