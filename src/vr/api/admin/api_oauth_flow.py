@@ -1,5 +1,5 @@
 from flask import request, session, url_for, jsonify
-from flask import render_template, redirect
+from flask import render_template, redirect, Response
 from authlib.oauth2 import OAuth2Error
 from time import sleep
 from vr.api import api
@@ -23,7 +23,7 @@ def split_by_crlf(s):
     return [v for v in s.splitlines() if v]
 
 
-@api.route('/oauth/authorize', methods=['GET', 'POST'])
+@api.route('/api/oauth/authorize', methods=['GET', 'POST'])
 def authorize():
     user = current_user()
     # if user log status is not true (Auth server), then to log it in
@@ -45,7 +45,7 @@ def authorize():
     return authorization.create_authorization_response(grant_user=grant_user)
 
 
-@api.route('/oauth/token', methods=['POST'])
+@api.route('/api/oauth/token', methods=['POST'])
 def issue_token():
     max_attempts = 5
     for attempt in range(max_attempts):
@@ -59,12 +59,14 @@ def issue_token():
                 return jsonify(error=str(e)), 500
 
 
-@api.route('/oauth/revoke', methods=['POST'])
+@api.route('/api/oauth/revoke', methods=['POST'])
 def revoke_token():
     return authorization.create_endpoint_response('revocation')
 
 
-@api.route('/openapi.yaml')
+@api.route('/api/openapi.yaml')
 def api_me():
-    return render_template('openapi.yaml'), 200
+    yaml_content = render_template('openapi_spec.yaml')
+    response = Response(yaml_content, content_type="application/x-yaml")
+    return response, 200
 

@@ -21,7 +21,7 @@ from config_engine import ENV
 
 ERROR_RESP = "Error: Invalid API Request"
 
-@api.route("/vulnerabilities")
+@api.route("/api/vulnerabilities")
 @require_oauth('read:vulnerabilities')
 def get_vulnerabilities():
     token = current_token
@@ -39,7 +39,7 @@ def get_vulnerabilities():
     return response
 
 
-@api.route('/search_vulnerabilities', methods=['POST'])
+@api.route('/api/search_vulnerabilities', methods=['POST'])
 @require_oauth('read:vulnerabilities')
 def search_vulnerabilities():
     token = current_token
@@ -60,7 +60,7 @@ def search_vulnerabilities():
     return response
 
 
-@api.route("/add_vulnerabilities", methods=["POST"])
+@api.route("/api/add_vulnerabilities", methods=["POST"])
 @require_oauth('write:vulnerabilities')
 def add_vulnerabilities():
     token = current_token
@@ -213,9 +213,13 @@ def add_app_id_to_docker_img(docker_img_id, app_cmdb_id, app_id_list):
 
 def get_app_id(app_name, git_url):
     app_component = ''
+    a_name = ''
     if '--' in app_name:
         a_name = app_name.split('--')[0]
         app_component = app_name.split('--')[1]
+    else:
+        a_name = app_name
+        app_component = app_name.lower()
     app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{a_name}' AND BusinessApplications.ApplicationAcronym='{app_component}'")).first()
     if app:
         app_id = app.ID
@@ -477,7 +481,7 @@ def _unique_check_iac_or_secret(new, r, vulns_all, new_vuln_name):
     return new, vuln_id, status
 
 
-@api.route('/edit_vulnerabilities', methods=['POST'])
+@api.route('/api/edit_vulnerabilities', methods=['POST'])
 @require_oauth('write:vulnerabilities')
 def edit_vulnerabilities():
     token = current_token
@@ -503,7 +507,7 @@ def edit_vulnerabilities():
     return response
 
 
-@api.route('/delete_vulnerabilities', methods=['POST'])
+@api.route('/api/delete_vulnerabilities', methods=['POST'])
 @require_oauth('write:vulnerabilities')
 def delete_vulnerabilities():
     token = current_token

@@ -3,9 +3,11 @@ from flask import jsonify, request, json
 from vr.api import api
 from requests.auth import HTTPBasicAuth
 from config_engine import JENKINS_USER, JENKINS_KEY, JENKINS_PROJECT, JENKINS_HOST, JENKINS_TOKEN
+from vr.admin.oauth2 import require_oauth
 
 
-@api.route('/jenkins_webhook', methods=['POST'])
+@api.route('/api/jenkins_webhook', methods=['POST'])
+@require_oauth('write:vulnerabilities')
 def jenkins_webhook():
     all = request.form
     payload_dict = json.loads(all['payload'])
