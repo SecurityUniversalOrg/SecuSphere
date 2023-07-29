@@ -1,0 +1,362 @@
+openapi: "3.0.0"
+info:
+  title: "SecuSphere"
+  version: "1.0.0"
+  description: "Efficient DevSecOps."
+
+servers:
+  - url: "http://192.168.0.68:5010"
+
+paths:
+  /api/oauth/authorize:
+    get:
+      summary: "Authorize OAuth2 Request"
+      responses:
+        '200':
+          description: "Authorization page for user consent."
+        '302':
+          description: "Redirect to login page if user is not logged in."
+    post:
+      summary: "Confirm or Deny Authorization"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                username:
+                  type: "string"
+                confirm:
+                  type: "boolean"
+      responses:
+        '200':
+          description: "Authorization response."
+
+  /api/oauth/token:
+    post:
+      summary: "Issue OAuth2 Token"
+      responses:
+        '200':
+          description: "Token issued successfully."
+        '500':
+          description: "Internal server error."
+
+  /api/oauth/revoke:
+    post:
+      summary: "Revoke OAuth2 Token"
+      responses:
+        '200':
+          description: "Token revoked successfully."
+
+  /api/openapi.yaml:
+    get:
+      summary: "Get OpenAPI Specification"
+      responses:
+        '200':
+          description: "OpenAPI specification file."
+          content:
+            application/yaml:
+              schema:
+                type: "string"
+
+  /api/add_loc:
+    post:
+      summary: "Add Lines of Code (LOC) Statistics"
+      security:
+        - OAuth2: [ 'write:vulnerabilities' ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                data:
+                  type: "array"
+                  items:
+                    type: "object"
+                    properties:
+                      loc:
+                        type: "integer"
+                      fileCount:
+                        type: "integer"
+                      language:
+                        type: "string"
+                appName:
+                  type: "string"
+      responses:
+        '200':
+          description: "LOC statistics added successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                    example: "success"
+
+  /api/get_application_profile/{app_id}:
+    get:
+      summary: "Get Application Profile"
+      parameters:
+        - name: "app_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Application profile retrieved successfully."
+        '403':
+          description: "Error: Invalid API Request."
+
+  /api/add_application_profile/{repo_name}:
+    post:
+      summary: "Add Application Profile"
+      parameters:
+        - name: "repo_name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                SecretScanReq:
+                  type: "string"
+                SecretScanData:
+                  type: "string"
+                SCAReq:
+                  type: "string"
+                SCAData:
+                  type: "string"
+                SASTReq:
+                  type: "string"
+                SASTData:
+                  type: "string"
+                IACReq:
+                  type: "string"
+                IACData:
+                  type: "string"
+                ContainerReq:
+                  type: "string"
+                ContainerData:
+                  type: "string"
+                InfrastructureScanReq:
+                  type: "string"
+                InfrastructureScanData:
+                  type: "string"
+                DASTReq:
+                  type: "string"
+                DASTData:
+                  type: "string"
+                DASTApiReq:
+                  type: "string"
+                DASTApiData:
+                  type: "string"
+                CICDConfigLocations:
+                  type: "string"
+                CICDConfigData:
+                  type: "string"
+      responses:
+        '200':
+          description: "Report Delivered."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  result:
+                    type: "string"
+                    example: "Report Delivered"
+
+  /api/jenkins_webhook:
+    post:
+      summary: "Jenkins Webhook"
+      security:
+        - OAuth2: [ 'write:vulnerabilities' ]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: "object"
+              properties:
+                payload:
+                  type: "string"
+                  description: "Payload containing information about the git repository, branch, and other details."
+      responses:
+        '200':
+          description: "Webhook processed successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  Status:
+                    type: "string"
+                    example: "200"
+
+  /api/add_sg_results:
+    post:
+      summary: "Add SG Results"
+      security:
+        - OAuth2: [ 'write:vulnerabilities' ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                jobData:
+                  type: "object"
+                  description: "Data related to the job."
+                config:
+                  type: "object"
+                  description: "Configuration settings for the job."
+                results:
+                  type: "object"
+                  description: "Results of the job."
+      responses:
+        '200':
+          description: "SG results added successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  result:
+                    type: "string"
+                    example: "Report Delivered"
+
+  /api/vulnerabilities:
+    get:
+      summary: "Get Vulnerabilities"
+      security:
+        - OAuth2: [ 'read:vulnerabilities' ]
+      responses:
+        '200':
+          description: "List of vulnerabilities."
+        '403':
+          description: "Unauthorized access."
+
+  /api/search_vulnerabilities:
+    post:
+      summary: "Search Vulnerabilities"
+      security:
+        - OAuth2: [ 'read:vulnerabilities' ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              description: "Filter criteria for searching vulnerabilities."
+      responses:
+        '200':
+          description: "Search results for vulnerabilities."
+        '403':
+          description: "Unauthorized access."
+
+  /api/add_vulnerabilities:
+    post:
+      summary: "Add Vulnerabilities"
+      security:
+        - OAuth2: [ 'write:vulnerabilities' ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              description: "Data for adding vulnerabilities."
+      responses:
+        '200':
+          description: "Vulnerabilities added successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  Status:
+                    type: "string"
+                    example: "success"
+        '403':
+          description: "Unauthorized access."
+
+  /api/edit_vulnerabilities:
+    post:
+      summary: "Edit Vulnerabilities"
+      security:
+        - OAuth2: [ 'write:vulnerabilities' ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                filter:
+                  type: "object"
+                  description: "Filter criteria for editing vulnerabilities."
+                values:
+                  type: "object"
+                  description: "Values to update for the selected vulnerabilities."
+      responses:
+        '200':
+          description: "Vulnerabilities edited successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  Status:
+                    type: "string"
+                    example: "Success"
+        '403':
+          description: "Unauthorized access."
+
+  /api/delete_vulnerabilities:
+    post:
+      summary: "Delete Vulnerabilities"
+      security:
+        - OAuth2: [ 'write:vulnerabilities' ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              description: "Filter criteria for deleting vulnerabilities."
+      responses:
+        '200':
+          description: "Vulnerabilities deleted successfully."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  Status:
+                    type: "string"
+                    example: "Deleted"
+        '403':
+          description: "Unauthorized access."
+
+components:
+  securitySchemes:
+    OAuth2: # This name must match the name used in the security requirements of the paths
+      type: oauth2
+      flows:
+        authorizationCode: # You can choose the appropriate OAuth2 flow here
+          authorizationUrl: https://example.com/oauth/authorize
+          tokenUrl: https://example.com/oauth/token
+          scopes:
+            read:vulnerabilities: Read access to vulnerabilities
+            write:vulnerabilities: Write access to vulnerabilities
+
+

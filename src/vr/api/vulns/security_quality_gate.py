@@ -7,9 +7,11 @@ from vr.vulns.model.sgconfigsettingsperjob import SgConfigSettingsPerJob
 from vr.vulns.model.sgresultsperjob import SgResultsPerJob
 from vr.api.vulns.vulnerabilities import get_app_id
 from vr.admin.functions import db_connection_handler
+from vr.admin.oauth2 import require_oauth
 
 
-@api.route('/add_sg_results', methods=['POST'])
+@api.route('/api/add_sg_results', methods=['POST'])
+@require_oauth('write:vulnerabilities')
 def add_sg_results():
     form = request.get_json()
     job_data = form['jobData']
