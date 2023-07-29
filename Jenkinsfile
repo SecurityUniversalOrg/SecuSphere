@@ -161,7 +161,7 @@ pipeline {
             }
             post {
                  always {
-                     jslTestReleasePost()
+                     //jslTestReleasePost()
                  }
             }
         }
