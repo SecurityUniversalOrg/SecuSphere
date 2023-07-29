@@ -13,7 +13,7 @@ from vr.assets.model.businessapplications import BusinessApplications
 
 ERROR_RESP = "Error: Invalid API Request"
 
-@api.route("/get_application_profile/<app_id>")
+@api.route("/api/get_application_profile/<app_id>")
 @require_oauth('read:vulnerabilities')
 def get_application_profile(app_id):
     token = current_token
@@ -30,7 +30,7 @@ def get_application_profile(app_id):
             response = jsonify(vulns), 200
     return response
 
-@api.route('/add_application_profile/<repo_name>', methods=['POST'])
+@api.route('/api/add_application_profile/<repo_name>', methods=['POST'])
 @require_oauth('write:vulnerabilities')
 def add_application_profile(repo_name):
     form = request.get_json()

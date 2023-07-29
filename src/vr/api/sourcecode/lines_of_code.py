@@ -4,6 +4,7 @@ from vr.api import api
 from vr.sourcecode.model.appcodecomposition import AppCodeComposition
 from vr.admin.functions import db_connection_handler
 from vr.api.vulns.vulnerabilities import get_app_id
+from vr.admin.oauth2 import require_oauth
 
 
 EXTENSION_LANGUAGE_MAP = {
@@ -58,7 +59,8 @@ EXTENSION_LANGUAGE_MAP = {
     "cpy": "COBOL"
 }
 
-@api.route('/add_loc', methods=['POST'])
+@api.route('/api/add_loc', methods=['POST'])
+@require_oauth('write:vulnerabilities')
 def add_loc():
     form = request.get_json()
     loc_data = form['data']
