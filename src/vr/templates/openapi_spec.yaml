@@ -10,6 +10,8 @@ servers:
 paths:
   /api/oauth/authorize:
     get:
+      tags:
+        - OAuth
       summary: "Authorize OAuth2 Request"
       responses:
         '200':
@@ -17,6 +19,8 @@ paths:
         '302':
           description: "Redirect to login page if user is not logged in."
     post:
+      tags:
+        - OAuth
       summary: "Confirm or Deny Authorization"
       requestBody:
         content:
@@ -33,6 +37,8 @@ paths:
 
   /api/oauth/token:
     post:
+      tags:
+        - OAuth
       summary: "Issue OAuth2 Token"
       responses:
         '200':
@@ -42,6 +48,8 @@ paths:
 
   /api/oauth/revoke:
     post:
+      tags:
+        - OAuth
       summary: "Revoke OAuth2 Token"
       responses:
         '200':
@@ -49,6 +57,8 @@ paths:
 
   /api/openapi.yaml:
     get:
+      tags:
+        - OAuth
       summary: "Get OpenAPI Specification"
       responses:
         '200':
@@ -60,6 +70,8 @@ paths:
 
   /api/add_loc:
     post:
+      tags:
+        - SourceCodeComposition
       summary: "Add Lines of Code (LOC) Statistics"
       security:
         - OAuth2: [ 'write:vulnerabilities' ]
@@ -97,6 +109,8 @@ paths:
 
   /api/get_application_profile/{app_id}:
     get:
+      tags:
+        - SourceCodeComposition
       summary: "Get Application Profile"
       parameters:
         - name: "app_id"
@@ -112,6 +126,8 @@ paths:
 
   /api/add_application_profile/{repo_name}:
     post:
+      tags:
+        - SourceCodeComposition
       summary: "Add Application Profile"
       parameters:
         - name: "repo_name"
@@ -176,6 +192,8 @@ paths:
 
   /api/jenkins_webhook:
     post:
+      tags:
+        - Integrations
       summary: "Jenkins Webhook"
       security:
         - OAuth2: [ 'write:vulnerabilities' ]
@@ -203,6 +221,8 @@ paths:
 
   /api/add_sg_results:
     post:
+      tags:
+        - Vulnerabilities
       summary: "Add SG Results"
       security:
         - OAuth2: [ 'write:vulnerabilities' ]
@@ -236,6 +256,8 @@ paths:
 
   /api/vulnerabilities:
     get:
+      tags:
+        - Vulnerabilities
       summary: "Get Vulnerabilities"
       security:
         - OAuth2: [ 'read:vulnerabilities' ]
@@ -247,6 +269,8 @@ paths:
 
   /api/search_vulnerabilities:
     post:
+      tags:
+        - Vulnerabilities
       summary: "Search Vulnerabilities"
       security:
         - OAuth2: [ 'read:vulnerabilities' ]
@@ -265,6 +289,8 @@ paths:
 
   /api/add_vulnerabilities:
     post:
+      tags:
+        - Vulnerabilities
       summary: "Add Vulnerabilities"
       security:
         - OAuth2: [ 'write:vulnerabilities' ]
@@ -291,6 +317,8 @@ paths:
 
   /api/edit_vulnerabilities:
     post:
+      tags:
+        - Vulnerabilities
       summary: "Edit Vulnerabilities"
       security:
         - OAuth2: [ 'write:vulnerabilities' ]
@@ -323,6 +351,8 @@ paths:
 
   /api/delete_vulnerabilities:
     post:
+      tags:
+        - Vulnerabilities
       summary: "Delete Vulnerabilities"
       security:
         - OAuth2: [ 'write:vulnerabilities' ]

@@ -156,7 +156,7 @@ pipeline {
             steps {
                 script {
                     jslDynamicApplicationSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010")
-                    jslDynamicApiSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010/openapi.yaml")
+                    jslDynamicApiSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010/api/openapi.yaml")
                 }
             }
             post {
