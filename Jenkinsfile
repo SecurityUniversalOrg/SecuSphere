@@ -75,6 +75,7 @@ pipeline {
                  }
             }
             steps {
+                jslOwaspSCA()
                 jslSecretScanning()
             }
         }
