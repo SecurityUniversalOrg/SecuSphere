@@ -78,7 +78,6 @@ pipeline {
                  }
             }
             steps {
-
                 jslSecretScanning()
             }
         }
