@@ -151,93 +151,96 @@ else:
 
 
 def train_model():
-    vuln_all = []
-    db = None
     try:
-        cur, db = connect_to_db()
-        if app.config['RUNTIME_ENV'] == 'test':
-            sql = "SELECT Severity, Classification, Description, Status, Attack, Evidence, Source, VulnerabilityName FROM Vulnerabilities WHERE (Status = ? OR Status = ? OR Status = ? OR Status = ?)"
+        vuln_all = []
+        db = None
+        try:
+            cur, db = connect_to_db()
+            if app.config['RUNTIME_ENV'] == 'test':
+                sql = "SELECT Severity, Classification, Description, Status, Attack, Evidence, Source, VulnerabilityName FROM Vulnerabilities WHERE (Status = ? OR Status = ? OR Status = ? OR Status = ?)"
 
-        else:
-            sql = "SELECT Severity, Classification, Description, Status, Attack, Evidence, Source, VulnerabilityName FROM Vulnerabilities WHERE (Status = %s OR Status = %s OR Status = %s OR Status = %s)"
-        args = ('Closed-Mitigated', 'Open-Reviewed', 'Open-RiskAccepted', 'Closed-FalsePositive',)
-        cur.execute(sql, args)
-        vuln_all = cur.fetchall()
+            else:
+                sql = "SELECT Severity, Classification, Description, Status, Attack, Evidence, Source, VulnerabilityName FROM Vulnerabilities WHERE (Status = %s OR Status = %s OR Status = %s OR Status = %s)"
+            args = ('Closed-Mitigated', 'Open-Reviewed', 'Open-RiskAccepted', 'Closed-FalsePositive',)
+            cur.execute(sql, args)
+            vuln_all = cur.fetchall()
+        except:
+            print(f'Warning: Unable to Connect to Vulnerability Data for ML Training!')
+        finally:
+            if db:
+                db.close()
+        # Convert vuln_all to a list of dictionaries
+        true_positive_dispos = ['Closed-Mitigated', 'Open-Reviewed', 'Open-RiskAccepted']
+        vuln_data = []
+        for vuln in vuln_all:
+            vuln_dict = {
+                "severity": vuln[0],
+                "type": vuln[1],
+                "description": vuln[2],
+                "true_positive": 1 if vuln[3] in true_positive_dispos else 0,
+                "attack": vuln[4],
+                "evidence": vuln[5],
+                "source": vuln[6],
+                "name": vuln[7]
+            }
+            vuln_data.append(vuln_dict)  # Directly append the dictionary
+
+        if vuln_data:
+            # Convert to DataFrame
+            columns = ['severity', 'type', 'description', 'true_positive', 'attack', 'evidence', 'source', 'name']
+            data = pd.DataFrame(vuln_data, columns=columns)
+
+            # Label encoding for 'severity' and 'type'
+            label_encoder_severity = LabelEncoder()
+            label_encoder_type = LabelEncoder()
+
+            # Manually fit the label encoders with all possible categories
+            all_possible_severities = ['Informational', 'Low', 'Medium', 'High', 'Critical']
+            all_possible_types = ['DAST', 'Container', 'SCA', 'SAST', 'IaC', 'Secret']
+            label_encoder_severity.fit(all_possible_severities)
+            label_encoder_type.fit(all_possible_types)
+
+            # Now transform the data with the fitted label encoders
+            data['severity'] = label_encoder_severity.transform(data['severity'])
+            data['type'] = label_encoder_type.transform(data['type'])
+
+            # Feature engineering (e.g., extract length of description)
+            data['description_length'] = data['description'].apply(len)
+            data['attack_length'] = data['attack'].apply(len)
+            data['evidence_length'] = data['evidence'].apply(len)
+            data['source_length'] = data['source'].apply(len)
+            data['name_length'] = data['name'].apply(len)
+
+            # Features and labels
+            X = data[
+                ['severity', 'type', 'description_length', 'attack_length', 'evidence_length', 'source_length', 'name_length']]
+            y = data['true_positive']
+
+            # Split data into training and validation sets
+            X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+
+            # Scale features
+            scaler = StandardScaler()
+            X_train_scaled = scaler.fit_transform(X_train)
+            X_val_scaled = scaler.transform(X_val)
+
+            # Training the model
+            model = RandomForestClassifier()
+            model.fit(X_train_scaled, y_train)
+
+            # Validation
+            predictions = model.predict(X_val_scaled)
+            accuracy = accuracy_score(y_val, predictions)
+            print(f'Vulnerability Managment ML Model Accuracy: {accuracy}')
+
+            # Save the model and scalers
+            joblib.dump(model, 'model.pkl')
+            joblib.dump(scaler, 'scaler.pkl')
+            joblib.dump(label_encoder_severity, 'label_encoder_severity.pkl')
+            joblib.dump(label_encoder_type, 'label_encoder_type.pkl')
     except:
-        print(f'Warning: Unable to Connect to Vulnerability Data for ML Training!')
-    finally:
-        if db:
-            db.close()
-    # Convert vuln_all to a list of dictionaries
-    true_positive_dispos = ['Closed-Mitigated', 'Open-Reviewed', 'Open-RiskAccepted']
-    vuln_data = []
-    for vuln in vuln_all:
-        vuln_dict = {
-            "severity": vuln[0],
-            "type": vuln[1],
-            "description": vuln[2],
-            "true_positive": 1 if vuln[3] in true_positive_dispos else 0,
-            "attack": vuln[4],
-            "evidence": vuln[5],
-            "source": vuln[6],
-            "name": vuln[7]
-        }
-        vuln_data.append(vuln_dict)  # Directly append the dictionary
-
-    if vuln_data:
-        # Convert to DataFrame
-        columns = ['severity', 'type', 'description', 'true_positive', 'attack', 'evidence', 'source', 'name']
-        data = pd.DataFrame(vuln_data, columns=columns)
-
-        # Label encoding for 'severity' and 'type'
-        label_encoder_severity = LabelEncoder()
-        label_encoder_type = LabelEncoder()
-
-        # Manually fit the label encoders with all possible categories
-        all_possible_severities = ['Informational', 'Low', 'Medium', 'High', 'Critical']
-        all_possible_types = ['DAST', 'Container', 'SCA', 'SAST', 'IaC', 'Secret']
-        label_encoder_severity.fit(all_possible_severities)
-        label_encoder_type.fit(all_possible_types)
-
-        # Now transform the data with the fitted label encoders
-        data['severity'] = label_encoder_severity.transform(data['severity'])
-        data['type'] = label_encoder_type.transform(data['type'])
-
-        # Feature engineering (e.g., extract length of description)
-        data['description_length'] = data['description'].apply(len)
-        data['attack_length'] = data['attack'].apply(len)
-        data['evidence_length'] = data['evidence'].apply(len)
-        data['source_length'] = data['source'].apply(len)
-        data['name_length'] = data['name'].apply(len)
-
-        # Features and labels
-        X = data[
-            ['severity', 'type', 'description_length', 'attack_length', 'evidence_length', 'source_length', 'name_length']]
-        y = data['true_positive']
-
-        # Split data into training and validation sets
-        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
-
-        # Scale features
-        scaler = StandardScaler()
-        X_train_scaled = scaler.fit_transform(X_train)
-        X_val_scaled = scaler.transform(X_val)
-
-        # Training the model
-        model = RandomForestClassifier()
-        model.fit(X_train_scaled, y_train)
-
-        # Validation
-        predictions = model.predict(X_val_scaled)
-        accuracy = accuracy_score(y_val, predictions)
-        print(f'Vulnerability Managment ML Model Accuracy: {accuracy}')
-
-        # Save the model and scalers
-        joblib.dump(model, 'model.pkl')
-        joblib.dump(scaler, 'scaler.pkl')
-        joblib.dump(label_encoder_severity, 'label_encoder_severity.pkl')
-        joblib.dump(label_encoder_type, 'label_encoder_type.pkl')
+        print('Unable to train ML model')
 
 
 # Call the Jobs Here #
-train_model()
+train_model_every_six_hours()
