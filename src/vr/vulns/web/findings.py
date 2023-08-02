@@ -750,7 +750,7 @@ def finding(appid, id):
             len(response['Source']),
             len(response['VulnerabilityName'])
         )
-        if hasattr(prediction_response, 'json'):
+        if prediction_response and hasattr(prediction_response, 'json'):
             finding_accuracy = "{:.1f}".format(prediction_response.json['probability'])
         else:
             finding_accuracy = 'N/A'

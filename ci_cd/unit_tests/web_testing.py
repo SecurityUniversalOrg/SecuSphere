@@ -103,7 +103,12 @@ class TestWebApp(unittest.TestCase):
             ApplicationId=app.ID,
             Severity='High',
             Classification='SAST',
-            ReleaseDate=now
+            ReleaseDate=now,
+            Description='This is a very long fake description that makes no sense at all and should probably not be classified as a description.',
+            Attack='This Vulnerability can be exploited via remote injection calls',
+            Status='Open-Reviewed',
+            Evidence='It is in the source code.',
+            Source='CI_CD_Zap'
         )
         self.db.session.add(new_vuln)
         self.db.session.commit()
