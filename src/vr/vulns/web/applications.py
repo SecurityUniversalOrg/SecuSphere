@@ -7,8 +7,6 @@ from flask_login import login_required
 from vr.functions.table_functions import load_table, update_table
 from vr.assets.model.businessapplications import BusinessApplications, MakeBusinessApplicationsSchema, BusinessApplicationsSchema
 from vr.vulns.model.vulnerabilities import Vulnerabilities, MakeVulnerabilitiesSchema, VulnerabilitiesSchema
-from vr.assets.model.assetapplications import AssetApplications
-from vr.vulns.model.applicationendpoints import ApplicationEndpoints, MakeApplicationEndpointsSchema, ApplicationEndpointsSchema
 from vr.vulns.model.applicationregulations import ApplicationRegulations
 from vr.vulns.model.regulations import Regulations
 from vr.vulns.model.integrations import Integrations
@@ -16,7 +14,6 @@ from vr.vulns.model.vulnerabilityslas import VulnerabilitySLAs
 from vr.vulns.model.vulnerabilityslaapppair import VulnerabilitySLAAppPair
 from vr.sourcecode.model.appcodecomposition import AppCodeComposition
 from vr.sourcecode.model.servicetickets import ServiceTickets, ServiceTicketsSchema
-from vr.sourcecode.model.releaseversions import ReleaseVersions
 from vr.assets.model.supportcontacts import SupportContacts, SupportContactsSchema, SupportContactsSchema
 from vr.assets.model.apptosupportcontactassociations import AppToSupportContactAssociations
 from vr.assets.model.apptoappassociations import AppToAppAssociations
@@ -52,6 +49,7 @@ VULN_OPEN_STATUS = "Vulnerabilities.Status NOT LIKE 'Closed-%' AND Vulnerabiliti
 @vulns.route("/all_applications", methods=['GET', 'POST'])
 @login_required
 def all_applications():
+    app.logger.info('all_applications endpoint accessed')
     try:
         NAV['curpage'] = {"name": "All Applications"}
         admin_role = APP_ADMIN
