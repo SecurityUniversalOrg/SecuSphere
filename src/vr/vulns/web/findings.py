@@ -25,6 +25,7 @@ import base64
 from io import StringIO
 from flask import Response
 from config_engine import ENV
+from vr.functions.ml_functions import predict_vuln_validity
 
 
 NAV = {
@@ -738,8 +739,25 @@ def finding(appid, id):
             .filter(text(f'ID={appid}')).first()
         app_data = {'ID': appid, 'ApplicationName': app.ApplicationName}
         jira_integrations = check_if_jira_enabled(appid)
+
+        # Call the prediction function with the input data
+        prediction_response = predict_vuln_validity(
+            response['Severity'],
+            response['Classification'],
+            len(response['Description']),
+            len(response['Attack']),
+            len(response['Evidence']),
+            len(response['Source']),
+            len(response['VulnerabilityName'])
+        )
+        if hasattr(prediction_response, 'json'):
+            finding_accuracy = "{:.1f}".format(prediction_response.json['probability'])
+        else:
+            finding_accuracy = 'N/A'
+
         return render_template('view_finding.html', details=response, app_data=app_data, user=user,
-                               NAV=NAV, issue_notes=issue_notes, sla_policy=sla_policy, jira=jira_integrations)
+                               NAV=NAV, issue_notes=issue_notes, sla_policy=sla_policy, jira=jira_integrations,
+                               finding_accuracy=finding_accuracy)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS)
 
