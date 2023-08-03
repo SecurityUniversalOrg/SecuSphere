@@ -196,7 +196,7 @@ def train_model():
 
             # Manually fit the label encoders with all possible categories
             all_possible_severities = ['Informational', 'Low', 'Medium', 'High', 'Critical']
-            all_possible_types = ['DAST', 'Container', 'SCA', 'SAST', 'IaC', 'Secret']
+            all_possible_types = ['DAST', 'Container', 'SCA', 'SAST', 'IaC', 'Secret', 'DASTAPI']
             label_encoder_severity.fit(all_possible_severities)
             label_encoder_type.fit(all_possible_types)
 

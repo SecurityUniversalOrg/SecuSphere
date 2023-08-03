@@ -76,9 +76,16 @@ def update_mfa_status():
     elif status == 403:
         return render_template('403.html', user=user, NAV=NAV)
     # check user permissions
-    user.mfa_enabled = int(request.form.get('mfa_enabled'))
-    db_connection_handler(db)
-    return str(200)
+
+    updated_user = User.query.filter(User.id==user.id).first()
+    raw_response = request.form.get('mfa_enabled')
+    if raw_response == "1" or raw_response == "0":
+        updated_user.mfa_enabled = int(raw_response)
+        db.session.add(updated_user)
+        db_connection_handler(db)
+        return str(200)
+    else:
+        return str(500)
 
 
 @admin.route('/display_mfa_qr', methods=['GET'])
