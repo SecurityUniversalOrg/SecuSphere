@@ -7,6 +7,9 @@ from vr.assets.model.businessapplications import BusinessApplications, MakeBusin
 from vr.vulns.model.pipelinejobs import PipelineJobs
 from vr.vulns.model.sgconfigsettingsperjob import SgConfigSettingsPerJob
 from vr.vulns.model.sgresultsperjob import SgResultsPerJob
+from vr.assets.model.cicdpipelinebuilds import CICDPipelineBuilds
+from vr.assets.model.cicdpipelinestagedata import CICDPipelineStageData
+
 
 
 NAV = {
