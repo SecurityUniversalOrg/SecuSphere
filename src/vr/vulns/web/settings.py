@@ -13,6 +13,8 @@ from vr.vulns.model.vulnerabilityslaapppair import VulnerabilitySLAAppPair
 from vr.vulns.model.vulnerabilityslas import VulnerabilitySLAs
 from vr.vulns.model.regulations import Regulations
 from vr.assets.model.appenvironmentdata import AppEnvironmentData, AppEnvironmentDataSchema
+from vr.vulns.model.cicdpipelines import CICDPipelines, CICDPipelinesSchema
+from vr.vulns.model.appintegrations import AppIntegrations
 
 
 NAV = {
@@ -308,3 +310,106 @@ def _set_application_env_config(request, app_id, env_id):
         synchronize_session=False)
     db_connection_handler(db)
 
+
+@vulns.route("/add_cicd_pipeline/<app_id>", methods=['GET', 'POST'])
+@login_required
+def add_cicd_pipeline(app_id):
+    try:
+        NAV['curpage'] = {"name": "Add CI/CD Pipeline Integration"}
+        admin_role = APP_ADMIN
+        role_req = [APP_ADMIN]
+        perm_entity = 'Application'
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
+                                              permissions_entity=perm_entity)
+        status = _add_page_permissions_filter(session, admin_role)
+        if status == 401:
+            return redirect(url_for(ADMIN_LOGIN))
+        elif status == 403:
+            return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
+        if request.method == 'POST':
+            project_name = request.form.get('project_name')
+            url = request.form.get('url')
+            description = request.form.get('description')
+            source = request.form.get('source')
+
+            new_pipeline = CICDPipelines(
+                AppID=app_id,
+                IntegrationID=source,
+                Name=project_name,
+                Description=description,
+                Url=url,
+                Source="Jenkins"
+            )
+            db.session.add(new_pipeline)
+            db_connection_handler(db)
+
+            return redirect(url_for('vulns.all_cicd_pipelines', app_id=app_id))
+
+        all_sources = (
+            AppIntegrations.query
+                .with_entities(Integrations.ID, Integrations.Name, AppIntegrations.ID)
+                .join(Integrations, Integrations.ID == AppIntegrations.IntegrationID)  # Explicit join condition
+                .filter(text(f"Integrations.ToolType='Jenkins' AND AppIntegrations.AppID={app_id}"))
+                .all()
+        )
+
+        app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
+
+        return render_template('add_cicd_pipeline.html', app_data=app_data, user=user, NAV=NAV, all_sources=all_sources)
+    except RuntimeError:
+        return render_template('500.html'), 500
+
+@vulns.route("/all_cicd_pipelines/<app_id>")
+@login_required
+def all_cicd_pipelines(app_id):
+    try:
+        NAV['curpage'] = {"name": "All Application Environments"}
+        role_req = ['Admin']
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req)
+        if status == 401:
+            return redirect(url_for('admin.login'))
+        elif status == 403:
+            return render_template('403.html', user=user, NAV=NAV)
+
+        assets_all = CICDPipelines.query.filter(CICDPipelines.ApplicationID==app_id).all()
+        schema = CICDPipelinesSchema(many=True)
+        assets = schema.dump(
+            filter(lambda t: t.ID != '', assets_all)
+        )
+        app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
+        NAV['appbar'] = 'settings'
+        return render_template('all_cicd_pipelines.html', entities=assets, user=user,
+                               NAV=NAV, app_data=app_data)
+    except RuntimeError:
+        return render_template('500.html'), 500
+
+
+@vulns.route("/remove_cicd_pipeline", methods=['POST'])
+@login_required
+def remove_cicd_pipeline():
+    try:
+        NAV['curpage'] = {"name": "All Users"}
+        role_req = ['Admin']
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req)
+        if status == 401:
+            return redirect(url_for('admin.login'))
+        elif status == 403:
+            return render_template('403.html', user=user, NAV=NAV)
+
+        pipeline_id = request.form.get('pipeline_id')
+        del_pair = CICDPipelines.query\
+            .filter(text(f"CICDPipelines.ID={env_id}")).first()
+        if del_pair:
+            db.session.delete(del_pair)
+            db_connection_handler(db)
+        rsp_json = {'status': 'success'}
+        response = app.response_class(
+            response=json.dumps(rsp_json),
+            status=200,
+            mimetype='application/json'
+        )
+        return response
+    except RuntimeError:
+        return render_template('500.html'), 500
