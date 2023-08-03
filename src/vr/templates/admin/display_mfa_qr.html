@@ -7,16 +7,17 @@
    <h3 class="page_title mfa_font" style="color: black !important;"><strong>Security Universal MFA Setup</strong></h3><br>
 </header>
   <div id="mfa_enable_container">
-	<div class="checkbox_grp col_adj" onclick="toggleCol('mfa_enabled');">
-	  <div class="checkbox_label"><strong>MFA Enabled</strong></div>
-	  <div class="checkbox_box">
-		<label class="switch switch-green">
-		  <input type="checkbox"  onchange="updateMfaStatus();" class="switch-input" name="mfa_enabled" value="y" id="mfa_enabled" {% if user.mfa_enabled|int == 1 %}checked{% endif %}>
-		  <span class="switch-label" data-on="On" data-off="Off"></span>
-		  <span class="switch-handle"></span>
-		</label>
-	  </div>
-	</div>
+	<div class="checkbox_grp col_adj">
+      <div class="checkbox_label"><strong>MFA Enabled</strong></div>
+      <div class="checkbox_box">
+        <label class="switch switch-green">
+          <input type="checkbox" onchange="updateMfaStatus();" class="switch-input" name="mfa_enabled" value="y" id="mfa_enabled" {% if user.mfa_enabled|int == 1 %}checked{% endif %}>
+          <span class="switch-label" data-on="On" data-off="Off"></span>
+          <span class="switch-handle"></span>
+        </label>
+      </div>
+    </div>
+
   </div><br>
 <div class="mfa_container">
     <p class="page_title mfa_font" style="color: black !important;">Please start your favorite MFA client on your smartphone and scan the following QR Code with it:</p>
@@ -28,6 +29,28 @@
     <p class="page_title mfa_font" style="color: black !important;"><a href="{{ url_for('admin.profile') }}">Back to Profile</a></p><br><br>
 </div>
 </div>
+
+<script>
+function updateMfaStatus() {
+  var csrf_token = "{{ csrf_token() }}";
+  var active = document.getElementById('mfa_enabled').checked;
+  if (active) {
+    var mfa_enabled = '1'
+  } else {
+    var mfa_enabled = '0'
+  }
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+
+    }
+  };
+  xhttp.open("POST", 'update_mfa_status', true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+  xhttp.send("mfa_enabled=" + mfa_enabled);
+}
+</script>
 
 {% endblock %}
 
