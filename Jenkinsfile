@@ -160,7 +160,7 @@ pipeline {
             }
             steps {
                 script {
-                    jslDastOWASP('baseline', TEST_URL, API_KEY)
+                    jslDastOWASP('full', TEST_URL, API_KEY)
                     //jslDynamicApplicationSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010")
 
                     //jslDynamicApiSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010/api/openapi.yaml")
