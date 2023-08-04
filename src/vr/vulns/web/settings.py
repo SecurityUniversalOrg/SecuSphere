@@ -326,6 +326,14 @@ def add_cicd_pipeline(app_id):
             return redirect(url_for(ADMIN_LOGIN))
         elif status == 403:
             return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
+        sources = (
+            AppIntegrations.query
+                .with_entities(Integrations.ID, Integrations.Name, AppIntegrations.ID, AppIntegrations.AppEntity)
+                .join(Integrations, Integrations.ID == AppIntegrations.IntegrationID)  # Explicit join condition
+                .filter(text(f"Integrations.ToolType='Jenkins' AND AppIntegrations.AppID={app_id}"))
+                .first()
+        )
+        print(sources[0])
         if request.method == 'POST':
             project_name = request.form.get('project_name')
             url = request.form.get('url')
@@ -345,18 +353,10 @@ def add_cicd_pipeline(app_id):
 
             return redirect(url_for('vulns.all_cicd_pipelines', app_id=app_id))
 
-        all_sources = (
-            AppIntegrations.query
-                .with_entities(Integrations.ID, Integrations.Name, AppIntegrations.ID)
-                .join(Integrations, Integrations.ID == AppIntegrations.IntegrationID)  # Explicit join condition
-                .filter(text(f"Integrations.ToolType='Jenkins' AND AppIntegrations.AppID={app_id}"))
-                .all()
-        )
-
         app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
         app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
 
-        return render_template('add_cicd_pipeline.html', app_data=app_data, user=user, NAV=NAV, all_sources=all_sources)
+        return render_template('add_cicd_pipeline.html', app_data=app_data, user=user, NAV=NAV, all_sources=sources)
     except RuntimeError:
         return render_template('500.html'), 500
 
@@ -400,7 +400,7 @@ def remove_cicd_pipeline():
 
         pipeline_id = request.form.get('pipeline_id')
         del_pair = CICDPipelines.query\
-            .filter(text(f"CICDPipelines.ID={env_id}")).first()
+            .filter(text(f"CICDPipelines.ID={pipeline_id}")).first()
         if del_pair:
             db.session.delete(del_pair)
             db_connection_handler(db)

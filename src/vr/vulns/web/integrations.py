@@ -239,6 +239,34 @@ def all_app_integrations(app_id):
     except RuntimeError:
         return render_template('500.html'), 500
 
+@vulns.route("/remove_app_integration", methods=['POST'])
+@login_required
+def remove_app_integration():
+    try:
+        NAV['curpage'] = {"name": "All Users"}
+        role_req = ['Admin']
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req)
+        if status == 401:
+            return redirect(url_for('admin.login'))
+        elif status == 403:
+            return render_template('403.html', user=user, NAV=NAV)
+
+        env_id = request.form.get('env_id')
+        del_pair = AppIntegrations.query\
+            .filter(text(f"AppIntegrations.ID={env_id}")).first()
+        if del_pair:
+            db.session.delete(del_pair)
+            db_connection_handler(db)
+        rsp_json = {'status': 'success'}
+        response = app.response_class(
+            response=json.dumps(rsp_json),
+            status=200,
+            mimetype='application/json'
+        )
+        return response
+    except RuntimeError:
+        return render_template('500.html'), 500
+
 
 def _get_all_jira_projects(integration):
     email = decrypt_with_priv_key(integration['Username'])

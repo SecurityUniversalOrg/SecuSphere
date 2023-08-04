@@ -9,7 +9,7 @@
                 <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
 
                 </h3>
-                {% include "application_horizontal_bar.html" %}
+                {% include "component_horizontal_bar.html" %}
             </div>
         </div>
 
@@ -110,6 +110,7 @@ function submitIntegration() {
     xhttp.onreadystatechange = function() {
         document.getElementById('validate_btn').disabled = true;
         document.getElementById('submit_btn').disabled = false;
+        window.location.pathname = "//all_app_integrations/{{ app_data.ID }}";
     };
     xhttp.open("POST", "/submit_app_integration/{{ app_id }}", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

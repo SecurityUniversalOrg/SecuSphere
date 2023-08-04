@@ -126,7 +126,7 @@ def add_vulns_background_process(req_raw):
     findings = req_raw['findings']
     scan_type = req_raw['scanType']
 
-    app_cmdb_id = get_app_id(app_name, git_url)
+    app_cmdb_id = get_app_id(app_name)
 
     docker_img_id = None
     if 'dockerImg' in req_raw:
@@ -211,26 +211,23 @@ def add_app_id_to_docker_img(docker_img_id, app_cmdb_id, app_id_list):
     db_connection_handler(db)
 
 
-def get_app_id(app_name, git_url):
-    app_component = ''
-    a_name = ''
+def get_app_id(app_name):
     if '--' in app_name:
         a_name = app_name.split('--')[0]
         app_component = app_name.split('--')[1]
     else:
         a_name = app_name
         app_component = app_name.lower()
-    app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{a_name}' AND BusinessApplications.ApplicationAcronym='{app_component}'")).first()
+    app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{a_name}' AND BusinessApplications.ApplicationAcronym='{app_component.lower()}'")).first()
     if app:
         app_id = app.ID
     else:
         now = datetime.datetime.utcnow()
         new_app = BusinessApplications(
             ApplicationName=a_name,
-            RepoURL=git_url,
             AssignmentChangedDate=now,
             MalListingAddDate=now,
-            ApplicationAcronym=app_component
+            ApplicationAcronym=app_component.lower()
         )
         db.session.add(new_app)
         db_connection_handler(db)
