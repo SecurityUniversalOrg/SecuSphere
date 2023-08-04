@@ -10,11 +10,12 @@ class CICDPipelineBuilds(db.Model):
     PipelineID = db.Column(db.Integer, db.ForeignKey('CICDPipelines.ID', ondelete='CASCADE'))
     AddDate = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
     BuildName = db.Column(db.String(400))
+    BranchName = db.Column(db.String(600))
     Status = db.Column(db.String(40))
     StartTime = db.Column(db.DateTime, index=True)
     DurationMillis = db.Column(db.Integer)
 
-    def __init__(self, PipelineID=None, AddDate=None, BuildName=None, Status=None, StartTime=None, DurationMillis=None, ID=None):
+    def __init__(self, PipelineID=None, AddDate=None, BuildName=None, BranchName=None, Status=None, StartTime=None, DurationMillis=None, ID=None):
         if ID:
             self.ID = ID
         if PipelineID:
@@ -23,6 +24,8 @@ class CICDPipelineBuilds(db.Model):
             self.AddDate = AddDate
         if BuildName:
             self.BuildName = BuildName
+        if BranchName:
+            self.BranchName = BranchName
         if Status:
             self.Status = Status
         if StartTime:
@@ -38,6 +41,7 @@ class CICDPipelineBuildsSchema(Schema):
     PipelineID = fields.Int()
     AddDate = fields.Date()
     BuildName = fields.Str()
+    BranchName = fields.Str()
     Status = fields.Str()
     StartTime = fields.Date()
     DurationMillis = fields.Int()
