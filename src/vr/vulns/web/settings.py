@@ -338,10 +338,11 @@ def add_cicd_pipeline(app_id):
             project_name = request.form.get('project_name')
             url = request.form.get('url')
             description = request.form.get('description')
+            source = request.form.get('source')
 
             new_pipeline = CICDPipelines(
-                ApplicationID=app_id,
-                IntegrationID=sources[0],
+                AppID=app_id,
+                IntegrationID=source,
                 Name=project_name,
                 Description=description,
                 Url=url,
