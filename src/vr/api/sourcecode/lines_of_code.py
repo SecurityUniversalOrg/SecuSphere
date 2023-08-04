@@ -81,8 +81,9 @@ def add_loc():
             language_stats[f"{language}Loc"] += loc
 
     app_name = form['appName']
-    application_id = get_app_id(app_name, '')
-    new_entry = AppCodeComposition(ApplicationID=application_id, **language_stats)
+    git_branch = form['gitBranch']
+    application_id = get_app_id(app_name)
+    new_entry = AppCodeComposition(ApplicationID=application_id, BranchName=git_branch, **language_stats)
     db.session.add(new_entry)
     db_connection_handler(db)
 

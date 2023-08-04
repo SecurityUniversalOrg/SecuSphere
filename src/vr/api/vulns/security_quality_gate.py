@@ -27,7 +27,7 @@ def _add_pipeline_job_data(job_data):
     timestamp = job_data['buildStartTime']
     timestamp_seconds = timestamp / 1000
     start_dt_object = datetime.datetime.fromtimestamp(timestamp_seconds)
-    app_id = get_app_id(job_data['appName'], job_data['gitUrl'])
+    app_id = get_app_id(job_data['appName'])
     job = PipelineJobs(
         StartDate=start_dt_object,
         Status = "In Progress",

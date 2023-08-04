@@ -9,7 +9,7 @@
                 <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
 
                 </h3>
-                {% include "application_horizontal_bar.html" %}
+                {% include "component_horizontal_bar.html" %}
             </div>
         </div>
 
@@ -47,13 +47,13 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="projectName" style="color:white;">Project Name:</label>
                         <div class="col-sm-10  ">
-                            <input type="text" class="form-control" id="projectName" name="project_name" required>
+                            <input type="text" class="form-control" id="projectName" name="project_name" value="{{ all_sources[3] }}" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="url" style="color:white;">URL:</label>
+                        <label class="col-sm-2 control-label" for="url" style="color:white;">URL (optional):</label>
                         <div class="col-sm-10  ">
-                            <input type="url" class="form-control" id="url" name="url" required>
+                            <input type="url" class="form-control" id="url" name="url">
                         </div>
                     </div>
                     <div class="form-group">
@@ -66,11 +66,7 @@
                         <label class="col-sm-2 control-label" for="source" style="color:white;">Source:</label>
                         <div class="col-sm-10  ">
                             <select class="form-control" class="form-control selectpicker" id="source" name="source" data-live-search="true" data-container="body" style="width: 70%;">
-                                <option>Jenkins</option>
-                                <option>GitLab</option>
-                                <option>GitHub Actions</option>
-                                <option>Azure DevOps</option>
-                                <!-- Add more options as needed -->
+                                <option selected disabled>{{ all_sources[1] }}</option>
                             </select>
                         </div>
                     </div>
