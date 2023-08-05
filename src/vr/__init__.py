@@ -131,7 +131,7 @@ def train_model_every_six_hours():
 
 def get_jenkins_data_every_hour():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(get_jenkins_data, 'interval', hours=1)
+    scheduler.add_job(get_jenkins_data, 'interval', minutes=1)
     scheduler.start()
 
 if app.config['RUNTIME_ENV'] == 'test':
@@ -170,7 +170,7 @@ def train_model():
             else:
                 sub_key = "%s"
             sql = f"SELECT Severity, Classification, Description, Status, Attack, Evidence, Source, VulnerabilityName FROM Vulnerabilities WHERE (Status = {sub_key} OR Status = {sub_key} OR Status = {sub_key} OR Status = {sub_key})"
-            args = ('Closed-Mitigated', 'Open-Reviewed', 'Open-RiskAccepted', 'Closed-FalsePositive',)
+            args = ('Closed-Mitigated', 'Open-Reviewed', 'Open-RiskAccepted', 'Closed-Manual-False Positive',)
             cur.execute(sql, args)
             vuln_all = cur.fetchall()
         except:
@@ -340,7 +340,7 @@ def get_jenkins_data():
                     stage_timestamp = b['startTimeMillis'] / 1000.0
                     stage_start_time = datetime.datetime.utcfromtimestamp(stage_timestamp).strftime("%Y-%m-%d %H:%M:%S")
                     sql = f"INSERT INTO CICDPipelineStageData (BuildID, AddDate, StageName, BuildNode, Status, StartTime, DurationMillis) VALUES ({sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key})"
-                    args = (build_id, now, s['name'], s['execNode'], s['status'], stage_start_time, b['durationMillis'])
+                    args = (build_id, now, s['name'], s['execNode'], s['status'], stage_start_time, s['durationMillis'])
                     cur.execute(sql, args)
                     db.commit()
     db.close()

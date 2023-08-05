@@ -1186,7 +1186,7 @@ def add_issue_dispo():
                         {Vulnerabilities.MitigationDate: now},
                         synchronize_session=False)
                     db_connection_handler(db)
-                elif dispo == 'Open-SecReview':
+                elif dispo == 'Open-NeedSecReview':
                     dispo_option = request.form.get('peerReviewOption')
                     issue_note = request.form.get('peerReviewnote')
                     if issue_note:
@@ -1210,6 +1210,29 @@ def add_issue_dispo():
                                                      receiver_id=user.id)
                         _add_new_system_msg_status(msg_id, 'New',
                                                    user.id)  # Status is always added if receiver is known
+                elif dispo == 'Open-SecReview':
+                    dispo_option = request.form.get('conductSecurityReviewOption')
+                    issue_note = request.form.get('conductSecurityReviewnote')
+                    if issue_note:
+                        _add_issue_note_from_dispo('Security', issue_id, user.id, dispo_option, issue_note)
+
+                    msg = f"Security Review Started for FINDING ID: {issue_id} - NEW STATUS: Under Security Review"
+                    # get messages for issue_id
+                    cur_msgs = Messages.query \
+                        .filter(text(
+                        f"(MessagesStatus.Status IS NULL OR MessagesStatus.Status <> 'Closed') AND (Messages.EntityType='Vulnerability' AND Messages.EntityID={issue_id})")) \
+                        .join(MessagesStatus, MessagesStatus.MessageId == Messages.ID, isouter=True) \
+                        .all()
+                    for i in cur_msgs:
+                        if not i.ReceiverUserId:
+                            _assign_msg_receiver(i.ID, user.id)
+
+                        if i.MessageType == 'New Security Review Requests':
+                            _add_new_system_msg_status(i.ID, 'InProcess',
+                                                       user.id)  # Update the status out for the message reciever (current user)
+                        elif i.MessageType == 'Security Review Request Submitted':
+                            msg_id = _add_new_system_msg(user, issue_id, 'Started Security Review', msg,
+                                                         receiver_id=i.ReceiverUserId)
                 elif dispo == 'Closed-Manual':
                     dispo_option = request.form.get('closedManualOption')
                     issue_note = request.form.get('closedManualnote')
@@ -1240,6 +1263,12 @@ def add_issue_dispo():
                     db.session.query(Vulnerabilities).filter(text(f"Vulnerabilities.VulnerabilityID={issue_id}")).update(
                         {Vulnerabilities.LastModifiedDate: now,
                          Vulnerabilities.Status: f"{dispo}-{dispo_option}"},
+                        synchronize_session=False)
+                    db_connection_handler(db)
+                if dispo_option == 'Closed-Manual':
+                    db.session.query(Vulnerabilities).filter(
+                        text(f"Vulnerabilities.VulnerabilityID={issue_id}")).update(
+                        {Vulnerabilities.MitigationDate: now},
                         synchronize_session=False)
                     db_connection_handler(db)
 

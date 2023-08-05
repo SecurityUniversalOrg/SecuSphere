@@ -166,7 +166,7 @@ def add_vulns_background_process(req_raw):
 def _update_reopened_vulns(reopened_vulns):
     for i in reopened_vulns:
         db.session.query(Vulnerabilities).filter(text(f"Vulnerabilities.VulnerabilityID={i['VulnerabilityID']}")).update(
-            values={"Status": "Open-New"},
+            values={"Status": "Open-Rediscovered"},
             synchronize_session=False)
         db_connection_handler(db)
 
@@ -364,6 +364,7 @@ def _get_vulns_for_src_and_app(source_type, app_id, source, req_raw, scan_id):
     vulns_all = Vulnerabilities.query \
         .filter(text(f"ApplicationId='{app_id}' AND Source='{source}'")) \
         .all()
+
     # Determine unique
     for r in req_raw:
         new = True

@@ -24,11 +24,27 @@
             <span class="hidden-xs">Contacts</span>
         </a>
     </li>
-    <li role="presentation" {% if NAV['appbar'] == 'metrics' %} class="active"{% endif %}>
-        <a href="/metrics/{{ app_data.ID }}">
-            <span class="fas fa-chart-line" aria-hidden="true"></span>
+    <li role="presentation" class="dropdown{% if NAV['appbar'] == 'metrics' %} active{% endif %}">
+        <a class="dropdown-toggle active" data-toggle="dropdown" href="">
+            <span class="fa fa-sitemap" aria-hidden="true"></span>
             <span class="hidden-xs">Metrics</span>
+            <span class="caret"></span>
         </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="/metrics/{{ app_data.ID }}">
+                    <div class="fa fa-list-alt"></div>
+                    View Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="/component_KPIs/{{ app_data.ID }}">
+                    <div class="fa fa-list-alt"></div>
+                    View KPIs
+                </a>
+            </li>
+
+        </ul>
     </li>
     <li role="presentation" {% if NAV['appbar'] == 'components' %} class="active"{% endif %}>
         <a class="dropdown-toggle active" data-toggle="dropdown" href="">

@@ -80,6 +80,13 @@
                                         <li role="separator" class="divider"></li>
 
                                         {% if user.is_security or user.is_admin %}
+                                        <li role="presentation" data-toggle="modal" data-target="#conductSecurityReviewModal">
+                                            <a href="#">
+                                                <div class="fa fa-fire-extinguisher"></div> Security Review
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                        {% if user.is_security or user.is_admin %}
                                         <li role="presentation" data-toggle="modal" data-target="#closedManualModal">
                                             <a href="#">
                                                 <div class="fa fa-fire-extinguisher"></div> Close Finding
@@ -111,7 +118,7 @@
                                         </li>
                                         {% endif %}
                                     </ul>
-                                    <!-- Security Review Modal -->
+                                    <!-- Need Security Review Modal -->
                                     <div class="modal fade" id="peerReviewModal" role="dialog">
                                         <div class="modal-dialog">
 
@@ -135,7 +142,7 @@
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-primary" onclick="AddIssueDispo('Open-SecReview')">Save changes</button>
+                                                    <button type="button" class="btn btn-primary" onclick="AddIssueDispo('Open-NeedSecReview')">Save changes</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -155,7 +162,7 @@
                                                     <select class="form-control modal_input" id="devReviewedOption">
                                                         <option value="" disabled="disabled">--Select An Option--</option>
                                                         <option value="Confirmed">Confirmed</option>
-                                                        <option value="False Positive">False Positive</option>
+                                                        <option value="Possible False Positive">Possible False Positive</option>
                                                         <option value="Duplicate">Duplicate</option>
                                                         <option value="Out of Scope">Out of Scope</option>
                                                         <option value="Not Exploitable">Not Exploitable</option>
@@ -170,6 +177,34 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                     <button type="button" class="btn btn-primary" onclick="AddIssueDispo('Open-Reviewed')">Save changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Security Review Modal -->
+                                    <div class="modal fade" id="conductSecurityReviewModal" role="dialog">
+                                        <div class="modal-dialog">
+
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="conductSecurityReviewModalLabel">Security Review</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <select class="form-control modal_input" id="conductSecurityReviewOption">
+                                                        <option value="" disabled="disabled">--Select An Option--</option>
+                                                        <option value="Testing">Testing</option>
+                                                        <option value="InProcess">Start Review</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                    <br>
+                                                    <textarea class="form-control modal_input" id="conductSecurityReviewnote" rows="3" placeholder="Add a note here..."></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary" onclick="AddIssueDispo('Open-SecReview')">Save changes</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -193,6 +228,7 @@
                                                         <option value="Compensating Control">Compensating Control</option>
                                                         <option value="False Reporting">False Reporting</option>
                                                         <option value="Reclassification">Reclassification</option>
+                                                        <option value="Mitigated">Mitigated</option>
                                                         <option value="Other">Other</option>
                                                     </select>
                                                     <br>
@@ -793,10 +829,14 @@ function DeleteIssueNote() {
 <script>
 function AddIssueDispo(dispo) {
   var issue_id = document.getElementById('issue_id').value;
-  if (dispo == "Open-SecReview") {
+  if (dispo == "Open-NeedSecReview") {
       var peerReviewOption = document.getElementById('peerReviewOption').value;
       var peerReviewnote = document.getElementById('peerReviewnote').value;
       var param_str = "dispo=" + dispo + "&issue_id=" + issue_id + "&peerReviewOption=" + peerReviewOption + "&peerReviewnote=" + peerReviewnote;
+  } else if (dispo == "Open-SecReview") {
+      var conductSecurityReviewOption = document.getElementById('conductSecurityReviewOption').value;
+      var conductSecurityReviewnote = document.getElementById('conductSecurityReviewnote').value;
+      var param_str = "dispo=" + dispo + "&issue_id=" + issue_id + "&conductSecurityReviewOption=" + conductSecurityReviewOption + "&conductSecurityReviewnote=" + conductSecurityReviewnote;
   } else if (dispo == "Closed-Manual") {
       var closedManualOption = document.getElementById('closedManualOption').value;
       var closedManualnote = document.getElementById('closedManualnote').value;
