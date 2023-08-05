@@ -6,7 +6,9 @@ from flask import render_template, session, redirect, url_for
 from flask_login import login_required
 from vr.assets.model.businessapplications import BusinessApplications, MakeBusinessApplicationsSchema, BusinessApplicationsSchema
 from vr.vulns.model.vulnerabilities import Vulnerabilities, MakeVulnerabilitiesSchema, VulnerabilitiesSchema
-
+from vr.assets.model.cicdpipelinebuilds import CICDPipelineBuilds
+from vr.assets.model.cicdpipelinestagedata import CICDPipelineStageData
+from vr.vulns.model.cicdpipelines import CICDPipelines
 
 NAV = {
     'CAT': { "name": "Vulnerabilities", "url": "sourcecode.dashboard"}
@@ -14,7 +16,7 @@ NAV = {
 
 @vulns.route("/metrics/<id>")
 @login_required
-def application_metrics(id):
+def component_metrics(id):
     try:
         NAV['curpage'] = {"name": "Metrics"}
         admin_role = 'Application Admin'
@@ -36,7 +38,7 @@ def application_metrics(id):
         assets = schema.dump(vuln_all)
         NAV['appbar'] = 'metrics'
         app = BusinessApplications.query.filter(text(f'ID={id}')).first()
-        app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         findings_map = {}
         reviewed_findings = parse_vuln_findings(vuln_all, 'reviewed')
         findings_map['reviewed_findings'] = reviewed_findings
@@ -60,8 +62,10 @@ def application_metrics(id):
         details_map = get_finding_by_dow(details_map, vuln_all)
         details_map = get_finding_by_test_type(details_map, vuln_all)
         details_map = get_finding_by_cwe_type(details_map, vuln_all)
-        return render_template('application_metrics.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
-                               findings_map=findings_map, details_map=details_map)
+        now = datetime.datetime.utcnow()
+        metrics = get_kpi('All', vuln_all, now)
+        return render_template('component_metrics.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
+                               findings_map=findings_map, details_map=details_map, metrics=metrics)
     except RuntimeError:
         return render_template('500.html'), 500
 
@@ -184,17 +188,17 @@ def parse_vuln_findings(all_vulns, filter_type):
     findings = {'total': 0, 'critical': 0, 'high': 0, 'medium': 0, 'low': 0, 'info': 0}
     for vuln in all_vulns:
         dispo = vuln.Status
-        if dispo == 'Open-Reviewed':
+        if dispo.startswith('Open-Reviewed-'):
             dispo = 'reviewed'
-        elif dispo == 'Open-RiskAccepted':
+        elif dispo.startswith('Open-RiskAccepted-'):
             dispo = 'risk_accepted'
         elif dispo.startswith('Closed-'):
             dispo = 'closed'
-        elif dispo == 'Closed-Manual':
+        elif dispo.startswith('Closed-Manual-'):
             dispo = 'closed_manually'
-        elif dispo == 'Open-SecReview':
+        elif dispo.startswith('Open-SecReview-'):
             dispo = 'secreview_findings'
-        elif dispo == 'Closed-FP':
+        elif dispo.startswith('Closed-Auto-False Positive') or dispo == 'Closed-Manual-False Positive':
             dispo = 'false_positive'
         if dispo == filter_type or filter_type == 'total':
             findings = _set_vuln_findings(findings, vuln)
@@ -322,23 +326,416 @@ def applevel_metrics(app_name):
         details_map = get_finding_by_test_type(details_map, vuln_all)
         details_map = get_finding_by_cwe_type(details_map, vuln_all)
         now = datetime.datetime.utcnow()
-        mttr = get_mean_time_to_remediate_kpi('All', vuln_all, now)
+        metrics = get_kpi('All', vuln_all, now)
         return render_template('application_metrics.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
-                               findings_map=findings_map, details_map=details_map, mttr_days=mttr)
+                               findings_map=findings_map, details_map=details_map, metrics=metrics)
     except RuntimeError:
         return render_template('500.html'), 500
 
 
-def get_mean_time_to_remediate_kpi(time_frame, vuln_data, now_dt_obj):
+def get_kpi(time_frame, vuln_data, now_dt_obj):
     total_time = 0
     total_eligible = 0
+    total_finding_false_positive = 0
+    total_findings = len(vuln_data)
+    total_finding_false_negative = 0
     for vuln in vuln_data:
         if vuln.MitigationDate:
             remediation_time = (vuln.MitigationDate - vuln.AddDate).days
             total_time += remediation_time
             total_eligible += 1
+        if vuln.Status == 'Closed-Manual-False Positive':
+            total_finding_false_positive += 1
+        if vuln.Source.startswith("Manual-"):
+            total_finding_false_negative += 1
     if total_eligible:
-        mttr = total_time / total_eligible
+        mttr = f"{total_time / total_eligible:.2f}"
     else:
-        mttr = 0
-    return mttr
+        mttr = "N/A"
+    if total_finding_false_positive:
+        false_positive_rate = total_finding_false_positive / total_findings
+    else:
+        false_positive_rate = 0
+    finding_accuracy = 100 - false_positive_rate
+    if total_finding_false_negative:
+        false_negative_rate = total_finding_false_negative / (total_findings + total_finding_false_negative)
+    else:
+        false_negative_rate = 0
+    metrics = {
+        'mttr': mttr,
+        'false_positive_rate': f"{false_positive_rate:.2f}",
+        'false_negative_rate': f"{false_negative_rate:.2f}",
+        'finding_accuracy': f"{finding_accuracy:.2f}"
+    }
+    return metrics
+
+
+@vulns.route("/application_KPIs/<app_name>")
+@login_required
+def application_KPIs(app_name):
+    try:
+        NAV['curpage'] = {"name": "KPIs"}
+        admin_role = 'Application Admin'
+        role_req = ['Application Admin', 'Application Viewer']
+        perm_entity = 'Application'
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
+                                              permissions_entity=perm_entity)
+        status = _entity_page_permissions_filter(id, user_roles, session, admin_role)
+
+        if status == 401:
+            return redirect(url_for('admin.login'))
+        elif status == 403:
+            return render_template('403.html', user=user, NAV=NAV)
+        key = 'BusinessApplications.ApplicationName'
+        val = app_name
+        filter_list = [f"{key} = '{val}'"]
+        vuln_all = Vulnerabilities.query\
+            .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId)\
+            .filter(text("".join(filter_list))).all()
+        schema = VulnerabilitiesSchema(many=True)
+        assets = schema.dump(vuln_all)
+        NAV['appbar'] = 'metrics'
+        app = BusinessApplications.query.filter(text(f'ApplicationName="{app_name}"')).first()
+        app_data = {'ID': app.ID, 'ApplicationName': app.ApplicationName}
+
+        kpi_tree = get_kpi_tree(app.ApplicationName, scope='Application')
+        vuln_by_category = {}
+        vuln_metrics = {
+            'Secret': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                       'metrics': {}},
+            'SCA': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                    'metrics': {}},
+            'SAST': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                     'metrics': {}},
+            'IaC': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                    'metrics': {}},
+            'Container': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                          'metrics': {}},
+            'Infrastructure': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0,
+                               'riskaccepted_findings': 0, 'metrics': {}},
+            'DAST': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                     'metrics': {}},
+            'DASTAPI': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                        'metrics': {}}
+        }
+        for vuln in vuln_all:
+            vuln_category = vuln.Classification
+            if vuln_category not in vuln_by_category:
+                vuln_by_category[vuln_category] = [vuln]
+            else:
+                vuln_by_category[vuln_category].append(vuln)
+            vuln_metrics[vuln_category]['total_findings'] += 1
+            vuln_status = vuln.Status
+            if vuln_status.startswith('Open-') and not vuln_status.startswith('Open-RiskAccepted-'):
+                vuln_metrics[vuln_category]['open_findings'] += 1
+            if vuln_status == 'Closed-Manual-Mitigated' or vuln_status == 'Closed-Mitigated':
+                vuln_metrics[vuln_category]['mitigated_findings'] += 1
+            if vuln_status.startswith('Open-RiskAccepted-') or vuln_status == 'Closed-Manual-Superseded or Deprecated Component' or vuln_status == 'Closed-Manual-Compensating Control':
+                vuln_metrics[vuln_category]['riskaccepted_findings'] += 1
+
+        for cat in vuln_by_category:
+            metrics = get_kpi('All', vuln_by_category[cat], 'Now')
+            vuln_metrics[cat]['metrics'] = metrics
+        return render_template('application_KPIs.html',  entities=assets, app_data=app_data, user=user, NAV=NAV, metrics=kpi_tree,
+                               vuln_metrics=vuln_metrics)
+    except RuntimeError:
+        return render_template('500.html'), 500
+
+
+def get_kpi_tree(entity_id, scope='Component'):
+    stages_all = []
+    if scope == 'Component':
+        stages_all = CICDPipelineStageData.query \
+            .with_entities(
+                CICDPipelineStageData.ID, CICDPipelineStageData.AddDate, CICDPipelineStageData.BuildNode,
+                CICDPipelineStageData.DurationMillis.label("StageDuration"), CICDPipelineStageData.StageName, CICDPipelineStageData.StartTime,
+                CICDPipelineStageData.Status.label("StageStatus"), CICDPipelineBuilds.Status.label("BuildStatus"),
+                CICDPipelineBuilds.DurationMillis.label("BuildDuration"), CICDPipelineBuilds.ID.label("BuildID")
+            )\
+            .join(CICDPipelineBuilds, CICDPipelineBuilds.ID == CICDPipelineStageData.BuildID) \
+            .join(CICDPipelines, CICDPipelines.ID == CICDPipelineBuilds.PipelineID)\
+            .filter(CICDPipelines.ApplicationID==entity_id).all()
+    elif scope == 'Application':
+        stages_all = CICDPipelineStageData.query \
+            .with_entities(
+            CICDPipelineStageData.ID, CICDPipelineStageData.AddDate, CICDPipelineStageData.BuildNode,
+            CICDPipelineStageData.DurationMillis.label("StageDuration"), CICDPipelineStageData.StageName,
+            CICDPipelineStageData.StartTime,
+            CICDPipelineStageData.Status.label("StageStatus"), CICDPipelineBuilds.Status.label("BuildStatus"),
+            CICDPipelineBuilds.DurationMillis.label("BuildDuration"), CICDPipelineBuilds.ID.label("BuildID")
+        ) \
+            .join(CICDPipelineBuilds, CICDPipelineBuilds.ID == CICDPipelineStageData.BuildID) \
+            .join(CICDPipelines, CICDPipelines.ID == CICDPipelineBuilds.PipelineID) \
+            .join(BusinessApplications, BusinessApplications.ID == CICDPipelines.ApplicationID) \
+            .filter(BusinessApplications.ApplicationName == entity_id).all()
+    elif scope == 'Global':
+        stages_all = CICDPipelineStageData.query \
+            .with_entities(
+            CICDPipelineStageData.ID, CICDPipelineStageData.AddDate, CICDPipelineStageData.BuildNode,
+            CICDPipelineStageData.DurationMillis.label("StageDuration"), CICDPipelineStageData.StageName,
+            CICDPipelineStageData.StartTime,
+            CICDPipelineStageData.Status.label("StageStatus"), CICDPipelineBuilds.Status.label("BuildStatus"),
+            CICDPipelineBuilds.DurationMillis.label("BuildDuration"), CICDPipelineBuilds.ID.label("BuildID")
+        ) \
+            .join(CICDPipelineBuilds, CICDPipelineBuilds.ID == CICDPipelineStageData.BuildID) \
+            .join(CICDPipelines, CICDPipelines.ID == CICDPipelineBuilds.PipelineID) \
+            .all()
+    # Ave time to complete scanning
+    # Maximum time to complete scanning
+    # Percentage of pipeline failures due to scanning
+    # Build time impact due to scanning
+    stage_data = {
+        'secret': {
+            'stage_name': 'Secret Scanning',
+            'total_build_time': 0,
+            'highest_build_time': 0,
+            'ave_scan_time': 0,
+            'total_responsible_failures': 0,
+            'percent_of_all_pipeline_failures': 0,
+            'total_build_time_percent': 0,
+            'stages': [],
+        },
+        'sca': {
+            'stage_name': 'Software Composition Analysis',
+            'total_build_time': 0,
+            'highest_build_time': 0,
+            'ave_scan_time': 0,
+            'total_responsible_failures': 0,
+            'percent_of_all_pipeline_failures': 0,
+            'total_build_time_percent': 0,
+            'stages': [],
+        },
+        'sast': {
+            'stage_name': 'Static Application Security Testing',
+            'total_build_time': 0,
+            'highest_build_time': 0,
+            'ave_scan_time': 0,
+            'total_responsible_failures': 0,
+            'percent_of_all_pipeline_failures': 0,
+            'total_build_time_percent': 0,
+            'stages': [],
+        },
+        'iac': {
+            'stage_name': 'Infrastructure-as-Code Security Testing',
+            'total_build_time': 0,
+            'highest_build_time': 0,
+            'ave_scan_time': 0,
+            'total_responsible_failures': 0,
+            'percent_of_all_pipeline_failures': 0,
+            'total_build_time_percent': 0,
+            'stages': [],
+        },
+        'docker': {
+            'stage_name': 'Docker Container Scanning',
+            'total_build_time': 0,
+            'highest_build_time': 0,
+            'ave_scan_time': 0,
+            'total_responsible_failures': 0,
+            'percent_of_all_pipeline_failures': 0,
+            'total_build_time_percent': 0,
+            'stages': [],
+        },
+        'infrastructure': {
+            'stage_name': 'Infrastructure Security Scanning',
+            'total_build_time': 0,
+            'highest_build_time': 0,
+            'ave_scan_time': 0,
+            'total_responsible_failures': 0,
+            'percent_of_all_pipeline_failures': 0,
+            'total_build_time_percent': 0,
+            'stages': [],
+        },
+        'dast': {
+            'stage_name': 'Test Release',
+            'total_build_time': 0,
+            'highest_build_time': 0,
+            'ave_scan_time': 0,
+            'total_responsible_failures': 0,
+            'percent_of_all_pipeline_failures': 0,
+            'total_build_time_percent': 0,
+            'stages': [],
+        }
+    }
+    prev_stage_status = ''
+    unique_builds = []
+    for stage in stages_all:
+        build_id = stage[9]
+        if build_id not in unique_builds:
+            unique_builds.append(build_id)
+        for key in stage_data:
+            if stage_data[key]['stage_name'] == stage[4]:
+                cur_status = stage[6]
+                if cur_status == 'FAILED' and prev_stage_status == 'SUCCESS':
+                    stage_data[key]['total_responsible_failures'] += 1
+                stage_data[key]['stages'].append(stage)
+        prev_stage_status = stage[6]
+
+    for cat in stage_data:
+        total_build_time = 0
+        total_stage_time = 0
+        highest_build_time = 0
+        for stage in stage_data[cat]['stages']:
+            new_stage_time = stage[3]
+            new_build_time = stage[8]
+            if new_stage_time > highest_build_time:
+                highest_build_time = new_stage_time
+            total_build_time += new_build_time
+            total_stage_time += new_stage_time
+        percent_of_all_pipeline_failures = (stage_data[cat]['total_responsible_failures'] / len(unique_builds)) * 100 if unique_builds else 0
+        total_build_time_percent = (total_stage_time / total_build_time if (total_build_time != 0 and total_stage_time != 0) else 0)  * 100
+        stage_data[cat]['highest_build_time'] = convert_milliseconds(highest_build_time)
+        stage_data[cat]['ave_scan_time'] = convert_milliseconds(total_stage_time / len(stage_data[cat]['stages']) if (stage_data[cat]['stages'] != 0 and total_stage_time) else 0)
+        stage_data[cat]['percent_of_all_pipeline_failures'] = f"{percent_of_all_pipeline_failures:.2f}"
+        stage_data[cat]['total_build_time_percent'] = f"{total_build_time_percent:.2f}"
+        stage_data[cat]['total_build_time'] = total_build_time
+    return stage_data
+
+
+def convert_milliseconds(ms):
+    # Convert milliseconds to seconds
+    seconds = ms / 1000
+
+    # Convert seconds to minutes and remaining seconds
+    minutes = seconds // 60
+    seconds = seconds % 60
+
+    return int(minutes), f"{seconds:.2f}"
+
+
+@vulns.route("/component_KPIs/<app_id>")
+@login_required
+def component_KPIs(app_id):
+    try:
+        NAV['curpage'] = {"name": "KPIs"}
+        admin_role = 'Application Admin'
+        role_req = ['Application Admin', 'Application Viewer']
+        perm_entity = 'Application'
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
+                                              permissions_entity=perm_entity)
+        status = _entity_page_permissions_filter(id, user_roles, session, admin_role)
+
+        if status == 401:
+            return redirect(url_for('admin.login'))
+        elif status == 403:
+            return render_template('403.html', user=user, NAV=NAV)
+        key = 'BusinessApplications.ID'
+        val = app_id
+        filter_list = [f"{key} = '{val}'"]
+        vuln_all = Vulnerabilities.query\
+            .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId)\
+            .filter(text("".join(filter_list))).all()
+        schema = VulnerabilitiesSchema(many=True)
+        assets = schema.dump(vuln_all)
+        NAV['appbar'] = 'metrics'
+        app = BusinessApplications.query.filter(text(f'ID="{app_id}"')).first()
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
+
+        kpi_tree = get_kpi_tree(app.ID)
+        vuln_by_category = {}
+        vuln_metrics = {
+            'Secret': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                       'metrics': {}},
+            'SCA': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                    'metrics': {}},
+            'SAST': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                     'metrics': {}},
+            'IaC': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                    'metrics': {}},
+            'Container': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                          'metrics': {}},
+            'Infrastructure': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0,
+                               'riskaccepted_findings': 0, 'metrics': {}},
+            'DAST': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                     'metrics': {}},
+            'DASTAPI': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                        'metrics': {}}
+        }
+        for vuln in vuln_all:
+            vuln_category = vuln.Classification
+            if vuln_category not in vuln_by_category:
+                vuln_by_category[vuln_category] = [vuln]
+            else:
+                vuln_by_category[vuln_category].append(vuln)
+            vuln_metrics[vuln_category]['total_findings'] += 1
+            vuln_status = vuln.Status
+            if vuln_status.startswith('Open-') and not vuln_status.startswith('Open-RiskAccepted-'):
+                vuln_metrics[vuln_category]['open_findings'] += 1
+            if vuln_status == 'Closed-Manual-Mitigated' or vuln_status == 'Closed-Mitigated':
+                vuln_metrics[vuln_category]['mitigated_findings'] += 1
+            if vuln_status.startswith('Open-RiskAccepted-') or vuln_status == 'Closed-Manual-Superseded or Deprecated Component' or vuln_status == 'Closed-Manual-Compensating Control':
+                vuln_metrics[vuln_category]['riskaccepted_findings'] += 1
+
+        for cat in vuln_by_category:
+            metrics = get_kpi('All', vuln_by_category[cat], 'Now')
+            vuln_metrics[cat]['metrics'] = metrics
+        return render_template('component_KPIs.html',  entities=assets, app_data=app_data, user=user, NAV=NAV, metrics=kpi_tree,
+                               vuln_metrics=vuln_metrics)
+    except RuntimeError:
+        return render_template('500.html'), 500
+
+
+@vulns.route("/global_KPIs")
+@login_required
+def global_KPIs():
+    try:
+        NAV['curpage'] = {"name": "KPIs"}
+        admin_role = 'Application Admin'
+        role_req = ['Application Admin', 'Application Viewer']
+        perm_entity = 'Application'
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
+                                              permissions_entity=perm_entity)
+        status = _entity_page_permissions_filter(id, user_roles, session, admin_role)
+
+        if status == 401:
+            return redirect(url_for('admin.login'))
+        elif status == 403:
+            return render_template('403.html', user=user, NAV=NAV)
+        vuln_all = Vulnerabilities.query\
+            .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId)\
+            .all()
+        schema = VulnerabilitiesSchema(many=True)
+        assets = schema.dump(vuln_all)
+
+        kpi_tree = get_kpi_tree('All', scope='Global')
+        vuln_by_category = {}
+        vuln_metrics = {
+            'Secret': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                       'metrics': {}},
+            'SCA': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                    'metrics': {}},
+            'SAST': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                     'metrics': {}},
+            'IaC': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                    'metrics': {}},
+            'Container': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                          'metrics': {}},
+            'Infrastructure': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0,
+                               'riskaccepted_findings': 0, 'metrics': {}},
+            'DAST': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                     'metrics': {}},
+            'DASTAPI': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
+                        'metrics': {}}
+        }
+        for vuln in vuln_all:
+            vuln_category = vuln.Classification
+            if vuln_category not in vuln_by_category:
+                vuln_by_category[vuln_category] = [vuln]
+            else:
+                vuln_by_category[vuln_category].append(vuln)
+            vuln_metrics[vuln_category]['total_findings'] += 1
+            vuln_status = vuln.Status
+            if vuln_status.startswith('Open-') and not vuln_status.startswith('Open-RiskAccepted-'):
+                vuln_metrics[vuln_category]['open_findings'] += 1
+            if vuln_status == 'Closed-Manual-Mitigated' or vuln_status == 'Closed-Mitigated':
+                vuln_metrics[vuln_category]['mitigated_findings'] += 1
+            if vuln_status.startswith('Open-RiskAccepted-') or vuln_status == 'Closed-Manual-Superseded or Deprecated Component' or vuln_status == 'Closed-Manual-Compensating Control':
+                vuln_metrics[vuln_category]['riskaccepted_findings'] += 1
+
+        for cat in vuln_by_category:
+            metrics = get_kpi('All', vuln_by_category[cat], 'Now')
+            vuln_metrics[cat]['metrics'] = metrics
+        return render_template('global_KPIs.html',  entities=assets, user=user, NAV=NAV, metrics=kpi_tree,
+                               vuln_metrics=vuln_metrics)
+    except RuntimeError:
+        return render_template('500.html'), 500
+
