@@ -333,7 +333,6 @@ def add_cicd_pipeline(app_id):
                 .filter(text(f"Integrations.ToolType='Jenkins' AND AppIntegrations.AppID={app_id}"))
                 .first()
         )
-        print(sources[0])
         if request.method == 'POST':
             project_name = request.form.get('project_name')
             url = request.form.get('url')
@@ -341,8 +340,8 @@ def add_cicd_pipeline(app_id):
             source = request.form.get('source')
 
             new_pipeline = CICDPipelines(
-                AppID=app_id,
-                IntegrationID=source,
+                ApplicationID=app_id,
+                IntegrationID=sources[0],
                 Name=project_name,
                 Description=description,
                 Url=url,
