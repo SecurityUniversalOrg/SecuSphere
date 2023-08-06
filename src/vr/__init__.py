@@ -132,7 +132,7 @@ def train_model_every_six_hours():
 
 def get_jenkins_data_every_hour():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(get_jenkins_data, 'interval', hours=1)
+    scheduler.add_job(get_jenkins_data, 'interval', minutes=1)
     scheduler.start()
 
 if app.config['RUNTIME_ENV'] == 'test':
