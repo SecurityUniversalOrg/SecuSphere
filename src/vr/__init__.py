@@ -24,6 +24,7 @@ from sklearn.metrics import accuracy_score
 import pandas as pd
 import joblib
 import os
+import json
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 from requests.auth import HTTPBasicAuth
@@ -131,7 +132,7 @@ def train_model_every_six_hours():
 
 def get_jenkins_data_every_hour():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(get_jenkins_data, 'interval', minutes=1)
+    scheduler.add_job(get_jenkins_data, 'interval', hours=1)
     scheduler.start()
 
 if app.config['RUNTIME_ENV'] == 'test':
@@ -286,63 +287,103 @@ def get_jenkins_data():
     cur.execute(sql, args)
     apps_all = cur.fetchall()
 
+    # Make a request to the Jenkins API
+    unique_jenkins_url = []
+    for a in apps_all:
+        instance_dict = {
+            'url': a[5],
+            'username': decrypt_with_priv_key(a[6]),
+            'token': decrypt_with_priv_key(a[7])
+        }
+        if instance_dict not in unique_jenkins_url:
+            unique_jenkins_url.append(instance_dict)
+
+    jenkins_instance_data = {}
+    for i in unique_jenkins_url:
+        response = requests.get(f"{i['url']}/api/json?tree=jobs[name,_class]", auth=(i['username'], i['token']))
+        # Parse the response
+        jobs = json.loads(response.text)['jobs']
+        jenkins_instance_data[i['url']] = {'jobs': jobs}
+
     for a in apps_all:
         cicd_pipeline_id = a[8]
         jenkins_url = a[5]
-        project_name = a[4]
+        project_name = a[4].lstrip().rstrip()
         username = decrypt_with_priv_key(a[6])
         token = decrypt_with_priv_key(a[7])
-        r = requests.get(f'{jenkins_url}/job/{project_name}/job/release%2F0.1.0-beta%2FTest-1/api/json',
-                         auth=HTTPBasicAuth(username, token))
-
-        if r.status_code == 200:
-            data = r.json()
-            pipeline_type = 'pipeline'
-            for i in data['property']:
-                if i['_class'] == 'org.jenkinsci.plugins.workflow.multibranch.BranchJobProperty':
+        # r = requests.get(f'{jenkins_url}/job/{project_name}/job/release%2F0.1.0-beta%2FTest-1/api/json', auth=HTTPBasicAuth(username, token))
+        for job in jenkins_instance_data[jenkins_url]['jobs']:
+            run = False
+            pipeline_type = 'Unknown'
+            if project_name == job['name']:
+                run = True
+                if job['_class'].endswith('WorkflowJob'):
+                    pipeline_type = 'pipeline'
+                elif job['_class'].endswith('WorkflowMultiBranchProject'):
                     pipeline_type = 'multibranch'
-                    break
-            builds = []
-            for build in data['builds']:
-                if pipeline_type == 'pipeline':
-                    branch_name = None
-                    build_req = requests.get(f'{jenkins_url}/job/{project_name}/{build["number"]}/wfapi/describe',
-                                              auth=HTTPBasicAuth(username, token))
+            if run:
+                if pipeline_type == 'multibranch':
+                    builds = []
+                    # Make a request to the Jenkins API for the specific multibranch pipeline
+                    url = f"{jenkins_url}/job/{project_name}/api/json?tree=jobs[name]"
+                    response = requests.get(url, auth=(username, token))
+
+                    # Check if the request was successful
+                    if response.status_code == 200:
+                        # Parse the response and get the branches
+                        branches = json.loads(response.text)['jobs']
+                        for branch in branches:
+                            r = requests.get(f'{jenkins_url}/job/{project_name}/job/{branch["name"]}/api/json', auth=(username, token))
+                            if r.status_code == 200:
+                                data = r.json()
+                                for build in data['builds']:
+                                    if pipeline_type == 'pipeline':
+                                        branch_name = None
+                                        build_req = requests.get(
+                                            f'{jenkins_url}/job/{project_name}/{build["number"]}/wfapi/describe',
+                                            auth=HTTPBasicAuth(username, token))
+                                    else:
+                                        branch_name = data['name']
+                                        build_req = requests.get(
+                                            f'{jenkins_url}/job/{project_name}/job/{branch_name}/{build["number"]}/wfapi/describe',
+                                            auth=HTTPBasicAuth(username, token))
+                                    if build_req.status_code == 200:
+                                        build_data = build_req.json()
+                                        build_data['stage_data'] = []
+                                        for i in build_data['stages']:
+                                            build_data['stage_data'].append(i)
+                                        build_data['branch_name'] = branch_name
+                                        builds.append(build_data)
+
+                    for b in builds:
+                        now = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+                        second_timestamp = b['startTimeMillis'] / 1000.0
+                        start_time = datetime.datetime.utcfromtimestamp(second_timestamp).strftime("%Y-%m-%d %H:%M:%S")
+
+                        # Check if the build data already exists
+                        check_sql = f"SELECT COUNT(*) FROM CICDPipelineBuilds WHERE PipelineID={sub_key} AND BuildName={sub_key} AND StartTime={sub_key} AND BranchName={sub_key}"
+                        check_args = (cicd_pipeline_id, b['name'], start_time, b['branch_name'])
+                        cur.execute(check_sql, check_args)
+                        result = cur.fetchone()
+                        if result[0] == 0:  # If build data does not exist, proceed with insertion
+                            sql = f"INSERT INTO CICDPipelineBuilds (PipelineID, AddDate, BuildName, BranchName, Status, StartTime, DurationMillis) VALUES ({sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key})"
+                            args = (
+                            cicd_pipeline_id, now, b['name'], b['branch_name'], b['status'], start_time, b['durationMillis'])
+                            cur.execute(sql, args)
+                            db.commit()
+                            build_id = cur.lastrowid
+                            for s in b['stage_data']:
+                                stage_timestamp = b['startTimeMillis'] / 1000.0
+                                stage_start_time = datetime.datetime.utcfromtimestamp(stage_timestamp).strftime(
+                                    "%Y-%m-%d %H:%M:%S")
+                                sql = f"INSERT INTO CICDPipelineStageData (BuildID, AddDate, StageName, BuildNode, Status, StartTime, DurationMillis) VALUES ({sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key})"
+                                args = (build_id, now, s['name'], s['execNode'], s['status'], stage_start_time,
+                                        s['durationMillis'])
+                                cur.execute(sql, args)
+                                db.commit()
                 else:
-                    branch_name = data['name']
-                    build_req = requests.get(
-                        f'{jenkins_url}/job/{project_name}/job/{branch_name}/{build["number"]}/wfapi/describe',
-                        auth=HTTPBasicAuth(username, token))
-                if build_req.status_code == 200:
-                    build_data = build_req.json()
-                    build_data['stage_data'] = []
-                    for i in build_data['stages']:
-                        build_data['stage_data'].append(i)
+                    print('Placeholder for pipeline type handler')
 
-                    builds.append(build_data)
-        for b in builds:
-            now = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            second_timestamp = b['startTimeMillis'] / 1000.0
-            start_time = datetime.datetime.utcfromtimestamp(second_timestamp).strftime("%Y-%m-%d %H:%M:%S")
-
-            # Check if the build data already exists
-            check_sql = f"SELECT COUNT(*) FROM CICDPipelineBuilds WHERE PipelineID={sub_key} AND BuildName={sub_key} AND StartTime={sub_key}"
-            check_args = (cicd_pipeline_id, b['name'], start_time)
-            cur.execute(check_sql, check_args)
-            result = cur.fetchone()
-            if result[0] == 0:  # If build data does not exist, proceed with insertion
-                sql = f"INSERT INTO CICDPipelineBuilds (PipelineID, AddDate, BuildName, BranchName, Status, StartTime, DurationMillis) VALUES ({sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key})"
-                args = (cicd_pipeline_id, now, b['name'], branch_name, b['status'], start_time, b['durationMillis'])
-                cur.execute(sql, args)
-                db.commit()
-                build_id = cur.lastrowid
-                for s in b['stage_data']:
-                    stage_timestamp = b['startTimeMillis'] / 1000.0
-                    stage_start_time = datetime.datetime.utcfromtimestamp(stage_timestamp).strftime("%Y-%m-%d %H:%M:%S")
-                    sql = f"INSERT INTO CICDPipelineStageData (BuildID, AddDate, StageName, BuildNode, Status, StartTime, DurationMillis) VALUES ({sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key}, {sub_key})"
-                    args = (build_id, now, s['name'], s['execNode'], s['status'], stage_start_time, s['durationMillis'])
-                    cur.execute(sql, args)
-                    db.commit()
     db.close()
 
 
