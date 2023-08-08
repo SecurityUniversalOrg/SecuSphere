@@ -91,6 +91,7 @@ pipeline {
             }
             steps {
                 jslOwaspSCA()
+                jslSendMicrosoftTeamsMessage()
                 //jslSoftwareCompositionAnalysis('Python')
             }
         }
