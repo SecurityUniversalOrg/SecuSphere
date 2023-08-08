@@ -62,7 +62,6 @@ def component_metrics(id):
         details_map = get_finding_by_dow(details_map, vuln_all)
         details_map = get_finding_by_test_type(details_map, vuln_all)
         details_map = get_finding_by_cwe_type(details_map, vuln_all)
-        now = datetime.datetime.utcnow()
         metrics = get_kpi(vuln_all)
         return render_template('component_metrics.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
                                findings_map=findings_map, details_map=details_map, metrics=metrics)
@@ -325,7 +324,6 @@ def applevel_metrics(app_name):
         details_map = get_finding_by_dow(details_map, vuln_all)
         details_map = get_finding_by_test_type(details_map, vuln_all)
         details_map = get_finding_by_cwe_type(details_map, vuln_all)
-        now = datetime.datetime.utcnow()
         metrics = get_kpi(vuln_all)
         return render_template('application_metrics.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
                                findings_map=findings_map, details_map=details_map, metrics=metrics)

@@ -78,8 +78,8 @@ pipeline {
                  }
             }
             steps {
-                jslOwaspSCA()
                 jslSecretScanning()
+                jslSendMicrosoftTeamsMessage()
             }
         }
 
@@ -91,7 +91,6 @@ pipeline {
             }
             steps {
                 jslOwaspSCA()
-                jslSendMicrosoftTeamsMessage()
                 //jslSoftwareCompositionAnalysis('Python')
             }
         }
