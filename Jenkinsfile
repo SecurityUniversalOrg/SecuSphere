@@ -78,8 +78,8 @@ pipeline {
                  }
             }
             steps {
-                jslOwaspSCA()
                 jslSecretScanning()
+                jslSendMicrosoftTeamsMessage()
             }
         }
 
