@@ -2,7 +2,7 @@ import datetime
 from vr.vulns import vulns
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter
 from sqlalchemy import text
-from flask import render_template, session, redirect, url_for
+from flask import render_template, session, redirect, url_for, request
 from flask_login import login_required
 from vr.assets.model.businessapplications import BusinessApplications, MakeBusinessApplicationsSchema, BusinessApplicationsSchema
 from vr.vulns.model.vulnerabilities import Vulnerabilities, MakeVulnerabilitiesSchema, VulnerabilitiesSchema
@@ -333,7 +333,7 @@ def applevel_metrics(app_name):
         return render_template('500.html'), 500
 
 
-def get_kpi(time_frame, vuln_data, now_dt_obj):
+def get_kpi(vuln_data):
     total_time = 0
     total_eligible = 0
     total_finding_false_positive = 0
@@ -370,7 +370,7 @@ def get_kpi(time_frame, vuln_data, now_dt_obj):
     return metrics
 
 
-@vulns.route("/application_KPIs/<app_name>")
+@vulns.route("/application_KPIs/<app_name>", methods=['GET', 'POST'])
 @login_required
 def application_KPIs(app_name):
     try:
@@ -388,7 +388,16 @@ def application_KPIs(app_name):
             return render_template('403.html', user=user, NAV=NAV)
         key = 'BusinessApplications.ApplicationName'
         val = app_name
-        filter_list = [f"{key} = '{val}'"]
+        filter_list = f"{key} = '{val}'"
+        start_date = None
+        end_date = None
+        if request.method == 'POST':
+            start_date = request.form.get('start_date').replace('T', ' ')
+            end_date = request.form.get('end_date').replace('T', ' ')
+            filter_list = f'{filter_list} AND ((AddDate BETWEEN "{start_date}" AND "{end_date}") OR ' \
+                          f'(MitigationDate BETWEEN "{start_date}" AND "{end_date}") OR ' \
+                          f'((LastModifiedDate BETWEEN "{start_date}" AND "{end_date}") AND (Status LIKE "Open-RiskAccepted-*" OR Status="Closed-Manual-Superseded or Deprecated Component" OR Status="Closed-Manual-Compensating Control")))'
+
         vuln_all = Vulnerabilities.query\
             .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId)\
             .filter(text("".join(filter_list))).all()
@@ -398,7 +407,7 @@ def application_KPIs(app_name):
         app = BusinessApplications.query.filter(text(f'ApplicationName="{app_name}"')).first()
         app_data = {'ID': app.ID, 'ApplicationName': app.ApplicationName}
 
-        kpi_tree = get_kpi_tree(app.ApplicationName, scope='Application')
+        kpi_tree = get_kpi_tree(app.ApplicationName, scope='Application', start_date=start_date, end_date=end_date)
         vuln_by_category = {}
         vuln_metrics = {
             'Secret': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
@@ -434,7 +443,7 @@ def application_KPIs(app_name):
                 vuln_metrics[vuln_category]['riskaccepted_findings'] += 1
 
         for cat in vuln_by_category:
-            metrics = get_kpi('All', vuln_by_category[cat], 'Now')
+            metrics = get_kpi(vuln_by_category[cat])
             vuln_metrics[cat]['metrics'] = metrics
         return render_template('application_KPIs.html',  entities=assets, app_data=app_data, user=user, NAV=NAV, metrics=kpi_tree,
                                vuln_metrics=vuln_metrics)
@@ -442,9 +451,13 @@ def application_KPIs(app_name):
         return render_template('500.html'), 500
 
 
-def get_kpi_tree(entity_id, scope='Component'):
+def get_kpi_tree(entity_id, scope='Component', start_date=None, end_date=None):
     stages_all = []
+    time_filter = f' AND CICDPipelineBuilds.StartTime BETWEEN "{start_date}" AND "{end_date}"'
     if scope == 'Component':
+        filter_str = f'CICDPipelines.ApplicationID={entity_id}'
+        if start_date:
+            filter_str = filter_str + time_filter
         stages_all = CICDPipelineStageData.query \
             .with_entities(
                 CICDPipelineStageData.ID, CICDPipelineStageData.AddDate, CICDPipelineStageData.BuildNode,
@@ -454,8 +467,11 @@ def get_kpi_tree(entity_id, scope='Component'):
             )\
             .join(CICDPipelineBuilds, CICDPipelineBuilds.ID == CICDPipelineStageData.BuildID) \
             .join(CICDPipelines, CICDPipelines.ID == CICDPipelineBuilds.PipelineID)\
-            .filter(CICDPipelines.ApplicationID==entity_id).all()
+            .filter(text(filter_str)).all()
     elif scope == 'Application':
+        filter_str = f'BusinessApplications.ApplicationName="{entity_id}"'
+        if start_date:
+            filter_str = filter_str + time_filter
         stages_all = CICDPipelineStageData.query \
             .with_entities(
             CICDPipelineStageData.ID, CICDPipelineStageData.AddDate, CICDPipelineStageData.BuildNode,
@@ -467,19 +483,33 @@ def get_kpi_tree(entity_id, scope='Component'):
             .join(CICDPipelineBuilds, CICDPipelineBuilds.ID == CICDPipelineStageData.BuildID) \
             .join(CICDPipelines, CICDPipelines.ID == CICDPipelineBuilds.PipelineID) \
             .join(BusinessApplications, BusinessApplications.ID == CICDPipelines.ApplicationID) \
-            .filter(BusinessApplications.ApplicationName == entity_id).all()
+            .filter(text(filter_str)).all()
     elif scope == 'Global':
-        stages_all = CICDPipelineStageData.query \
-            .with_entities(
-            CICDPipelineStageData.ID, CICDPipelineStageData.AddDate, CICDPipelineStageData.BuildNode,
-            CICDPipelineStageData.DurationMillis.label("StageDuration"), CICDPipelineStageData.StageName,
-            CICDPipelineStageData.StartTime,
-            CICDPipelineStageData.Status.label("StageStatus"), CICDPipelineBuilds.Status.label("BuildStatus"),
-            CICDPipelineBuilds.DurationMillis.label("BuildDuration"), CICDPipelineBuilds.ID.label("BuildID")
-        ) \
-            .join(CICDPipelineBuilds, CICDPipelineBuilds.ID == CICDPipelineStageData.BuildID) \
-            .join(CICDPipelines, CICDPipelines.ID == CICDPipelineBuilds.PipelineID) \
-            .all()
+        if start_date:
+            filter_str = f'CICDPipelineBuilds.StartTime BETWEEN "{start_date}" AND "{end_date}"'
+            stages_all = CICDPipelineStageData.query \
+                .with_entities(
+                CICDPipelineStageData.ID, CICDPipelineStageData.AddDate, CICDPipelineStageData.BuildNode,
+                CICDPipelineStageData.DurationMillis.label("StageDuration"), CICDPipelineStageData.StageName,
+                CICDPipelineStageData.StartTime,
+                CICDPipelineStageData.Status.label("StageStatus"), CICDPipelineBuilds.Status.label("BuildStatus"),
+                CICDPipelineBuilds.DurationMillis.label("BuildDuration"), CICDPipelineBuilds.ID.label("BuildID")
+            ) \
+                .join(CICDPipelineBuilds, CICDPipelineBuilds.ID == CICDPipelineStageData.BuildID) \
+                .join(CICDPipelines, CICDPipelines.ID == CICDPipelineBuilds.PipelineID) \
+                .filter(text(filter_str)).all()
+        else:
+            stages_all = CICDPipelineStageData.query \
+                .with_entities(
+                CICDPipelineStageData.ID, CICDPipelineStageData.AddDate, CICDPipelineStageData.BuildNode,
+                CICDPipelineStageData.DurationMillis.label("StageDuration"), CICDPipelineStageData.StageName,
+                CICDPipelineStageData.StartTime,
+                CICDPipelineStageData.Status.label("StageStatus"), CICDPipelineBuilds.Status.label("BuildStatus"),
+                CICDPipelineBuilds.DurationMillis.label("BuildDuration"), CICDPipelineBuilds.ID.label("BuildID")
+            ) \
+                .join(CICDPipelineBuilds, CICDPipelineBuilds.ID == CICDPipelineStageData.BuildID) \
+                .join(CICDPipelines, CICDPipelines.ID == CICDPipelineBuilds.PipelineID) \
+                .all()
     # Ave time to complete scanning
     # Maximum time to complete scanning
     # Percentage of pipeline failures due to scanning
@@ -602,7 +632,7 @@ def convert_milliseconds(ms):
     return int(minutes), f"{seconds:.2f}"
 
 
-@vulns.route("/component_KPIs/<app_id>")
+@vulns.route("/component_KPIs/<app_id>", methods=['GET', 'POST'])
 @login_required
 def component_KPIs(app_id):
     try:
@@ -620,17 +650,25 @@ def component_KPIs(app_id):
             return render_template('403.html', user=user, NAV=NAV)
         key = 'BusinessApplications.ID'
         val = app_id
-        filter_list = [f"{key} = '{val}'"]
+        filter_list = f"{key} = '{val}'"
+        start_date = None
+        end_date = None
+        if request.method == 'POST':
+            start_date = request.form.get('start_date').replace('T', ' ')
+            end_date = request.form.get('end_date').replace('T', ' ')
+            filter_list = f'{filter_list} AND ((AddDate BETWEEN "{start_date}" AND "{end_date}") OR ' \
+                          f'(MitigationDate BETWEEN "{start_date}" AND "{end_date}") OR ' \
+                          f'((LastModifiedDate BETWEEN "{start_date}" AND "{end_date}") AND (Status LIKE "Open-RiskAccepted-*" OR Status="Closed-Manual-Superseded or Deprecated Component" OR Status="Closed-Manual-Compensating Control")))'
         vuln_all = Vulnerabilities.query\
             .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId)\
-            .filter(text("".join(filter_list))).all()
+            .filter(text(filter_list)).all()
         schema = VulnerabilitiesSchema(many=True)
         assets = schema.dump(vuln_all)
         NAV['appbar'] = 'metrics'
         app = BusinessApplications.query.filter(text(f'ID="{app_id}"')).first()
         app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
-        kpi_tree = get_kpi_tree(app.ID)
+        kpi_tree = get_kpi_tree(app.ID, start_date=start_date, end_date=end_date)
         vuln_by_category = {}
         vuln_metrics = {
             'Secret': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
@@ -666,7 +704,7 @@ def component_KPIs(app_id):
                 vuln_metrics[vuln_category]['riskaccepted_findings'] += 1
 
         for cat in vuln_by_category:
-            metrics = get_kpi('All', vuln_by_category[cat], 'Now')
+            metrics = get_kpi(vuln_by_category[cat])
             vuln_metrics[cat]['metrics'] = metrics
         return render_template('component_KPIs.html',  entities=assets, app_data=app_data, user=user, NAV=NAV, metrics=kpi_tree,
                                vuln_metrics=vuln_metrics)
@@ -674,7 +712,7 @@ def component_KPIs(app_id):
         return render_template('500.html'), 500
 
 
-@vulns.route("/global_KPIs")
+@vulns.route("/global_KPIs", methods=['GET', 'POST'])
 @login_required
 def global_KPIs():
     try:
@@ -690,13 +728,26 @@ def global_KPIs():
             return redirect(url_for('admin.login'))
         elif status == 403:
             return render_template('403.html', user=user, NAV=NAV)
-        vuln_all = Vulnerabilities.query\
-            .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId)\
-            .all()
+
+        start_date = None
+        end_date = None
+        if request.method == 'POST':
+            start_date = request.form.get('start_date').replace('T', ' ')
+            end_date = request.form.get('end_date').replace('T', ' ')
+            filter_list = f'((AddDate BETWEEN "{start_date}" AND "{end_date}") OR ' \
+                          f'(MitigationDate BETWEEN "{start_date}" AND "{end_date}") OR ' \
+                          f'((LastModifiedDate BETWEEN "{start_date}" AND "{end_date}") AND (Status LIKE "Open-RiskAccepted-*" OR Status="Closed-Manual-Superseded or Deprecated Component" OR Status="Closed-Manual-Compensating Control")))'
+            vuln_all = Vulnerabilities.query\
+                .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId)\
+                .filter(text(filter_list)).all()
+        else:
+            vuln_all = Vulnerabilities.query \
+                .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId) \
+                .all()
         schema = VulnerabilitiesSchema(many=True)
         assets = schema.dump(vuln_all)
 
-        kpi_tree = get_kpi_tree('All', scope='Global')
+        kpi_tree = get_kpi_tree('All', scope='Global', start_date=start_date, end_date=end_date)
         vuln_by_category = {}
         vuln_metrics = {
             'Secret': {'total_findings': 0, 'open_findings': 0, 'mitigated_findings': 0, 'riskaccepted_findings': 0,
@@ -732,7 +783,7 @@ def global_KPIs():
                 vuln_metrics[vuln_category]['riskaccepted_findings'] += 1
 
         for cat in vuln_by_category:
-            metrics = get_kpi('All', vuln_by_category[cat], 'Now')
+            metrics = get_kpi(vuln_by_category[cat])
             vuln_metrics[cat]['metrics'] = metrics
         return render_template('global_KPIs.html',  entities=assets, user=user, NAV=NAV, metrics=kpi_tree,
                                vuln_metrics=vuln_metrics)

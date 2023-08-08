@@ -13,6 +13,18 @@
             </div>
         </div>
 
+         <!-- Time filter form -->
+        <form id="time-filter" action="/application_KPIs/{{ app_data.ApplicationName }}" method="post" style="display: none;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <label for="start_date" style="color: white !important;">Start Date and Time:</label>
+            <input type="datetime-local" id="start_date" name="start_date" style="width: 30%;">
+
+            <label for="end_date" style="color: white !important;">End Date and Time:</label>
+            <input type="datetime-local" id="end_date" name="end_date" style="width: 30%;">
+
+            <button type="submit" style="width: 15%;display: block;">Filter</button>
+        </form>
+
 
             <!-- end of tabs -->
     <div class="row">
@@ -30,6 +42,7 @@
                     <div class="clearfix">
                         <h3 class="has-filters" style="color: #333;">
                             Security Scanning Metrics
+                            <i id="filter-icon" class="fa fa-filter" style="cursor: pointer;"></i>
                         </h3>
                     </div>
                 </div>
@@ -471,5 +484,10 @@
 
 {#  Scripts  #}
 <script src='../static/js/Chart.js'></script>
-
+<script>
+        document.getElementById('filter-icon').addEventListener('click', function() {
+            var filterForm = document.getElementById('time-filter');
+            filterForm.style.display = filterForm.style.display === 'none' ? 'block' : 'none';
+        });
+    </script>
 {% endblock %}
