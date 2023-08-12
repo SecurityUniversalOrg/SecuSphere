@@ -73,7 +73,7 @@ def all_application_benchmarks(id):
 
         NAV['appbar'] = 'benchmarks'
         app = BusinessApplications.query.filter(text(f'ID={id}')).first()
-        app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         table_details = {
             "pg_cnt": pg_cnt,
             "page": int(page),
@@ -144,7 +144,7 @@ def benchmark_assessments(id):
 
         NAV['appbar'] = 'benchmarks'
         app = BusinessApplications.query.filter(text(f'ID={id}')).first()
-        app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         table_details = {
             "pg_cnt": pg_cnt,

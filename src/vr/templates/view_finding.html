@@ -415,6 +415,142 @@
 
 
                     <div class="view-finding">
+                        {% if details.CVEID %}
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Common Vulnerability Scoring System version 3 <span class="pull-right"><a data-toggle="collapse" href="#cvss3"><div
+                                        class="glyphicon glyphicon-chevron-up"></div></a></span></h4>
+                            </div>
+                            <table id="cvss3" class="table-striped table table-condensed table-hover centered" aria-describedby="CVSSv3 Table">
+                                <tr>
+                                    <th><strong>Attack Vector:</strong></th>
+                                    <td><strong>Attack Complexity:</strong></td>
+                                    <td><strong>Privileges Required:</strong></td>
+                                    <td><strong>User Interaction:</strong></td>
+                                    <td><strong>Scope:</strong></td>
+                                    <td><strong>Confidentiality Impact:</strong></td>
+                                    <td><strong>Integrity Impact:</strong></td>
+                                    <td><strong>Availability Impact:</strong></td>
+                                    <td><strong>Base Severity:</strong></td>
+                                    <td><strong>Base Score:</strong></td>
+                                    <td><strong>Exploitability Score:</strong></td>
+                                    <td><strong>Impact Score:</strong></td>
+                                </tr>
+                                <tr>
+                                  <td>{{ details.cvssV3attackVector }}</td>
+                                  <td>{{ details.cvssV3attackComplexity }}</td>
+                                  <td>{{ details.cvssV3privilegesRequired }}</td>
+                                  <td>{{ details.cvssV3userInteraction }}</td>
+                                  <td>{{ details.cvssV3scope }}</td>
+                                  <td>{{ details.cvssV3confidentialityImpact }}</td>
+                                  <td>{{ details.cvssV3integrityImpact }}</td>
+                                  <td>{{ details.cvssV3availabilityImpact }}</td>
+                                  <td>{{ details.cvssV3baseSeverity }}</td>
+                                  <td>{{ details.cvssV3baseScore }}</td>
+                                  <td>{{ details.cvssV3exploitabilityScore }}</td>
+                                  <td>{{ details.cvssV3impactScore }}</td>
+                                </tr>
+                              </table>
+                        </div>
+                        {% endif %}
+
+                        {% if details.CWEID %}
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Common Weakness Enumeration <span class="pull-right"><a data-toggle="collapse" href="#cwe"><div
+                                        class="glyphicon glyphicon-chevron-up"></div></a></span></h4>
+                            </div>
+                            <table id="cwe" class="table-striped table table-condensed table-hover centered" aria-describedby="CWE Details Table">
+                                <tr>
+                                    <th><strong>CWE Name:</strong></th>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.CWEName }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>CWE Description:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.CWEDescription }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Introduction Phase:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.ModesOfIntroductionPhase }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Introduction Note:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.ModesOfIntroductionNote }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Consequences Scope:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.CommonConsequencesScope }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Consequences Impact:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.CommonConsequencesImpact }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Detection Method:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.DetectionMethodsMethod }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Detection Method Description:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.DetectionMethodsDescription }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mitigation Phase:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.PotentialMitigationsPhase }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mitigation:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.PotentialMitigationsDescription }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Functional Areas:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.FunctionalAreas }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Affected Resources:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.AffectedResources }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Taxonomy:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.TaxonomyMappingsName }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Taxonomy Entry:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ details.TaxonomyMappingsEntryName }}</td>
+                                </tr>
+
+                              </table>
+                        </div>
+                        {% endif %}
+
+
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4>Description <span class="pull-right"><a data-toggle="collapse" href="#vuln_desc"><div

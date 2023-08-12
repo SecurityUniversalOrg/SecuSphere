@@ -122,7 +122,7 @@ def pipeline_jobs(id):
 
         NAV['appbar'] = 'ci_cd'
         app = BusinessApplications.query.filter(text(f'ID={id}')).first()
-        app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         table_details = {
             "pg_cnt": pg_cnt,
             "page": int(page),
@@ -138,9 +138,9 @@ def pipeline_jobs(id):
         return render_template('500.html'), 500
 
 
-@vulns.route("/add_cicd_pipeline_stage", methods=['GET'])
+@vulns.route("/add_cicd_pipeline_stage/<appid>", methods=['GET'])
 @login_required
-def add_cicd_pipeline_stage():
+def add_cicd_pipeline_stage(appid):
     NAV['curpage'] = {"name": "Add CI/CD Pipeline Stage"}
     admin_role = APP_ADMIN
     role_req = [APP_ADMIN, 'Application Viewer']
@@ -152,7 +152,12 @@ def add_cicd_pipeline_stage():
         return redirect(url_for('admin.login'))
     elif status == 403:
         return render_template('403.html', user=user, NAV=NAV)
-    return render_template('add_cicd_pipeline_stage.html', user=user, NAV=NAV)
+
+    NAV['appbar'] = 'ci_cd'
+    app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
+    app_data = {'ID': appid, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
+
+    return render_template('add_cicd_pipeline_stage.html', user=user, NAV=NAV, app_data=app_data)
 
 
 @vulns.route("/get_cicd_pipeline_stage_data", methods=['POST'])

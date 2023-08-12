@@ -17,6 +17,7 @@ from vr.admin.oauth2 import require_oauth
 from vr.admin.functions import db_connection_handler
 from authlib.integrations.flask_oauth2 import current_token
 from config_engine import ENV
+import re
 
 
 ERROR_RESP = "Error: Invalid API Request"
@@ -152,6 +153,14 @@ def add_vulns_background_process(req_raw):
         i['ApplicationId'] = app_cmdb_id
         if docker_img_id:
             i['DockerImageId'] = docker_img_id
+        if i['VulnerablePackage']:
+            pattern = r'([^:-]+)(?:[:\-]([\d\w\.-]+))?'
+            match = re.match(pattern, i['VulnerablePackage'])
+
+            if match:
+                i['VulnerablePackage'] = match.group(1)
+                i['VulnerablePackageVersion'] = match.group(2) if match.group(2) else 'No version'
+
         full_findings.append(i)
 
     if full_findings:

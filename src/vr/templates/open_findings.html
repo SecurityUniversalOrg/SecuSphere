@@ -6,11 +6,13 @@
         <!-- start of tabs -->
         <div class="row">
             <div class="col-md-12 active">
+
                 <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">
-                    {{ app_data.ApplicationName }}
+                    {{ app_data.ApplicationName }}:{{ app_data.Component }}
 
                 </h3>
-                {% include "application_horizontal_bar.html" %}
+                {% include "component_horizontal_bar.html" %}
+
             </div>
         </div>
 
@@ -136,10 +138,7 @@
                             <div id="open_findings_wrapper"
                                  class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 
-                                <div id="open_findings_filter" class="dataTables_filter" style="float: right;padding-top: 1em;padding-bottom: 1em;"><label>Search:<input
-                                        type="search" class="form-control input-sm" placeholder=""
-                                        aria-controls="open_findings"></label></div>
-                                <table id="open_findings" aria-describedby="Component Table"
+                                 <table id="open_findings" aria-describedby="Component Table"
                                        class="tablesorter-bootstrap table table-condensed table-striped table-hover dataTable no-footer">
                                     <thead>
                                     <tr>

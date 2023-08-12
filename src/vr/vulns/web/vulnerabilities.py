@@ -634,6 +634,7 @@ def all_app_vulns_filtered(app_name, type, val):
 
         table_details = _set_table_details(pg_cnt, page, vuln_all, per_page, orderby)
 
+        NAV['appbar'] = 'findings'
         app = BusinessApplications.query.filter(text(f'ApplicationName="{app_name}"')).first()
         app_data = {'ID': app.ID, 'ApplicationName': app.ApplicationName}
 
