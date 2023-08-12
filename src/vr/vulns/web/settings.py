@@ -249,8 +249,9 @@ def edit_application_environment(app_id, env_id):
             AppEnvironmentData.ImplementsWebApp, AppEnvironmentData.ImplementsAPI, AppEnvironmentData.PublicFacingWebApp,
             AppEnvironmentData.PublicFacingAPI,
             AppEnvironmentData.WebURL, AppEnvironmentData.OpenAPISpecURL, AppEnvironmentData.AuthType,
-            AppEnvironmentData.TestUsername, AppEnvironmentData.TestPasswordReference
+            AppEnvironmentData.TestUsername, AppEnvironmentData.TestPasswordReference, BusinessApplications.ApplicationAcronym
         )\
+            .join(BusinessApplications, BusinessApplications.ID==AppEnvironmentData.AppID)\
             .filter(text(f'AppEnvironmentData.ID={env_id}')).first()
         app_data = {'envID': app.ID, 'ID': app.AppID, 'EnvironmentName': app.EnvironmentName, 'AddDate': app.AddDate,
                     'EnvironmentClassification': app.EnvironmentClassification, 'Status': app.Status,
