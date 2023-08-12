@@ -1116,7 +1116,7 @@ class TestWebApp(unittest.TestCase):
         assert response.status_code == 200
 
     def test_add_cicd_pipeline_stage_get(self):
-        route = f"/add_cicd_pipeline_stage"
+        route = f"/add_cicd_pipeline_stage/1"
         response = self._get_test_handler(route)
         assert response.status_code == 200
 
