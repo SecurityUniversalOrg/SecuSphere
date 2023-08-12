@@ -26,6 +26,8 @@ from io import StringIO
 from flask import Response
 from config_engine import ENV
 from vr.functions.ml_functions import predict_vuln_validity
+from vr.vulns.model.cvssbasescoresv3 import CVSSBaseScoresV3
+from vr.vulns.model.cwedetails import CWEDetails
 
 
 NAV = {
@@ -94,7 +96,7 @@ def open_findings(id):
         .filter(text(f'ApplicationID={id}')).first()
     NAV['appbar'] = 'findings'
     app = BusinessApplications.query.filter(text(f'ID={id}')).first()
-    app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
+    app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
     now = datetime.datetime.utcnow()
     vulns = []
     for vuln in assets:
@@ -123,6 +125,7 @@ def open_findings(id):
         "rec_start": (int(page)-1) * per_page + 1 if int(page) != 1 else 1,
         "rec_end": int(page) * per_page if (int(page) * per_page) < vuln_all.total else vuln_all.total
     }
+
     return render_template('open_findings.html', entities=assets, app_data=app_data, user=user, NAV=NAV,
                            sla_policy=sla_policy, table_details= table_details)
 
@@ -707,12 +710,25 @@ def finding(appid, id):
             Vulnerabilities.Status, Vulnerabilities.MitigationDate, Vulnerabilities.ScanId,
             DockerImages.ImageName, DockerImages.ImageTag, DockerImages.ID.label('DockerImageID'),
             ApplicationEndpoints.ID.label('EndpointID'), ImportedCode.ID.label('ImportedCodeID'),
-            BusinessApplications.RepoURL
+            BusinessApplications.RepoURL, CVSSBaseScoresV3.cvssV3vectorString, CVSSBaseScoresV3.cvssV3attackVector,
+            CVSSBaseScoresV3.cvssV3attackComplexity, CVSSBaseScoresV3.cvssV3privilegesRequired,
+            CVSSBaseScoresV3.cvssV3userInteraction, CVSSBaseScoresV3.cvssV3scope,
+            CVSSBaseScoresV3.cvssV3confidentialityImpact, CVSSBaseScoresV3.cvssV3integrityImpact,
+            CVSSBaseScoresV3.cvssV3availabilityImpact, CVSSBaseScoresV3.cvssV3baseScore,
+            CVSSBaseScoresV3.cvssV3baseSeverity, CVSSBaseScoresV3.cvssV3exploitabilityScore,
+            CVSSBaseScoresV3.cvssV3impactScore,
+            CWEDetails.Name.label('CWEName'), CWEDetails.Description.label('CWEDescription'), CWEDetails.ModesOfIntroductionPhase, CWEDetails.ModesOfIntroductionNote,
+            CWEDetails.CommonConsequencesScope, CWEDetails.CommonConsequencesImpact, CWEDetails.DetectionMethodsMethod,
+            CWEDetails.DetectionMethodsDescription, CWEDetails.PotentialMitigationsPhase,
+            CWEDetails.PotentialMitigationsDescription, CWEDetails.FunctionalAreas, CWEDetails.AffectedResources,
+            CWEDetails.TaxonomyMappingsName, CWEDetails.TaxonomyMappingsEntryName
         )\
             .join(DockerImages, DockerImages.ID == Vulnerabilities.DockerImageId, isouter=True) \
             .join(ApplicationEndpoints, and_(ApplicationEndpoints.Endpoint == Vulnerabilities.Uri, ApplicationEndpoints.ApplicationID == appid), isouter=True) \
             .join(ImportedCode, and_(ImportedCode.ImportFile == Vulnerabilities.VulnerableFileName, ImportedCode.ApplicationID == appid), isouter=True) \
             .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId, isouter=True) \
+            .join(CVSSBaseScoresV3, CVSSBaseScoresV3.CVEID == Vulnerabilities.CVEID, isouter=True) \
+            .join(CWEDetails, CWEDetails.CWEID == Vulnerabilities.CWEID, isouter=True) \
             .filter(text("".join(filter_list))).all()
         schema = VulnerabilitiesSchema(many=True)
         assets = schema.dump(vuln_all)
@@ -744,7 +760,7 @@ def finding(appid, id):
         prediction_response = predict_vuln_validity(
             response['Severity'],
             response['Classification'],
-            len(response['Description']),
+            len(response['Description']) if response['Description'] else 0,
             len(response['Attack']),
             len(response['Evidence']),
             len(response['Source']),
@@ -834,7 +850,7 @@ def filtered_findings(appid, type, val):
             .filter(text(f'ApplicationID={appid}')).first()
         NAV['appbar'] = 'findings'
         app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
-        app_data = {'ID': appid, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': appid, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         table_details = _set_table_details(assets, sla_policy, pg_cnt, page, vuln_all, per_page, orderby)
 
         return render_template('open_findings_filtered.html', entities=assets, app_data=app_data, user=user, NAV=NAV,

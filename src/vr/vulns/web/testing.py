@@ -69,7 +69,7 @@ def vulnerability_scans(id):
 
         NAV['appbar'] = 'scans'
         app = BusinessApplications.query.filter(text(f'ID={id}')).first()
-        app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         table_details = {
             "pg_cnt": pg_cnt,
             "page": int(page),
@@ -145,7 +145,7 @@ def application_profile(app_id):
             filter(lambda t: t.ID != '', assets_all)
         )
         app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
-        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         NAV['appbar'] = 'settings'
         return render_template('application_profile.html', entities=assets, user=user,
                                NAV=NAV, app_data=app_data)

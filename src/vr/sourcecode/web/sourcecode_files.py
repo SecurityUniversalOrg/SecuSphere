@@ -62,7 +62,7 @@ def sourcecode_files(id):
 
         NAV['appbar'] = 'components'
         app = BusinessApplications.query.filter(text(f'ID={id}')).first()
-        app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         table_details = {
             "pg_cnt": pg_cnt,

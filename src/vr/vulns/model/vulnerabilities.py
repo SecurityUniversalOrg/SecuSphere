@@ -48,6 +48,7 @@ class Vulnerabilities(db.Model):
     ScanId = db.Column(db.Integer, db.ForeignKey('VulnerabilityScans.ID', ondelete='CASCADE'))
     InitialScanId = db.Column(db.Integer, db.ForeignKey('VulnerabilityScans.ID', ondelete='CASCADE'))
     SourceType = db.Column(db.String(20))
+    VulnerablePackageVersion = db.Column(db.String(100))
 
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -107,6 +108,35 @@ class VulnerabilitiesSchema(Schema):
     pkg_version = fields.Str()
     ApplicationName = fields.Str()
     ApplicationAcronym = fields.Str()
+    cvssV3vectorString = fields.Str()
+    cvssV3attackVector = fields.Str()
+    cvssV3attackComplexity = fields.Str()
+    cvssV3privilegesRequired = fields.Str()
+    cvssV3userInteraction = fields.Str()
+    cvssV3scope = fields.Str()
+    cvssV3confidentialityImpact = fields.Str()
+    cvssV3integrityImpact = fields.Str()
+    cvssV3availabilityImpact = fields.Str()
+    cvssV3baseScore = fields.Number()
+    cvssV3baseSeverity = fields.Str()
+    cvssV3exploitabilityScore = fields.Number()
+    cvssV3impactScore = fields.Number()
+    CWEName = fields.Str()
+    CWEDescription = fields.Str()
+    ModesOfIntroductionPhase = fields.Str()
+    ModesOfIntroductionNote = fields.Str()
+    CommonConsequencesScope = fields.Str()
+    CommonConsequencesImpact = fields.Str()
+    DetectionMethodsMethod = fields.Str()
+    DetectionMethodsDescription = fields.Str()
+    PotentialMitigationsPhase = fields.Str()
+    PotentialMitigationsDescription = fields.Str()
+    FunctionalAreas = fields.Str()
+    AffectedResources = fields.Str()
+    TaxonomyMappingsName = fields.Str()
+    TaxonomyMappingsEntryName = fields.Str()
+    VulnerablePackageVersion = fields.Str()
+
 
 class MakeVulnerabilitiesSchema(VulnerabilitiesSchema):
     @post_load

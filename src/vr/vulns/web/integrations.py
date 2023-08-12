@@ -175,7 +175,7 @@ def add_app_integration(app_id):
                 i['Projects'] = _get_all_jira_projects(i)
             entities.append(i)
         app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
-        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         NAV['appbar'] = 'settings'
         return render_template('add_app_integration.html', entities=entities, user=user,
                                NAV=NAV, app_id=app_id, app_data=app_data)
@@ -232,7 +232,7 @@ def all_app_integrations(app_id):
             filter(lambda t: t.ID != '', assets_all)
         )
         app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
-        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         NAV['appbar'] = 'settings'
         return render_template('all_app_integrations.html', entities=assets, user=user,
                                NAV=NAV, app_data=app_data)

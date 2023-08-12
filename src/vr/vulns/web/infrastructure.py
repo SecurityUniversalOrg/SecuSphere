@@ -71,7 +71,7 @@ def application_endpoints(id):
 
         NAV['appbar'] = 'endpoints'
         app = BusinessApplications.query.filter(text(f'ID={id}')).first()
-        app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         table_details = {
             "pg_cnt": pg_cnt,
             "page": int(page),

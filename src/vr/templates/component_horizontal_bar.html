@@ -1,6 +1,6 @@
 <ul class="nav nav-tabs horizontal-bar in">
     <li role="presentation" {% if NAV['appbar'] == 'application' %} class="active"{% endif %}>
-        <a href="/application/{{ app_data.ID }}">
+        <a href="/application/{{ app_data.ID }}/Component/main">
             <span class="fa fa-globe" aria-hidden="true"></span>
             <span class="hidden-xs">Overview</span>
         </a>
@@ -110,7 +110,7 @@
             </li>
             <li role="separator" class="divider"></li>
             <li>
-                <a href="/add_cicd_pipeline_stage">
+                <a href="/add_cicd_pipeline_stage/{{ app_data.ID }}">
                     <div class="fa fa-plus"></div>
                     Add New CI/CD Integration
                 </a>
