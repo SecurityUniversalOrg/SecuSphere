@@ -161,7 +161,7 @@ def dockerimages(appid):
             entities.append(new_dict)
         NAV['appbar'] = 'endpoints'
         app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
-        app_data = {'ID': appid, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': appid, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         table_details = {
             "pg_cnt": pg_cnt,

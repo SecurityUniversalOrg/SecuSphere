@@ -52,7 +52,7 @@ def edit_application(id):
             BusinessApplications.MiscCustomerData, BusinessApplications.Type, BusinessApplications.WebEnabled,
             BusinessApplications.RepoURL, BusinessApplications.ApplicationType, BusinessApplications.ProductType,
             BusinessApplications.Lifecycle, BusinessApplications.Origin, BusinessApplications.UserRecords,
-            BusinessApplications.Revenue, VulnerabilitySLAAppPair.SlaID
+            BusinessApplications.Revenue, VulnerabilitySLAAppPair.SlaID, BusinessApplications.ApplicationAcronym
         )\
             .join(VulnerabilitySLAAppPair, VulnerabilitySLAAppPair.ApplicationID==BusinessApplications.ID)\
             .filter(text(f'BusinessApplications.ID={id}')).first()
@@ -61,7 +61,7 @@ def edit_application(id):
                     'PII': app.PII, 'PCI': app.PCI, 'MiscCustomerData': app.MiscCustomerData, 'Type': app.Type,
                     'WebEnabled': app.WebEnabled, 'RepoURL': app.RepoURL, 'ApplicationType': app.ApplicationType,
                     'ProductType': app.ProductType, 'Lifecycle': app.Lifecycle, 'Origin': app.Origin, 'UserRecords': app.UserRecords,
-                    'Revenue': app.Revenue, 'SlaID': app.SlaID
+                    'Revenue': app.Revenue, 'SlaID': app.SlaID, 'Component': app.ApplicationAcronym
                     }
         product_types = ['Billing', 'Commerce', 'Internal', 'Research and Development', 'Security']
         all_slas = VulnerabilitySLAs.query.all()
@@ -163,7 +163,7 @@ def add_application_environment(app_id):
             return redirect(url_for('vulns.all_application_environments', app_id=app_id))
 
         app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
-        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         return render_template('add_application_environment.html', app_data=app_data, user=user, NAV=NAV)
     except RuntimeError:
@@ -188,7 +188,7 @@ def all_application_environments(app_id):
             filter(lambda t: t.ID != '', assets_all)
         )
         app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
-        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         NAV['appbar'] = 'settings'
         return render_template('all_application_environments.html', entities=assets, user=user,
                                NAV=NAV, app_data=app_data)
@@ -257,7 +257,8 @@ def edit_application_environment(app_id, env_id):
                     'ImplementsWebApp': app.ImplementsWebApp, 'ImplementsAPI': app.ImplementsAPI,
                     'PublicFacingWebApp': app.PublicFacingWebApp, 'PublicFacingAPI': app.PublicFacingAPI,
                     'WebURL': app.WebURL, 'OpenAPISpecURL': app.OpenAPISpecURL,
-                    'AuthType': app.AuthType, 'TestUsername': app.TestUsername, 'TestPasswordReference': app.TestPasswordReference
+                    'AuthType': app.AuthType, 'TestUsername': app.TestUsername, 'TestPasswordReference': app.TestPasswordReference,
+                    'Component': app.ApplicationAcronym
                     }
         all_env_class = ['Development', 'Test', 'Staging', 'Production', 'Other']
         all_status = ['Active', 'Planned', 'Retired', 'Other']
@@ -353,7 +354,7 @@ def add_cicd_pipeline(app_id):
             return redirect(url_for('vulns.all_cicd_pipelines', app_id=app_id))
 
         app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
-        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         return render_template('add_cicd_pipeline.html', app_data=app_data, user=user, NAV=NAV, all_sources=sources)
     except RuntimeError:
@@ -377,7 +378,7 @@ def all_cicd_pipelines(app_id):
             filter(lambda t: t.ID != '', assets_all)
         )
         app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
-        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         NAV['appbar'] = 'settings'
         return render_template('all_cicd_pipelines.html', entities=assets, user=user,
                                NAV=NAV, app_data=app_data)

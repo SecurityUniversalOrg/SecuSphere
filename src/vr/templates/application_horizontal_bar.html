@@ -27,6 +27,104 @@
 
         </ul>
     </li>
+
+    <!-- Findings Tab -->
+    <li role="presentation" class="dropdown{% if NAV['appbar'] == 'findings' %} active{% endif %}">
+        <a class="dropdown-toggle active" data-toggle="dropdown" href="">
+            <span class="fa fa-bug" aria-hidden="true"></span>
+            <span class="hidden-xs">Findings</span>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/ApplicationName/{{ app_data.ApplicationName }}">
+                    <div class="fa fa-list-alt"></div>
+                    View Active Findings
+                </a>
+            </li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/severity/Critical">
+                    <div class="fa fa-exclamation-triangle"></div>
+                    View Critical Findings
+                </a>
+            </li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/severity/High">
+                    <div class="fa-solid fa-circle-exclamation"></div>
+                    View High Findings
+                </a>
+            </li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/severity/Medium">
+                    <div class="fa-solid fa-square"></div>
+                    View Medium Findings
+                </a>
+            </li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/severity/Low">
+                    <div class="fa-regular fa-circle-down"></div>
+                    View Low Findings
+                </a>
+            </li>
+            <li role="separator" class="divider"></li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/Secret">
+                    <div class="fa-solid fa-key"></div>
+                    View Secret Scanning Findings
+                </a>
+            </li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/SCA">
+                    <div class="fa-solid fa-file-import"></div>
+                    View SCA Findings
+                </a>
+            </li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/SAST">
+                    <div class="fa-solid fa-file-code"></div>
+                    View SAST Findings
+                </a>
+            </li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/IaC">
+                    <div class="fa-regular fa-file-code"></div>
+                    View IaC Findings
+                </a>
+            </li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/Container">
+                    <div class="fa-brands fa-docker"></div>
+                    View Container Findings
+                </a>
+            </li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/DAST">
+                    <div class="fa-solid fa-tablet-screen-button"></div>
+                    View DAST Findings
+                </a>
+            </li>
+            <li role="separator" class="divider"></li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/status/RiskAccepted">
+                    <div class="fa fa-check"></div>
+                    View Risk Accepted Findings
+                </a>
+            </li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/ApplicationName/{{ app_data.ApplicationName }}">
+                    <div class="fa fa-search"></div>
+                    View All Findings
+                </a>
+            </li>
+            <li>
+                <a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/status/Closed">
+                    <div class="fa fa-fire-extinguisher"></div>
+                    &nbsp;&nbsp;View Closed Findings
+                </a>
+            </li>
+
+        </ul>
+    </li>
 </ul>
 
 

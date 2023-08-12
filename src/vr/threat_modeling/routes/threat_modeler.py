@@ -90,7 +90,7 @@ def threat_modeler(id):
             }
             NAV['appbar'] = 'threat_models'
             app = BusinessApplications.query.filter(text(f'ID={id}')).first()
-            app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
+            app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
             return render_template('threat_modeling/threat_modeler.html', app_data=app_data, user=user, NAV=NAV, questions=questions, application_questions=application_questions)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500
@@ -152,7 +152,7 @@ def threat_assessments(id):
 
         NAV['appbar'] = 'threat_models'
         app = BusinessApplications.query.filter(text(f'ID={id}')).first()
-        app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         table_details = {
             "pg_cnt": pg_cnt,
@@ -236,7 +236,7 @@ def threat_assessment(appid, id):
         details['threats_all'] = threats_dict
         NAV['appbar'] = 'threat_models'
         app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
-        app_data = {'ID': appid, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': appid, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         return render_template('threat_assessment.html', details=details, app_data=app_data, user=user, NAV=NAV)
     except RuntimeError:
