@@ -1121,7 +1121,7 @@ class TestWebApp(unittest.TestCase):
         assert response.status_code == 200
 
     def test_get_cicd_pipeline_stage_data_post(self):
-        route = f"/get_cicd_pipeline_stage_data"
+        route = f"/get_cicd_pipeline_stage_data/1"
         data_dict = {
             'platform': 'Jenkins',
             'stage': 'Secret Scanning',
