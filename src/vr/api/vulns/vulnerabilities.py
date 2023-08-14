@@ -154,9 +154,8 @@ def add_vulns_background_process(req_raw):
         if docker_img_id:
             i['DockerImageId'] = docker_img_id
         if i['VulnerablePackage']:
-            pattern = r'([^:-]+)(?:[:\-]([\d\w\.-]+))?'
+            pattern = r'(?:pkg:[\w\-]+/)?([^@:/-]+)(?:[@:\-]([\d\w\.-]+))?'
             match = re.match(pattern, i['VulnerablePackage'])
-
             if match:
                 i['VulnerablePackage'] = match.group(1)
                 i['VulnerablePackageVersion'] = match.group(2) if match.group(2) else 'No version'

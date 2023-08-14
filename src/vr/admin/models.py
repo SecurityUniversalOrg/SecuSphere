@@ -190,7 +190,7 @@ class User(UserMixin, db.Model):
         else:
             return
 
-if AUTH_TYPE == 'local':
+if AUTH_TYPE == 'local' or AUTH_TYPE == 'azuread':
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))

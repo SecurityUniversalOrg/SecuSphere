@@ -45,6 +45,9 @@
       
       <input class="password" required name="login[password]" type="password" />
 
+    {% if auth_type == 'azuread' %}
+        <a href="{{ auth_url }}" class="btn btn-primary" style="margin-left: 1em;"><i class="fa-brands fa-microsoft"></i> Sign In with Azure AD</a>
+    {% endif %}
       
       <div id="mfa_container" style="display: none;">
 
