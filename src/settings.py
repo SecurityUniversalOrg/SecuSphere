@@ -1,5 +1,5 @@
 ## Authentication  ##
-SET_AUTH_TYPE = 'local'  # options: local, ldap, saml
+SET_AUTH_TYPE = 'local'  # options: local, ldap, saml, azuread
 SET_INSECURE_OAUTH = True
 SET_AZURE_KEYVAULT_NAME = 'BkDevSecOpsKeyVault'
 SET_ENV = 'test'  # options: test, prod
@@ -21,6 +21,11 @@ SET_SMTP_PW_REF = 'SENDGRID-SMTP-PW'
 SET_SMTP_PW = 'changeme'
 
 ##
+## AZURE AD Settings (Optional) ##
+SET_AZAD_CLIENT_ID = "e2efe60c-84f9-41ba-bfba-1cc4fb1fc837"
+SET_AZAD_CLIENT_SECRET = "AZAD-CLIENT-SECRET"
+SET_AZAD_AUTHORITY = "https://login.microsoftonline.com/8da368d4-070a-47bd-9530-798f0ad6a651"
+
 ## LDAP Settings (Optional) ##
 SET_LDAP_HOST = '192.168.0.54'
 SET_LDAP_PORT = 389  # Use 636 for LDAPS

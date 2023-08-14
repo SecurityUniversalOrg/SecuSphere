@@ -1,7 +1,8 @@
 import datetime
 import requests
 from config_engine import ENV, PROD_DB_URI, AUTH_TYPE, APP_EXT_URL, LDAP_HOST, LDAP_PORT, LDAP_BASE_DN, \
-    LDAP_USER_DN, LDAP_GROUP_DN, LDAP_USER_RDN_ATTR, LDAP_USER_LOGIN_ATTR, LDAP_BIND_USER_DN, LDAP_BIND_USER_PASSWORD
+    LDAP_USER_DN, LDAP_GROUP_DN, LDAP_USER_RDN_ATTR, LDAP_USER_LOGIN_ATTR, LDAP_BIND_USER_DN, LDAP_BIND_USER_PASSWORD, \
+    AZAD_CLIENT_ID, AZAD_CLIENT_SECRET, AZAD_AUTHORITY
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
@@ -28,6 +29,11 @@ import json
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 from requests.auth import HTTPBasicAuth
+
+if AUTH_TYPE == 'azuread':
+    from flask_session import Session
+    import msal
+    from flask import session, url_for
 
 
 app = Flask(__name__)
@@ -62,6 +68,52 @@ if AUTH_TYPE == 'ldap':
 
     # Flask-LDAP3-Login Manager
     ldap_manager = LDAP3LoginManager(app)
+elif AUTH_TYPE == 'azuread':
+    app.config['CLIENT_ID'] = AZAD_CLIENT_ID
+    app.config['CLIENT_SECRET'] = AZAD_CLIENT_SECRET
+    app.config['AUTHORITY'] = AZAD_AUTHORITY
+    app.config['REDIRECT_PATH'] = "/getAToken"
+    app.config['ENDPOINT'] = 'https://graph.microsoft.com/v1.0/me/memberOf'
+    app.config['SCOPE'] = ["User.ReadBasic.All", "Group.Read.All"]
+    app.config['SESSION_TYPE'] = 'filesystem'
+    Session(app)
+
+
+
+    def _load_cache():
+        cache = msal.SerializableTokenCache()
+        if session.get("token_cache"):
+            cache.deserialize(session["token_cache"])
+        return cache
+
+
+    def _save_cache(cache):
+        if cache.has_state_changed:
+            session["token_cache"] = cache.serialize()
+
+
+    def _build_msal_app(cache=None, authority=None):
+        return msal.ConfidentialClientApplication(
+            app.config['CLIENT_ID'], authority=authority or app.config['AUTHORITY'],
+            client_credential=app.config['CLIENT_SECRET'], token_cache=cache)
+
+
+    def _build_auth_code_flow(authority=None, scopes=None):
+        return _build_msal_app(authority=authority).initiate_auth_code_flow(
+            scopes or [],
+            redirect_uri=url_for("authorized", _external=True))
+
+
+    def _get_token_from_cache(scope=None):
+        cache = _load_cache()  # This web app maintains one cache per session
+        cca = _build_msal_app(cache=cache)
+        accounts = cca.get_accounts()
+        if accounts:  # So all account(s) belong to the current signed-in user
+            result = cca.acquire_token_silent(scope, account=accounts[0])
+            _save_cache(cache)
+            return result
+
+    app.jinja_env.globals.update(_build_auth_code_flow=_build_auth_code_flow)
 
 with app.app_context():
     db = SQLAlchemy()
@@ -95,14 +147,16 @@ csrf.exempt(api)
 app.register_blueprint(api)
 
 bootstrap = Bootstrap(app)
-login_manager.init_app(app)
-login_manager.login_view = 'admin.login'
+if AUTH_TYPE == 'local' or AUTH_TYPE == 'azuread':
+    login_manager.init_app(app)
+    login_manager.login_view = 'admin.login'
 
 stdout_handler = StreamHandler(stream=sys.stdout)
 stdout_handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(name)s: %(levelname)s %(message)s')
 stdout_handler.setFormatter(formatter)
 app.logger.addHandler(stdout_handler)
+
 
 @app.template_filter('format_datetime')
 def format_datetime(value):

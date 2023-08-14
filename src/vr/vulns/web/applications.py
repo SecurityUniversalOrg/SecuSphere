@@ -1,4 +1,5 @@
 from vr import db, app
+from vr.functions.route_decorators import requires_role
 from vr.vulns import vulns
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter, _add_page_permissions_filter
 from sqlalchemy import text, desc, func, and_
@@ -776,6 +777,7 @@ def _parse_languages(ld, tot_files, active_languages, tot_loc):
 
 @vulns.route("/add_application", methods=['GET', 'POST'])
 @login_required
+@requires_role('Admin')
 def add_application():
     try:
         NAV['curpage'] = {"name": "Add Application"}

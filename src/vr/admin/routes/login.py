@@ -1,3 +1,4 @@
+import datetime
 import re
 from flask_login import current_user, login_user
 from flask import session, redirect, url_for, render_template, request, json, flash
@@ -10,6 +11,10 @@ from vr.admin.functions import db_connection_handler
 from config_engine import AUTH_TYPE
 if AUTH_TYPE == 'ldap':
     from flask_ldap3_login.forms import LDAPLoginForm
+elif AUTH_TYPE == 'azuread':
+    import requests
+    import msal
+    from vr import _build_auth_code_flow, _load_cache, _save_cache, _build_msal_app, _get_token_from_cache
 
 
 NAV_CAT= { "name": "Admin", "url": "admin.admin_dashboard"}
@@ -28,11 +33,13 @@ def login():
     app_config = AppConfig.query.first()
     if app_config is None:
         return redirect(url_for('admin.register'))
-    if current_user.is_authenticated:
-        flash('You are already logged in.', 'danger')
-        return redirect(url_for('vulns.all_applications'))
+    ad_auth_url = None
+    warnmsg = ''
     if AUTH_TYPE == 'local':
-        warnmsg = ''
+        if current_user.is_authenticated:
+            flash('You are already logged in.', 'danger')
+            return redirect(url_for('vulns.all_applications'))
+
         form = LoginForm(request.form)
         if not form.validate():
             warnmsg = 'Please validate your entries.'
@@ -64,10 +71,78 @@ def login():
             # Print the form errors
             print("Form validation failed with errors:", form.errors)
         return render_template(LDAP_LOGIN_TEMPLATE, form=form, errors=form.errors)
-
+    elif AUTH_TYPE == 'azuread':
+        form = LoginForm(request.form)
+        session["flow"] = _build_auth_code_flow(scopes=app.config['SCOPE'])
+        ad_auth_url = session["flow"]["auth_uri"]
     if form.errors:
         warnmsg = (form.errors, 'danger')
-    return render_template(LOGIN_TEMPLATE, form=form, warnmsg=warnmsg)
+    return render_template(LOGIN_TEMPLATE, form=form, warnmsg=warnmsg, auth_type=AUTH_TYPE, auth_url=ad_auth_url)
+
+if AUTH_TYPE == 'azuread':
+    @app.route(app.config['REDIRECT_PATH'])  # Its absolute URL must match your app's redirect_uri set in AAD
+    def authorized():
+        try:
+            cache = _load_cache()
+            result = _build_msal_app(cache=cache).acquire_token_by_auth_code_flow(
+                session.get("flow", {}), request.args)
+            if "error" in result:
+                return render_template("azuread_auth_error.html", result=result)
+            session["username"] = result.get("id_token_claims")["preferred_username"]
+            session["id_token_claims"] = result.get("id_token_claims")
+            _save_cache(cache)
+            token = _get_token_from_cache(app.config['SCOPE'])
+            graph_data = requests.get(  # Use token to call downstream service
+                app.config['ENDPOINT'],
+                headers={'Authorization': 'Bearer ' + token['access_token']},
+            ).json()
+            session["roles"] = map_ad_groups_to_roles(graph_data)
+            username = session["username"]
+            user = User.query.filter(User.email.ilike(username)).first()
+            if not user:
+                user_details = session["id_token_claims"]
+                user = User(
+                    is_admin=True if "Admin" in session["roles"] else False,
+                    is_security=True if "Security" in session["roles"] else False,
+                    username=username,
+                    auth_type='Azure-AD',
+                    email=username,
+                    email_confirmed_at=datetime.datetime.utcnow(),
+                    first_name=user_details['name'].split()[0],
+                    last_name=user_details['name'].split()[1],
+                    user_type='system',
+                    avatar_path='/static/images/default_profile_avatar.jpg',
+                    email_updates="y",
+                    app_updates="y",
+                    text_updates="n"
+                )
+                db.session.add(user)
+                db.session.commit()
+            elif not user.is_admin and "Admin" in session["roles"]:
+                user.is_admin = True
+                db.session.add(user)
+                db.session.commit()
+            elif not user.is_security and "Security" in session["roles"]:
+                user.is_security = True
+                db.session.add(user)
+                db.session.commit()
+            # Log the user in
+            login_user(user)
+        except ValueError:  # Usually caused by CSRF
+            pass  # Simply ignore them
+        return redirect(url_for("vulns.all_applications"))
+
+
+def map_ad_groups_to_roles(graph_data):
+    user_roles = []
+    for group in graph_data['value']:
+        if group['@odata.type'] == '#microsoft.graph.group':
+            if group['displayName'] == 'SecuSphere Super Administrators':
+                user_roles.append('Admin')
+            elif group['displayName'].startswith('ART-'):
+                user_roles.append(group['displayName'])
+            # Add other mappings as needed
+    return user_roles
 
 
 def check_input(user_input):
