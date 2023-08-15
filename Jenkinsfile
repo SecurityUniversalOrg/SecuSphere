@@ -79,7 +79,6 @@ pipeline {
             }
             steps {
                 jslSecretScanning()
-                jslSendMicrosoftTeamsMessage()
             }
         }
 
@@ -90,9 +89,7 @@ pipeline {
                  }
             }
             steps {
-                jslOwaspSCA()
-                jslSendMicrosoftTeamsMessage()
-                //jslSoftwareCompositionAnalysis('Python')
+                jslSecuritySCA('Python,Javascript')
             }
         }
 
@@ -193,6 +190,7 @@ pipeline {
         stage('Send report') {
             steps {
                 script {
+                    jslSendMicrosoftTeamsMessage()
                     jslSendSecurityReportEmail()
                 }
             }
