@@ -136,7 +136,7 @@ class VulnerabilitiesSchema(Schema):
     TaxonomyMappingsName = fields.Str()
     TaxonomyMappingsEntryName = fields.Str()
     VulnerablePackageVersion = fields.Str()
-
+    KnownExploit = fields.Str()
 
 class MakeVulnerabilitiesSchema(VulnerabilitiesSchema):
     @post_load
