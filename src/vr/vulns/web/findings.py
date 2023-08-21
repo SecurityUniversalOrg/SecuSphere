@@ -27,6 +27,7 @@ from flask import Response
 from config_engine import ENV
 from vr.functions.ml_functions import predict_vuln_validity
 from vr.vulns.model.cvssbasescoresv3 import CVSSBaseScoresV3
+from vr.vulns.model.cvssbasescoresv3extensions import CVSSBaseScoresV3Extensions
 from vr.vulns.model.cwedetails import CWEDetails
 
 
@@ -721,13 +722,15 @@ def finding(appid, id):
             CWEDetails.CommonConsequencesScope, CWEDetails.CommonConsequencesImpact, CWEDetails.DetectionMethodsMethod,
             CWEDetails.DetectionMethodsDescription, CWEDetails.PotentialMitigationsPhase,
             CWEDetails.PotentialMitigationsDescription, CWEDetails.FunctionalAreas, CWEDetails.AffectedResources,
-            CWEDetails.TaxonomyMappingsName, CWEDetails.TaxonomyMappingsEntryName
+            CWEDetails.TaxonomyMappingsName, CWEDetails.TaxonomyMappingsEntryName,
+            CVSSBaseScoresV3Extensions.cvssV3exploitCodeMaturity.label('KnownExploit')
         )\
             .join(DockerImages, DockerImages.ID == Vulnerabilities.DockerImageId, isouter=True) \
             .join(ApplicationEndpoints, and_(ApplicationEndpoints.Endpoint == Vulnerabilities.Uri, ApplicationEndpoints.ApplicationID == appid), isouter=True) \
             .join(ImportedCode, and_(ImportedCode.ImportFile == Vulnerabilities.VulnerableFileName, ImportedCode.ApplicationID == appid), isouter=True) \
             .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId, isouter=True) \
             .join(CVSSBaseScoresV3, CVSSBaseScoresV3.CVEID == Vulnerabilities.CVEID, isouter=True) \
+            .join(CVSSBaseScoresV3Extensions, CVSSBaseScoresV3Extensions.CVEID == Vulnerabilities.CVEID, isouter=True) \
             .join(CWEDetails, CWEDetails.CWEID == Vulnerabilities.CWEID, isouter=True) \
             .filter(text("".join(filter_list))).all()
         schema = VulnerabilitiesSchema(many=True)
