@@ -756,7 +756,7 @@ def _parse_languages(ld, tot_files, active_languages, tot_loc):
         tot_files += ld.PythonFiles
     if ld.CLoc:
         tot_loc += ld.CLoc
-        active_languages.append({"C": ld.Cloc})
+        active_languages.append({"C": ld.CLoc})
     if ld.GoLoc:
         tot_loc += ld.GoLoc
         active_languages.append({"Go": ld.GoLoc})
