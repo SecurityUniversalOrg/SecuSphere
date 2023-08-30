@@ -19,4 +19,4 @@ from vr.vulns.web import settings
 from vr.vulns.web import infrastructure
 from vr.vulns.web import devopsscorecard
 from vr.vulns.web import securitygatescorecard
-
+from vr.vulns.web import visual_pipeline
