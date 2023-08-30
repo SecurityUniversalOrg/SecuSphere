@@ -1,12 +1,10 @@
 from vr.orchestration import orchestration
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter
-from flask import request, render_template, session, redirect, url_for, jsonify
+from flask import request, render_template, session, redirect, url_for
 from flask_login import login_required
 from sqlalchemy import text, func
 from vr.assets.model.businessapplications import BusinessApplications
 from vr.orchestration.model.dockerimages import DockerImages, DockerImagesSchema
-from vr.orchestration.model.dockerimageapppair import DockerImageAppPair
-from vr.vulns.model.integrations import Integrations, IntegrationsSchema
 from vr.vulns.model.vulnerabilities import Vulnerabilities, MakeVulnerabilitiesSchema, VulnerabilitiesSchema
 from math import ceil
 from vr.functions.table_functions import load_table, update_table
@@ -93,7 +91,7 @@ def all_dockerimages():
             "rec_start": (int(page) - 1) * per_page + 1 if int(page) != 1 else 1,
             "rec_end": int(page) * per_page if (int(page) * per_page) < assets_all.total else assets_all.total
         }
-        return render_template('all_dockerimages.html', entities=entities, user=user, NAV=NAV, table_details=table_details)
+        return render_template('orchestration/all_dockerimages.html', entities=entities, user=user, NAV=NAV, table_details=table_details)
     except RuntimeError:
         return render_template(SERVER_ERR_URL), 500
 
@@ -138,9 +136,6 @@ def dockerimages(appid):
         pg_cnt = ceil((assets_all.total / per_page))
         schema = DockerImagesSchema(many=True)
         assets = schema.dump(assets_all.items)
-
-
-
         entities = []
         for i in assets:
             new_dict = {
@@ -172,7 +167,7 @@ def dockerimages(appid):
             "rec_start": (int(page) - 1) * per_page + 1 if int(page) != 1 else 1,
             "rec_end": int(page) * per_page if (int(page) * per_page) < assets_all.total else assets_all.total
         }
-        return render_template('dockerimages.html', app_data=app_data, entities=entities, user=user, NAV=NAV,
+        return render_template('orchestration/dockerimages.html', app_data=app_data, entities=entities, user=user, NAV=NAV,
                                table_details=table_details)
     except RuntimeError:
         return render_template(SERVER_ERR_URL), 500

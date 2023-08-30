@@ -1,10 +1,10 @@
 from vr.sourcecode import sourcecode
 from math import ceil
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter
-from flask import request, render_template, session, redirect, url_for, jsonify
+from flask import request, render_template, session, redirect, url_for
 from flask_login import login_required
 from vr.vulns.model.vulnerabilities import Vulnerabilities, MakeVulnerabilitiesSchema, VulnerabilitiesSchema
-from sqlalchemy import text, func, and_
+from sqlalchemy import text, func
 from vr.functions.table_functions import load_table, update_table
 from vr.assets.model.businessapplications import BusinessApplications
 
@@ -13,6 +13,7 @@ NAV = {
     'CAT': { "name": "Source Code", "url": "sourcecode.dashboard"}
 }
 APP_ADMIN = "Application Admin"
+
 
 @sourcecode.route("/sourcecode_files/<id>", methods=['GET', 'POST'])
 @login_required
@@ -74,7 +75,7 @@ def sourcecode_files(id):
             "rec_end": int(page) * per_page if (int(page) * per_page) < components.total else components.total
         }
 
-        return render_template('sourcecode_files.html', app_data=app_data, entities=assets, user=user, NAV=NAV,
+        return render_template('sourcecode/sourcecode_files.html', app_data=app_data, entities=assets, user=user, NAV=NAV,
                                table_details= table_details)
     except RuntimeError:
         return render_template('500.html'), 500

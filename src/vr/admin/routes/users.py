@@ -64,7 +64,7 @@ def users():
         }
 
         all_apps = BusinessApplications.query.all()
-        return render_template('users.html', entity_details=entity_details, entities=assets_all.items, user=user,
+        return render_template('admin/users.html', entity_details=entity_details, entities=assets_all.items, user=user,
                                NAV=NAV, table_details= table_details, app_data={"ID": 0}, user_list=users_all,
                                all_apps=all_apps)
     except RuntimeError:

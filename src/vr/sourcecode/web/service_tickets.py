@@ -2,13 +2,13 @@ from vr import db, app
 from math import ceil
 from vr.sourcecode import sourcecode
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter
-from flask import request, render_template, session, redirect, url_for, jsonify
+from flask import request, render_template, session, redirect, url_for
 from flask_login import login_required
 from vr.assets.model.businessapplications import BusinessApplications
 from vr.sourcecode.model.servicetickets import ServiceTickets, ServiceTicketsSchema
 from vr.sourcecode.model.releaseversions import ReleaseVersions
-from vr.vulns.model.integrations import Integrations, IntegrationsSchema
-from vr.vulns.model.appintegrations import AppIntegrations, AppIntegrationsSchema
+from vr.assets.model.integrations import Integrations, IntegrationsSchema
+from vr.assets.model.appintegrations import AppIntegrations, AppIntegrationsSchema
 from sqlalchemy import text
 import requests
 from requests.auth import HTTPBasicAuth
@@ -77,7 +77,7 @@ def all_service_tickets():
             "rec_end": int(page) * per_page if (int(page) * per_page) < assets_all.total else assets_all.total
         }
 
-        return render_template('all_service_tickets.html', entities=assets, user=user, NAV=NAV, table_details=table_details)
+        return render_template('sourcecode/all_service_tickets.html', entities=assets, user=user, NAV=NAV, table_details=table_details)
     except RuntimeError:
         return render_template('500.html'), 500
 
@@ -113,7 +113,7 @@ def issue(appid, id):
         app = BusinessApplications.query\
             .filter(text(f'ID={appid}')).first()
         app_data = {'ID': appid, 'ApplicationName': app.ApplicationName}
-        return render_template('view_service_ticket.html', details=assets_all, app_data=app_data, user=user, NAV=NAV)
+        return render_template('sourcecode/view_service_ticket.html', details=assets_all, app_data=app_data, user=user, NAV=NAV)
     except RuntimeError:
         return render_template('500.html'), 500
 

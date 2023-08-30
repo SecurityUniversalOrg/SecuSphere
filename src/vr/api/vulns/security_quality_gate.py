@@ -2,7 +2,7 @@ import datetime
 from vr import db, app
 from flask import jsonify, request
 from vr.api import api
-from vr.vulns.model.pipelinejobs import PipelineJobs
+from vr.orchestration.model.pipelinejobs import PipelineJobs
 from vr.vulns.model.sgconfigsettingsperjob import SgConfigSettingsPerJob
 from vr.vulns.model.sgresultsperjob import SgResultsPerJob
 from vr.api.vulns.vulnerabilities import get_app_id

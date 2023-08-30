@@ -5,7 +5,6 @@ from vr.threat_modeling import threat_modeling
 from vr.threat_modeling.main import ThreatModeler
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter
 from sqlalchemy import text, func
-import datetime
 from math import ceil
 from vr.functions.table_functions import load_table, update_table
 from vr.assets.model.businessapplications import BusinessApplications
@@ -13,9 +12,7 @@ from vr.admin.functions import db_connection_handler
 from vr.admin.models import User
 from vr.threat_modeling.model.tmthreatassessments import TmThreatAssessments, TmThreatAssessmentsSchema
 from vr.threat_modeling.model.tmidentifiedthreats import TmIdentifiedThreats
-from vr.threat_modeling.model.tmidentifiedcontrols import TmIdentifiedControls
 from vr.threat_modeling.model.tmidentifiedsolutions import TmIdentifiedSolutions
-from vr.threat_modeling.model.tmcontrols import TmControls
 from vr.threat_modeling.model.tmthreats import TmThreats
 
 
@@ -30,6 +27,7 @@ SERVER_ERR_STATUS = "500.html"
 NAV = {
     'CAT': { "name": THREAT_MODELER, "url": "threat_modeling.threat_modeler"}
 }
+
 
 @threat_modeling.route('/threat_modeler/<id>', methods=['GET', 'POST'])
 @login_required
@@ -164,7 +162,7 @@ def threat_assessments(id):
             "rec_end": int(page) * per_page if (int(page) * per_page) < assessments.total else assessments.total
         }
 
-        return render_template('threat_assessments.html', app_data=app_data, entities=assets, user=user, NAV=NAV,
+        return render_template('threat_modeling/threat_assessments.html', app_data=app_data, entities=assets, user=user, NAV=NAV,
                                table_details=table_details)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500
@@ -238,6 +236,6 @@ def threat_assessment(appid, id):
         app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
         app_data = {'ID': appid, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
-        return render_template('threat_assessment.html', details=details, app_data=app_data, user=user, NAV=NAV)
+        return render_template('threat_modeling/threat_assessment.html', details=details, app_data=app_data, user=user, NAV=NAV)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500

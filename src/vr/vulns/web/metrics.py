@@ -8,7 +8,7 @@ from vr.assets.model.businessapplications import BusinessApplications, MakeBusin
 from vr.vulns.model.vulnerabilities import Vulnerabilities, MakeVulnerabilitiesSchema, VulnerabilitiesSchema
 from vr.assets.model.cicdpipelinebuilds import CICDPipelineBuilds
 from vr.assets.model.cicdpipelinestagedata import CICDPipelineStageData
-from vr.vulns.model.cicdpipelines import CICDPipelines
+from vr.orchestration.model.cicdpipelines import CICDPipelines
 
 NAV = {
     'CAT': { "name": "Vulnerabilities", "url": "sourcecode.dashboard"}
@@ -63,7 +63,7 @@ def component_metrics(id):
         details_map = get_finding_by_test_type(details_map, vuln_all)
         details_map = get_finding_by_cwe_type(details_map, vuln_all)
         metrics = get_kpi(vuln_all)
-        return render_template('component_metrics.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
+        return render_template('vulns/component_metrics.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
                                findings_map=findings_map, details_map=details_map, metrics=metrics)
     except RuntimeError:
         return render_template('500.html'), 500
@@ -268,7 +268,7 @@ def all_application_metrics():
         details_map = get_finding_by_dow(details_map, vuln_all)
         details_map = get_finding_by_test_type(details_map, vuln_all)
         details_map = get_finding_by_cwe_type(details_map, vuln_all)
-        return render_template('all_application_metrics.html',  entities=assets, user=user, NAV=NAV,
+        return render_template('vulns/all_application_metrics.html',  entities=assets, user=user, NAV=NAV,
                                findings_map=findings_map, details_map=details_map)
     except RuntimeError:
         return render_template('500.html'), 500
@@ -325,7 +325,7 @@ def applevel_metrics(app_name):
         details_map = get_finding_by_test_type(details_map, vuln_all)
         details_map = get_finding_by_cwe_type(details_map, vuln_all)
         metrics = get_kpi(vuln_all)
-        return render_template('application_metrics.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
+        return render_template('vulns/application_metrics.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
                                findings_map=findings_map, details_map=details_map, metrics=metrics)
     except RuntimeError:
         return render_template('500.html'), 500
@@ -443,7 +443,7 @@ def application_KPIs(app_name):
         for cat in vuln_by_category:
             metrics = get_kpi(vuln_by_category[cat])
             vuln_metrics[cat]['metrics'] = metrics
-        return render_template('application_KPIs.html',  entities=assets, app_data=app_data, user=user, NAV=NAV, metrics=kpi_tree,
+        return render_template('vulns/application_KPIs.html',  entities=assets, app_data=app_data, user=user, NAV=NAV, metrics=kpi_tree,
                                vuln_metrics=vuln_metrics)
     except RuntimeError:
         return render_template('500.html'), 500
@@ -704,7 +704,7 @@ def component_KPIs(app_id):
         for cat in vuln_by_category:
             metrics = get_kpi(vuln_by_category[cat])
             vuln_metrics[cat]['metrics'] = metrics
-        return render_template('component_KPIs.html',  entities=assets, app_data=app_data, user=user, NAV=NAV, metrics=kpi_tree,
+        return render_template('vulns/component_KPIs.html',  entities=assets, app_data=app_data, user=user, NAV=NAV, metrics=kpi_tree,
                                vuln_metrics=vuln_metrics)
     except RuntimeError:
         return render_template('500.html'), 500
@@ -783,7 +783,7 @@ def global_KPIs():
         for cat in vuln_by_category:
             metrics = get_kpi(vuln_by_category[cat])
             vuln_metrics[cat]['metrics'] = metrics
-        return render_template('global_KPIs.html',  entities=assets, user=user, NAV=NAV, metrics=kpi_tree,
+        return render_template('vulns/global_KPIs.html',  entities=assets, user=user, NAV=NAV, metrics=kpi_tree,
                                vuln_metrics=vuln_metrics)
     except RuntimeError:
         return render_template('500.html'), 500
