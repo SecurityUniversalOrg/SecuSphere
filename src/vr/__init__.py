@@ -74,7 +74,7 @@ elif AUTH_TYPE == 'azuread':
     app.config['AUTHORITY'] = AZAD_AUTHORITY
     app.config['REDIRECT_PATH'] = "/getAToken"
     app.config['ENDPOINT'] = 'https://graph.microsoft.com/v1.0/me/memberOf'
-    app.config['SCOPE'] = ["User.ReadBasic.All", "Group.Read.All"]
+    app.config['SCOPE'] = ["User.ReadBasic.All", "Group.Read.All", "Application.Read.All"]
     app.config['SESSION_TYPE'] = 'filesystem'
     Session(app)
 
