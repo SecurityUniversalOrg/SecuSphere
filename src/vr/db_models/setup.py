@@ -130,6 +130,22 @@ def _init_db(db=None, app=None):
 
     SourceCodeFile()
 
+    class TmControls(db.Model):
+        __table_args__ = {'extend_existing': True}
+        __tablename__ = 'TmControls'
+        ID = db.Column(db.Integer, primary_key=True)
+        AddDate = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
+        Control = db.Column(LONGTEXT)
+        Type = db.Column(db.String(8))
+        Description = db.Column(LONGTEXT)
+        Lambda = db.Column(db.String(1))
+        Process = db.Column(db.String(1))
+        Server = db.Column(db.String(1))
+        Dataflow = db.Column(db.String(1))
+        Datastore = db.Column(db.String(1))
+        ExternalEntity = db.Column(db.String(1))
+
+    TmControls()
 
     db.create_all()
 
