@@ -1,12 +1,11 @@
 from math import ceil
 from vr.sourcecode import sourcecode
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter
-from flask import request, render_template, session, redirect, url_for, jsonify
+from flask import request, render_template, session, redirect, url_for
 from flask_login import login_required
 from vr.vulns.model.vulnerabilities import Vulnerabilities, MakeVulnerabilitiesSchema, VulnerabilitiesSchema
 from vr.vulns.model.vulnerabilityscans import VulnerabilityScans, VulnerabilityScansSchema
-from vr.sourcecode.model.releaseversions import ReleaseVersions, MakeReleaseVersionsSchema, ReleaseVersionsSchema
-from sqlalchemy import text, func, and_
+from sqlalchemy import text, func
 from vr.functions.table_functions import load_table, update_table
 from vr.assets.model.businessapplications import BusinessApplications
 
@@ -79,7 +78,7 @@ def branches(id):
             "rec_end": int(page) * per_page if (int(page) * per_page) < branches.total else branches.total
         }
 
-        return render_template('versions.html', app_data=app_data, entities=assets, user=user, NAV=NAV,
+        return render_template('sourcecode/versions.html', app_data=app_data, entities=assets, user=user, NAV=NAV,
                                table_details= table_details)
     except RuntimeError:
         return render_template('500.html'), 500

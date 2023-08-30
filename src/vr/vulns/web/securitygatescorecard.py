@@ -4,12 +4,9 @@ from sqlalchemy import text
 from flask import render_template, session, redirect, url_for
 from flask_login import login_required
 from vr.assets.model.businessapplications import BusinessApplications, MakeBusinessApplicationsSchema, BusinessApplicationsSchema
-from vr.vulns.model.pipelinejobs import PipelineJobs
+from vr.orchestration.model.pipelinejobs import PipelineJobs
 from vr.vulns.model.sgconfigsettingsperjob import SgConfigSettingsPerJob
 from vr.vulns.model.sgresultsperjob import SgResultsPerJob
-from vr.assets.model.cicdpipelinebuilds import CICDPipelineBuilds
-from vr.assets.model.cicdpipelinestagedata import CICDPipelineStageData
-
 
 
 NAV = {
@@ -190,7 +187,7 @@ def securitygatescorecard(id):
             entity = []
             scorecard_results = {}
             scorecard_results['OVERALL'] = 'No Tests'
-        return render_template('securitygatescorecard.html', app_data=app_data, entities=entity, user=user, NAV=NAV,
+        return render_template('vulns/securitygatescorecard.html', app_data=app_data, entities=entity, user=user, NAV=NAV,
                                scorecard_results=scorecard_results)
     except RuntimeError:
         return render_template('500.html'), 500

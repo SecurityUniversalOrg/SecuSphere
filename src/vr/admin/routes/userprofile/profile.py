@@ -1,10 +1,9 @@
-import datetime
 import base64
 import os
 from io import BytesIO
 import pyqrcode
 
-from flask import session, redirect, url_for, render_template, request, json
+from flask import session, redirect, url_for, render_template
 from flask_login import login_required
 # Start of Entity-specific Imports
 from vr import db, app
@@ -30,8 +29,6 @@ def profile():
         return redirect(url_for('admin.login'))
     elif status == 403:
         return render_template('403.html', user=user, NAV=NAV)
-    ua = request.headers.get('User-Agent')
-    now = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
 
     # Messages
     key = 'Messages.ReceiverUserId'
@@ -126,7 +123,7 @@ def mobile_qrcode():
 
     # render qrcode for FreeTOTP
     otp_secret = base64.b32encode(os.urandom(10)).decode('utf-8')
-    totp_uri = f'sumobilesync:///Security-Universal///{otp_secret}///{app.config["APP_EXT_URL"]}///{user.username}'
+    totp_uri = f'sumobilesync:///AppSec-Portal///{otp_secret}///{app.config["APP_EXT_URL"]}///{user.username}'
     url = pyqrcode.create(totp_uri)
     stream = BytesIO()
     url.svg(stream, scale=5)
@@ -147,7 +144,7 @@ def mfa_qrcode():
         return render_template('403.html', user=user, NAV=NAV)
 
     # render qrcode for FreeTOTP
-    totp_uri = f'otpauth://totp/Security-Universal:{user.username}?secret={user.otp_secret}&issuer=Security-Universal'
+    totp_uri = f'otpauth://totp/AppSec-Portal:{user.username}?secret={user.otp_secret}&issuer=Security-Universal'
     url = pyqrcode.create(totp_uri)
     stream = BytesIO()
     url.svg(stream, scale=5)

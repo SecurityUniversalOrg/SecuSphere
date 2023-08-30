@@ -1,0 +1,475 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
+                </h3>
+                {% include "assets/application_horizontal_bar.html" %}
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li><a data-toggle="tooltip" data-placement="top" title="Endpoints" href="/endpoint?product=4">Docker Images</a>
+                        </li>
+
+
+                        <li><a data-toggle="tooltip" data-placement="top" title="Test" href="/dockerimage/{{ app_data.ID }}/{{ details.details.ID }}">{{ details.details.ImageName }}</a>
+                        </li>
+
+
+                        <li class="breadcrumb-item active" aria-current="page">{{ details.details.ImageTag }}</li>
+
+                    </ol>
+                </nav>
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="clearfix">
+                            <h4 class="pull-left finding-title">
+
+                                Host: {{ details.details.ImageName }}:{{ details.details.ImageTag }}
+
+                            </h4>
+
+
+                            <div class="dropdown pull-right">
+                                <div class="btn-group">
+                                    <button class="btn btn-primary clickable panel-collapsed">
+                                        <span><div class="fa fa-bar-chart"></div></span>
+                                    </button>
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
+                                            data-toggle="dropdown" aria-expanded="true">
+                                        <span class="fa fa-bars"></span>
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right" role="menu"
+                                        aria-labelledby="dropdownMenu1">
+
+                                        <li role="presentation">
+                                            <a href="/endpoint/host/{{ details.details.ID }}/report?&amp;active=1">
+                                                <div class="fa fa-file-text-o"></div> Report
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body product-graphs" style="display: none;">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="fa fa-calendar fa-2x"></div>
+
+                                            <div class="pull-right inline-block text-right">
+                                                <span class=" fa-2x">&nbsp;</span>
+                                                <span>
+                                        Finding Age (12 verified
+                                        findings)
+                                    </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div id="finding_age" class="graph" style="padding: 0px; position: relative;">
+                                        <canvas class="flot-base"
+                                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 396px; height: 158px;"
+                                                width="396" height="158"></canvas>
+                                        <div class="flot-text"
+                                             style="position: absolute; inset: 0px; font-size: smaller; color: rgb(84, 84, 84);">
+                                            <div class="flot-x-axis flot-x1-axis xAxis x1Axis"
+                                                 style="position: absolute; inset: 0px;">
+                                                <div style="position: absolute; max-width: 396px; top: 118px; left: 208px; text-align: center;"
+                                                     class="flot-tick-label tickLabel">0
+                                                </div>
+                                            </div>
+                                            <div class="flot-y-axis flot-y1-axis yAxis y1Axis"
+                                                 style="position: absolute; inset: 0px;">
+                                                <div style="position: absolute; top: 105px; left: 23px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">0
+                                                </div>
+                                                <div style="position: absolute; top: 70px; left: 23px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">5
+                                                </div>
+                                                <div style="position: absolute; top: 35px; left: 16px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">10
+                                                </div>
+                                                <div style="position: absolute; top: 1px; left: 16px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">15
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <canvas class="flot-overlay"
+                                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 396px; height: 158px;"
+                                                width="396" height="158"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="fa fa-bug fa-2x"></div>
+
+                                            <div class="pull-right inline-block text-right">
+                                                <span class=" fa-2x">12</span>
+                                                <span>
+
+                                        <a href="/endpoint/host/85/report">
+
+                                            endpoint findings <div class="fa fa-arrow-circle-right"></div></a>
+                                    </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div id="open_findings" class="graph" style="padding: 0px; position: relative;">
+                                        <canvas class="flot-base"
+                                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 396px; height: 158px;"
+                                                width="396" height="158"></canvas>
+                                        <div class="flot-text"
+                                             style="position: absolute; inset: 0px; font-size: smaller; color: rgb(84, 84, 84);">
+                                            <div class="flot-x-axis flot-x1-axis xAxis x1Axis"
+                                                 style="position: absolute; inset: 0px;">
+                                                <div style="position: absolute; max-width: 79px; top: 140px; left: 35px; text-align: center;"
+                                                     class="flot-tick-label tickLabel">Critical
+                                                </div>
+                                                <div style="position: absolute; max-width: 79px; top: 140px; left: 113px; text-align: center;"
+                                                     class="flot-tick-label tickLabel">High
+                                                </div>
+                                                <div style="position: absolute; max-width: 79px; top: 140px; left: 176px; text-align: center;"
+                                                     class="flot-tick-label tickLabel">Medium
+                                                </div>
+                                                <div style="position: absolute; max-width: 79px; top: 140px; left: 258px; text-align: center;"
+                                                     class="flot-tick-label tickLabel">Low
+                                                </div>
+                                                <div style="position: absolute; max-width: 79px; top: 140px; left: 332px; text-align: center;"
+                                                     class="flot-tick-label tickLabel">Info
+                                                </div>
+                                            </div>
+                                            <div class="flot-y-axis flot-y1-axis yAxis y1Axis"
+                                                 style="position: absolute; inset: 0px;">
+                                                <div style="position: absolute; top: 127px; left: 8px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">0
+                                                </div>
+                                                <div style="position: absolute; top: 101px; left: 8px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">2
+                                                </div>
+                                                <div style="position: absolute; top: 76px; left: 8px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">4
+                                                </div>
+                                                <div style="position: absolute; top: 51px; left: 8px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">6
+                                                </div>
+                                                <div style="position: absolute; top: 26px; left: 8px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">8
+                                                </div>
+                                                <div style="position: absolute; top: 1px; left: 1px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">10
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <canvas class="flot-overlay"
+                                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 396px; height: 158px;"
+                                                width="396" height="158"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="fa fa-bug fa-2x"></div>
+
+                                            <div class="pull-right inline-block text-right">
+                                                <span>Opened findings count by month</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.panel-heading -->
+                                <div class="panel-body">
+                                    <div id="opened_per_month_2" class="graph"
+                                         style="padding: 0px; position: relative;">
+                                        <canvas class="flot-base"
+                                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 856px; height: 158px;"
+                                                width="856" height="158"></canvas>
+                                        <div class="flot-text"
+                                             style="position: absolute; inset: 0px; font-size: smaller; color: rgb(84, 84, 84);">
+                                            <div class="flot-x-axis flot-x1-axis xAxis x1Axis"
+                                                 style="position: absolute; inset: 0px;">
+                                                <div style="position: absolute; max-width: 171px; top: 140px; left: 8px; text-align: center;"
+                                                     class="flot-tick-label tickLabel">11-01-2022
+                                                </div>
+                                                <div style="position: absolute; max-width: 171px; top: 140px; left: 379px; text-align: center;"
+                                                     class="flot-tick-label tickLabel">11-15-2022
+                                                </div>
+                                            </div>
+                                            <div class="flot-y-axis flot-y1-axis yAxis y1Axis"
+                                                 style="position: absolute; inset: 0px;">
+                                                <div style="position: absolute; top: 127px; left: 1px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">0
+                                                </div>
+                                                <div style="position: absolute; top: 101px; left: 1px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">1
+                                                </div>
+                                                <div style="position: absolute; top: 76px; left: 1px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">2
+                                                </div>
+                                                <div style="position: absolute; top: 51px; left: 1px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">3
+                                                </div>
+                                                <div style="position: absolute; top: 26px; left: 1px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">4
+                                                </div>
+                                                <div style="position: absolute; top: 1px; left: 1px; text-align: right;"
+                                                     class="flot-tick-label tickLabel">5
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <canvas class="flot-overlay"
+                                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 856px; height: 158px;"
+                                                width="856" height="158"></canvas>
+                                        <div class="legend">
+                                            <div style="position: absolute; width: 58px; height: 66.6667px; top: 14px; right: 37px; background-color: rgb(255, 255, 255); opacity: 0.85;"></div>
+                                            <table style="position:absolute;top:14px;right:37px;;font-size:smaller;color:#545454"  aria-describedby="Components Table">
+                                                <tbody>
+                                                <th style="display: none;"></th>
+                                                <tr>
+                                                    <td class="legendColorBox">
+                                                        <div style="border:1px solid #ccc;padding:1px">
+                                                            <div style="width:4px;height:0;border:5px solid #d9534f;overflow:hidden"></div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="legendLabel"> Critical</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="legendColorBox">
+                                                        <div style="border:1px solid #ccc;padding:1px">
+                                                            <div style="width:4px;height:0;border:5px solid #f0ad4e;overflow:hidden"></div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="legendLabel"> High</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="legendColorBox">
+                                                        <div style="border:1px solid #ccc;padding:1px">
+                                                            <div style="width:4px;height:0;border:5px solid #f0de28;overflow:hidden"></div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="legendLabel"> Medium</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="legendColorBox">
+                                                        <div style="border:1px solid #ccc;padding:1px">
+                                                            <div style="width:4px;height:0;border:5px solid #337ab7;overflow:hidden"></div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="legendLabel"> Low</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.panel-body -->
+                            </div>
+                            <!-- /.panel -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default table-responsive">
+
+                    <div class="panel-heading"><h4>Endpoints</h4></div>
+
+
+                    <table class="table-striped table table table-condensed table-hover finding-endpoints" aria-describedby="Components Table">
+
+                        <tbody>
+                        <tr>
+                            <th style="display: none;"></th>
+                            {% for i in details.endpoints %}
+                            <td>
+                                <a data-toggle="tooltip" data-placement="top"
+                                   data-original-title="{{ i.Endpoint }}" href="/endpoint/{{ i.ID }}">
+
+                                    <span style="color:OrangeRed" class="fa fa-thumbs-down"></span>
+
+                                    &nbsp;{{ i.Endpoint }}</a>
+
+                            </td>
+                            {% endfor %}
+
+
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+
+
+                <div class="panel panel-default table-responsive">
+                    <div class="panel-heading">
+                        <h4>Active Verified Findings</h4>
+                    </div>
+
+                    <div class="clearfix pagination-in-panel">
+
+
+                        <div class="pull-left pagination  pagination-sm">
+                            Showing entries 1 to {{ details.vulns_all|length }} of {{ details.vulns_all|length }}
+                        </div>
+
+                        <nav class="pull-right" aria-label="Pagination">
+                            <ul class="pagination pagination-sm">
+
+
+                                <li>
+                                    <!-- Split button -->
+                                    &nbsp;
+                                    <div class="btn-group">
+                                        <button type="button" class="btn-sm btn-secondary dropdown-toggle"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Page Size
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="?page_size=25">25</a></li>
+                                            <li><a href="?page_size=50">50</a></li>
+                                            <li><a href="?page_size=75">75</a></li>
+                                            <li><a href="?page_size=100">100</a></li>
+                                            <li><a href="?page_size=150">150</a></li>
+
+                                            <li><a href="?page_size=7">All</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                            </ul>
+                        </nav>
+
+
+                    </div>
+                    <div class="table-responsive panel panel-default">
+                        <table id="findings" class="tablesorter-bootstrap table table-striped" aria-describedby="Components Table">
+                            <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th class="text-center">Severity</th>
+                                <th class="text-center">Date</th>
+                                <th class="text-center">Age</th>
+                                <th>Found by</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for i in details.vulns_all %}
+                            <tr>
+                                <td>
+                                    <a href="/finding/{{ app_data.ID }}/{{ i.VulnerabilityID }}">{{ i.VulnerabilityName }}</a>
+                                </td>
+                                <td class="text-center">
+                            <span class="label severity severity-Medium" style="color:black;">
+                            {{ i.Severity }}
+                            </span>
+                                </td>
+                                <td class="text-center">
+                                    {{ i.ReleaseDate }}
+                                </td>
+                                <td class="text-center">
+                                    {{ moment(i.ReleaseDate).fromNow(refresh = True) }}
+                                </td>
+                                <td>
+
+                                    {{ i.Source }} ({{ i.Classification }})
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="clearfix pagination-in-panel">
+
+
+                        <div class="pull-left pagination  pagination-sm">
+                            Showing entries 1 to {{ details.vulns_all|length }} of {{ details.vulns_all|length }}
+                        </div>
+
+                        <nav class="pull-right" aria-label="Pagination">
+                            <ul class="pagination pagination-sm">
+
+
+                                <li>
+                                    <!-- Split button -->
+                                    &nbsp;
+                                    <div class="btn-group">
+                                        <button type="button" class="btn-sm btn-secondary dropdown-toggle"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Page Size
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="?page_size=25">25</a></li>
+                                            <li><a href="?page_size=50">50</a></li>
+                                            <li><a href="?page_size=75">75</a></li>
+                                            <li><a href="?page_size=100">100</a></li>
+                                            <li><a href="?page_size=150">150</a></li>
+
+                                            <li><a href="?page_size=7">All</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                            </ul>
+                        </nav>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+{% endblock %}
+
+
+

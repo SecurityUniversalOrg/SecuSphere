@@ -79,7 +79,7 @@ def vulnerability_scans(id):
             "rec_start": (int(page) - 1) * per_page + 1 if int(page) != 1 else 1,
             "rec_end": int(page) * per_page if (int(page) * per_page) < vuln_all.total else vuln_all.total
         }
-        return render_template('vulnerability_scans.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
+        return render_template('vulns/vulnerability_scans.html',  entities=assets, app_data=app_data, user=user, NAV=NAV,
                                table_details= table_details)
     except RuntimeError:
         return render_template('500.html'), 500
@@ -147,7 +147,7 @@ def application_profile(app_id):
         app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
         app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         NAV['appbar'] = 'settings'
-        return render_template('application_profile.html', entities=assets, user=user,
+        return render_template('vulns/application_profile.html', entities=assets, user=user,
                                NAV=NAV, app_data=app_data)
     except RuntimeError:
         return render_template('500.html'), 500

@@ -6,6 +6,6 @@ from vr.admin import admin
 @admin.route("/api/documentation")
 def api_documentation():
     try:
-        return render_template('api_documentation.html')
+        return render_template('api/api_documentation.html')
     except RuntimeError:
         return render_template('500.html'), 500

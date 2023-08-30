@@ -1,17 +1,12 @@
-from flask import request, render_template, session, redirect, url_for, jsonify
-import base64
-import os
+from flask import request, render_template, session, redirect, url_for
 from vr import db, app
-from vr.admin.auth_functions import create_api_key
 from vr.admin import admin
 from vr.admin.models import RegisterForm, UserAPIKeys, OAuth2Client
 from flask_login import login_required
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter, _add_page_permissions_filter
 from vr.admin.functions import db_connection_handler
-from authlib.integrations.flask_oauth2 import current_token
 from werkzeug.security import gen_salt
 import time
-
 
 
 NAV = {
@@ -45,7 +40,7 @@ def create_client():
     client.client_secret = gen_salt(48)
     db.session.add(client)
     db_connection_handler(db)
-    return render_template('create_client_output.html', user=user, user_roles=user_roles,
+    return render_template('admin/create_client_output.html', user=user, user_roles=user_roles,
                            NAV=NAV, client_id=client_id, client_secret=client.client_secret)
 
 

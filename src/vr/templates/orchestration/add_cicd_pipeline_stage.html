@@ -1,0 +1,183 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+    <div class="container-fluid">
+
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}:{{ app_data.Component }}
+
+                </h3>
+                {% include "assets/component_horizontal_bar.html" %}
+            </div>
+        </div>
+
+        <h2 class="my-4" style="color: white;">CI/CD Pipeline Integrations</h2>
+
+        <div class="row">
+            <div class="col-md-4">
+                <label for="ci-cd-type" style="color: white;">Select CI/CD Pipeline Integration:</label>
+                <select id="ci-cd-type" class="form-control" onchange="updateCode()">
+                    <option value="">--Select CI/CD Pipeline Integration--</option>
+                    <option value="Jenkins">Jenkins</option>
+                    <!-- Add other CI/CD Pipeline Integrations here -->
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label for="assessment-type" style="color: white;">Select Assessment Type:</label>
+                <select id="assessment-type" class="form-control" onchange="resetVendor();updateCode()">
+                    <option value="">--Select Assessment Type--</option>
+                    <option value="Secret Scanning">Secret Scanning</option>
+                    <option value="SCA">SCA</option>
+                    <option value="SAST">SAST</option>
+                    <option value="IaC Security Scanning">IaC Security Scanning</option>
+                    <option value="Container Security Scanning">Container Security Scanning</option>
+                    <option value="Infrastructure Security Scanning">Infrastructure Security Scanning</option>
+                    <option value="Dynamic Application Security Testing (DAST)">Dynamic Application Security Testing (DAST)</option>
+                    <option value="Dynamic API Security Testing (DAST-API)">Dynamic API Security Testing (DAST-API)</option>
+                    <option value="Security Quality Gate">Security Quality Gate</option>
+                    <!-- Add other Assessment Types here -->
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label for="vendor-type" style="color: white;">Select Vendor:</label>
+                <select id="vendor-type" class="form-control" onchange="updateCode()">
+                    <option value="">--Select Vendor--</option>
+                    <!-- Add other vendors here -->
+                </select>
+            </div>
+        </div>
+
+
+        <div id="pre_reqs_container" style="display: none;padding-top: 2.5rem;">
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="output-prereqs" style="color: white;">Pre-Requisites:</label>
+                    <div id="output-prereqs" style="color: white;"></div>
+                </div>
+            </div>
+        </div>
+        <div id="env_container" style="display: none;padding-top: 2.5rem;">
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="output-env" style="color: white;">Environment Variables:</label>
+                    <textarea id="output-env" class="form-control" rows="10" readonly></textarea>
+                </div>
+            </div>
+
+            <div class="row" style="padding-top: 1.5rem;">
+                <div class="col-md-12">
+                    <button class="btn btn-primary mt-4" onclick="copyToClipboard()">Copy to Clipboard</button>
+                </div>
+            </div>
+        </div>
+        <div id="stage_data_container" style="display: none;padding-top: 2.5rem;">
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="output-stage_data" style="color: white;">Stage Data:</label>
+                    <textarea id="output-stage_data" class="form-control" rows="10" readonly></textarea>
+                </div>
+            </div>
+
+            <div class="row" style="padding-top: 1.5rem;">
+                <div class="col-md-12">
+                    <button class="btn btn-primary mt-4" onclick="copyToClipboard()">Copy to Clipboard</button>
+                </div>
+            </div>
+        </div>
+
+        <br><br><br>
+
+    </div>
+
+    <script>
+        // Define the mapping of CI/CD Type and Assessment Type to Vendors
+        var vendorsMap = {
+            'Jenkins': {
+                'Secret Scanning': ['Trufflehog'],
+                'SCA': ['Snyk'],
+                'SAST': ['SonarQube'],
+                'IaC Security Scanning': ['Terrascan'],
+                'Container Security Scanning': ['Anchore'],
+                'Infrastructure Security Scanning': [],
+                'Dynamic Application Security Testing (DAST)': ['OWASP-ZAP'],
+                'Dynamic API Security Testing (DAST-API)': ['OWASP-ZAP'],
+                'Security Quality Gate': ['SecurityUniversal']
+            },
+            'GitHub Actions': {
+                'Secret Scanning': ['Trufflehog', 'Veracode'],
+                'SCA': ['Snyk'],
+                // Add mappings for other Assessment Types
+            },
+            // Add mappings for other CI/CD Types
+        };
+
+        function resetVendor() {
+            document.getElementById('vendor-type').value = "";
+        }
+
+        function updateCode() {
+            var ciCdType = document.getElementById('ci-cd-type').value;
+            var assessmentType = document.getElementById('assessment-type').value;
+            var vendorType = document.getElementById('vendor-type').value;
+
+            if (ciCdType && assessmentType && !vendorType) {
+                // Update the vendor dropdown
+                var vendorDropdown = document.getElementById('vendor-type');
+                // Clear existing options
+                vendorDropdown.innerHTML = '<option value="">--Select Vendor--</option>';
+
+                var vendors = vendorsMap[ciCdType][assessmentType];
+                // Add new options
+                for (var i = 0; i < vendors.length; i++) {
+                    var option = document.createElement('option');
+                    option.text = vendors[i];
+                    option.value = vendors[i];
+                    vendorDropdown.add(option);
+                }
+            }
+
+            if (ciCdType && assessmentType && vendorType) {
+                // Generate the code based on the selected CI/CD Pipeline Integration, Assessment Type, and Vendor
+                getStageData();
+            }
+        }
+
+        function copyToClipboard() {
+            var outputCode = document.getElementById('output-code');
+            outputCode.select();
+            document.execCommand('copy');
+            alert('Code copied to clipboard!');
+        }
+
+        function getStageData() {
+            var platform = document.getElementById('ci-cd-type').value;
+            var stage = document.getElementById('assessment-type').value;
+            var vendor = document.getElementById('vendor-type').value;
+            var xhttp = new XMLHttpRequest();
+            var csrf_token = "{{ csrf_token() }}";
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var resp = JSON.parse(this.responseText);
+                var outputCode = document.getElementById('output-prereqs');
+                outputCode.innerHTML = resp.pre_reqs.replace(/\n/g, "<br/>");
+                outputCode = document.getElementById('output-env');
+                outputCode.value = resp.env_data;
+                outputCode = document.getElementById('output-stage_data');
+                outputCode.value = resp.stage_data;
+                document.getElementById('pre_reqs_container').style.display = 'block';
+                document.getElementById('env_container').style.display = 'block';
+                document.getElementById('stage_data_container').style.display = 'block';
+            }
+          };
+          xhttp.open("POST", "/get_cicd_pipeline_stage_data", true);
+          xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+          xhttp.send("platform=" + platform + "&stage=" + stage + "&vendor=" + vendor);
+        }
+
+    </script>
+{% endblock %}

@@ -1,7 +1,6 @@
 from flask_login import logout_user, login_required
 from flask import session, redirect, url_for
 from vr.admin import admin
-from vr import app
 from config_engine import AUTH_TYPE
 
 

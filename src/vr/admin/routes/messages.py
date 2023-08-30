@@ -1,5 +1,5 @@
 from vr import db
-from flask import request, render_template, session, redirect, url_for, jsonify
+from flask import request, render_template, session, redirect, url_for
 from vr.admin import admin
 from flask_login import login_required
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter, _add_page_permissions_filter
@@ -76,7 +76,7 @@ def messages():
             "rec_start": (int(page) - 1) * per_page + 1 if int(page) != 1 else 1,
             "rec_end": int(page) * per_page if (int(page) * per_page) < messages_all.total else messages_all.total
         }
-        return render_template('messages.html', entities=assets, user=user, NAV=NAV,
+        return render_template('admin/messages.html', entities=assets, user=user, NAV=NAV,
                                table_details=table_details)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500

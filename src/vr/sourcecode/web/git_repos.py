@@ -1,6 +1,6 @@
 from vr.sourcecode import sourcecode
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter
-from flask import request, render_template, session, redirect, url_for, jsonify
+from flask import render_template, session, redirect, url_for
 from flask_login import login_required
 from vr.sourcecode.model.gitrepo import GitRepo
 from vr.assets.model.businessapplications import BusinessApplications
@@ -33,7 +33,7 @@ def all_git_repos():
             .join(BusinessApplications, BusinessApplications.ID == GitRepo.ApplicationID, isouter=True) \
             .filter(text(sql_filter)) \
             .all()
-        return render_template('all_git_repos.html', entities=assets_all, user=user, NAV=NAV)
+        return render_template('sourcecode/all_git_repos.html', entities=assets_all, user=user, NAV=NAV)
     except RuntimeError:
         return render_template('500.html'), 500
 

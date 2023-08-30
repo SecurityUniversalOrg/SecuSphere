@@ -34,7 +34,7 @@ def devopsscorecard(id):
         NAV['appbar'] = 'scorecard'
         app = BusinessApplications.query.filter(text(f'ID={id}')).first()
         app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
-        return render_template('devopsscorecard.html', app_data=app_data, entities=assets, user=user, NAV=NAV)
+        return render_template('vulns/devopsscorecard.html', app_data=app_data, entities=assets, user=user, NAV=NAV)
     except RuntimeError:
         return render_template('500.html'), 500
 
