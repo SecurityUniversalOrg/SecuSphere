@@ -29,11 +29,11 @@
 .fa-solid,
 .far,
 .fa-regular {
-  font-family: 'Font Awesome 6 Free'; }
+  font-family: 'Font Awesome 6 Free', sans-serif; }
 
 .fab,
 .fa-brands {
-  font-family: 'Font Awesome 6 Brands'; }
+  font-family: 'Font Awesome 6 Brands', sans-serif; }
 
 .fa-1x {
   font-size: 1em; }
