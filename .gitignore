@@ -161,3 +161,8 @@ cython_debug/
 
 src/runtime/
 Jenkinsfile~
+src/flask_session/
+*.crt
+*.key
+src/keys/server.crt
+src/keys/server.key
