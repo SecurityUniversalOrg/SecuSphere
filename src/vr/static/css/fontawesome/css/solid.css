@@ -8,7 +8,7 @@
   --fa-font-solid: normal 900 1em/1 'Font Awesome 6 Free'; }
 
 @font-face {
-  font-family: 'Font Awesome 6 Free';
+  font-family: 'Font Awesome 6 Free', sans-serif;
   font-style: normal;
   font-weight: 900;
   font-display: block;
