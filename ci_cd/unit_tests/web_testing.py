@@ -9,6 +9,7 @@ from vr.assets.model.businessapplications import BusinessApplications
 from vr.vulns.model.vulnerabilities import Vulnerabilities
 from vr.vulns.model.vulnerabilityscans import VulnerabilityScans
 from vr.vulns.model.vulnerabilityslaapppair import VulnerabilitySLAAppPair
+from vr.assessments.model.appassessmentbenchmarkassignments import AppAssessmentBenchmarkAssignments, MakeAppAssessmentBenchmarkAssignmentsSchema
 
 ADMIN_USER_FIRST_NAME = 'testadmin'
 ADMIN_USER_LAST_NAME = 'user'
@@ -1405,6 +1406,34 @@ class TestWebApp(unittest.TestCase):
         route = f"/application_profile/1"
         response = self._get_test_handler(route)
         assert response.status_code == 200
+
+    def test_appassessmentbenchmarkassignments_model_creation(self):
+        new_assignment = AppAssessmentBenchmarkAssignments(ApplicationID=1, BenchmarkID=2, UserID=3, Notes="Test",
+                                                           Type="TypeTest")
+        db.session.add(new_assignment)
+        db.session.commit()
+        fetched_assignment = AppAssessmentBenchmarkAssignments.query.first()
+        self.assertEqual(fetched_assignment.ApplicationID, 1)
+        self.assertEqual(fetched_assignment.BenchmarkID, 2)
+        self.assertEqual(fetched_assignment.UserID, 3)
+        self.assertEqual(fetched_assignment.Notes, "Test")
+        self.assertEqual(fetched_assignment.Type, "TypeTest")
+
+    def test_appassessmentbenchmarkassignments_schema(self):
+        assignment = {
+            "ID": 1,
+            "AddDate": "2022-01-01",
+            "ApplicationID": 1,
+            "BenchmarkID": 2,
+            "UserID": 3,
+            "Notes": "Test",
+            "Type": "TypeTest"
+        }
+        schema = MakeAppAssessmentBenchmarkAssignmentsSchema()
+        deserialized_data = schema.load(assignment)
+        self.assertIsInstance(deserialized_data, AppAssessmentBenchmarkAssignments)
+        serialized_data = schema.dump(deserialized_data)
+        self.assertEqual(serialized_data, assignment)
 
 
 def _three_o_two_handler(headers, target):
