@@ -112,7 +112,7 @@ def visual_pipeline(id):
     visualize_pipeline_children(entity_groups, edge_groups)
 
     # Static Code Analysis Children
-    visualize_static_code_analysis(id, entity_groups, edge_groups)
+    # visualize_static_code_analysis(id, entity_groups, edge_groups)
 
     # Application Build Children
     visualize_app_build(entity_groups, edge_groups)
@@ -447,3 +447,58 @@ def visualize_operate(entity_groups, edge_groups):
     ]
     add_entity(entities_list, entity_groups, edge_groups, group_details)
 
+
+@api.route("/visual_vulnerabilities/<id>")
+@login_required
+def visual_vulnerabilities(id):
+    NAV['curpage'] = {"name": "Threat Modeler"}
+    NAV['subcat'] = ""
+    NAV['subsubcat'] = ""
+    user, status, user_roles = _auth_user(session, NAV['CAT']['name'])
+    if status == 401:
+        return redirect(url_for('admin.login'))
+    elif status == 403:
+        return render_template('403.html', user=user, NAV=NAV)
+
+    edge_groups = [
+        {
+            "id": 'Release Management_to_Issue Management',
+            "source": 'Release Management',
+            "target": 'Issue Management'
+        }
+    ]
+    entity_groups = [
+        {
+            "data": {
+                "id": 'Release Management',
+                "name": 'Release Management',
+                "group": 'Features',
+                "href": '/net_disc'
+            },
+            "style": {
+                'background-color': '#666',
+                'background-image': '../static/images/icon_1.png'
+            }
+        },
+        {
+            "data": {
+                "id": 'Issue Management',
+                "name": 'Issue Management',
+                "group": 'JIRA',
+                "href": '/net_disc'
+            },
+            "style": {
+                'background-color': '#666',
+                'background-image': '../static/images/icon_2.png'
+            }
+        }
+    ]
+
+
+    group_names = [
+        RELEASE_MGMT,
+        ISSUE_MGMT,
+    ]
+
+    return render_template('visual_pipeline.html', user=user, NAV=NAV, entity_groups=entity_groups, \
+                           edge_group=edge_groups, group_names=group_names, default_settings=default_settings)
