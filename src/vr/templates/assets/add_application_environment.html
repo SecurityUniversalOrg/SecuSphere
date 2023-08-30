@@ -1,0 +1,333 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}:{{ app_data.Component }}
+
+                </h3>
+                {% include "assets/component_horizontal_bar.html" %}
+            </div>
+        </div>
+
+
+        <div class="row hidden-xs">
+            <div class="col-lg-12">
+                <ul class="breadcrumb main">
+                    <li class="">
+                        <a class="" href="/">Home</a>
+                    </li>
+                    <li class="">
+                        <a class="" href="#">Settings</a>
+                    </li>
+                    <li class="active">
+                        <a class="active" href="#">Add Application Environment</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12"></div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+                <form class="form-horizontal" action="/add_application_environment/{{ app_data.ID }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <link href="/static/tagulous/lib/select2-4/css/select2.min.css" type="text/css" media="all" rel="stylesheet">
+                    <script src="/static/tagulous/lib/select2-4/js/select2.full.min.js"></script>
+                    <script src="/static/tagulous/tagulous.js"></script>
+                    <script src="/static/tagulous/adaptor/select2-4.js"></script>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="EnvironmentName" style="color:white;">Environment Name<sup>*</sup></label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="EnvironmentName" maxlength="255" class="form-control" required="" id="EnvironmentName">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="EnvironmentClassification" style="color:white;">Environment Classification</label>
+                        <div class="col-sm-10  ">
+                            <select name="EnvironmentClassification" class="form-control selectpicker" id="EnvironmentClassification"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected disabled>---------</option>
+                                <option value="Development">Development</option>
+                                <option value="Test">Test</option>
+                                <option value="Staging">Staging</option>
+                                <option value="Production">Production</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="Status" style="color:white;">Status</label>
+                        <div class="col-sm-10  ">
+                            <select name="Status" class="form-control selectpicker" id="Status"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected disabled>---------</option>
+                                <option value="Active">Active</option>
+                                <option value="Planned">Planned</option>
+                                <option value="Retired">Retired</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="ImplementsWebApp" style="color:white;">Implements Web App</label>
+                        <div class="col-sm-10  ">
+                            <select name="ImplementsWebApp" class="form-control selectpicker" id="ImplementsWebApp"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected disabled>---------</option>
+                                <option value="No">No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="PublicFacingWebApp" style="color:white;">Public Facing Web App</label>
+                        <div class="col-sm-10  ">
+                            <select name="PublicFacingWebApp" class="form-control selectpicker" id="PublicFacingWebApp"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected disabled>---------</option>
+                                <option value="No">No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="ImplementsAPI" style="color:white;">Implements API</label>
+                        <div class="col-sm-10  ">
+                            <select name="ImplementsAPI" class="form-control selectpicker" id="ImplementsAPI"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected disabled>---------</option>
+                                <option value="No">No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="PublicFacingAPI" style="color:white;">Public Facing API</label>
+                        <div class="col-sm-10  ">
+                            <select name="PublicFacingAPI" class="form-control selectpicker" id="PublicFacingAPI"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="" selected disabled>---------</option>
+                                <option value="No">No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="WebURL" style="color:white;">Web URL</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="WebURL" maxlength="255" class="form-control" required="" id="WebURL">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="OpenAPISpecURL" style="color:white;">OpenAPI Spec URL</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="OpenAPISpecURL" maxlength="255" class="form-control" required="" id="OpenAPISpecURL">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="AuthType" style="color:white;">Auth Type</label>
+                        <div class="col-sm-10  ">
+                            <select name="AuthType" class="form-control selectpicker" id="AuthType"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="None" selected>None</option>
+                                <option value="Basic Authentication">Basic Authentication</option>
+                                <option value="Form-Based Authentication">Form-Based Authentication</option>
+                                <option value="Token-Based Authentication">Token-Based Authentication</option>
+                                <option value="Certificate-Based Authentication">Certificate-Based Authentication</option>
+                                <option value="OAuth 2.0">OAuth 2.0</option>
+                                <option value="OpenID Connect">OpenID Connect</option>
+                                <option value="SAML (Security Assertion Markup Language)">SAML (Security Assertion Markup Language)</option>
+                                <option value="LDAP (Lightweight Directory Access Protocol)">LDAP (Lightweight Directory Access Protocol)</option>
+                                <option value="Kerberos">Kerberos</option>
+                                <option value="Biometric Authentication">Biometric Authentication</option>
+                                <option value="Social Login">Social Login</option>
+                                <option value="Single Sign-On (SSO)">Single Sign-On (SSO)</option>
+                                <option value="JSON Web Tokens (JWT)">JSON Web Tokens (JWT)</option>
+                                <option value="Session-Based Authentication">Session-Based Authentication</option>
+                                <option value="Digest Authentication">Digest Authentication</option>
+                                <option value="Adaptive Authentication">Adaptive Authentication</option>
+                                <option value="API Keys">API Keys</option>
+                                <option value="Bearer Token Authentication">Bearer Token Authentication</option>
+                                <option value="API Gateway Authentication">API Gateway Authentication</option>
+                                <option value="Custom Authentication">Custom Authentication</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="TestUsername" style="color:white;">Test Username</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="TestUsername" maxlength="255" class="form-control" id="TestUsername">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="TestPasswordReference" style="color:white;">Test Password Reference</label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="TestPasswordReference" maxlength="255" class="form-control" id="TestPasswordReference">
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <input style="width: max-content;margin-left: 94px;margin-top: 1rem;" class="btn btn-primary" type="submit" value="Submit">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+<script src="/static/js/index.js"></script>
+<script src="/static/js/cvsscalc30_helptext.js"></script>
+<script src="/static/js/cvsscalc30.js"></script>
+<script src="/static/js/cvss_calculator.js"></script>
+<script type="application/javascript">
+            $(document).ready(function() {
+                disable_count = document.getElementById('disable_count').innerHTML
+                refresh = document.getElementById('alert_refresh').innerHTML
+
+                $('.has-popover').popover({'trigger':'hover'});
+
+                    $('.dropdown-toggle-alerts').click(function() {
+                        get_alerts();
+                    });
+
+                    if (disable_count == "False") {
+                        if(refresh == 'True') {
+                            setInterval(function() {
+                                update_alertcount();
+                            }, 10000);
+                        } else {
+                            update_alertcount();
+                        }
+                    }
+
+
+                function update_alertcount() {
+                    $.get("/alerts/count", function (data) {
+                        if (data.count != $('#alert_count').text()) {
+                            $('#alert_count').text(data.count);
+                            $('#alert_count').removeClass().addClass('badge badge-count badge-count' + data.count);
+                        }
+                    });
+                }
+
+                function htmlEscape(str) {
+                return str
+                    .replace(/\n/g, " ")
+                    .replace(/&/g, '&amp;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+                }
+
+                function get_alerts() {
+                    $('.dropdown-alerts').html('<div class="text-center"><div class="fa fa-spin fa-spinner"></div></div>');
+                    $.get("/alerts/json?limit=12", function (data) {
+                        $('.dropdown-alerts').empty();
+                        $.each(data, function(i, elem) {
+                        var titleField = elem.fields.title ? elem.fields.title : elem.fields.description;
+                        var display_title = titleField.length < 50 ? titleField : titleField.trim().substring(0,50).trim(this) + '...';
+                        var description = elem.fields.description
+                        var display_description = description ? description.length < 100 ? description : description.trim().substring(0,100).trim(this) + '...': ''
+                        var dropdown_alert = "alert-list" + i;
+                        $('.dropdown-alerts').append('<li><div style="padding: 3px 20px;"><div class="fa fa-' + htmlEscape(elem.fields.icon) +
+                                                        ' fa-fw"></div><a href="' + htmlEscape(elem.fields.url) + '" id=' + dropdown_alert +
+                                                        ' title="' + htmlEscape(display_description) + '"></a><span class="pull-right text-muted small">' +
+                                                    htmlEscape(elem.fields.source) + '</span></div></li><li class="divider"></li>');
+                        $("#" + dropdown_alert).text(display_title);
+                        });
+
+                        if (data.length > 0) {
+                            $('.dropdown-alerts').append('<li><a class="text-center" href="/alerts"><strong>See All Alerts</strong>' +
+                                                        '<div class="fa fa-angle-right"></div></a></li>');
+                            $('.dropdown-alerts').append('<li><a class="text-center" href="/delete_alerts"><strong>Clear All Alerts</strong>' +
+                                                    '<div class="fa fa-angle-right"></div></a></li>');
+                        }
+                        else {
+                            $('.dropdown-alerts').append('<li class="text-center"><strong>No alerts found</strong></li>');
+                        }
+                    });
+                    update_alertcount()
+                }
+
+                $("#id_jiraform-jira_issue").on('paste', function(e) {
+                    var clipboardData = e.clipboardData || e.originalEvent.clipboardData || window.clipboardData;
+                    var pastedData = clipboardData.getData('text');
+
+                    $this = $(this)
+                    // if someone entered/pasted a full URL, we strip evertyhing until last '/'
+                    setTimeout(function (elem) {
+                        $this.val($this.val().substring($this.val().lastIndexOf("/") + 1));
+                    }, 100);
+                });
+
+                <!-- TODO not working with django tagulous which uses select2, break styling -->
+                <!-- $('#id_tags').select2({ -->
+                    <!-- 'placeholder': 'Select or add some tags...', -->
+                    <!-- 'no_results_text': "Tag not found, press TAB key to add.", -->
+                <!-- }); -->
+
+                $('select').not('#notification-scope').addClass('selectpicker');
+                $('.selectpicker').attr('data-live-search', 'true');
+                $('.selectpicker').attr('data-container', 'body');
+                $('.selectpicker').css('width', '70%');
+                $('.selectpicker').selectpicker('render');
+
+            });
+        </script>
+<script type="application/javascript" src="/static/easymde/dist/easymde.min.js"></script>
+<script type="application/javascript">
+        $(function () {
+            $("textarea").each(function (index, elem) {
+                if (elem.hasAttribute("required")) {
+                    elem.removeAttribute("required");
+                    elem.id = "req"
+                }
+
+                if(!$(elem).hasClass('select2-search__field')) {
+                    var mde = new EasyMDE({
+                        spellChecker: false,
+                        element: elem,
+                        autofocus: false,
+                        forceSync: true,
+                        toolbar: ["bold", "italic", "heading", "|",
+                            "quote", "unordered-list", "ordered-list", "|",
+                            "link", "image", "|",
+                            "table", "horizontal-rule", "code", "|",
+                            "guide"
+                        ]
+                    });
+                    mde.render();
+                }
+            });
+        });
+    </script>
+
+{% endblock %}
+

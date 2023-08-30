@@ -1,0 +1,283 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
+
+                </h3>
+                {% include "assets/application_horizontal_bar.html" %}
+            </div>
+        </div>
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="clearfix">
+                            <span class="pull-left">
+                                <h4>{{ benchmarks.Name }} (<span id="pass_percent">{{ "%.2f"|format(((benchmarks.L1_pass|length / benchmarks.rules|length) * 100)) }}</span>%) Pass: <span id="pass_total">{{ benchmarks.L1_pass|length }}</span> Total:  {{ benchmarks.rules|length }}</h4>
+                            </span>
+                            <div id="test-pulldown" class="dropdown pull-right">
+                                <form method="post" id="summary" name="summary" style="display: inline-flex;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                    <div style="display: inline-flex;">
+                                        <label for="target">Target Level </label>
+                                        <select name="desired_level" id="desired_level" class="selectpicker" data-live-search="true"
+                                                data-container="body" style="width: 70%;" onchange="changeLevel()">
+                                            <option value="Level 1" selected="">Level 1</option>
+                                            <option value="Level 2">Level 2</option>
+                                            <option value="Level 3">Level 3</option>
+                                        </select>
+
+                                        <button onclick="activateQuickNotes()" class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
+                                                data-toggle="dropdown" aria-expanded="true" style="margin-top: 0em;width: min-content;">
+                                            <div class="far fa-comments"></div>
+
+                                        </button>
+
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <table id="test_findings" class="table-bordered table table-condensed table-hover" aria-describedby="Component Table">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>#</th>
+                            <th>Description</th>
+                            <th>L1</th>
+                            <th>L2</th>
+                            <th>L3</th>
+                            <th>Applicable</th>
+                            <th>Pass</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+
+
+                        {% for j in benchmarks['rules'] %}
+
+                            {% if j.ID in benchmarks['L1_pass'] %}
+                                {% set rule_passed = True %}
+                            {% else %}
+                                {% set rule_passed = False %}
+                            {% endif %}
+                            <tr class="rule_row" id="rule_row_{{ j.ID }}">
+                                <td onclick="updateInfoModal({{ j.ID }})"><a href="#"><div class="fas fa-info-circle"></div></a></td>
+                                <td class="highlight_asvs_level_1">{{ j.Number }}</td>
+                                <td>{{ j.Description }}</td>
+                                <td class="level1_select level1">{% if '1' in j.ImplementationLevels %}✓{% endif %}</td>
+                                <td class="level2_select">{% if '2' in j.ImplementationLevels %}✓{% endif %}</td>
+                                <td class="level3_select">{% if '3' in j.ImplementationLevels %}✓{% endif %}</td>
+                                <td id="td_id_form-{{ j.ID }}-id-enabled">
+                                    <input class="enabled_status" type="checkbox" name="form-{{ j.ID }}-enabled" id="id_form-{{ j.ID }}-enabled" checked="" disabled>
+                                </td>
+                                <td id="td_id_form-{{ j.ID }}-pass_fail" class="benchmark_{% if rule_passed %}pass{% else %}fail{% endif %}">
+                                    <input class="passfail_status" onclick="changePassStatus({{ j.ID }})" type="checkbox" name="form-{{ j.ID }}-pass_fail" id="id_form-{{ j.ID }}-pass_fail" {% if rule_passed %}checked=""{% endif %}>
+                                </td>
+                            </tr>
+
+                            <tr id="quick_notes_row_{{ j.ID }}" class="quick_notes_row quick_notes_hidden">
+                                <td>Notes: </td>
+                                <td colspan="5"><input class="quick_notes_input" type="text" id="quick_notes_{{ j.ID }}" name="quick_notes_{{ j.ID }}" style="width: 100%;"></td>
+                            </tr>
+                        {% endfor %}
+
+
+
+
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="form-group">
+                    <input class="btn btn-primary" type="submit" name="update_benchmarks" value="Submit Assessment" onclick="updateBenchmarkStatus()">
+                </div>
+
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+{% include "assessments/bm_rule_modal.html" %}
+{% include "assessments/add_note_modal.html" %}
+<script src='/static/js/core.js'></script>
+<script>
+var quick_notes_active = 'n'
+function activateQuickNotes() {
+    var all_rows = document.getElementsByClassName('quick_notes_row');
+    if (quick_notes_active == 'n') {
+        for (var i = 0; i < all_rows.length; i++) {
+            removeClass(all_rows[i], 'quick_notes_hidden')
+        }
+        quick_notes_active = 'y'
+    } else {
+        for (var i = 0; i < all_rows.length; i++) {
+            addClass(all_rows[i], 'quick_notes_hidden')
+        }
+        quick_notes_active = 'n'
+    }
+}
+</script>
+<script>
+
+var rule_list = {{ benchmarks['modal_rules']|safe }}
+var cur_user = "{{ user.username }}"
+
+function updateInfoModal(rule_id) {
+    document.getElementById("active_rule").value = rule_id;
+    document.getElementById('bm_notes').innerHTML = "";
+    var rule_info = rule_list[rule_id]
+    document.getElementById('bm_rule_num').innerText = "# " + rule_info.Number;
+    document.getElementById('bm_description').innerText = rule_info.Description;
+    document.getElementById('bm_levels').innerText = rule_info.ImplementationLevels;
+    var passed = document.getElementById(`id_form-${rule_id}-pass_fail`).checked;
+    if (passed) {
+        var pass_status = 'Passed'
+        document.getElementById('bm_status').style.color = 'green';
+    } else {
+        var pass_status = 'Failed'
+        document.getElementById('bm_status').style.color = 'red';
+    }
+    document.getElementById('bm_status').innerText = pass_status;
+    var notes_el = document.getElementById('bm_notes')
+
+    for (let i = 0; i < rule_info.Notes.length; i++) {
+        var new_el = document.createElement('p')
+        new_el.id = "rule_note_id_" + rule_info.Notes[i].ID;
+        var date_el = document.createElement('div')
+        if (cur_user == rule_info.Notes[i].username) {
+            date_el.innerHTML = rule_info.Notes[i].AddDate + `&nbsp;&nbsp;<div class="fas fa-trash-alt" onclick="deleteNote(${rule_info.Notes[i].ID})"></div>`
+        } else {
+            date_el.innerText = rule_info.Notes[i].AddDate;
+        }
+        var username_el = document.createElement('div')
+        username_el.innerText = rule_info.Notes[i].username;
+        var msg_el = document.createElement('div')
+        msg_el.innerText = rule_info.Notes[i].Note;
+
+        new_el.appendChild(date_el);
+        new_el.appendChild(username_el);
+        new_el.appendChild(msg_el);
+        notes_el.appendChild(new_el);
+
+
+
+    }
+
+    showModal('bm_rule_modal')
+}
+</script>
+
+<script>
+function updateBenchmarkStatus() {
+    var all_rules = document.getElementsByClassName('rule_row')
+    var desired_level = document.getElementById('desired_level').value;
+    var benchmark_id = {{ benchmarks.ID }}
+    var uri_string = `update_map=${benchmark_id}_${desired_level};;`
+    for (var i = 0; i < all_rules.length; i++) {
+        var rule_hum = all_rules[i].id.split('rule_row_')[1]
+        var enabled_status = all_rules[i].getElementsByClassName('enabled_status')[0].checked;
+        var passfail_status = all_rules[i].getElementsByClassName('passfail_status')[0].checked;
+        uri_string += `${rule_hum}_${enabled_status}_${passfail_status};`
+    }
+    var all_notes = document.getElementsByClassName('quick_notes_input')
+    console.log(all_notes)
+    var quick_note_str = ""
+    for (var i = 0; i < all_notes.length; i++) {
+        var note_id = all_notes[i].id.split('quick_notes_')[1];
+        var note_val = all_notes[i].value;
+        if (note_val) {
+            quick_note_str += `${note_id}:${note_val};;`
+        }
+    }
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            window.location.href = "/benchmark_assessments/{{ app_data.ID }}";
+
+        }
+    };
+    xhttp.open("POST", '/application_benchmarks/{{ app_data.ID }}/{{ benchmarks.ID }}', true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send(uri_string + "&quick_note_str=" + quick_note_str);
+}
+
+var total_q = {{ benchmarks.rules|length }}
+function changePassStatus(rule_id) {
+    var clicked_el = document.getElementById(`id_form-${rule_id}-pass_fail`).checked;
+    var rule_el = document.getElementById(`td_id_form-${rule_id}-pass_fail`)
+    var cur_pass_total = parseInt(document.getElementById(`pass_total`).innerText);
+
+    if (clicked_el) {
+        removeClass(rule_el, 'benchmark_fail')
+        addClass(rule_el, 'benchmark_pass')
+        cur_pass_total += 1
+        document.getElementById('pass_total').innerText = cur_pass_total;
+    } else {
+        removeClass(rule_el, 'benchmark_pass')
+        addClass(rule_el, 'benchmark_fail')
+        cur_pass_total -= 1
+        document.getElementById('pass_total').innerText = cur_pass_total;
+    }
+    var new_pass_percent = parseFloat((cur_pass_total / total_q) *100).toFixed(2);
+    document.getElementById('pass_percent').innerText = new_pass_percent;
+}
+function changeLevel() {
+    var setting = document.getElementById('desired_level').value;
+    var lev2_els = document.getElementsByClassName('level2_select');
+    var lev3_els = document.getElementsByClassName('level3_select');
+    if (setting == 'Level 1') {
+        for (var i = 0; i < lev2_els.length; i++) {
+            var lev2_el = lev2_els[i];
+            removeClass(lev2_el, 'level2')
+        }
+        for (var i = 0; i < lev3_els.length; i++) {
+            var lev3_el = lev3_els[i];
+            removeClass(lev3_el, 'level3')
+        }
+    } else if (setting == 'Level 2') {
+        for (var i = 0; i < lev2_els.length; i++) {
+            var lev2_el = lev2_els[i];
+            addClass(lev2_el, 'level2')
+        }
+        for (var i = 0; i < lev3_els.length; i++) {
+            var lev3_el = lev3_els[i];
+            removeClass(lev3_el, 'level3')
+        }
+    } else if (setting == 'Level 3') {
+        for (var i = 0; i < lev2_els.length; i++) {
+            var lev2_el = lev2_els[i];
+            addClass(lev2_el, 'level2')
+        }
+        for (var i = 0; i < lev3_els.length; i++) {
+            var lev3_el = lev3_els[i];
+            addClass(lev3_el, 'level3')
+        }
+    }
+}
+</script>
+
+{% endblock %}

@@ -15,7 +15,7 @@ from vr.vulns.model.vulnerabilityslaapppair import VulnerabilitySLAAppPair
 from vr.orchestration.model.dockerimages import DockerImages
 from vr.sourcecode.model.importedcode import ImportedCode
 from vr.vulns.model.issuenotes import IssueNotes
-from vr.vulns.model.applicationendpoints import ApplicationEndpoints
+from vr.assets.model.applicationendpoints import ApplicationEndpoints
 from vr.vulns.model.vulnerabilityscans import VulnerabilityScans
 from vr.admin.functions import db_connection_handler
 from io import BytesIO
@@ -127,7 +127,7 @@ def open_findings(id):
         "rec_end": int(page) * per_page if (int(page) * per_page) < vuln_all.total else vuln_all.total
     }
 
-    return render_template('open_findings.html', entities=assets, app_data=app_data, user=user, NAV=NAV,
+    return render_template('vulns/open_findings.html', entities=assets, app_data=app_data, user=user, NAV=NAV,
                            sla_policy=sla_policy, table_details= table_details)
 
 
@@ -208,7 +208,7 @@ def open_findings_export(id):
         "rec_end": int(page) * per_page if (int(page) * per_page) < vuln_all.total else vuln_all.total
     }
     now = datetime.datetime.utcnow()
-    html = render_template('open_findings_pdf.html', now=now, entities=assets, app_data=app_data, user=user, NAV=NAV, sla_policy=sla_policy, table_details= table_details)
+    html = render_template('vulns/open_findings_pdf.html', now=now, entities=assets, app_data=app_data, user=user, NAV=NAV, sla_policy=sla_policy, table_details= table_details)
     # Create a BytesIO buffer to store the generated PDF
     pdf_buffer = BytesIO()
 
@@ -262,7 +262,6 @@ def open_findings_csv(id):
         .order_by(text(orderby)) \
         .yield_per(per_page) \
         .paginate(page=page, per_page=per_page, error_out=False)
-    pg_cnt = ceil((vuln_all.total / per_page))
     schema = VulnerabilitiesSchema(many=True)
     assets = schema.dump(vuln_all.items)
     sla_policy = VulnerabilitySLAAppPair.query.with_entities(
@@ -273,7 +272,6 @@ def open_findings_csv(id):
         .filter(text(f'ApplicationID={id}')).first()
     NAV['appbar'] = 'findings'
     app = BusinessApplications.query.filter(text(f'ID={id}')).first()
-    app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
     now = datetime.datetime.utcnow()
     vulns = []
     for vuln in assets:
@@ -293,7 +291,6 @@ def open_findings_csv(id):
         sla_status = int(sla) - time_since_found
         vuln['SLAStatus'] = sla_status
         vulns.append(vuln)
-    now = datetime.datetime.utcnow()
 
     # Process the data and create the CSV
     csv_buffer = StringIO()
@@ -415,7 +412,7 @@ def open_findings_for_scan(appid, id):
             "rec_end": int(page) * per_page if (int(page) * per_page) < vuln_all.total else vuln_all.total
         }
         scan = VulnerabilityScans.query.filter(text(f'ID={id}')).first()
-        return render_template('open_findings_for_scan.html', entities=assets, app_data=app_data, user=user, NAV=NAV,
+        return render_template('vulns/open_findings_for_scan.html', entities=assets, app_data=app_data, user=user, NAV=NAV,
                                sla_policy=sla_policy, table_details= table_details, scan=scan)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS)
@@ -500,7 +497,7 @@ def open_findings_for_scan_export(appid, id):
         }
         scan = VulnerabilityScans.query.filter(text(f'ID={id}')).first()
         now = datetime.datetime.utcnow()
-        html = render_template('open_findings_pdf.html', now=now, entities=assets, app_data=app_data, user=user, NAV=NAV,
+        html = render_template('vulns/open_findings_pdf.html', now=now, entities=assets, app_data=app_data, user=user, NAV=NAV,
                                sla_policy=sla_policy, table_details= table_details, scan=scan)
         # Create a BytesIO buffer to store the generated PDF
         pdf_buffer = BytesIO()
@@ -558,7 +555,6 @@ def open_findings_for_scan_csv(appid, id):
             .order_by(text(orderby)) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
-        pg_cnt = ceil((vuln_all.total / per_page))
         schema = VulnerabilitiesSchema(many=True)
         assets = schema.dump(vuln_all.items)
         sla_policy = VulnerabilitySLAAppPair.query.with_entities(
@@ -569,7 +565,6 @@ def open_findings_for_scan_csv(appid, id):
             .filter(text(f'ApplicationID={appid}')).first()
         NAV['appbar'] = 'findings'
         app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
-        app_data = {'ID': appid, 'ApplicationName': app.ApplicationName}
         now = datetime.datetime.utcnow()
         vulns = []
         for vuln in assets:
@@ -589,8 +584,6 @@ def open_findings_for_scan_csv(appid, id):
             sla_status = int(sla) - time_since_found
             vuln['SLAStatus'] = sla_status
             vulns.append(vuln)
-        scan = VulnerabilityScans.query.filter(text(f'ID={id}')).first()
-        now = datetime.datetime.utcnow()
 
         # Process the data and create the CSV
         csv_buffer = StringIO()
@@ -674,7 +667,7 @@ def finding_request_review(appid, id):
         app = BusinessApplications.query\
             .filter(text(f'ID={appid}')).first()
         app_data = {'ID': appid, 'ApplicationName': app.ApplicationName}
-        return render_template('request_review.html', details=response, app_data=app_data, user=user, NAV=NAV)
+        return render_template('vulns/request_review.html', details=response, app_data=app_data, user=user, NAV=NAV)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS)
 
@@ -774,7 +767,7 @@ def finding(appid, id):
         else:
             finding_accuracy = 'N/A'
 
-        return render_template('view_finding.html', details=response, app_data=app_data, user=user,
+        return render_template('vulns/view_finding.html', details=response, app_data=app_data, user=user,
                                NAV=NAV, issue_notes=issue_notes, sla_policy=sla_policy, jira=jira_integrations,
                                finding_accuracy=finding_accuracy)
     except RuntimeError:
@@ -856,7 +849,7 @@ def filtered_findings(appid, type, val):
         app_data = {'ID': appid, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         table_details = _set_table_details(assets, sla_policy, pg_cnt, page, vuln_all, per_page, orderby)
 
-        return render_template('open_findings_filtered.html', entities=assets, app_data=app_data, user=user, NAV=NAV,
+        return render_template('vulns/open_findings_filtered.html', entities=assets, app_data=app_data, user=user, NAV=NAV,
                                sla_policy=sla_policy, table_details=table_details, filter_type=type, filter_value=val)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS)
@@ -935,7 +928,7 @@ def filtered_findings_export(appid, type, val):
         table_details = _set_table_details(assets, sla_policy, pg_cnt, page, vuln_all, per_page, orderby)
 
         now = datetime.datetime.utcnow()
-        html = render_template('open_findings_pdf.html', now=now, entities=assets, app_data=app_data, user=user, NAV=NAV,
+        html = render_template('vulns/open_findings_pdf.html', now=now, entities=assets, app_data=app_data, user=user, NAV=NAV,
                                sla_policy=sla_policy, table_details=table_details, filter_type=type, filter_value=val)
         # Create a BytesIO buffer to store the generated PDF
         pdf_buffer = BytesIO()
@@ -1018,17 +1011,8 @@ def filtered_findings_csv(appid, type, val):
 
         assets, pg_cnt, vuln_all = _get_assets(val, orderby, per_page, page, filter_list, appid)
 
-        sla_policy = VulnerabilitySLAAppPair.query.with_entities(
-            VulnerabilitySLAAppPair.ID, VulnerabilitySLAs.CriticalSetting, VulnerabilitySLAs.HighSetting,
-            VulnerabilitySLAs.MediumSetting, VulnerabilitySLAs.LowSetting
-        ) \
-            .join(VulnerabilitySLAs, VulnerabilitySLAs.ID == VulnerabilitySLAAppPair.SlaID) \
-            .filter(text(f'ApplicationID={appid}')).first()
         NAV['appbar'] = 'findings'
         app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
-        app_data = {'ID': appid, 'ApplicationName': app.ApplicationName}
-
-        now = datetime.datetime.utcnow()
 
         # Process the data and create the CSV
         csv_buffer = StringIO()

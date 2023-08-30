@@ -1,6 +1,6 @@
 from vr.sourcecode import sourcecode
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter
-from flask import request, render_template, session, redirect, url_for, jsonify
+from flask import render_template, session, redirect, url_for
 from flask_login import login_required
 import os
 
@@ -33,7 +33,7 @@ def all_cheatsheets():
             filepath = f'vr/sourcecode/cheat_sheets/Index.md'
         with open(filepath, 'r', encoding="utf8") as infile:
             mkd_text = infile.read()
-        return render_template('cheat_sheet.html', mkd_text=mkd_text, user=user, NAV=NAV)
+        return render_template('sourcecode/cheat_sheet.html', mkd_text=mkd_text, user=user, NAV=NAV)
     except RuntimeError:
         return render_template('500.html'), 500
 
@@ -60,7 +60,7 @@ def cheatsheets(sheet_name):
             filepath = f'vr/sourcecode/cheat_sheets/{sheet_name}.md'
         with open(filepath, 'r', encoding="utf8") as infile:
             mkd_text = infile.read()
-        return render_template('cheat_sheet.html', mkd_text=mkd_text, user=user, NAV=NAV)
+        return render_template('sourcecode/cheat_sheet.html', mkd_text=mkd_text, user=user, NAV=NAV)
     except RuntimeError:
         return render_template('500.html'), 500
 

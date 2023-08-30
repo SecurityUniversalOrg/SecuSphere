@@ -130,6 +130,9 @@ app.register_blueprint(admin)
 from vr.assets import assets
 app.register_blueprint(assets)
 
+from vr.assessments import assessments
+app.register_blueprint(assessments)
+
 from vr.vulns import vulns
 app.register_blueprint(vulns)
 

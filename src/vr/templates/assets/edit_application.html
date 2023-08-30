@@ -1,0 +1,425 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+        <div class="row">
+            <div class="col-md-12 active">
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}:{{ app_data.Component }}
+
+                </h3>
+                {% include "assets/component_horizontal_bar.html" %}
+            </div>
+        </div>
+
+
+        <div class="row hidden-xs">
+            <div class="col-lg-12">
+                <ul class="breadcrumb main">
+                    <li class="">
+                        <a class="" href="/">Home</a>
+                    </li>
+                    <li class="">
+                        <a class="" href="#">Settings</a>
+                    </li>
+                    <li class="active">
+                        <a class="active" href="#">Edit Application</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12"></div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div id="base-content" class="col-lg-12">
+                <form class="form-horizontal" action="/edit_application/{{ app_data.ID }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <link href="/static/tagulous/lib/select2-4/css/select2.min.css" type="text/css" media="all" rel="stylesheet">
+                    <script src="/static/tagulous/lib/select2-4/js/select2.full.min.js"></script>
+                    <script src="/static/tagulous/tagulous.js"></script>
+                    <script src="/static/tagulous/adaptor/select2-4.js"></script>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_name" style="color:white;">Name<sup>*</sup></label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="name" maxlength="255" class="form-control" required="" id="id_name" value="{{ app_data.ApplicationName }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_description" style="color:white;">Description<sup>*</sup></label>
+                        <div class="col-sm-10  ">
+                            <textarea name="description" cols="40" rows="10" class="form-control" id="req">{{ app_data.Description }}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_initial_version" style="color:white;">Initial Version<sup>*</sup></label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="initial_version" maxlength="255" class="form-control" required="" id="id_initial_version" value="{{ app_data.Version }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_repo_url" style="color:white;">Code Repository URL<sup>*</sup></label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="repo_url" maxlength="255" class="form-control" required="" id="id_repo_url" value="{{ app_data.RepoURL }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_tags" style="color:white;">Tags
+                            <div class="fa fa-question-circle has-popover" data-trigger="hover"
+                               data-content="Add tags that help describe this product. Choose from the list or add new tags. Press Enter key to add."
+                               data-placement="right" data-container="body" data-original-title="" title="">
+                            </div>
+                        </label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="application_tags" id="id_application_tags" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_product_manager" style="color:white;">Product manager</label>
+                        <div class="col-sm-10  ">
+                            <select name="product_manager" class="form-control selectpicker" id="id_product_manager" data-live-search="true"
+                                    data-container="body" style="width: 70%;">
+                                <option value="">---------</option>
+                                <option value="1" selected="">Admin User (admin)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_technical_contact" style="color:white;">Technical contact</label>
+                        <div class="col-sm-10  ">
+                            <select name="technical_contact" class="form-control selectpicker" id="id_technical_contact"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="">---------</option>
+                                <option value="1" selected="">Admin User (admin)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_team_manager" style="color:white;">Team manager</label>
+                        <div class="col-sm-10  ">
+                            <select name="team_manager" class="form-control selectpicker" id="id_team_manager"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="">---------</option>
+                                <option value="1" selected="">Admin User (admin)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_prod_type" style="color:white;">Product Type<sup>*</sup></label>
+                        <div class="col-sm-10  ">
+                            <select name="prod_type" class="form-control selectpicker" required="" id="id_prod_type"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="">---------</option>
+                                {% for i in product_types %}
+                                    <option value="{{ i }}" {% if i == app_data.ProductType %}selected=""{% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_sla_configuration" style="color:white;">SLA Configuration<sup>*</sup></label>
+                        <div class="col-sm-10  ">
+                            <select name="sla_configuration" class="form-control selectpicker" id="id_sla_configuration"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="">---------</option>
+                                {% for i in all_slas %}
+                                    <option value="{{ i.ID }}" {% if i.ID == app_data.SlaID %}selected=""{% endif %}>{{ i.Name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_regulations" style="color:white;">Regulations</label>
+                        <div class="col-sm-10  ">
+                            <select name="regulations" class="form-control selectpicker" id="id_regulations" multiple=""
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                {% for i in all_regs %}
+                                    <option value="{{ i.ID }}" {% if i.ID == app_data.SlaID %}selected=""{% endif %}>{{ i.Acronym }} ({{ i.Jusisdiction }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_data_types" style="color:white;">Sensitive Data Types</label>
+                        <div class="col-sm-10  ">
+                            <select name="data_types" class="form-control selectpicker" id="id_data_types" multiple=""
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="PCI" {% if app_data.PCI == "1" %}selected=""{% endif %}>Credit Card Info (PCI)</option>
+                                <option value="PHI" {% if app_data.PHI == "1" %}selected=""{% endif %}>Health Info (PHI)</option>
+                                <option value="PII" {% if app_data.PII == "1" %}selected=""{% endif %}>Personally Identifiable Info (PII)</option>
+                                <option value="MiscCustomerData" {% if app_data.MiscCustomerData == "1" %}selected=""{% endif %}>Miscellaneous Customer Data</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_business_criticality" style="color:white;">Business criticality</label>
+                        <div class="col-sm-10  ">
+                            <select name="business_criticality" class="form-control selectpicker" id="id_business_criticality"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="">---------</option>
+                                <option value="Critical" {% if app_data.AppValue == 'Critical' %}selected=""{% endif %}>Critical</option>
+                                <option value="High" {% if app_data.AppValue == 'High' %}selected=""{% endif %}>High</option>
+                                <option value="Medium" {% if app_data.AppValue == 'Medium' %}selected=""{% endif %}>Medium</option>
+                                <option value="Low" {% if app_data.AppValue == 'Low' %}selected=""{% endif %}>Low</option>
+                                <option value="Minimal" {% if app_data.AppValue == 'Minimal' %}selected=""{% endif %}>Minimal</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_platform" style="color:white;">Platform</label>
+                        <div class="col-sm-10  ">
+                            <select name="platform" class="form-control selectpicker" id="id_platform" data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="">---------</option>
+                                <option value="api" {% if app_data.Type == 'api' %}selected=""{% endif %}>API</option>
+                                <option value="desktop" {% if app_data.Type == 'desktop' %}selected=""{% endif %}>Desktop</option>
+                                <option value="iot" {% if app_data.Type == 'iot' %}selected=""{% endif %}>Internet of Things</option>
+                                <option value="mobile" {% if app_data.Type == 'mobile' %}selected=""{% endif %}>Mobile</option>
+                                <option value="web" {% if app_data.Type == 'web' %}selected=""{% endif %}>Web</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_lifecycle" style="color:white;">Lifecycle</label>
+                        <div class="col-sm-10  ">
+                            <select name="lifecycle" class="form-control selectpicker" id="id_lifecycle"
+                                    data-live-search="true" data-container="body" style="width: 70%;">
+                                <option value="">---------</option>
+                                <option value="construction" {% if app_data.Lifecycle == 'construction' %}selected=""{% endif %}>Construction</option>
+                                <option value="production" {% if app_data.Lifecycle == 'production' %}selected=""{% endif %}>Production</option>
+                                <option value="retirement" {% if app_data.Lifecycle == 'retirement' %}selected=""{% endif %}>Retirement</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_origin" style="color:white;">Origin</label>
+                        <div class="col-sm-10  ">
+                            <select name="origin" class="form-control selectpicker" id="id_origin" data-live-search="true"
+                                    data-container="body" style="width: 70%;">
+                                <option value="">---------</option>
+                                <option value="third party library" {% if app_data.Origin == 'third party library' %}selected=""{% endif %}>Third Party Library</option>
+                                <option value="purchased" {% if app_data.Origin == 'purchased' %}selected=""{% endif %}>Purchased</option>
+                                <option value="contractor" {% if app_data.Origin == 'contractor' %}selected=""{% endif %}>Contractor Developed</option>
+                                <option value="internal" {% if app_data.Origin == 'internal' %}selected=""{% endif %}>Internally Developed</option>
+                                <option value="open source" {% if app_data.Origin == 'open source' %}selected=""{% endif %}>Open Source</option>
+                                <option value="outsourced" {% if app_data.Origin == 'outsourced' %}selected=""{% endif %}>Outsourced</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_user_records" style="color:white;">User records
+                            <div class="fa fa-question-circle has-popover" data-trigger="hover"
+                               data-content="Estimate the number of user records within the application."
+                               data-placement="right" data-container="body" data-original-title="" title="">
+                            </div>
+                        </label>
+                        <div class="col-sm-10  ">
+                            <input type="number" name="user_records" min="0" class="form-control" id="id_user_records" value="{{ app_data.UserRecords }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_revenue" style="color:white;">Revenue
+                            <div class="fa fa-question-circle has-popover" data-trigger="hover"
+                               data-content="Estimate the application's revenue." data-placement="right"
+                               data-container="body" data-original-title="" title="">
+                            </div>
+                        </label>
+                        <div class="col-sm-10  ">
+                            <input type="number" name="revenue" step="0.01" class="form-control" id="id_revenue" value="{{ app_data.Revenue }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10 ">
+                            <div class="checkbox">
+                                <label style="color:white;">
+                                    <input type="checkbox" name="internet_accessible" id="id_internet_accessible" {% if app_data.WebEnabled == '1' %}checked=""{% endif %}>
+                                    <span style="margin-left: 50px;">Internet accessible</span>
+                                    <div class="fa fa-question-circle has-popover" data-trigger="hover"
+                                       data-content="Specify if the application is accessible from the public internet."
+                                       data-placement="right" data-container="body" data-original-title="" title="">
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10 ">
+                            <div class="checkbox">
+                                <label style="color:white;">
+                                    <input type="checkbox" name="enable_simple_risk_acceptance"
+                                           id="id_enable_simple_risk_acceptance">
+                                    <span style="margin-left: 50px;">Enable simple risk acceptance</span>
+                                    <div class="fa fa-question-circle has-popover" data-trigger="hover"
+                                       data-content="Allows simple risk acceptance by checking/unchecking a checkbox."
+                                       data-placement="right" data-container="body" data-original-title="" title="">
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10 ">
+                            <div class="checkbox">
+                                <label style="color:white;">
+                                    <input type="checkbox" name="enable_full_risk_acceptance"
+                                           id="id_enable_full_risk_acceptance" checked="">
+                                    <span style="margin-left: 50px;">Enable full risk acceptance</span>
+                                    <div class="fa fa-question-circle has-popover" data-trigger="hover"
+                                       data-content="Allows full risk acceptance using a risk acceptance form, expiration date, uploaded proof, etc."
+                                       data-placement="right" data-container="body" data-original-title="" title="">
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <input style="width: max-content;margin-left: 94px;margin-top: 1rem;" class="btn btn-primary" type="submit" value="Submit">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+    </div>
+
+<script src="/static/js/index.js"></script>
+<script src="/static/js/cvsscalc30_helptext.js"></script>
+<script src="/static/js/cvsscalc30.js"></script>
+<script src="/static/js/cvss_calculator.js"></script>
+<script type="application/javascript">
+            $(document).ready(function() {
+                disable_count = document.getElementById('disable_count').innerHTML
+                refresh = document.getElementById('alert_refresh').innerHTML
+
+                $('.has-popover').popover({'trigger':'hover'});
+
+                    $('.dropdown-toggle-alerts').click(function() {
+                        get_alerts();
+                    });
+
+                    if (disable_count == "False") {
+                        if(refresh == 'True') {
+                            setInterval(function() {
+                                update_alertcount();
+                            }, 10000);
+                        } else {
+                            update_alertcount();
+                        }
+                    }
+
+
+                function update_alertcount() {
+                    $.get("/alerts/count", function (data) {
+                        if (data.count != $('#alert_count').text()) {
+                            $('#alert_count').text(data.count);
+                            $('#alert_count').removeClass().addClass('badge badge-count badge-count' + data.count);
+                        }
+                    });
+                }
+
+                function htmlEscape(str) {
+                return str
+                    .replace(/\n/g, " ")
+                    .replace(/&/g, '&amp;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+                }
+
+                function get_alerts() {
+                    $('.dropdown-alerts').html('<div class="text-center"><div class="fa fa-spin fa-spinner"></div></div>');
+                    $.get("/alerts/json?limit=12", function (data) {
+                        $('.dropdown-alerts').empty();
+                        $.each(data, function(i, elem) {
+                        var titleField = elem.fields.title ? elem.fields.title : elem.fields.description;
+                        var display_title = titleField.length < 50 ? titleField : titleField.trim().substring(0,50).trim(this) + '...';
+                        var description = elem.fields.description
+                        var display_description = description ? description.length < 100 ? description : description.trim().substring(0,100).trim(this) + '...': ''
+                        var dropdown_alert = "alert-list" + i;
+                        $('.dropdown-alerts').append('<li><div style="padding: 3px 20px;"><div class="fa fa-' + htmlEscape(elem.fields.icon) +
+                                                        ' fa-fw"></div><a href="' + htmlEscape(elem.fields.url) + '" id=' + dropdown_alert +
+                                                        ' title="' + htmlEscape(display_description) + '"></a><span class="pull-right text-muted small">' +
+                                                    htmlEscape(elem.fields.source) + '</span></div></li><li class="divider"></li>');
+                        $("#" + dropdown_alert).text(display_title);
+                        });
+
+                        if (data.length > 0) {
+                            $('.dropdown-alerts').append('<li><a class="text-center" href="/alerts"><strong>See All Alerts</strong>' +
+                                                        '<div class="fa fa-angle-right"></div></a></li>');
+                            $('.dropdown-alerts').append('<li><a class="text-center" href="/delete_alerts"><strong>Clear All Alerts</strong>' +
+                                                    '<div class="fa fa-angle-right"></div></a></li>');
+                        }
+                        else {
+                            $('.dropdown-alerts').append('<li class="text-center"><strong>No alerts found</strong></li>');
+                        }
+                    });
+                    update_alertcount()
+                }
+
+                $("#id_jiraform-jira_issue").on('paste', function(e) {
+                    var clipboardData = e.clipboardData || e.originalEvent.clipboardData || window.clipboardData;
+                    var pastedData = clipboardData.getData('text');
+
+                    $this = $(this)
+                    // if someone entered/pasted a full URL, we strip evertyhing until last '/'
+                    setTimeout(function (elem) {
+                        $this.val($this.val().substring($this.val().lastIndexOf("/") + 1));
+                    }, 100);
+                });
+
+                <!-- TODO not working with django tagulous which uses select2, break styling -->
+                <!-- $('#id_tags').select2({ -->
+                    <!-- 'placeholder': 'Select or add some tags...', -->
+                    <!-- 'no_results_text': "Tag not found, press TAB key to add.", -->
+                <!-- }); -->
+
+                $('select').not('#notification-scope').addClass('selectpicker');
+                $('.selectpicker').attr('data-live-search', 'true');
+                $('.selectpicker').attr('data-container', 'body');
+                $('.selectpicker').css('width', '70%');
+                $('.selectpicker').selectpicker('render');
+
+            });
+        </script>
+<script type="application/javascript" src="/static/easymde/dist/easymde.min.js"></script>
+<script type="application/javascript">
+        $(function () {
+            $("textarea").each(function (index, elem) {
+                if (elem.hasAttribute("required")) {
+                    elem.removeAttribute("required");
+                    elem.id = "req"
+                }
+
+                if(!$(elem).hasClass('select2-search__field')) {
+                    var mde = new EasyMDE({
+                        spellChecker: false,
+                        element: elem,
+                        autofocus: false,
+                        forceSync: true,
+                        toolbar: ["bold", "italic", "heading", "|",
+                            "quote", "unordered-list", "ordered-list", "|",
+                            "link", "image", "|",
+                            "table", "horizontal-rule", "code", "|",
+                            "guide"
+                        ]
+                    });
+                    mde.render();
+                }
+            });
+        });
+    </script>
+
+{% endblock %}
+

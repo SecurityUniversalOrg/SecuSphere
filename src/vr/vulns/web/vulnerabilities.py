@@ -82,7 +82,7 @@ def all_vulnerabilities():
             "rec_end": int(page) * per_page if (int(page) * per_page) < vuln_all.total else vuln_all.total
         }
 
-        return render_template('all_vulnerabilities.html', entities=assets, user=user, NAV=NAV, table_details= table_details)
+        return render_template('vulns/all_vulnerabilities.html', entities=assets, user=user, NAV=NAV, table_details= table_details)
     except RuntimeError:
         return render_template('500.html'), 500
 
@@ -146,7 +146,7 @@ def all_vulnerabilities_export():
         }
 
         now = datetime.datetime.utcnow()
-        html = render_template('all_vulnerabilities_pdf.html', now=now, entities=assets, user=user,
+        html = render_template('vulns/all_vulnerabilities_pdf.html', now=now, entities=assets, user=user,
                                NAV=NAV, table_details=table_details)
         # Create a BytesIO buffer to store the generated PDF
         pdf_buffer = BytesIO()
@@ -211,7 +211,6 @@ def all_vulnerabilities_csv():
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
-        pg_cnt = ceil((vuln_all.total / per_page))
         schema = VulnerabilitiesSchema(many=True)
         assets = schema.dump(vuln_all.items)
 
@@ -326,7 +325,7 @@ def all_vulnerabilities_filtered(type, val):
 
         table_details = _set_table_details(pg_cnt, page, vuln_all, per_page, orderby)
 
-        return render_template('all_vulnerabilities_filtered.html', entities=assets, user=user, NAV=NAV, table_details= table_details,
+        return render_template('vulns/all_vulnerabilities_filtered.html', entities=assets, user=user, NAV=NAV, table_details= table_details,
                                filter_type=type, filter_value=val)
     except RuntimeError:
         return render_template('500.html'), 500
@@ -441,7 +440,7 @@ def all_vulnerabilities_filtered_export(type, val):
         table_details = _set_table_details(pg_cnt, page, vuln_all, per_page, orderby)
 
         now = datetime.datetime.utcnow()
-        html = render_template('all_vulnerabilities_pdf.html', now=now, entities=assets, user=user,
+        html = render_template('vulns/all_vulnerabilities_pdf.html', now=now, entities=assets, user=user,
                                NAV=NAV, table_details=table_details)
         # Create a BytesIO buffer to store the generated PDF
         pdf_buffer = BytesIO()
@@ -638,7 +637,7 @@ def all_app_vulns_filtered(app_name, type, val):
         app = BusinessApplications.query.filter(text(f'ApplicationName="{app_name}"')).first()
         app_data = {'ID': app.ID, 'ApplicationName': app.ApplicationName}
 
-        return render_template('all_app_vulns_filtered.html', entities=assets, user=user, NAV=NAV, table_details= table_details,
+        return render_template('vulns/all_app_vulns_filtered.html', entities=assets, user=user, NAV=NAV, table_details= table_details,
                                filter_type=type, filter_value=val, app_data=app_data)
     except RuntimeError:
         return render_template('500.html'), 500
@@ -708,7 +707,7 @@ def all_app_vulns_filtered_export(app_name, type, val):
         table_details = _set_table_details(pg_cnt, page, vuln_all, per_page, orderby)
 
         now = datetime.datetime.utcnow()
-        html = render_template('all_app_vulns_filtered_pdf.html', now=now, entities=assets, user=user,
+        html = render_template('vulns/all_app_vulns_filtered_pdf.html', now=now, entities=assets, user=user,
                                NAV=NAV, table_details=table_details)
         # Create a BytesIO buffer to store the generated PDF
         pdf_buffer = BytesIO()

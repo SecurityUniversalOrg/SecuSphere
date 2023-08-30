@@ -1,5 +1,5 @@
 import datetime
-from flask import request, render_template, session, redirect, url_for
+from flask import render_template, session, redirect, url_for
 from flask_login import login_required
 from sqlalchemy import text
 from vr.api import api
@@ -153,7 +153,7 @@ def visual_pipeline(id):
         CMDB_ENTRY
     ]
 
-    return render_template('visual_pipeline.html', user=user, NAV=NAV, entity_groups=entity_groups, \
+    return render_template('vulns/visual_pipeline.html', user=user, NAV=NAV, entity_groups=entity_groups, \
                            edge_group=edge_groups, group_names=group_names, default_settings=default_settings)
 
 
@@ -500,5 +500,5 @@ def visual_vulnerabilities(id):
         ISSUE_MGMT,
     ]
 
-    return render_template('visual_pipeline.html', user=user, NAV=NAV, entity_groups=entity_groups, \
+    return render_template('vulns/visual_pipeline.html', user=user, NAV=NAV, entity_groups=entity_groups, \
                            edge_group=edge_groups, group_names=group_names, default_settings=default_settings)

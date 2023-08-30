@@ -4,7 +4,7 @@ from io import BytesIO
 import pyqrcode
 
 from flask_login import current_user
-from flask import session, redirect, url_for, render_template, request, json, flash
+from flask import session, redirect, url_for, render_template, request, flash
 # Start of Entity-specific Imports
 from vr import db, app
 from vr.admin import admin
@@ -34,14 +34,14 @@ def register():
         except RuntimeError:
             return render_template(SERV_ERR)
     else:
-        return redirect(url_for('vulns.all_applications'))
+        return redirect(url_for('assets.all_applications'))
 
 
 @admin.route('/register_user/<token>', methods=['GET'])
 def register_user(token):
     if current_user.is_authenticated:
         flash('You are already logged in.', 'danger')
-        return redirect(url_for('vulns.all_applications'))
+        return redirect(url_for('assets.all_applications'))
     form = RegisterForm(request.form)
     user = User.query.filter_by(auth_token=token).first()
     if user:
@@ -55,7 +55,7 @@ def register_user_submit():
     try:
         if current_user.is_authenticated:
             flash('You are already logged in.', 'danger')
-            return redirect(url_for('vulns.all_applications'))
+            return redirect(url_for('assets.all_applications'))
         form = RegisterForm(request.form)
 
         password = request.form.get('psw')
@@ -72,7 +72,7 @@ def register_user_submit():
             db_connection_handler(db)
 
             session['username'] = user.username
-            return redirect(url_for('vulns.all_applications'))
+            return redirect(url_for('assets.all_applications'))
         else:
             warnmsg = ('regfail', 'danger')
             return render_template('admin/login.html', form=form, warnmsg=warnmsg)
@@ -87,7 +87,7 @@ def register_submit():
     try:
         if current_user.is_authenticated:
             flash('You are already logged in.', 'danger')
-            return redirect(url_for('vulns.all_applications'))
+            return redirect(url_for('assets.all_applications'))
         form = RegisterForm(request.form)
 
         firstname = request.form.get('firstname')
@@ -150,11 +150,6 @@ def qrcode():
         if 'username' not in session:
             return redirect(url_for('admin.register'))
         user = User.query.filter_by(username=session['username']).first()
-
-        # for added security, remove username from session
-        # del session['username']
-
-        # render qrcode for FreeTOTP
         url = pyqrcode.create(user.get_totp_uri())
         stream = BytesIO()
         url.svg(stream, scale=5)

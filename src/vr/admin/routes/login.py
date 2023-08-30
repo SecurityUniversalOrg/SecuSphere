@@ -38,7 +38,7 @@ def login():
     if AUTH_TYPE == 'local':
         if current_user.is_authenticated:
             flash('You are already logged in.', 'danger')
-            return redirect(url_for('vulns.all_applications'))
+            return redirect(url_for('assets.all_applications'))
 
         form = LoginForm(request.form)
         if not form.validate():
@@ -87,7 +87,7 @@ if AUTH_TYPE == 'azuread':
             result = _build_msal_app(cache=cache).acquire_token_by_auth_code_flow(
                 session.get("flow", {}), request.args)
             if "error" in result:
-                return render_template("azuread_auth_error.html", result=result)
+                return render_template("admin/azuread_auth_error.html", result=result)
             session["username"] = result.get("id_token_claims")["preferred_username"]
             session["id_token_claims"] = result.get("id_token_claims")
             _save_cache(cache)
@@ -198,7 +198,7 @@ def _login_attempt(user, username, password, userid, form, mfa_password):
         pass
     flash('You have successfully logged in.', 'success')
 
-    return redirect(url_for('vulns.all_applications'))
+    return redirect(url_for('assets.all_applications'))
 
 
 def _handle_successful_login(userid, auth_success, user):
