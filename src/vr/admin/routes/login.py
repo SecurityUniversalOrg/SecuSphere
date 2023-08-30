@@ -130,7 +130,7 @@ if AUTH_TYPE == 'azuread':
             login_user(user)
         except ValueError:  # Usually caused by CSRF
             pass  # Simply ignore them
-        return redirect(url_for("vulns.all_applications"))
+        return redirect(url_for("assets.all_applications"))
 
 
 def map_ad_groups_to_roles(graph_data):
