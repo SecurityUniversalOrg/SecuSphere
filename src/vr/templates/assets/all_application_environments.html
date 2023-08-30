@@ -104,7 +104,7 @@
                                     <td>{{ i.ImplementsAPI }}</td>
                                     <td>{{ i.WebURL }}</td>
                                     <td class="text-center">
-                                        <a href="{{ url_for('vulns.edit_application_environment', app_id=i.AppID, env_id=i.ID) }}"><div class="fa-solid fa-pencil btn-delete"></div></a>
+                                        <a href="{{ url_for('assets.edit_application_environment', app_id=i.AppID, env_id=i.ID) }}"><div class="fa-solid fa-pencil btn-delete"></div></a>
                                     </td>
                                     <td class="text-center">
                                         <div class="fa-solid fa-trash btn-delete" data-toggle="modal" data-target="#deleteModal-{{i.id}}"></div>

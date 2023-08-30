@@ -26,7 +26,7 @@ def create_client():
         return render_template('403.html', user=user, nav_cat={}, nav_subcat='', \
                                nav_subsubcat='', nav_curpage={"name": "Unauthorized"})
     if request.method == 'GET':
-        return render_template('create_client.html', user=user, user_roles=user_roles, NAV=NAV)
+        return render_template('admin/create_client.html', user=user, user_roles=user_roles, NAV=NAV)
     client_id = gen_salt(24)
     client_id_issued_at = int(time.time())
     client = OAuth2Client(
