@@ -228,7 +228,7 @@
           <div class="fa fa-caret-down"></div>
       </button>
 	  <div class="dropdown_container">
-        <a href="{{ url_for('vulns.all_applications') }}" class="menu_child_btn reg">All Applications</a>
+        <a href="{{ url_for('assets.all_applications') }}" class="menu_child_btn reg">All Applications</a>
         <a href="{{ url_for('vulns.all_application_metrics') }}" class="menu_child_btn reg">Application Metrics</a>
         <a href="{{ url_for('vulns.global_KPIs') }}" class="menu_child_btn reg">Application KPIs</a>
         {% if user.is_admin %}
