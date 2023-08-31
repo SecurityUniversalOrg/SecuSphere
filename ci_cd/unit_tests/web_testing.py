@@ -10,7 +10,7 @@ from vr.vulns.model.vulnerabilities import Vulnerabilities
 from vr.vulns.model.vulnerabilityscans import VulnerabilityScans
 from vr.vulns.model.vulnerabilityslaapppair import VulnerabilitySLAAppPair
 from vr.assessments.model.appassessmentbenchmarkassignments import AppAssessmentBenchmarkAssignments, MakeAppAssessmentBenchmarkAssignmentsSchema
-# from vr.assets.model.assetapplications import AssetApplications, MakeAssetApplicationsSchema
+from vr.assets.model.assetapplications import AssetApplications, MakeAssetApplicationsSchema
 # from vr.sourcecode.model.buildartifacts import BuildArtifacts, MakeBuildArtifactsSchema
 # from vr.sourcecode.model.pullrequests import PullRequests, MakePullRequestsSchema
 # from vr.sourcecode.model.sourcecodefile import SourceCodeFile, MakeSourceCodeFileSchema
@@ -243,53 +243,53 @@ class TestWebApp(unittest.TestCase):
         response = self._get_test_handler(route)
         assert response.status_code == 200
 
-    # def test_A6_appassessmentbenchmarkassignments_model_creation(self):
-    #     new_assignment = AppAssessmentBenchmarkAssignments(ApplicationID=1, BenchmarkID=1, UserID=1, Notes="Test",
-    #                                                        Type="TypeTest")
-    #     db.session.add(new_assignment)
-    #     db.session.commit()
-    #     fetched_assignment = AppAssessmentBenchmarkAssignments.query.first()
-    #     self.assertEqual(fetched_assignment.ApplicationID, 1)
-    #     self.assertEqual(fetched_assignment.BenchmarkID, 1)
-    #     self.assertEqual(fetched_assignment.UserID, 1)
-    #     self.assertEqual(fetched_assignment.Notes, "Test")
-    #     self.assertEqual(fetched_assignment.Type, "TypeTest")
-    #
-    # def test_A7_appassessmentbenchmarkassignments_schema(self):
-    #     assignment = {
-    #         "ID": 1,
-    #         "AddDate": "2022-01-01",
-    #         "ApplicationID": 1,
-    #         "BenchmarkID": 1,
-    #         "UserID": 1,
-    #         "Notes": "Test",
-    #         "Type": "TypeTest"
-    #     }
-    #     schema = MakeAppAssessmentBenchmarkAssignmentsSchema()
-    #     deserialized_data = schema.load(assignment)
-    #     self.assertIsInstance(deserialized_data, AppAssessmentBenchmarkAssignments)
-    #     serialized_data = schema.dump(deserialized_data)
-    #     self.assertEqual(serialized_data, assignment)
+    def test_A6_appassessmentbenchmarkassignments_model_creation(self):
+        new_assignment = AppAssessmentBenchmarkAssignments(ApplicationID=1, BenchmarkID=1, UserID=1, Notes="Test",
+                                                           Type="TypeTest")
+        db.session.add(new_assignment)
+        db.session.commit()
+        fetched_assignment = AppAssessmentBenchmarkAssignments.query.first()
+        self.assertEqual(fetched_assignment.ApplicationID, 1)
+        self.assertEqual(fetched_assignment.BenchmarkID, 1)
+        self.assertEqual(fetched_assignment.UserID, 1)
+        self.assertEqual(fetched_assignment.Notes, "Test")
+        self.assertEqual(fetched_assignment.Type, "TypeTest")
 
-    # def test_A8_assetapplications_creation(self):
-    #     new_asset_application = AssetApplications(TechnologyID=1, ApplicationID=1)
-    #     db.session.add(new_asset_application)
-    #     db.session.commit()
-    #     fetched_asset_application = AssetApplications.query.first()
-    #     self.assertEqual(fetched_asset_application.TechnologyID, 1)
-    #     self.assertEqual(fetched_asset_application.ApplicationID, 1)
-    #
-    # def test_A9_assetapplications_schema(self):
-    #     asset_application_data = {
-    #         "ID": 1,
-    #         "TechnologyID": 1,
-    #         "ApplicationID": 1
-    #     }
-    #     schema = MakeAssetApplicationsSchema()
-    #     deserialized_data = schema.load(asset_application_data)
-    #     self.assertIsInstance(deserialized_data, AssetApplications)
-    #     serialized_data = schema.dump(deserialized_data)
-    #     self.assertEqual(serialized_data, asset_application_data)
+    def test_A7_appassessmentbenchmarkassignments_schema(self):
+        assignment = {
+            "ID": 1,
+            "AddDate": "2022-01-01",
+            "ApplicationID": 1,
+            "BenchmarkID": 1,
+            "UserID": 1,
+            "Notes": "Test",
+            "Type": "TypeTest"
+        }
+        schema = MakeAppAssessmentBenchmarkAssignmentsSchema()
+        deserialized_data = schema.load(assignment)
+        self.assertIsInstance(deserialized_data, AppAssessmentBenchmarkAssignments)
+        serialized_data = schema.dump(deserialized_data)
+        self.assertEqual(serialized_data, assignment)
+
+    def test_A8_assetapplications_creation(self):
+        new_asset_application = AssetApplications(TechnologyID=1, ApplicationID=1)
+        db.session.add(new_asset_application)
+        db.session.commit()
+        fetched_asset_application = AssetApplications.query.first()
+        self.assertEqual(fetched_asset_application.TechnologyID, 1)
+        self.assertEqual(fetched_asset_application.ApplicationID, 1)
+
+    def test_A9_assetapplications_schema(self):
+        asset_application_data = {
+            "ID": 1,
+            "TechnologyID": 1,
+            "ApplicationID": 1
+        }
+        schema = MakeAssetApplicationsSchema()
+        deserialized_data = schema.load(asset_application_data)
+        self.assertIsInstance(deserialized_data, AssetApplications)
+        serialized_data = schema.dump(deserialized_data)
+        self.assertEqual(serialized_data, asset_application_data)
     #
     # def test_A9A_buildartifacts_creation(self):
     #     new_build_artifact = BuildArtifacts(PipelineJobID=1, ArtifactName="artifact1",
