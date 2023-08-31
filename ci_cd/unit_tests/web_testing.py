@@ -9,20 +9,20 @@ from vr.assets.model.businessapplications import BusinessApplications
 from vr.vulns.model.vulnerabilities import Vulnerabilities
 from vr.vulns.model.vulnerabilityscans import VulnerabilityScans
 from vr.vulns.model.vulnerabilityslaapppair import VulnerabilitySLAAppPair
-from vr.assessments.model.appassessmentbenchmarkassignments import AppAssessmentBenchmarkAssignments, MakeAppAssessmentBenchmarkAssignmentsSchema
-from vr.assets.model.assetapplications import AssetApplications, MakeAssetApplicationsSchema
-from vr.sourcecode.model.buildartifacts import BuildArtifacts, MakeBuildArtifactsSchema
-from vr.sourcecode.model.pullrequests import PullRequests, MakePullRequestsSchema
-from vr.sourcecode.model.sourcecodefile import SourceCodeFile, MakeSourceCodeFileSchema
-from vr.assets.model.technologies import Technologies, MakeTechnologiesSchema
-from vr.threat_modeling.model.tmansweredquestions import TmAnsweredQuestions, MakeTmAnsweredQuestionsSchema
-from vr.threat_modeling.model.tmcontrols import TmControls, MakeTmControlsSchema
-from vr.threat_modeling.model.tmidentifiedcontrols import TmIdentifiedControls, MakeTmIdentifiedControlsSchema
-from vr.threat_modeling.model.tmquestions import TmQuestions, MakeTmQuestionsSchema
-from vr.threat_modeling.model.tmsolutions import TmSolutions, MakeTmSolutionsSchema
-from vr.vulns.model.vulnerabilityremediation import VulnerabilityRemediation, MakeVulnerabilityRemediationSchema
-from vr.vulns.model.vulnerabilityupdates import VulnerabilityUpdates, MakeVulnerabilityUpdatesSchema
-from vr.vulns.model.vulntoolapppairs import VulnToolAppPairs, MakeVulnToolAppPairsSchema
+# from vr.assessments.model.appassessmentbenchmarkassignments import AppAssessmentBenchmarkAssignments, MakeAppAssessmentBenchmarkAssignmentsSchema
+# from vr.assets.model.assetapplications import AssetApplications, MakeAssetApplicationsSchema
+# from vr.sourcecode.model.buildartifacts import BuildArtifacts, MakeBuildArtifactsSchema
+# from vr.sourcecode.model.pullrequests import PullRequests, MakePullRequestsSchema
+# from vr.sourcecode.model.sourcecodefile import SourceCodeFile, MakeSourceCodeFileSchema
+# from vr.assets.model.technologies import Technologies, MakeTechnologiesSchema
+# from vr.threat_modeling.model.tmansweredquestions import TmAnsweredQuestions, MakeTmAnsweredQuestionsSchema
+# from vr.threat_modeling.model.tmcontrols import TmControls, MakeTmControlsSchema
+# from vr.threat_modeling.model.tmidentifiedcontrols import TmIdentifiedControls, MakeTmIdentifiedControlsSchema
+# from vr.threat_modeling.model.tmquestions import TmQuestions, MakeTmQuestionsSchema
+# from vr.threat_modeling.model.tmsolutions import TmSolutions, MakeTmSolutionsSchema
+# from vr.vulns.model.vulnerabilityremediation import VulnerabilityRemediation, MakeVulnerabilityRemediationSchema
+# from vr.vulns.model.vulnerabilityupdates import VulnerabilityUpdates, MakeVulnerabilityUpdatesSchema
+# from vr.vulns.model.vulntoolapppairs import VulnToolAppPairs, MakeVulnToolAppPairsSchema
 
 ADMIN_USER_FIRST_NAME = 'testadmin'
 ADMIN_USER_LAST_NAME = 'user'
