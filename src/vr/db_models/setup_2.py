@@ -81,14 +81,14 @@ def _init_db(db):
 
 
     class VulnerabilityUpdates(db.Model):
-        __tablename__ = 'VulnerabilityUpdates'
         __table_args__ = {'extend_existing': True}
+        __tablename__ = 'VulnerabilityUpdates'
         ID = db.Column(db.Integer, primary_key=True)
         UpdateStartDate = db.Column(db.DateTime, index=True)
         UpdateEndDate = db.Column(db.DateTime, index=True)
         NewCveCnt = db.Column(db.Integer)
-        UpdatedCveCnt = db.Column(db.DateTime, index=True)
-        ScanEndDate = db.Column(db.Integer, db.ForeignKey(TECH_ID, ondelete='CASCADE'))
+        UpdatedCveCnt = db.Column(db.Integer)
+        ScanEndDate = db.Column(db.DateTime, index=True)
 
 
     VulnerabilityUpdates()
