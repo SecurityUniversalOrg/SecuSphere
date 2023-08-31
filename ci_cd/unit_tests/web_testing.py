@@ -9,7 +9,7 @@ from vr.assets.model.businessapplications import BusinessApplications
 from vr.vulns.model.vulnerabilities import Vulnerabilities
 from vr.vulns.model.vulnerabilityscans import VulnerabilityScans
 from vr.vulns.model.vulnerabilityslaapppair import VulnerabilitySLAAppPair
-# from vr.assessments.model.appassessmentbenchmarkassignments import AppAssessmentBenchmarkAssignments, MakeAppAssessmentBenchmarkAssignmentsSchema
+from vr.assessments.model.appassessmentbenchmarkassignments import AppAssessmentBenchmarkAssignments, MakeAppAssessmentBenchmarkAssignmentsSchema
 # from vr.assets.model.assetapplications import AssetApplications, MakeAssetApplicationsSchema
 # from vr.sourcecode.model.buildartifacts import BuildArtifacts, MakeBuildArtifactsSchema
 # from vr.sourcecode.model.pullrequests import PullRequests, MakePullRequestsSchema
