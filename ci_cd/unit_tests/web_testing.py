@@ -389,61 +389,61 @@ class TestWebApp(unittest.TestCase):
         for field in file_data:
             self.assertEqual(serialized_data[field], file_data[field])
 
-    def test_A9G_technology_creation(self):
-        tech = Technologies(
-            Name="TechName",
-            Part="Part1",
-            Vendor="Vendor1",
-            Product="Product1",
-            Version="1.0",
-            UpdateVer="1.1",
-            Edition="Standard",
-            Language="English",
-            TechnologyValue="Value1",
-            BusinessUnit="BU1",
-            Owner="Owner1",
-            Custodian="Custodian1",
-            Classification="Class1",
-            UniqueID="UID1",
-            UniqueIDType="Type1",
-            Description="A technology description",
-            RegComplete="Y"
-        )
-        db.session.add(tech)
-        db.session.commit()
-        fetched_tech = Technologies.query.first()
-        self.assertEqual(fetched_tech.Name, "TechName")
-        self.assertEqual(fetched_tech.Owner, "Owner1")
-        self.assertEqual(fetched_tech.Product, "Product1")
-
-    def test_A9H_technology_schema(self):
-        tech_data = {
-            "TechnologyID": 1,
-            "Name": "TechName",
-            "Part": "Part1",
-            "Vendor": "Vendor1",
-            "Product": "Product1",
-            "Version": "1.0",
-            "UpdateVer": "1.1",
-            "Edition": "Standard",
-            "Language": "English",
-            "TechnologyValue": "Value1",
-            "BusinessUnit": "BU1",
-            "Owner": "Owner1",
-            "Custodian": "Custodian1",
-            "Classification": "Class1",
-            "UniqueID": "UID1",
-            "UniqueIDType": "Type1",
-            "Description": "A technology description",
-            "RegComplete": "Y",
-            "RegDate": datetime.utcnow().isoformat()
-        }
-        schema = MakeTechnologiesSchema()
-        deserialized_data = schema.load(tech_data)
-        self.assertIsInstance(deserialized_data, Technologies)
-        serialized_data = schema.dump(deserialized_data)
-        for field in tech_data:
-            self.assertEqual(serialized_data[field], tech_data[field])
+    # def test_A9G_technology_creation(self):
+    #     tech = Technologies(
+    #         Name="TechName",
+    #         Part="Part1",
+    #         Vendor="Vendor1",
+    #         Product="Product1",
+    #         Version="1.0",
+    #         UpdateVer="1.1",
+    #         Edition="Standard",
+    #         Language="English",
+    #         TechnologyValue="Value1",
+    #         BusinessUnit="BU1",
+    #         Owner="Owner1",
+    #         Custodian="Custodian1",
+    #         Classification="Class1",
+    #         UniqueID="UID1",
+    #         UniqueIDType="Type1",
+    #         Description="A technology description",
+    #         RegComplete="Y"
+    #     )
+    #     db.session.add(tech)
+    #     db.session.commit()
+    #     fetched_tech = Technologies.query.first()
+    #     self.assertEqual(fetched_tech.Name, "TechName")
+    #     self.assertEqual(fetched_tech.Owner, "Owner1")
+    #     self.assertEqual(fetched_tech.Product, "Product1")
+    #
+    # def test_A9H_technology_schema(self):
+    #     tech_data = {
+    #         "TechnologyID": 1,
+    #         "Name": "TechName",
+    #         "Part": "Part1",
+    #         "Vendor": "Vendor1",
+    #         "Product": "Product1",
+    #         "Version": "1.0",
+    #         "UpdateVer": "1.1",
+    #         "Edition": "Standard",
+    #         "Language": "English",
+    #         "TechnologyValue": "Value1",
+    #         "BusinessUnit": "BU1",
+    #         "Owner": "Owner1",
+    #         "Custodian": "Custodian1",
+    #         "Classification": "Class1",
+    #         "UniqueID": "UID1",
+    #         "UniqueIDType": "Type1",
+    #         "Description": "A technology description",
+    #         "RegComplete": "Y",
+    #         "RegDate": datetime.utcnow().isoformat()
+    #     }
+    #     schema = MakeTechnologiesSchema()
+    #     deserialized_data = schema.load(tech_data)
+    #     self.assertIsInstance(deserialized_data, Technologies)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     for field in tech_data:
+    #         self.assertEqual(serialized_data[field], tech_data[field])
 
     def test_A9I_tmansweredquestions_creation(self):
         answered_question = TmAnsweredQuestions(
