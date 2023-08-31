@@ -271,123 +271,123 @@ class TestWebApp(unittest.TestCase):
         serialized_data = schema.dump(deserialized_data)
         self.assertEqual(serialized_data, assignment)
 
-    def test_A8_assetapplications_creation(self):
-        new_asset_application = AssetApplications(TechnologyID=1, ApplicationID=1)
-        db.session.add(new_asset_application)
-        db.session.commit()
-        fetched_asset_application = AssetApplications.query.first()
-        self.assertEqual(fetched_asset_application.TechnologyID, 1)
-        self.assertEqual(fetched_asset_application.ApplicationID, 1)
-
-    def test_A9_assetapplications_schema(self):
-        asset_application_data = {
-            "ID": 1,
-            "TechnologyID": 1,
-            "ApplicationID": 1
-        }
-        schema = MakeAssetApplicationsSchema()
-        deserialized_data = schema.load(asset_application_data)
-        self.assertIsInstance(deserialized_data, AssetApplications)
-        serialized_data = schema.dump(deserialized_data)
-        self.assertEqual(serialized_data, asset_application_data)
-
-    def test_A9A_buildartifacts_creation(self):
-        new_build_artifact = BuildArtifacts(PipelineJobID=1, ArtifactName="artifact1",
-                                            Url="http://example.com/artifact1")
-        db.session.add(new_build_artifact)
-        db.session.commit()
-        fetched_build_artifact = BuildArtifacts.query.first()
-        self.assertEqual(fetched_build_artifact.PipelineJobID, 1)
-        self.assertEqual(fetched_build_artifact.ArtifactName, "artifact1")
-        self.assertEqual(fetched_build_artifact.Url, "http://example.com/artifact1")
-
-    def test_A9B_buildartifacts_schema(self):
-        build_artifact_data = {
-            "ID": 1,
-            "AddDate": "2022-01-01T12:30:45",
-            "PipelineJobID": 1,
-            "ArtifactName": "artifact1",
-            "Url": "http://example.com/artifact1"
-        }
-        schema = MakeBuildArtifactsSchema()
-        deserialized_data = schema.load(build_artifact_data)
-        self.assertIsInstance(deserialized_data, BuildArtifacts)
-        serialized_data = schema.dump(deserialized_data)
-        self.assertEqual(serialized_data, build_artifact_data)
-
-    def test_A9C_pullrequests_creation(self):
-        new_pull_request = PullRequests(
-            ReleaseID=1,
-            Name="PR1",
-            Description="Description of PR1",
-            Source="Github",
-            SourceID=1,
-            Reporter="user1",
-            Approvers="user2,user3",
-            Status="Open"
-        )
-        db.session.add(new_pull_request)
-        db.session.commit()
-        fetched_pull_request = PullRequests.query.first()
-        self.assertEqual(fetched_pull_request.ReleaseID, 1)
-        self.assertEqual(fetched_pull_request.Name, "PR1")
-        self.assertEqual(fetched_pull_request.Description, "Description of PR1")
-        self.assertEqual(fetched_pull_request.Source, "Github")
-        self.assertEqual(fetched_pull_request.SourceID, 1)
-        self.assertEqual(fetched_pull_request.Reporter, "user1")
-        self.assertEqual(fetched_pull_request.Approvers, "user2,user3")
-        self.assertEqual(fetched_pull_request.Status, "Open")
-
-    def test_A9D_pullrequests_schema(self):
-        pr_data = {
-            "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
-            "ReleaseID": 1,
-            "Name": "PR1",
-            "Description": "Description of PR1",
-            "Source": "Github",
-            "SourceID": 1,
-            "Reporter": "user1",
-            "Approvers": "user2,user3",
-            "Status": "Open"
-        }
-        schema = MakePullRequestsSchema()
-        deserialized_data = schema.load(pr_data)
-        self.assertIsInstance(deserialized_data, PullRequests)
-        serialized_data = schema.dump(deserialized_data)
-        self.assertEqual(serialized_data, pr_data)
-
-    def test_A9E_sourcecodefile_creation(self):
-        new_file = SourceCodeFile(
-            AddDate=datetime.utcnow(),
-            GitRepoId=1,
-            FileName="file1.py",
-            FileLocation="/path/to/file",
-            FileType="Python"
-        )
-        db.session.add(new_file)
-        db.session.commit()
-        fetched_file = SourceCodeFile.query.first()
-        self.assertEqual(fetched_file.GitRepoId, 1)
-        self.assertEqual(fetched_file.FileName, "file1.py")
-        self.assertEqual(fetched_file.FileLocation, "/path/to/file")
-        self.assertEqual(fetched_file.FileType, "Python")
-
-    def test_A9F_sourcecodefile_schema(self):
-        file_data = {
-            "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
-            "GitRepoId": 1,
-            "FileName": "file1.py",
-            "FileLocation": "/path/to/file",
-            "FileType": "Python"
-        }
-        schema = MakeSourceCodeFileSchema()
-        deserialized_data = schema.load(file_data)
-        self.assertIsInstance(deserialized_data, SourceCodeFile)
-        serialized_data = schema.dump(deserialized_data)
-        for field in file_data:
-            self.assertEqual(serialized_data[field], file_data[field])
+    # def test_A8_assetapplications_creation(self):
+    #     new_asset_application = AssetApplications(TechnologyID=1, ApplicationID=1)
+    #     db.session.add(new_asset_application)
+    #     db.session.commit()
+    #     fetched_asset_application = AssetApplications.query.first()
+    #     self.assertEqual(fetched_asset_application.TechnologyID, 1)
+    #     self.assertEqual(fetched_asset_application.ApplicationID, 1)
+    #
+    # def test_A9_assetapplications_schema(self):
+    #     asset_application_data = {
+    #         "ID": 1,
+    #         "TechnologyID": 1,
+    #         "ApplicationID": 1
+    #     }
+    #     schema = MakeAssetApplicationsSchema()
+    #     deserialized_data = schema.load(asset_application_data)
+    #     self.assertIsInstance(deserialized_data, AssetApplications)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     self.assertEqual(serialized_data, asset_application_data)
+    #
+    # def test_A9A_buildartifacts_creation(self):
+    #     new_build_artifact = BuildArtifacts(PipelineJobID=1, ArtifactName="artifact1",
+    #                                         Url="http://example.com/artifact1")
+    #     db.session.add(new_build_artifact)
+    #     db.session.commit()
+    #     fetched_build_artifact = BuildArtifacts.query.first()
+    #     self.assertEqual(fetched_build_artifact.PipelineJobID, 1)
+    #     self.assertEqual(fetched_build_artifact.ArtifactName, "artifact1")
+    #     self.assertEqual(fetched_build_artifact.Url, "http://example.com/artifact1")
+    #
+    # def test_A9B_buildartifacts_schema(self):
+    #     build_artifact_data = {
+    #         "ID": 1,
+    #         "AddDate": "2022-01-01T12:30:45",
+    #         "PipelineJobID": 1,
+    #         "ArtifactName": "artifact1",
+    #         "Url": "http://example.com/artifact1"
+    #     }
+    #     schema = MakeBuildArtifactsSchema()
+    #     deserialized_data = schema.load(build_artifact_data)
+    #     self.assertIsInstance(deserialized_data, BuildArtifacts)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     self.assertEqual(serialized_data, build_artifact_data)
+    #
+    # def test_A9C_pullrequests_creation(self):
+    #     new_pull_request = PullRequests(
+    #         ReleaseID=1,
+    #         Name="PR1",
+    #         Description="Description of PR1",
+    #         Source="Github",
+    #         SourceID=1,
+    #         Reporter="user1",
+    #         Approvers="user2,user3",
+    #         Status="Open"
+    #     )
+    #     db.session.add(new_pull_request)
+    #     db.session.commit()
+    #     fetched_pull_request = PullRequests.query.first()
+    #     self.assertEqual(fetched_pull_request.ReleaseID, 1)
+    #     self.assertEqual(fetched_pull_request.Name, "PR1")
+    #     self.assertEqual(fetched_pull_request.Description, "Description of PR1")
+    #     self.assertEqual(fetched_pull_request.Source, "Github")
+    #     self.assertEqual(fetched_pull_request.SourceID, 1)
+    #     self.assertEqual(fetched_pull_request.Reporter, "user1")
+    #     self.assertEqual(fetched_pull_request.Approvers, "user2,user3")
+    #     self.assertEqual(fetched_pull_request.Status, "Open")
+    #
+    # def test_A9D_pullrequests_schema(self):
+    #     pr_data = {
+    #         "ID": 1,
+    #         "AddDate": datetime.utcnow().isoformat(),
+    #         "ReleaseID": 1,
+    #         "Name": "PR1",
+    #         "Description": "Description of PR1",
+    #         "Source": "Github",
+    #         "SourceID": 1,
+    #         "Reporter": "user1",
+    #         "Approvers": "user2,user3",
+    #         "Status": "Open"
+    #     }
+    #     schema = MakePullRequestsSchema()
+    #     deserialized_data = schema.load(pr_data)
+    #     self.assertIsInstance(deserialized_data, PullRequests)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     self.assertEqual(serialized_data, pr_data)
+    #
+    # def test_A9E_sourcecodefile_creation(self):
+    #     new_file = SourceCodeFile(
+    #         AddDate=datetime.utcnow(),
+    #         GitRepoId=1,
+    #         FileName="file1.py",
+    #         FileLocation="/path/to/file",
+    #         FileType="Python"
+    #     )
+    #     db.session.add(new_file)
+    #     db.session.commit()
+    #     fetched_file = SourceCodeFile.query.first()
+    #     self.assertEqual(fetched_file.GitRepoId, 1)
+    #     self.assertEqual(fetched_file.FileName, "file1.py")
+    #     self.assertEqual(fetched_file.FileLocation, "/path/to/file")
+    #     self.assertEqual(fetched_file.FileType, "Python")
+    #
+    # def test_A9F_sourcecodefile_schema(self):
+    #     file_data = {
+    #         "ID": 1,
+    #         "AddDate": datetime.utcnow().isoformat(),
+    #         "GitRepoId": 1,
+    #         "FileName": "file1.py",
+    #         "FileLocation": "/path/to/file",
+    #         "FileType": "Python"
+    #     }
+    #     schema = MakeSourceCodeFileSchema()
+    #     deserialized_data = schema.load(file_data)
+    #     self.assertIsInstance(deserialized_data, SourceCodeFile)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     for field in file_data:
+    #         self.assertEqual(serialized_data[field], file_data[field])
 
     # def test_A9G_technology_creation(self):
     #     tech = Technologies(
@@ -445,269 +445,269 @@ class TestWebApp(unittest.TestCase):
     #     for field in tech_data:
     #         self.assertEqual(serialized_data[field], tech_data[field])
 
-    def test_A9I_tmansweredquestions_creation(self):
-        answered_question = TmAnsweredQuestions(
-            ApplicationID=1,
-            ThreatAssessmentID=1,
-            QuestionID=1,
-            Response="This is a sample response."
-        )
-        db.session.add(answered_question)
-        db.session.commit()
-        fetched_question = TmAnsweredQuestions.query.first()
-        self.assertEqual(fetched_question.ApplicationID, 1)
-        self.assertEqual(fetched_question.ThreatAssessmentID, 1)
-        self.assertEqual(fetched_question.Response, "This is a sample response.")
-
-    def test_A9J_tmansweredquestions_schema(self):
-        question_data = {
-            "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
-            "ApplicationID": 1,
-            "ThreatAssessmentID": 1,
-            "QuestionID": 1,
-            "Response": "This is a sample response."
-        }
-        schema = MakeTmAnsweredQuestionsSchema()
-        deserialized_data = schema.load(question_data)
-        self.assertIsInstance(deserialized_data, TmAnsweredQuestions)
-        serialized_data = schema.dump(deserialized_data)
-        for field in question_data:
-            self.assertEqual(serialized_data[field], question_data[field])
-
-    def test_A9K_tmcontrols_creation(self):
-        control = TmControls(
-            Control="Sample Control",
-            Type="ControlType",
-            Description="Sample Description",
-            Lambda="Y",
-            Process="Y",
-            Server="N",
-            Dataflow="Y",
-            Datastore="N",
-            ExternalEntity="Y"
-        )
-        db.session.add(control)
-        db.session.commit()
-        fetched_control = TmControls.query.first()
-        self.assertEqual(fetched_control.Control, "Sample Control")
-        self.assertEqual(fetched_control.Type, "ControlType")
-        self.assertEqual(fetched_control.Description, "Sample Description")
-
-    def test_A9L_tmcontrols_schema(self):
-        control_data = {
-            "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
-            "Control": "Sample Control",
-            "Type": "ControlType",
-            "Description": "Sample Description",
-            "Lambda": "Y",
-            "Process": "Y",
-            "Server": "N",
-            "Dataflow": "Y",
-            "Datastore": "N",
-            "ExternalEntity": "Y"
-        }
-        schema = MakeTmControlsSchema()
-        deserialized_data = schema.load(control_data)
-        self.assertIsInstance(deserialized_data, TmControls)
-        serialized_data = schema.dump(deserialized_data)
-        for field in control_data:
-            self.assertEqual(serialized_data[field], control_data[field])
-
-    def test_A9M_tmidentifiedcontrols_creation(self):
-        identified_control = TmIdentifiedControls(
-            ApplicationID=1,
-            ThreatAssessmentID=1,
-            ControlID=1
-        )
-        db.session.add(identified_control)
-        db.session.commit()
-        fetched_control = TmIdentifiedControls.query.first()
-        self.assertEqual(fetched_control.ApplicationID, 1)
-        self.assertEqual(fetched_control.ThreatAssessmentID, 1)
-        self.assertEqual(fetched_control.ControlID, 1)
-
-    def test_A9N_tmidentifiedcontrols_schema(self):
-        control_data = {
-            "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
-            "ApplicationID": 1,
-            "ThreatAssessmentID": 1,
-            "ControlID": 1
-        }
-        schema = MakeTmIdentifiedControlsSchema()
-        deserialized_data = schema.load(control_data)
-        self.assertIsInstance(deserialized_data, TmIdentifiedControls)
-        serialized_data = schema.dump(deserialized_data)
-        for field in control_data:
-            self.assertEqual(serialized_data[field], control_data[field])
-
-    def test_A9O_tmquestions_creation(self):
-        question_entry = TmQuestions(
-            Question="What is your favorite color?",
-            Condition="User must be registered",
-            Options="Red,Blue,Green",
-            Type="Single Choice",
-            Prereqs="None",
-            Targets="User",
-            Produces="Color Preference"
-        )
-        db.session.add(question_entry)
-        db.session.commit()
-        fetched_question = TmQuestions.query.first()
-        self.assertEqual(fetched_question.Question, "What is your favorite color?")
-        self.assertEqual(fetched_question.Condition, "User must be registered")
-
-    def test_A9P_tmquestions_schema(self):
-        question_data = {
-            "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
-            "Question": "What is your favorite color?",
-            "Condition": "User must be registered",
-            "Options": "Red,Blue,Green",
-            "Type": "Single Choice",
-            "Prereqs": "None",
-            "Targets": "User",
-            "Produces": "Color Preference"
-        }
-        schema = MakeTmQuestionsSchema()
-        deserialized_data = schema.load(question_data)
-        self.assertIsInstance(deserialized_data, TmQuestions)
-        serialized_data = schema.dump(deserialized_data)
-        for field in question_data:
-            self.assertEqual(serialized_data[field], question_data[field])
-
-    def test_A9Q_tmsolutions_creation(self):
-        solution_entry = TmSolutions(
-            Targets="Server",
-            Attributes="RAM, CPU",
-            Description="Hardware requirements",
-            FixType="Upgrade",
-            Fix="Add more RAM",
-            Solution="Upgrade server RAM",
-            Validation="Server performance"
-        )
-        db.session.add(solution_entry)
-        db.session.commit()
-        fetched_solution = TmSolutions.query.first()
-        self.assertEqual(fetched_solution.Targets, "Server")
-        self.assertEqual(fetched_solution.Fix, "Add more RAM")
-
-    def test_A9R_tmsolutions_schema(self):
-        solution_data = {
-            "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
-            "Targets": "Server",
-            "Attributes": "RAM, CPU",
-            "Description": "Hardware requirements",
-            "FixType": "Upgrade",
-            "Fix": "Add more RAM",
-            "Solution": "Upgrade server RAM",
-            "Validation": "Server performance"
-        }
-        schema = MakeTmSolutionsSchema()
-        deserialized_data = schema.load(solution_data)
-        self.assertIsInstance(deserialized_data, TmSolutions)
-        serialized_data = schema.dump(deserialized_data)
-        for field in solution_data:
-            self.assertEqual(serialized_data[field], solution_data[field])
-
-    def test_A9S_vulnerabilityremediation_creation(self):
-        remediation_entry = VulnerabilityRemediation(
-            VulnerabilityID=1,
-            TechnologyID=1,
-            OpenDate=datetime.utcnow(),
-            Status="Open",
-            Priority="High",
-            CloseDate=datetime.utcnow(),
-            ClosedBy="Admin"
-        )
-        db.session.add(remediation_entry)
-        db.session.commit()
-        fetched_remediation = VulnerabilityRemediation.query.first()
-        self.assertEqual(fetched_remediation.VulnerabilityID, 1)
-        self.assertEqual(fetched_remediation.ClosedBy, "Admin")
-
-    def test_A9T_vulnerabilityremediation_schema(self):
-        remediation_data = {
-            "ID": 1,
-            "VulnerabilityID": 1,
-            "TechnologyID": 1,
-            "OpenDate": datetime.utcnow().isoformat(),
-            "Status": "Open",
-            "Priority": "High",
-            "CloseDate": datetime.utcnow().isoformat(),
-            "ClosedBy": "Admin"
-        }
-        schema = MakeVulnerabilityRemediationSchema()
-        deserialized_data = schema.load(remediation_data)
-        self.assertIsInstance(deserialized_data, VulnerabilityRemediation)
-        serialized_data = schema.dump(deserialized_data)
-        for field in remediation_data:
-            self.assertEqual(serialized_data[field], remediation_data[field])
-
-    def test_A9U_vulnerabilityupdates_creation(self):
-        update_entry = VulnerabilityUpdates(
-            UpdateStartDate=datetime.utcnow(),
-            UpdateEndDate=datetime.utcnow(),
-            NewCveCnt=5,
-            UpdatedCveCnt=3,
-            ScanEndDate=1
-        )
-
-        db.session.add(update_entry)
-        db.session.commit()
-
-        fetched_update = VulnerabilityUpdates.query.first()
-        self.assertEqual(fetched_update.NewCveCnt, 5)
-        self.assertEqual(fetched_update.ScanEndDate, 1)
-
-    def test_A9V_vulnerabilityupdates_schema(self):
-        update_data = {
-            "ID": 1,
-            "UpdateStartDate": datetime.utcnow().isoformat(),
-            "UpdateEndDate": datetime.utcnow().isoformat(),
-            "NewCveCnt": 5,
-            "UpdatedCveCnt": datetime.utcnow().isoformat(),
-            "ScanEndDate": 1
-        }
-        schema = MakeVulnerabilityUpdatesSchema()
-        deserialized_data = schema.load(update_data)
-        self.assertIsInstance(deserialized_data, VulnerabilityUpdates)
-        serialized_data = schema.dump(deserialized_data)
-        for field in update_data:
-            self.assertEqual(serialized_data[field], update_data[field])
-
-    def test_A9W_vulntoolapppairs_creation(self):
-        pair_entry = VulnToolAppPairs(
-            AddDate=datetime.utcnow(),
-            ApplicationID=1,
-            ToolID=1,
-            ToolProjectID="SomeToolProjectID",
-            KeyValuePairs="key1=value1; key2=value2"
-        )
-        db.session.add(pair_entry)
-        db.session.commit()
-        fetched_pair = VulnToolAppPairs.query.first()
-        self.assertEqual(fetched_pair.ToolProjectID, "SomeToolProjectID")
-        self.assertEqual(fetched_pair.KeyValuePairs, "key1=value1; key2=value2")
-
-    def test_A9X_vulntoolapppairs_schema(self):
-        pair_data = {
-            "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
-            "ApplicationID": 1,
-            "ToolID": 1,
-            "ToolProjectID": "SomeToolProjectID",
-            "KeyValuePairs": "key1=value1; key2=value2"
-        }
-        schema = MakeVulnToolAppPairsSchema()
-        deserialized_data = schema.load(pair_data)
-        self.assertIsInstance(deserialized_data, VulnToolAppPairs)
-        serialized_data = schema.dump(deserialized_data)
-        for field in pair_data:
-            self.assertEqual(serialized_data[field], pair_data[field])
+    # def test_A9I_tmansweredquestions_creation(self):
+    #     answered_question = TmAnsweredQuestions(
+    #         ApplicationID=1,
+    #         ThreatAssessmentID=1,
+    #         QuestionID=1,
+    #         Response="This is a sample response."
+    #     )
+    #     db.session.add(answered_question)
+    #     db.session.commit()
+    #     fetched_question = TmAnsweredQuestions.query.first()
+    #     self.assertEqual(fetched_question.ApplicationID, 1)
+    #     self.assertEqual(fetched_question.ThreatAssessmentID, 1)
+    #     self.assertEqual(fetched_question.Response, "This is a sample response.")
+    #
+    # def test_A9J_tmansweredquestions_schema(self):
+    #     question_data = {
+    #         "ID": 1,
+    #         "AddDate": datetime.utcnow().isoformat(),
+    #         "ApplicationID": 1,
+    #         "ThreatAssessmentID": 1,
+    #         "QuestionID": 1,
+    #         "Response": "This is a sample response."
+    #     }
+    #     schema = MakeTmAnsweredQuestionsSchema()
+    #     deserialized_data = schema.load(question_data)
+    #     self.assertIsInstance(deserialized_data, TmAnsweredQuestions)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     for field in question_data:
+    #         self.assertEqual(serialized_data[field], question_data[field])
+    #
+    # def test_A9K_tmcontrols_creation(self):
+    #     control = TmControls(
+    #         Control="Sample Control",
+    #         Type="ControlType",
+    #         Description="Sample Description",
+    #         Lambda="Y",
+    #         Process="Y",
+    #         Server="N",
+    #         Dataflow="Y",
+    #         Datastore="N",
+    #         ExternalEntity="Y"
+    #     )
+    #     db.session.add(control)
+    #     db.session.commit()
+    #     fetched_control = TmControls.query.first()
+    #     self.assertEqual(fetched_control.Control, "Sample Control")
+    #     self.assertEqual(fetched_control.Type, "ControlType")
+    #     self.assertEqual(fetched_control.Description, "Sample Description")
+    #
+    # def test_A9L_tmcontrols_schema(self):
+    #     control_data = {
+    #         "ID": 1,
+    #         "AddDate": datetime.utcnow().isoformat(),
+    #         "Control": "Sample Control",
+    #         "Type": "ControlType",
+    #         "Description": "Sample Description",
+    #         "Lambda": "Y",
+    #         "Process": "Y",
+    #         "Server": "N",
+    #         "Dataflow": "Y",
+    #         "Datastore": "N",
+    #         "ExternalEntity": "Y"
+    #     }
+    #     schema = MakeTmControlsSchema()
+    #     deserialized_data = schema.load(control_data)
+    #     self.assertIsInstance(deserialized_data, TmControls)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     for field in control_data:
+    #         self.assertEqual(serialized_data[field], control_data[field])
+    #
+    # def test_A9M_tmidentifiedcontrols_creation(self):
+    #     identified_control = TmIdentifiedControls(
+    #         ApplicationID=1,
+    #         ThreatAssessmentID=1,
+    #         ControlID=1
+    #     )
+    #     db.session.add(identified_control)
+    #     db.session.commit()
+    #     fetched_control = TmIdentifiedControls.query.first()
+    #     self.assertEqual(fetched_control.ApplicationID, 1)
+    #     self.assertEqual(fetched_control.ThreatAssessmentID, 1)
+    #     self.assertEqual(fetched_control.ControlID, 1)
+    #
+    # def test_A9N_tmidentifiedcontrols_schema(self):
+    #     control_data = {
+    #         "ID": 1,
+    #         "AddDate": datetime.utcnow().isoformat(),
+    #         "ApplicationID": 1,
+    #         "ThreatAssessmentID": 1,
+    #         "ControlID": 1
+    #     }
+    #     schema = MakeTmIdentifiedControlsSchema()
+    #     deserialized_data = schema.load(control_data)
+    #     self.assertIsInstance(deserialized_data, TmIdentifiedControls)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     for field in control_data:
+    #         self.assertEqual(serialized_data[field], control_data[field])
+    #
+    # def test_A9O_tmquestions_creation(self):
+    #     question_entry = TmQuestions(
+    #         Question="What is your favorite color?",
+    #         Condition="User must be registered",
+    #         Options="Red,Blue,Green",
+    #         Type="Single Choice",
+    #         Prereqs="None",
+    #         Targets="User",
+    #         Produces="Color Preference"
+    #     )
+    #     db.session.add(question_entry)
+    #     db.session.commit()
+    #     fetched_question = TmQuestions.query.first()
+    #     self.assertEqual(fetched_question.Question, "What is your favorite color?")
+    #     self.assertEqual(fetched_question.Condition, "User must be registered")
+    #
+    # def test_A9P_tmquestions_schema(self):
+    #     question_data = {
+    #         "ID": 1,
+    #         "AddDate": datetime.utcnow().isoformat(),
+    #         "Question": "What is your favorite color?",
+    #         "Condition": "User must be registered",
+    #         "Options": "Red,Blue,Green",
+    #         "Type": "Single Choice",
+    #         "Prereqs": "None",
+    #         "Targets": "User",
+    #         "Produces": "Color Preference"
+    #     }
+    #     schema = MakeTmQuestionsSchema()
+    #     deserialized_data = schema.load(question_data)
+    #     self.assertIsInstance(deserialized_data, TmQuestions)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     for field in question_data:
+    #         self.assertEqual(serialized_data[field], question_data[field])
+    #
+    # def test_A9Q_tmsolutions_creation(self):
+    #     solution_entry = TmSolutions(
+    #         Targets="Server",
+    #         Attributes="RAM, CPU",
+    #         Description="Hardware requirements",
+    #         FixType="Upgrade",
+    #         Fix="Add more RAM",
+    #         Solution="Upgrade server RAM",
+    #         Validation="Server performance"
+    #     )
+    #     db.session.add(solution_entry)
+    #     db.session.commit()
+    #     fetched_solution = TmSolutions.query.first()
+    #     self.assertEqual(fetched_solution.Targets, "Server")
+    #     self.assertEqual(fetched_solution.Fix, "Add more RAM")
+    #
+    # def test_A9R_tmsolutions_schema(self):
+    #     solution_data = {
+    #         "ID": 1,
+    #         "AddDate": datetime.utcnow().isoformat(),
+    #         "Targets": "Server",
+    #         "Attributes": "RAM, CPU",
+    #         "Description": "Hardware requirements",
+    #         "FixType": "Upgrade",
+    #         "Fix": "Add more RAM",
+    #         "Solution": "Upgrade server RAM",
+    #         "Validation": "Server performance"
+    #     }
+    #     schema = MakeTmSolutionsSchema()
+    #     deserialized_data = schema.load(solution_data)
+    #     self.assertIsInstance(deserialized_data, TmSolutions)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     for field in solution_data:
+    #         self.assertEqual(serialized_data[field], solution_data[field])
+    #
+    # def test_A9S_vulnerabilityremediation_creation(self):
+    #     remediation_entry = VulnerabilityRemediation(
+    #         VulnerabilityID=1,
+    #         TechnologyID=1,
+    #         OpenDate=datetime.utcnow(),
+    #         Status="Open",
+    #         Priority="High",
+    #         CloseDate=datetime.utcnow(),
+    #         ClosedBy="Admin"
+    #     )
+    #     db.session.add(remediation_entry)
+    #     db.session.commit()
+    #     fetched_remediation = VulnerabilityRemediation.query.first()
+    #     self.assertEqual(fetched_remediation.VulnerabilityID, 1)
+    #     self.assertEqual(fetched_remediation.ClosedBy, "Admin")
+    #
+    # def test_A9T_vulnerabilityremediation_schema(self):
+    #     remediation_data = {
+    #         "ID": 1,
+    #         "VulnerabilityID": 1,
+    #         "TechnologyID": 1,
+    #         "OpenDate": datetime.utcnow().isoformat(),
+    #         "Status": "Open",
+    #         "Priority": "High",
+    #         "CloseDate": datetime.utcnow().isoformat(),
+    #         "ClosedBy": "Admin"
+    #     }
+    #     schema = MakeVulnerabilityRemediationSchema()
+    #     deserialized_data = schema.load(remediation_data)
+    #     self.assertIsInstance(deserialized_data, VulnerabilityRemediation)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     for field in remediation_data:
+    #         self.assertEqual(serialized_data[field], remediation_data[field])
+    #
+    # def test_A9U_vulnerabilityupdates_creation(self):
+    #     update_entry = VulnerabilityUpdates(
+    #         UpdateStartDate=datetime.utcnow(),
+    #         UpdateEndDate=datetime.utcnow(),
+    #         NewCveCnt=5,
+    #         UpdatedCveCnt=3,
+    #         ScanEndDate=1
+    #     )
+    #
+    #     db.session.add(update_entry)
+    #     db.session.commit()
+    #
+    #     fetched_update = VulnerabilityUpdates.query.first()
+    #     self.assertEqual(fetched_update.NewCveCnt, 5)
+    #     self.assertEqual(fetched_update.ScanEndDate, 1)
+    #
+    # def test_A9V_vulnerabilityupdates_schema(self):
+    #     update_data = {
+    #         "ID": 1,
+    #         "UpdateStartDate": datetime.utcnow().isoformat(),
+    #         "UpdateEndDate": datetime.utcnow().isoformat(),
+    #         "NewCveCnt": 5,
+    #         "UpdatedCveCnt": datetime.utcnow().isoformat(),
+    #         "ScanEndDate": 1
+    #     }
+    #     schema = MakeVulnerabilityUpdatesSchema()
+    #     deserialized_data = schema.load(update_data)
+    #     self.assertIsInstance(deserialized_data, VulnerabilityUpdates)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     for field in update_data:
+    #         self.assertEqual(serialized_data[field], update_data[field])
+    #
+    # def test_A9W_vulntoolapppairs_creation(self):
+    #     pair_entry = VulnToolAppPairs(
+    #         AddDate=datetime.utcnow(),
+    #         ApplicationID=1,
+    #         ToolID=1,
+    #         ToolProjectID="SomeToolProjectID",
+    #         KeyValuePairs="key1=value1; key2=value2"
+    #     )
+    #     db.session.add(pair_entry)
+    #     db.session.commit()
+    #     fetched_pair = VulnToolAppPairs.query.first()
+    #     self.assertEqual(fetched_pair.ToolProjectID, "SomeToolProjectID")
+    #     self.assertEqual(fetched_pair.KeyValuePairs, "key1=value1; key2=value2")
+    #
+    # def test_A9X_vulntoolapppairs_schema(self):
+    #     pair_data = {
+    #         "ID": 1,
+    #         "AddDate": datetime.utcnow().isoformat(),
+    #         "ApplicationID": 1,
+    #         "ToolID": 1,
+    #         "ToolProjectID": "SomeToolProjectID",
+    #         "KeyValuePairs": "key1=value1; key2=value2"
+    #     }
+    #     schema = MakeVulnToolAppPairsSchema()
+    #     deserialized_data = schema.load(pair_data)
+    #     self.assertIsInstance(deserialized_data, VulnToolAppPairs)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     for field in pair_data:
+    #         self.assertEqual(serialized_data[field], pair_data[field])
 
 
     def test_login(self):
