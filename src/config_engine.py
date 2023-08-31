@@ -15,28 +15,88 @@ from settings import SET_AZAD_CLIENT_ID, SET_AZAD_CLIENT_SECRET, SET_AZAD_AUTHOR
 
 VERSION = '0.1.0-beta'
 
-AZURE_KEYVAULT_NAME = SET_AZURE_KEYVAULT_NAME
-AUTH_TYPE = SET_AUTH_TYPE
-INSECURE_OAUTH = SET_INSECURE_OAUTH
+if os.getenv('AZURE_KEYVAULT_NAME'):
+    AZURE_KEYVAULT_NAME = os.getenv('AZURE_KEYVAULT_NAME')
+else:
+    AZURE_KEYVAULT_NAME = SET_AZURE_KEYVAULT_NAME
+
+if os.getenv('AUTH_TYPE'):
+    AUTH_TYPE = os.getenv('AUTH_TYPE')
+else:
+    AUTH_TYPE = SET_AUTH_TYPE
+
+if os.getenv('INSECURE_OAUTH'):
+    INSECURE_OAUTH = os.getenv('INSECURE_OAUTH')
+else:
+    INSECURE_OAUTH = SET_INSECURE_OAUTH
+
 if INSECURE_OAUTH:
     os.environ['AUTHLIB_INSECURE_TRANSPORT'] = '1'
+
 if os.getenv('APP_EXT_URL'):
     APP_EXT_URL = os.getenv('APP_EXT_URL')
 else:
     APP_EXT_URL = SET_APP_EXT_URL
-SMTP_HOST = SET_SMTP_HOST
-SMTP_USER = SET_SMTP_USER
-SMTP_ADMIN_EMAIL = SET_SMTP_ADMIN_EMAIL
 
-LDAP_HOST = SET_LDAP_HOST
-LDAP_PORT = SET_LDAP_PORT
-LDAP_BASE_DN = SET_LDAP_BASE_DN
-LDAP_USER_DN = SET_LDAP_USER_DN
-LDAP_GROUP_DN = SET_LDAP_GROUP_DN
-LDAP_USER_RDN_ATTR = SET_LDAP_USER_RDN_ATTR
-LDAP_USER_LOGIN_ATTR = SET_LDAP_USER_LOGIN_ATTR
-LDAP_BIND_USER_DN = SET_LDAP_BIND_USER_DN
-LDAP_BIND_USER_PASSWORD = SET_LDAP_BIND_USER_PASSWORD
+if os.getenv('SMTP_HOST'):
+    SMTP_HOST = os.getenv('SMTP_HOST')
+else:
+    SMTP_HOST = SET_SMTP_HOST
+
+if os.getenv('SMTP_USER'):
+    SMTP_USER = os.getenv('SMTP_USER')
+else:
+    SMTP_USER = SET_SMTP_USER
+
+if os.getenv('SMTP_ADMIN_EMAIL'):
+    SMTP_ADMIN_EMAIL = os.getenv('SMTP_ADMIN_EMAIL')
+else:
+    SMTP_ADMIN_EMAIL = SET_SMTP_ADMIN_EMAIL
+
+if os.getenv('LDAP_HOST'):
+    LDAP_HOST = os.getenv('LDAP_HOST')
+else:
+    LDAP_HOST = SET_LDAP_HOST
+
+if os.getenv('LDAP_PORT'):
+    LDAP_PORT = os.getenv('LDAP_PORT')
+else:
+    LDAP_PORT = SET_LDAP_PORT
+
+if os.getenv('LDAP_BASE_DN'):
+    LDAP_BASE_DN = os.getenv('LDAP_BASE_DN')
+else:
+    LDAP_BASE_DN = SET_LDAP_BASE_DN
+
+if os.getenv('LDAP_USER_DN'):
+    LDAP_USER_DN = os.getenv('LDAP_USER_DN')
+else:
+    LDAP_USER_DN = SET_LDAP_USER_DN
+
+if os.getenv('LDAP_GROUP_DN'):
+    LDAP_GROUP_DN = os.getenv('LDAP_GROUP_DN')
+else:
+    LDAP_GROUP_DN = SET_LDAP_GROUP_DN
+
+if os.getenv('LDAP_USER_RDN_ATTR'):
+    LDAP_USER_RDN_ATTR = os.getenv('LDAP_USER_RDN_ATTR')
+else:
+    LDAP_USER_RDN_ATTR = SET_LDAP_USER_RDN_ATTR
+
+if os.getenv('LDAP_USER_LOGIN_ATTR'):
+    LDAP_USER_LOGIN_ATTR = os.getenv('LDAP_USER_LOGIN_ATTR')
+else:
+    LDAP_USER_LOGIN_ATTR = SET_LDAP_USER_LOGIN_ATTR
+
+if os.getenv('LDAP_BIND_USER_DN'):
+    LDAP_BIND_USER_DN = os.getenv('LDAP_BIND_USER_DN')
+else:
+    LDAP_BIND_USER_DN = SET_LDAP_BIND_USER_DN
+
+if os.getenv('LDAP_BIND_USER_PASSWORD'):
+    LDAP_BIND_USER_PASSWORD = os.getenv('LDAP_BIND_USER_PASSWORD')
+else:
+    LDAP_BIND_USER_PASSWORD = SET_LDAP_BIND_USER_PASSWORD
 
 
 class KeyVaultManager(object):
@@ -106,6 +166,7 @@ if os.getenv('VM_RUNTIME'):
     ENV = os.getenv('VM_RUNTIME')
 else:
     ENV = SET_ENV
+
 if ENV == 'prod':
     if os.getenv('PROD_DB_URI_REF'):
         PROD_DB_URI = KeyVaultManager().get_secret(os.getenv('PROD_DB_URI_REF'))
@@ -115,9 +176,18 @@ else:
     PROD_DB_URI = SET_PROD_DB_URI
 
 if AUTH_TYPE == 'azuread':
-    AZAD_CLIENT_ID = SET_AZAD_CLIENT_ID
-    AZAD_CLIENT_SECRET = KeyVaultManager().get_secret(SET_AZAD_CLIENT_SECRET)
-    AZAD_AUTHORITY = SET_AZAD_AUTHORITY
+    if os.getenv('AZAD_CLIENT_ID'):
+        AZAD_CLIENT_ID = os.getenv('AZAD_CLIENT_ID')
+    else:
+        AZAD_CLIENT_ID = SET_AZAD_CLIENT_ID
+    if os.getenv('AZAD_CLIENT_SECRET'):
+        AZAD_CLIENT_SECRET = KeyVaultManager().get_secret(os.getenv('AZAD_CLIENT_SECRET'))
+    else:
+        AZAD_CLIENT_SECRET = KeyVaultManager().get_secret(SET_AZAD_CLIENT_SECRET)
+    if os.getenv('AZAD_AUTHORITY'):
+        AZAD_AUTHORITY = os.getenv('AZAD_AUTHORITY')
+    else:
+        AZAD_AUTHORITY = SET_AZAD_AUTHORITY
 else:
     AZAD_CLIENT_ID = ""
     AZAD_CLIENT_SECRET = ""
@@ -135,13 +205,30 @@ else:
 ##
 ## GitHub to Jenkins Webhook ##
 if ENV == 'prod':
-    JENKINS_USER = KeyVaultManager().get_secret(SET_JENKINS_USER_REF)
-    JENKINS_KEY = KeyVaultManager().get_secret(SET_JENKINS_KEY_REF)
-    JENKINS_TOKEN = KeyVaultManager().get_secret(SET_JENKINS_TOKEN_REF)
+    if os.getenv('JENKINS_USER'):
+        JENKINS_USER = KeyVaultManager().get_secret(os.getenv('JENKINS_USER'))
+    else:
+        JENKINS_USER = KeyVaultManager().get_secret(SET_JENKINS_USER_REF)
+    if os.getenv('JENKINS_KEY'):
+        JENKINS_KEY = KeyVaultManager().get_secret(os.getenv('JENKINS_KEY'))
+    else:
+        JENKINS_KEY = KeyVaultManager().get_secret(SET_JENKINS_KEY_REF)
+    if os.getenv('JENKINS_TOKEN'):
+        JENKINS_TOKEN = KeyVaultManager().get_secret(os.getenv('JENKINS_TOKEN'))
+    else:
+        JENKINS_TOKEN = KeyVaultManager().get_secret(SET_JENKINS_TOKEN_REF)
 else:
     JENKINS_USER = SET_JENKINS_USER
     JENKINS_KEY = SET_JENKINS_KEY
     JENKINS_TOKEN = SET_JENKINS_TOKEN
-JENKINS_PROJECT = SET_JENKINS_PROJECT
-JENKINS_HOST = SET_JENKINS_HOST
+
+if os.getenv('JENKINS_PROJECT'):
+    JENKINS_PROJECT = os.getenv('JENKINS_PROJECT')
+else:
+    JENKINS_PROJECT = SET_JENKINS_PROJECT
+
+if os.getenv('JENKINS_HOST'):
+    JENKINS_HOST = os.getenv('JENKINS_HOST')
+else:
+    JENKINS_HOST = SET_JENKINS_HOST
 
