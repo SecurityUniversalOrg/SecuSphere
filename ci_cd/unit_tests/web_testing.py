@@ -444,7 +444,7 @@ class TestWebApp(unittest.TestCase):
     #     serialized_data = schema.dump(deserialized_data)
     #     for field in tech_data:
     #         self.assertEqual(serialized_data[field], tech_data[field])
-
+    
     # def test_A9I_tmansweredquestions_creation(self):
     #     answered_question = TmAnsweredQuestions(
     #         ApplicationID=1,
