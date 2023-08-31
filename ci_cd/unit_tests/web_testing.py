@@ -11,17 +11,9 @@ from vr.vulns.model.vulnerabilityscans import VulnerabilityScans
 from vr.vulns.model.vulnerabilityslaapppair import VulnerabilitySLAAppPair
 from vr.assessments.model.appassessmentbenchmarkassignments import AppAssessmentBenchmarkAssignments, MakeAppAssessmentBenchmarkAssignmentsSchema
 from vr.assets.model.assetapplications import AssetApplications, MakeAssetApplicationsSchema
-from vr.sourcecode.model.buildartifacts import BuildArtifacts, MakeBuildArtifactsSchema
-from vr.sourcecode.model.pullrequests import PullRequests, MakePullRequestsSchema
 from vr.sourcecode.model.sourcecodefile import SourceCodeFile, MakeSourceCodeFileSchema
-# from vr.assets.model.technologies import Technologies, MakeTechnologiesSchema
-from vr.threat_modeling.model.tmansweredquestions import TmAnsweredQuestions, MakeTmAnsweredQuestionsSchema
 from vr.threat_modeling.model.tmcontrols import TmControls, MakeTmControlsSchema
 from vr.threat_modeling.model.tmidentifiedcontrols import TmIdentifiedControls, MakeTmIdentifiedControlsSchema
-from vr.threat_modeling.model.tmquestions import TmQuestions, MakeTmQuestionsSchema
-from vr.threat_modeling.model.tmsolutions import TmSolutions, MakeTmSolutionsSchema
-from vr.vulns.model.vulnerabilityremediation import VulnerabilityRemediation, MakeVulnerabilityRemediationSchema
-from vr.vulns.model.vulnerabilityupdates import VulnerabilityUpdates, MakeVulnerabilityUpdatesSchema
 from vr.vulns.model.vulntoolapppairs import VulnToolAppPairs, MakeVulnToolAppPairsSchema
 
 ADMIN_USER_FIRST_NAME = 'testadmin'
@@ -292,6 +284,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(serialized_data, asset_application_data)
 
     def test_A9A_buildartifacts_creation(self):
+        from vr.sourcecode.model.buildartifacts import BuildArtifacts, MakeBuildArtifactsSchema
         new_build_artifact = BuildArtifacts(PipelineJobID=1, ArtifactName="artifact1",
                                             Url="http://example.com/artifact1")
         db.session.add(new_build_artifact)
@@ -301,7 +294,6 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_build_artifact.ArtifactName, "artifact1")
         self.assertEqual(fetched_build_artifact.Url, "http://example.com/artifact1")
 
-    def test_A9B_buildartifacts_schema(self):
         build_artifact_data = {
             "ID": 1,
             "AddDate": "2022-01-01T12:30:45",
@@ -316,6 +308,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(serialized_data, build_artifact_data)
 
     def test_A9C_pullrequests_creation(self):
+        from vr.sourcecode.model.pullrequests import PullRequests, MakePullRequestsSchema
         new_pull_request = PullRequests(
             ReleaseID=1,
             Name="PR1",
@@ -338,7 +331,6 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_pull_request.Approvers, "user2,user3")
         self.assertEqual(fetched_pull_request.Status, "Open")
 
-    def test_A9D_pullrequests_schema(self):
         pr_data = {
             "ID": 1,
             "AddDate": datetime.utcnow().isoformat(),
@@ -389,64 +381,65 @@ class TestWebApp(unittest.TestCase):
         for field in file_data:
             self.assertEqual(serialized_data[field], file_data[field])
 
-    # def test_A9G_technology_creation(self):
-    #     tech = Technologies(
-    #         Name="TechName",
-    #         Part="Part1",
-    #         Vendor="Vendor1",
-    #         Product="Product1",
-    #         Version="1.0",
-    #         UpdateVer="1.1",
-    #         Edition="Standard",
-    #         Language="English",
-    #         TechnologyValue="Value1",
-    #         BusinessUnit="BU1",
-    #         Owner="Owner1",
-    #         Custodian="Custodian1",
-    #         Classification="Class1",
-    #         UniqueID="UID1",
-    #         UniqueIDType="Type1",
-    #         Description="A technology description",
-    #         RegComplete="Y"
-    #     )
-    #     db.session.add(tech)
-    #     db.session.commit()
-    #     fetched_tech = Technologies.query.first()
-    #     self.assertEqual(fetched_tech.Name, "TechName")
-    #     self.assertEqual(fetched_tech.Owner, "Owner1")
-    #     self.assertEqual(fetched_tech.Product, "Product1")
-    #
-    # def test_A9H_technology_schema(self):
-    #     tech_data = {
-    #         "TechnologyID": 1,
-    #         "Name": "TechName",
-    #         "Part": "Part1",
-    #         "Vendor": "Vendor1",
-    #         "Product": "Product1",
-    #         "Version": "1.0",
-    #         "UpdateVer": "1.1",
-    #         "Edition": "Standard",
-    #         "Language": "English",
-    #         "TechnologyValue": "Value1",
-    #         "BusinessUnit": "BU1",
-    #         "Owner": "Owner1",
-    #         "Custodian": "Custodian1",
-    #         "Classification": "Class1",
-    #         "UniqueID": "UID1",
-    #         "UniqueIDType": "Type1",
-    #         "Description": "A technology description",
-    #         "RegComplete": "Y",
-    #         "RegDate": datetime.utcnow().isoformat()
-    #     }
-    #     schema = MakeTechnologiesSchema()
-    #     deserialized_data = schema.load(tech_data)
-    #     self.assertIsInstance(deserialized_data, Technologies)
-    #     serialized_data = schema.dump(deserialized_data)
-    #     for field in tech_data:
-    #         self.assertEqual(serialized_data[field], tech_data[field])
+    def test_A9G_technology_creation(self):
+        from vr.assets.model.technologies import Technologies, MakeTechnologiesSchema
+        tech = Technologies(
+            Name="TechName",
+            Part="Part1",
+            Vendor="Vendor1",
+            Product="Product1",
+            Version="1.0",
+            UpdateVer="1.1",
+            Edition="Standard",
+            Language="English",
+            TechnologyValue="Value1",
+            BusinessUnit="BU1",
+            Owner="Owner1",
+            Custodian="Custodian1",
+            Classification="Class1",
+            UniqueID="UID1",
+            UniqueIDType="Type1",
+            Description="A technology description",
+            RegComplete="Y"
+        )
+        db.session.add(tech)
+        db.session.commit()
+        fetched_tech = Technologies.query.first()
+        self.assertEqual(fetched_tech.Name, "TechName")
+        self.assertEqual(fetched_tech.Owner, "Owner1")
+        self.assertEqual(fetched_tech.Product, "Product1")
+
+        tech_data = {
+            "TechnologyID": 1,
+            "Name": "TechName",
+            "Part": "Part1",
+            "Vendor": "Vendor1",
+            "Product": "Product1",
+            "Version": "1.0",
+            "UpdateVer": "1.1",
+            "Edition": "Standard",
+            "Language": "English",
+            "TechnologyValue": "Value1",
+            "BusinessUnit": "BU1",
+            "Owner": "Owner1",
+            "Custodian": "Custodian1",
+            "Classification": "Class1",
+            "UniqueID": "UID1",
+            "UniqueIDType": "Type1",
+            "Description": "A technology description",
+            "RegComplete": "Y",
+            "RegDate": datetime.utcnow().isoformat()
+        }
+        schema = MakeTechnologiesSchema()
+        deserialized_data = schema.load(tech_data)
+        self.assertIsInstance(deserialized_data, Technologies)
+        serialized_data = schema.dump(deserialized_data)
+        for field in tech_data:
+            self.assertEqual(serialized_data[field], tech_data[field])
 
 
     def test_A9I_tmansweredquestions_creation(self):
+        from vr.threat_modeling.model.tmansweredquestions import TmAnsweredQuestions, MakeTmAnsweredQuestionsSchema
         answered_question = TmAnsweredQuestions(
             ApplicationID=1,
             ThreatAssessmentID=1,
@@ -460,10 +453,9 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_question.ThreatAssessmentID, 1)
         self.assertEqual(fetched_question.Response, "This is a sample response.")
 
-    def test_A9J_tmansweredquestions_schema(self):
         question_data = {
             "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
+            "AddDate": "2022-01-01",
             "ApplicationID": 1,
             "ThreatAssessmentID": 1,
             "QuestionID": 1,
@@ -490,7 +482,7 @@ class TestWebApp(unittest.TestCase):
         )
         db.session.add(control)
         db.session.commit()
-        fetched_control = TmControls.query.first()
+        fetched_control = TmControls.query.filter(TmControls.ID==control.ID).first()
         self.assertEqual(fetched_control.Control, "Sample Control")
         self.assertEqual(fetched_control.Type, "ControlType")
         self.assertEqual(fetched_control.Description, "Sample Description")
@@ -498,7 +490,7 @@ class TestWebApp(unittest.TestCase):
     def test_A9L_tmcontrols_schema(self):
         control_data = {
             "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
+            "AddDate": "2022-01-01",
             "Control": "Sample Control",
             "Type": "ControlType",
             "Description": "Sample Description",
@@ -532,7 +524,7 @@ class TestWebApp(unittest.TestCase):
     def test_A9N_tmidentifiedcontrols_schema(self):
         control_data = {
             "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
+            "AddDate": "2022-01-01",
             "ApplicationID": 1,
             "ThreatAssessmentID": 1,
             "ControlID": 1
@@ -545,6 +537,7 @@ class TestWebApp(unittest.TestCase):
             self.assertEqual(serialized_data[field], control_data[field])
 
     def test_A9O_tmquestions_creation(self):
+        from vr.threat_modeling.model.tmquestions import TmQuestions, MakeTmQuestionsSchema
         question_entry = TmQuestions(
             Question="What is your favorite color?",
             Condition="User must be registered",
@@ -556,14 +549,13 @@ class TestWebApp(unittest.TestCase):
         )
         db.session.add(question_entry)
         db.session.commit()
-        fetched_question = TmQuestions.query.first()
+        fetched_question = TmQuestions.query.filter(TmQuestions.ID==question_entry.ID).first()
         self.assertEqual(fetched_question.Question, "What is your favorite color?")
         self.assertEqual(fetched_question.Condition, "User must be registered")
 
-    def test_A9P_tmquestions_schema(self):
         question_data = {
             "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
+            "AddDate": "2022-01-01",
             "Question": "What is your favorite color?",
             "Condition": "User must be registered",
             "Options": "Red,Blue,Green",
@@ -580,6 +572,7 @@ class TestWebApp(unittest.TestCase):
             self.assertEqual(serialized_data[field], question_data[field])
 
     def test_A9Q_tmsolutions_creation(self):
+        from vr.threat_modeling.model.tmsolutions import TmSolutions, MakeTmSolutionsSchema
         solution_entry = TmSolutions(
             Targets="Server",
             Attributes="RAM, CPU",
@@ -591,14 +584,13 @@ class TestWebApp(unittest.TestCase):
         )
         db.session.add(solution_entry)
         db.session.commit()
-        fetched_solution = TmSolutions.query.first()
+        fetched_solution = TmSolutions.query.filter(TmSolutions.ID==solution_entry.ID).first()
         self.assertEqual(fetched_solution.Targets, "Server")
         self.assertEqual(fetched_solution.Fix, "Add more RAM")
 
-    def test_A9R_tmsolutions_schema(self):
         solution_data = {
             "ID": 1,
-            "AddDate": datetime.utcnow().isoformat(),
+            "AddDate": "2022-01-01",
             "Targets": "Server",
             "Attributes": "RAM, CPU",
             "Description": "Hardware requirements",
@@ -615,6 +607,7 @@ class TestWebApp(unittest.TestCase):
             self.assertEqual(serialized_data[field], solution_data[field])
 
     def test_A9S_vulnerabilityremediation_creation(self):
+        from vr.vulns.model.vulnerabilityremediation import VulnerabilityRemediation, MakeVulnerabilityRemediationSchema
         remediation_entry = VulnerabilityRemediation(
             VulnerabilityID=1,
             TechnologyID=1,
@@ -630,7 +623,6 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_remediation.VulnerabilityID, 1)
         self.assertEqual(fetched_remediation.ClosedBy, "Admin")
 
-    def test_A9T_vulnerabilityremediation_schema(self):
         remediation_data = {
             "ID": 1,
             "VulnerabilityID": 1,
@@ -649,12 +641,13 @@ class TestWebApp(unittest.TestCase):
             self.assertEqual(serialized_data[field], remediation_data[field])
 
     def test_A9U_vulnerabilityupdates_creation(self):
+        from vr.vulns.model.vulnerabilityupdates import VulnerabilityUpdates, MakeVulnerabilityUpdatesSchema
         update_entry = VulnerabilityUpdates(
             UpdateStartDate=datetime.utcnow(),
             UpdateEndDate=datetime.utcnow(),
             NewCveCnt=5,
             UpdatedCveCnt=3,
-            ScanEndDate=1
+            ScanEndDate=datetime.utcnow()
         )
 
         db.session.add(update_entry)
@@ -662,16 +655,15 @@ class TestWebApp(unittest.TestCase):
 
         fetched_update = VulnerabilityUpdates.query.first()
         self.assertEqual(fetched_update.NewCveCnt, 5)
-        self.assertEqual(fetched_update.ScanEndDate, 1)
+        self.assertEqual(fetched_update.UpdatedCveCnt, 3)
 
-    def test_A9V_vulnerabilityupdates_schema(self):
         update_data = {
             "ID": 1,
             "UpdateStartDate": datetime.utcnow().isoformat(),
             "UpdateEndDate": datetime.utcnow().isoformat(),
             "NewCveCnt": 5,
-            "UpdatedCveCnt": datetime.utcnow().isoformat(),
-            "ScanEndDate": 1
+            "UpdatedCveCnt": 1,
+            "ScanEndDate": datetime.utcnow().isoformat()
         }
         schema = MakeVulnerabilityUpdatesSchema()
         deserialized_data = schema.load(update_data)
