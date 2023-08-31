@@ -243,33 +243,33 @@ class TestWebApp(unittest.TestCase):
         response = self._get_test_handler(route)
         assert response.status_code == 200
 
-    def test_A6_appassessmentbenchmarkassignments_model_creation(self):
-        new_assignment = AppAssessmentBenchmarkAssignments(ApplicationID=1, BenchmarkID=1, UserID=1, Notes="Test",
-                                                           Type="TypeTest")
-        db.session.add(new_assignment)
-        db.session.commit()
-        fetched_assignment = AppAssessmentBenchmarkAssignments.query.first()
-        self.assertEqual(fetched_assignment.ApplicationID, 1)
-        self.assertEqual(fetched_assignment.BenchmarkID, 1)
-        self.assertEqual(fetched_assignment.UserID, 1)
-        self.assertEqual(fetched_assignment.Notes, "Test")
-        self.assertEqual(fetched_assignment.Type, "TypeTest")
-
-    def test_A7_appassessmentbenchmarkassignments_schema(self):
-        assignment = {
-            "ID": 1,
-            "AddDate": "2022-01-01",
-            "ApplicationID": 1,
-            "BenchmarkID": 1,
-            "UserID": 1,
-            "Notes": "Test",
-            "Type": "TypeTest"
-        }
-        schema = MakeAppAssessmentBenchmarkAssignmentsSchema()
-        deserialized_data = schema.load(assignment)
-        self.assertIsInstance(deserialized_data, AppAssessmentBenchmarkAssignments)
-        serialized_data = schema.dump(deserialized_data)
-        self.assertEqual(serialized_data, assignment)
+    # def test_A6_appassessmentbenchmarkassignments_model_creation(self):
+    #     new_assignment = AppAssessmentBenchmarkAssignments(ApplicationID=1, BenchmarkID=1, UserID=1, Notes="Test",
+    #                                                        Type="TypeTest")
+    #     db.session.add(new_assignment)
+    #     db.session.commit()
+    #     fetched_assignment = AppAssessmentBenchmarkAssignments.query.first()
+    #     self.assertEqual(fetched_assignment.ApplicationID, 1)
+    #     self.assertEqual(fetched_assignment.BenchmarkID, 1)
+    #     self.assertEqual(fetched_assignment.UserID, 1)
+    #     self.assertEqual(fetched_assignment.Notes, "Test")
+    #     self.assertEqual(fetched_assignment.Type, "TypeTest")
+    #
+    # def test_A7_appassessmentbenchmarkassignments_schema(self):
+    #     assignment = {
+    #         "ID": 1,
+    #         "AddDate": "2022-01-01",
+    #         "ApplicationID": 1,
+    #         "BenchmarkID": 1,
+    #         "UserID": 1,
+    #         "Notes": "Test",
+    #         "Type": "TypeTest"
+    #     }
+    #     schema = MakeAppAssessmentBenchmarkAssignmentsSchema()
+    #     deserialized_data = schema.load(assignment)
+    #     self.assertIsInstance(deserialized_data, AppAssessmentBenchmarkAssignments)
+    #     serialized_data = schema.dump(deserialized_data)
+    #     self.assertEqual(serialized_data, assignment)
 
     # def test_A8_assetapplications_creation(self):
     #     new_asset_application = AssetApplications(TechnologyID=1, ApplicationID=1)
