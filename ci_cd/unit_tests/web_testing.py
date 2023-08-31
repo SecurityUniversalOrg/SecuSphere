@@ -291,7 +291,7 @@ class TestWebApp(unittest.TestCase):
         serialized_data = schema.dump(deserialized_data)
         self.assertEqual(serialized_data, asset_application_data)
 
-    def test_AA_buildartifacts_creation(self):
+    def test_A9A_buildartifacts_creation(self):
         new_build_artifact = BuildArtifacts(PipelineJobID=1, ArtifactName="artifact1",
                                             Url="http://example.com/artifact1")
         db.session.add(new_build_artifact)
@@ -301,7 +301,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_build_artifact.ArtifactName, "artifact1")
         self.assertEqual(fetched_build_artifact.Url, "http://example.com/artifact1")
 
-    def test_AB_buildartifacts_schema(self):
+    def test_A9B_buildartifacts_schema(self):
         build_artifact_data = {
             "ID": 1,
             "AddDate": "2022-01-01T12:30:45",
@@ -315,7 +315,7 @@ class TestWebApp(unittest.TestCase):
         serialized_data = schema.dump(deserialized_data)
         self.assertEqual(serialized_data, build_artifact_data)
 
-    def test_AC_pullrequests_creation(self):
+    def test_A9C_pullrequests_creation(self):
         new_pull_request = PullRequests(
             ReleaseID=1,
             Name="PR1",
@@ -338,7 +338,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_pull_request.Approvers, "user2,user3")
         self.assertEqual(fetched_pull_request.Status, "Open")
 
-    def test_AD_pullrequests_schema(self):
+    def test_A9D_pullrequests_schema(self):
         pr_data = {
             "ID": 1,
             "AddDate": datetime.utcnow().isoformat(),
@@ -357,7 +357,7 @@ class TestWebApp(unittest.TestCase):
         serialized_data = schema.dump(deserialized_data)
         self.assertEqual(serialized_data, pr_data)
 
-    def test_AE_sourcecodefile_creation(self):
+    def test_A9E_sourcecodefile_creation(self):
         new_file = SourceCodeFile(
             AddDate=datetime.utcnow(),
             GitRepoId=1,
@@ -373,7 +373,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_file.FileLocation, "/path/to/file")
         self.assertEqual(fetched_file.FileType, "Python")
 
-    def test_AF_sourcecodefile_schema(self):
+    def test_A9F_sourcecodefile_schema(self):
         file_data = {
             "ID": 1,
             "AddDate": datetime.utcnow().isoformat(),
@@ -389,7 +389,7 @@ class TestWebApp(unittest.TestCase):
         for field in file_data:
             self.assertEqual(serialized_data[field], file_data[field])
 
-    def test_AG_technology_creation(self):
+    def test_A9G_technology_creation(self):
         tech = Technologies(
             Name="TechName",
             Part="Part1",
@@ -416,7 +416,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_tech.Owner, "Owner1")
         self.assertEqual(fetched_tech.Product, "Product1")
 
-    def test_AH_technology_schema(self):
+    def test_A9H_technology_schema(self):
         tech_data = {
             "TechnologyID": 1,
             "Name": "TechName",
@@ -445,7 +445,7 @@ class TestWebApp(unittest.TestCase):
         for field in tech_data:
             self.assertEqual(serialized_data[field], tech_data[field])
 
-    def test_AI_tmansweredquestions_creation(self):
+    def test_A9I_tmansweredquestions_creation(self):
         answered_question = TmAnsweredQuestions(
             ApplicationID=1,
             ThreatAssessmentID=1,
@@ -459,7 +459,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_question.ThreatAssessmentID, 1)
         self.assertEqual(fetched_question.Response, "This is a sample response.")
 
-    def test_AJ_tmansweredquestions_schema(self):
+    def test_A9J_tmansweredquestions_schema(self):
         question_data = {
             "ID": 1,
             "AddDate": datetime.utcnow().isoformat(),
@@ -475,7 +475,7 @@ class TestWebApp(unittest.TestCase):
         for field in question_data:
             self.assertEqual(serialized_data[field], question_data[field])
 
-    def test_AK_tmcontrols_creation(self):
+    def test_A9K_tmcontrols_creation(self):
         control = TmControls(
             Control="Sample Control",
             Type="ControlType",
@@ -494,7 +494,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_control.Type, "ControlType")
         self.assertEqual(fetched_control.Description, "Sample Description")
 
-    def test_AL_tmcontrols_schema(self):
+    def test_A9L_tmcontrols_schema(self):
         control_data = {
             "ID": 1,
             "AddDate": datetime.utcnow().isoformat(),
@@ -515,7 +515,7 @@ class TestWebApp(unittest.TestCase):
         for field in control_data:
             self.assertEqual(serialized_data[field], control_data[field])
 
-    def test_AM_tmidentifiedcontrols_creation(self):
+    def test_A9M_tmidentifiedcontrols_creation(self):
         identified_control = TmIdentifiedControls(
             ApplicationID=1,
             ThreatAssessmentID=1,
@@ -528,7 +528,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_control.ThreatAssessmentID, 1)
         self.assertEqual(fetched_control.ControlID, 1)
 
-    def test_AN_tmidentifiedcontrols_schema(self):
+    def test_A9N_tmidentifiedcontrols_schema(self):
         control_data = {
             "ID": 1,
             "AddDate": datetime.utcnow().isoformat(),
@@ -543,7 +543,7 @@ class TestWebApp(unittest.TestCase):
         for field in control_data:
             self.assertEqual(serialized_data[field], control_data[field])
 
-    def test_AO_tmquestions_creation(self):
+    def test_A9O_tmquestions_creation(self):
         question_entry = TmQuestions(
             Question="What is your favorite color?",
             Condition="User must be registered",
@@ -559,7 +559,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_question.Question, "What is your favorite color?")
         self.assertEqual(fetched_question.Condition, "User must be registered")
 
-    def test_AP_tmquestions_schema(self):
+    def test_A9P_tmquestions_schema(self):
         question_data = {
             "ID": 1,
             "AddDate": datetime.utcnow().isoformat(),
@@ -578,7 +578,7 @@ class TestWebApp(unittest.TestCase):
         for field in question_data:
             self.assertEqual(serialized_data[field], question_data[field])
 
-    def test_AQ_tmsolutions_creation(self):
+    def test_A9Q_tmsolutions_creation(self):
         solution_entry = TmSolutions(
             Targets="Server",
             Attributes="RAM, CPU",
@@ -594,7 +594,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_solution.Targets, "Server")
         self.assertEqual(fetched_solution.Fix, "Add more RAM")
 
-    def test_AR_tmsolutions_schema(self):
+    def test_A9R_tmsolutions_schema(self):
         solution_data = {
             "ID": 1,
             "AddDate": datetime.utcnow().isoformat(),
@@ -613,7 +613,7 @@ class TestWebApp(unittest.TestCase):
         for field in solution_data:
             self.assertEqual(serialized_data[field], solution_data[field])
 
-    def test_AS_vulnerabilityremediation_creation(self):
+    def test_A9S_vulnerabilityremediation_creation(self):
         remediation_entry = VulnerabilityRemediation(
             VulnerabilityID=1,
             TechnologyID=1,
@@ -629,7 +629,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_remediation.VulnerabilityID, 1)
         self.assertEqual(fetched_remediation.ClosedBy, "Admin")
 
-    def test_AT_vulnerabilityremediation_schema(self):
+    def test_A9T_vulnerabilityremediation_schema(self):
         remediation_data = {
             "ID": 1,
             "VulnerabilityID": 1,
@@ -647,7 +647,7 @@ class TestWebApp(unittest.TestCase):
         for field in remediation_data:
             self.assertEqual(serialized_data[field], remediation_data[field])
 
-    def test_AU_vulnerabilityupdates_creation(self):
+    def test_A9U_vulnerabilityupdates_creation(self):
         update_entry = VulnerabilityUpdates(
             UpdateStartDate=datetime.utcnow(),
             UpdateEndDate=datetime.utcnow(),
@@ -663,7 +663,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_update.NewCveCnt, 5)
         self.assertEqual(fetched_update.ScanEndDate, 1)
 
-    def test_AV_vulnerabilityupdates_schema(self):
+    def test_A9V_vulnerabilityupdates_schema(self):
         update_data = {
             "ID": 1,
             "UpdateStartDate": datetime.utcnow().isoformat(),
@@ -679,7 +679,7 @@ class TestWebApp(unittest.TestCase):
         for field in update_data:
             self.assertEqual(serialized_data[field], update_data[field])
 
-    def test_AW_vulntoolapppairs_creation(self):
+    def test_A9W_vulntoolapppairs_creation(self):
         pair_entry = VulnToolAppPairs(
             AddDate=datetime.utcnow(),
             ApplicationID=1,
@@ -693,7 +693,7 @@ class TestWebApp(unittest.TestCase):
         self.assertEqual(fetched_pair.ToolProjectID, "SomeToolProjectID")
         self.assertEqual(fetched_pair.KeyValuePairs, "key1=value1; key2=value2")
 
-    def test_AX_vulntoolapppairs_schema(self):
+    def test_A9X_vulntoolapppairs_schema(self):
         pair_data = {
             "ID": 1,
             "AddDate": datetime.utcnow().isoformat(),
