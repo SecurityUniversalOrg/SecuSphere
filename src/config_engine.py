@@ -11,6 +11,7 @@ from settings import SET_PROD_DB_URI_REF, SET_SMTP_PW_REF, SET_JENKINS_KEY_REF, 
 from settings import SET_PROD_DB_URI, SET_SMTP_PW, SET_JENKINS_KEY, SET_JENKINS_USER, \
     SET_JENKINS_HOST, SET_JENKINS_PROJECT, SET_JENKINS_TOKEN
 from settings import SET_AZAD_CLIENT_ID, SET_AZAD_CLIENT_SECRET, SET_AZAD_AUTHORITY
+from settings import SET_SNOW_INSTANCE_NAME, SET_SNOW_CLIENT_ID, SET_SNOW_CLIENT_SECRET, SET_SNOW_USERNAME, SET_SNOW_PASSWORD, SET_SNOW_CLIENT_SECRET_REF, SET_SNOW_PASSWORD_REF
 
 
 VERSION = '0.1.0-beta'
@@ -231,4 +232,34 @@ if os.getenv('JENKINS_HOST'):
     JENKINS_HOST = os.getenv('JENKINS_HOST')
 else:
     JENKINS_HOST = SET_JENKINS_HOST
+
+
+## ServiceNOW Integration
+if ENV == 'prod':
+    if os.getenv('SNOW_PASSWORD'):
+        SNOW_PASSWORD = KeyVaultManager().get_secret(os.getenv('SNOW_PASSWORD'))
+    else:
+        SNOW_PASSWORD = KeyVaultManager().get_secret(SET_SNOW_PASSWORD_REF)
+    if os.getenv('SNOW_CLIENT_SECRET'):
+        SNOW_CLIENT_SECRET = KeyVaultManager().get_secret(os.getenv('SNOW_CLIENT_SECRET'))
+    else:
+        SNOW_CLIENT_SECRET = KeyVaultManager().get_secret(SET_SNOW_CLIENT_SECRET_REF)
+    if os.getenv('SNOW_INSTANCE_NAME'):
+        SNOW_INSTANCE_NAME = KeyVaultManager().get_secret(os.getenv('SNOW_INSTANCE_NAME'))
+    else:
+        SNOW_INSTANCE_NAME = KeyVaultManager().get_secret(SET_SNOW_INSTANCE_NAME)
+    if os.getenv('SNOW_CLIENT_ID'):
+        SNOW_CLIENT_ID = KeyVaultManager().get_secret(os.getenv('SNOW_CLIENT_ID'))
+    else:
+        SNOW_CLIENT_ID = KeyVaultManager().get_secret(SET_SNOW_CLIENT_ID)
+    if os.getenv('SNOW_USERNAME'):
+        SNOW_USERNAME = KeyVaultManager().get_secret(os.getenv('SNOW_USERNAME'))
+    else:
+        SNOW_USERNAME = KeyVaultManager().get_secret(SET_SNOW_USERNAME)
+else:
+    SNOW_PASSWORD = SET_SNOW_PASSWORD
+    SNOW_CLIENT_SECRET = SET_SNOW_CLIENT_SECRET
+    SNOW_INSTANCE_NAME = SET_SNOW_INSTANCE_NAME
+    SNOW_CLIENT_ID = SET_SNOW_CLIENT_ID
+    SNOW_USERNAME = SET_SNOW_USERNAME
 

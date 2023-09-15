@@ -10,3 +10,5 @@ from vr.api.vulns import security_quality_gate
 from vr.api.vulns import vulnerabilities
 from vr.api.vulns import jenkins_webhook
 from vr.api.vulns import application_profiler
+
+from vr.api.integrations import servicenow
