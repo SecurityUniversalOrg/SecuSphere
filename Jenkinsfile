@@ -187,7 +187,7 @@ pipeline {
 
 
 
-        stage('Send report') {
+        stage('Send Report') {
             steps {
                 script {
                     jslSendMicrosoftTeamsMessage()
