@@ -12,26 +12,6 @@
             </div>
         </div>
 
-
-        <div class="row hidden-xs">
-            <div class="col-lg-12">
-
-                <ul class="breadcrumb main">
-
-                    <li class="">
-                        <a class="" href="/">Home</a>
-                    </li>
-
-                    <li class="active">
-                        <a class="active" href="/all_integrations">Application Profile</a>
-                    </li>
-
-                </ul>
-
-            </div>
-        </div>
-
-
         <!-- end of tabs -->
         <div class="row">
             <div class="col-lg-12">
@@ -66,14 +46,14 @@
                                 <thead>
                                 <tr>
                                     <th>Add Date</th>
-                                    <th>Secret Scanning Required</th>
-                                    <th>SCA Required</th>
-                                    <th>SAST Required</th>
-                                    <th>IAC Scanning Required</th>
-                                    <th>Container Scanning Required</th>
-                                    <th>Infrastructure Scanning Required</th>
-                                    <th>DAST Required</th>
-                                    <th>DAST API Required</th>
+                                    <th title="Secret Scanning tests for hard-coded secrets, such as API keys, in your code. It's required if your application stores code in a Source Code Management (SCM) system.">Secret Scanning Required</th>
+                                    <th title="Software Composition Analysis (SCA) checks for vulnerabilities in open-source components. It's required if your application uses open-source libraries or components.">SCA Required</th>
+                                    <th title="Static Application Security Testing (SAST) analyzes source code to find security vulnerabilities. It's required if your application has custom-built source code and features.">SAST Required</th>
+                                    <th title="Infrastructure as Code (IaC) scanning checks for security flaws in your infrastructure configuration files. It's required if your application uses infrastructure provisioning tools like Docker, Helm, Kubernetes, Terraform or CloudFormation.">IAC Scanning Required</th>
+                                    <th title="Container Scanning checks for vulnerabilities in your Docker images or other container formats. It's required if your application is containerized.">Container Scanning Required</th>
+                                    <th title="Infrastructure Scanning checks for vulnerabilities in your cloud or on-premise servers. It's required if your application is hosted on such infrastructure.">Infrastructure Scanning Required</th>
+                                    <th title="Dynamic Application Security Testing (DAST) checks for vulnerabilities in your running application. It's required if your application has an interface that interacts with users or external systems.">DAST Required</th>
+                                    <th title="Dynamic Application Security Testing for APIs (DAST API) checks for vulnerabilities in your application's APIs. It's required if your application provides APIs for client apps or external systems.">DAST API Required</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -81,16 +61,16 @@
                                 {% for i in entities %}
                                 <tr>
                                     <td>{{ i.AddDate }}</td>
-                                    <td title="Secret Scanning tests for hard-coded secrets, such as API keys, in your code. It's required if your application stores code in a Source Code Management (SCM) system.">{% if i.SecretScanReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
-                                    <td title="Software Composition Analysis (SCA) checks for vulnerabilities in open-source components. It's required if your application uses open-source libraries or components.">{% if i.SCAReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
-                                    <td title="Static Application Security Testing (SAST) analyzes source code to find security vulnerabilities. It's required if your application has custom-built source code and features.">{% if i.SASTReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
-                                    <td title="Infrastructure as Code (IaC) scanning checks for security flaws in your infrastructure configuration files. It's required if your application uses infrastructure provisioning tools like Docker, Helm, Kubernetes, Terraform or CloudFormation.">{% if i.IACReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
-                                    <td title="Container Scanning checks for vulnerabilities in your Docker images or other container formats. It's required if your application is containerized.">{% if i.ContainerReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
-                                    <td title="Infrastructure Scanning checks for vulnerabilities in your cloud or on-premise servers. It's required if your application is hosted on such infrastructure.">{% if i.InfrastructureScanReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
-                                    <td title="Dynamic Application Security Testing (DAST) checks for vulnerabilities in your running application. It's required if your application has an interface that interacts with users or external systems.">{% if i.DASTReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
-                                    <td title="Dynamic Application Security Testing for APIs (DAST API) checks for vulnerabilities in your application's APIs. It's required if your application provides APIs for client apps or external systems.">{% if i.DASTApiReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
+                                    <td>{% if i.SecretScanReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
+                                    <td>{% if i.SCAReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
+                                    <td>{% if i.SASTReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
+                                    <td>{% if i.IACReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
+                                    <td>{% if i.ContainerReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
+                                    <td>{% if i.InfrastructureScanReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
+                                    <td>{% if i.DASTReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
+                                    <td>{% if i.DASTApiReq == '0' %}<div class="fa-solid fa-xmark" style="color: red;"></div>{% else %}<div class="fa-solid fa-check" style="color: green;"></div>{% endif %}</td>
                                 </tr>
-                                    {% endfor %}
+                                {% endfor %}
 
 
                                 </tbody>
