@@ -166,3 +166,5 @@ src/flask_session/
 *.key
 src/keys/server.crt
 src/keys/server.key
+src/model.pkl
+src/scaler.pkl

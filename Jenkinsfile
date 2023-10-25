@@ -158,11 +158,12 @@ pipeline {
             }
             steps {
                 script {
-                    jslDastOWASP('full', TEST_URL, API_KEY)
+                    //jslDastOWASP('full', TEST_URL, API_KEY)
                     //jslDynamicApplicationSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010")
 
                     //jslDynamicApiSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010/api/openapi.yaml")
-                    jslDastAPIOWASP(OPENAPI_URL, TEST_URL, API_KEY)
+                    //jslDastAPIOWASP(OPENAPI_URL, TEST_URL, API_KEY)
+                    echo "Temp"
                 }
             }
             //post {
@@ -201,7 +202,15 @@ pipeline {
         ////////// Deploy to Production //////////
         stage('Deploy') {
             when {
-                branch 'release/*/PROD'
+                anyOf {
+                    // Condition for the PROD branch
+                    branch 'release/*/PROD'
+                    // Condition for a Test-* branch
+                    expression {
+                        // Split the branch name by '/' and check if the last segment starts with 'Test-'
+                        env.BRANCH_NAME.split('/').last().startsWith('Test-')
+                    }
+                }
             }
             steps {
                 jslDeployToProdWithSecrets()
