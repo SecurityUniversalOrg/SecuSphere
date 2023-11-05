@@ -196,4 +196,7 @@ def securitygatescorecard(id):
 def safe_int(value, default=0):
     if value is None:
         return default
-    return int(value)
+    if value[0].isdigit():
+        return int(value)
+    else:
+        return value

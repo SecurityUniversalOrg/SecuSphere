@@ -26,7 +26,7 @@
             <div style="display: inline-block;">
                 <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">Branch: <strong>{{ entities.GitBranch }}</strong></div>
                 <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">Start Time: <strong>{{ entities.StartDate }}</strong></div>
-                <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">Project: <strong>{{ entities.Project }}</strong></div>
+                <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">Project: <strong>TESTAPP</strong></div>
                 <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">Build Number: <strong>{{ entities.BuildNum }}</strong></div>
                 <div class="scorecard_top_item" style="padding-bottom: 0.5em;font-size: 16px;">Outcome: <strong>{{ scorecard_results['OVERALL'] }}</strong></div>
             </div>
@@ -70,7 +70,7 @@
                         <div class="scorecard_item_subsection_child">
                             <div class="scorecard_cell_hdr">Low</div>
                             <span style="font-size:x-small">(Limit|Actual)</span>
-                            <br>{{ entities.ThreshScaLow|default(0) }}|{{ entities.ResultScaLow if entities.ResultScaLow is not none else 0 }}
+                            <br>{{ entities.ThreshScaLow }}|{{ entities.ResultScaLow if entities.ResultScaLow is not none else 0 }}
                         </div>
                         <div class="scorecard_item_subsection_child">
                             <div class="scorecard_cell_hdr">Med</div>
