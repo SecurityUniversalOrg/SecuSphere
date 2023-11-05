@@ -214,7 +214,7 @@ pipeline {
             }
             steps {
                 //jslDeployToProdWithSecrets()
-                jslKubernetesDeploy()
+                jslKubernetesDeploy(pushDocker: false, deployFunction: 'jslDeployServiceB')
             }
         }
 
