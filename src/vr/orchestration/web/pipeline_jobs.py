@@ -175,14 +175,12 @@ def get_cicd_pipeline_stage_data():
         return redirect(url_for('admin.login'))
     elif status == 403:
         return render_template('403.html', user=user, NAV=NAV)
-    platform = request.form.get('platform')
     stage = request.form.get('stage')
-    vendor = request.form.get('vendor')
     resp = {}
-    if platform and stage:
+    if stage:
         opts = OPTS
         for opt in opts:
-            if platform == opt['platform'] and stage == opt['stage'] and vendor == opt['vendor']:
+            if 'Jenkins' == opt['platform'] and stage == opt['stage']:
                 resp['stage_data'] = opt['stage_data']
                 resp['env_data'] = opt['env_data']
                 resp['pre_reqs'] = opt['pre_reqs']

@@ -28,12 +28,40 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading tight">
-                                <h3 class="has-filters">
-                                    Application Profile
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <button class="btn btn-primary" data-toggle="modal" data-target="#updateAppProfileModal" style="float: right;position: relative;top: -0.5em;">Update Profile</button>
+                                    <h3 class="has-filters mb-0">
+                                        Application Profile
+                                    </h3>
 
-                                </h3>
+                                </div>
                             </div>
 
+                        </div>
+
+                        <!-- Update Application Profile Modal -->
+                        <div class="modal fade" id="updateAppProfileModal" tabindex="-1" role="dialog" aria-labelledby="updateAppProfileModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title" id="updateAppProfileModalLabel">Update Application Profile</h3>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="emailDistributionUpdate">Email Distribution List (optional):</label>
+                                            <input type="text" class="form-control" id="emailDistributionUpdate" placeholder="Enter email distribution list">
+                                        </div>
+                                    </div>
+                                    <p>NOTE: This will perform an Application Profile Assessment on the OnDemand Security Pipeline.  This process can take up to 1 hour to complete and the results will be emailed to your registered email in addition to the optional Email distribution list entered above.</p>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
 
