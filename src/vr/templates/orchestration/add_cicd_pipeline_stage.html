@@ -17,17 +17,8 @@
 
         <div class="row">
             <div class="col-md-4">
-                <label for="ci-cd-type" style="color: white;">Select CI/CD Pipeline Integration:</label>
-                <select id="ci-cd-type" class="form-control" onchange="updateCode()">
-                    <option value="">--Select CI/CD Pipeline Integration--</option>
-                    <option value="Jenkins">Jenkins</option>
-                    <!-- Add other CI/CD Pipeline Integrations here -->
-                </select>
-            </div>
-
-            <div class="col-md-4">
                 <label for="assessment-type" style="color: white;">Select Assessment Type:</label>
-                <select id="assessment-type" class="form-control" onchange="resetVendor();updateCode()">
+                <select id="assessment-type" class="form-control" onchange="updateCode();">
                     <option value="">--Select Assessment Type--</option>
                     <option value="Secret Scanning">Secret Scanning</option>
                     <option value="SCA">SCA</option>
@@ -42,14 +33,177 @@
                 </select>
             </div>
 
-            <div class="col-md-4">
-                <label for="vendor-type" style="color: white;">Select Vendor:</label>
-                <select id="vendor-type" class="form-control" onchange="updateCode()">
-                    <option value="">--Select Vendor--</option>
-                    <!-- Add other vendors here -->
-                </select>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <label style="color: white;margin-top: 1em;">Languages Used:</label>
+
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Android">
+                        <span style="padding-left: 1.75em;">Android</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Apex">
+                        <span style="padding-left: 1.75em;">Apex</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="ASP Classic">
+                        <span style="padding-left: 1.75em;">ASP Classic</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="COBOL">
+                        <span style="padding-left: 1.75em;">COBOL</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="ColdFusion">
+                        <span style="padding-left: 1.75em;">ColdFusion</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="C/C++">
+                        <span style="padding-left: 1.75em;">C/C++</span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-2" style="margin-top: 2.75em;">
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Dart/Flutter">
+                        <span style="padding-left: 1.75em;">Dart/Flutter</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Go">
+                        <span style="padding-left: 1.75em;">Go</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Groovy">
+                        <span style="padding-left: 1.75em;">Groovy</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="iOS">
+                        <span style="padding-left: 1.75em;">iOS</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Ionic">
+                        <span style="padding-left: 1.75em;">Ionic</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Java">
+                        <span style="padding-left: 1.75em;">Java</span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-2" style="margin-top: 2.75em;">
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="JavaScript/TypeScript">
+                        <span style="padding-left: 1.75em;">JavaScript/TypeScript</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Kotlin">
+                        <span style="padding-left: 1.75em;">Kotlin</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value=".NET">
+                        <span style="padding-left: 1.75em;">.NET</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value=".NET MAUI">
+                        <span style="padding-left: 1.75em;">.NET MAUI</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Perl">
+                        <span style="padding-left: 1.75em;">Perl</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="PhoneGap/Cordova">
+                        <span style="padding-left: 1.75em;">PhoneGap/Cordova</span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-2" style="margin-top: 2.75em;">
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="PHP">
+                        <span style="padding-left: 1.75em;">PHP</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="PL/SQL">
+                        <span style="padding-left: 1.75em;">PL/SQL</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Python">
+                        <span style="padding-left: 1.75em;">Python</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="React Native">
+                        <span style="padding-left: 1.75em;">React Native</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="RPG">
+                        <span style="padding-left: 1.75em;">RPG</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Ruby on Rails">
+                        <span style="padding-left: 1.75em;">Ruby on Rails</span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-2" style="margin-top: 2.75em;">
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Scala">
+                        <span style="padding-left: 1.75em;">Scala</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Transact-SQL">
+                        <span style="padding-left: 1.75em;">Transact-SQL</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Titanium">
+                        <span style="padding-left: 1.75em;">Titanium</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Visual Basic 6">
+                        <span style="padding-left: 1.75em;">Visual Basic 6</span>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Xamarin">
+                        <span style="padding-left: 1.75em;">Xamarin</span>
+                    </label>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row" style="padding-top: 1.5rem;">
+            <div class="col-md-12">
+                <button class="btn btn-primary mt-4" onclick="copyToClipboard()">Submit</button>
             </div>
         </div>
+
 
 
         <div id="pre_reqs_container" style="display: none;padding-top: 2.5rem;">
@@ -85,11 +239,37 @@
             <div class="row" style="padding-top: 1.5rem;">
                 <div class="col-md-12">
                     <button class="btn btn-primary mt-4" onclick="copyToClipboard()">Copy to Clipboard</button>
+                    <button class="btn btn-primary mt-4" data-toggle="modal" data-target="#validateModal">Validate</button>
                 </div>
             </div>
         </div>
 
         <br><br><br>
+
+        <!-- Validation Modal -->
+        <div class="modal fade" id="validateModal" tabindex="-1" role="dialog" aria-labelledby="validateModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="validateModalLabel">Validate Stage Configuration</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="emailDistribution">Email Distribution List (optional):</label>
+                            <input type="text" class="form-control" id="emailDistribution" placeholder="Enter email distribution list">
+                        </div>
+                    </div>
+                    <p>NOTE: This will perform a Security Assessment with these configurations on the OnDemand Security Pipeline.  This process can take up to 1 hour to complete and the results will be emailed to your registered email in addition to the optional Email distribution list entered above.</p>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 
@@ -106,41 +286,13 @@
                 'Dynamic Application Security Testing (DAST)': ['OWASP-ZAP'],
                 'Dynamic API Security Testing (DAST-API)': ['OWASP-ZAP'],
                 'Security Quality Gate': ['SecurityUniversal']
-            },
-            'GitHub Actions': {
-                'Secret Scanning': ['Trufflehog', 'Veracode'],
-                'SCA': ['Snyk'],
-                // Add mappings for other Assessment Types
-            },
-            // Add mappings for other CI/CD Types
+            }
         };
 
-        function resetVendor() {
-            document.getElementById('vendor-type').value = "";
-        }
-
         function updateCode() {
-            var ciCdType = document.getElementById('ci-cd-type').value;
             var assessmentType = document.getElementById('assessment-type').value;
-            var vendorType = document.getElementById('vendor-type').value;
 
-            if (ciCdType && assessmentType && !vendorType) {
-                // Update the vendor dropdown
-                var vendorDropdown = document.getElementById('vendor-type');
-                // Clear existing options
-                vendorDropdown.innerHTML = '<option value="">--Select Vendor--</option>';
-
-                var vendors = vendorsMap[ciCdType][assessmentType];
-                // Add new options
-                for (var i = 0; i < vendors.length; i++) {
-                    var option = document.createElement('option');
-                    option.text = vendors[i];
-                    option.value = vendors[i];
-                    vendorDropdown.add(option);
-                }
-            }
-
-            if (ciCdType && assessmentType && vendorType) {
+            if (assessmentType) {
                 // Generate the code based on the selected CI/CD Pipeline Integration, Assessment Type, and Vendor
                 getStageData();
             }
@@ -154,11 +306,9 @@
         }
 
         function getStageData() {
-            var platform = document.getElementById('ci-cd-type').value;
-            var stage = document.getElementById('assessment-type').value;
-            var vendor = document.getElementById('vendor-type').value;
-            var xhttp = new XMLHttpRequest();
-            var csrf_token = "{{ csrf_token() }}";
+          var stage = document.getElementById('assessment-type').value;
+          var xhttp = new XMLHttpRequest();
+          var csrf_token = "{{ csrf_token() }}";
           xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 var resp = JSON.parse(this.responseText);
@@ -176,7 +326,7 @@
           xhttp.open("POST", "/get_cicd_pipeline_stage_data", true);
           xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
           xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
-          xhttp.send("platform=" + platform + "&stage=" + stage + "&vendor=" + vendor);
+          xhttp.send("stage=" + stage);
         }
 
     </script>

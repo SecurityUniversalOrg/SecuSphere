@@ -119,6 +119,12 @@ form button:focus, form button:hover {
   background: #1fd100;
 }
 
+
+.dyn_checkbox {
+  padding-left: 0px !important;
+  color: white;
+}
+
 .bottom1 {
   color: #f9fafb;
   margin: 0 3% 0;

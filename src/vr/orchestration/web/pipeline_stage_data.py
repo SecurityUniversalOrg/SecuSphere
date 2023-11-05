@@ -12,7 +12,7 @@ OPTS = [
          }
     }
     steps {
-        jslSecretScanning()
+        jslSecSecretScanning()
     }
 }""",
             "env_data": "@Library('security-pipeline-library')_",
@@ -38,7 +38,7 @@ OPTS = [
          }
     }
     steps {
-        jslPythonSoftwareCompositionAnalysis()
+        jslSecSoftwareCompositionAnalysis('Java', 'JavaScript', 'Python')
     }
 }""",
             "env_data": """@Library('security-pipeline-library')_

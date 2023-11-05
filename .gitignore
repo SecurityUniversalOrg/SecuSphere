@@ -168,3 +168,5 @@ src/keys/server.crt
 src/keys/server.key
 src/model.pkl
 src/scaler.pkl
+*.pkl
+src/model.pkl
