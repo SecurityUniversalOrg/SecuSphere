@@ -47,157 +47,147 @@ pipeline {
     // Pipeline stages
     stages {
 
-        //stage('Prep Job') {
-        //    when {
-        //        expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //        }
-        //    }
-        //    steps {
-        //        script {
-        //            jslCountLinesOfCode()
-        //        }
-        //    }
-        //}
+        stage('Prep Job') {
+            when {
+                expression {
+                    env.BRANCH_NAME ==~ /^release\/.*\/.*/
+                }
+            }
+            steps {
+                script {
+                    jslCountLinesOfCode()
+                }
+            }
+        }
 
-        //stage('Unit Testing') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslPythonUnitTesting()
-        //    }
-        //}
+        stage('Unit Testing') {
+            when {
+                 expression {
+                    env.BRANCH_NAME ==~ /^release\/.*\/.*/
+                 }
+            }
+            steps {
+                jslPythonUnitTesting()
+            }
+        }
 
-        //stage('Secret Scanning') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslSecretScanning()
-        //    }
-        //}
+        stage('Secret Scanning') {
+            when {
+                 expression {
+                    env.BRANCH_NAME ==~ /^release\/.*\/.*/
+                 }
+            }
+            steps {
+                jslSecretScanning()
+            }
+        }
 
-        //stage('Software Composition Analysis') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslSecuritySCA('Python,Javascript')
-        //    }
-        //}
+        stage('Software Composition Analysis') {
+            when {
+                 expression {
+                    env.BRANCH_NAME ==~ /^release\/.*\/.*/
+                 }
+            }
+            steps {
+                jslSecuritySCA('Python,Javascript')
+            }
+        }
 
-        //stage('Static Application Security Testing') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslStaticApplicationSecurityTesting('Python')
-        //    }
-        //}
+        stage('Static Application Security Testing') {
+            when {
+                 expression {
+                    env.BRANCH_NAME ==~ /^release\/.*\/.*/
+                 }
+            }
+            steps {
+                jslStaticApplicationSecurityTesting('Python')
+            }
+        }
 
-        //stage('Infrastructure-as-Code Security Testing') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslInfrastructureAsCodeAnalysis()
-        //    }
-        //}
+        stage('Infrastructure-as-Code Security Testing') {
+            when {
+                 expression {
+                    env.BRANCH_NAME ==~ /^release\/.*\/.*/
+                 }
+            }
+            steps {
+                jslInfrastructureAsCodeAnalysis()
+            }
+        }
 
         ////////// Build //////////
-        //stage('Build Docker Service') {
-        //    when {
-        //        expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //        }
-        //    }
-        //    steps {
-        //        jslBuildDocker(env.K8_NAMESPACE)
-        //    }
-        //}
+        stage('Build Docker Service') {
+            when {
+                expression {
+                    env.BRANCH_NAME ==~ /^release\/.*\/.*/
+                }
+            }
+            steps {
+                script {
+                    jslBuildDocker([
+                        'serviceName': appName
+                    ])
+                }
+            }
+        }
 
-        //stage('Docker Container Scanning') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslContainerSecurityScanning(env.K8_NAMESPACE, 'latest', 'securityuniversal')
-        //    }
-        //}
+        stage('Docker Container Scanning') {
+            when {
+                 expression {
+                    env.BRANCH_NAME ==~ /^release\/.*\/.*/
+                 }
+            }
+            steps {
+                jslContainerSecurityScanning(env.K8_NAMESPACE, 'latest', 'securityuniversal')
+            }
+        }
 
         ////////// Release //////////
-        //stage('Release to Test') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslRunDockerCompose("secusphere")
-        //    }
-        //}
+        stage('Release to Test') {
+            when {
+                 expression {
+                    env.BRANCH_NAME ==~ /^release\/.*\/.*/
+                 }
+            }
+            steps {
+                jslRunDockerCompose("secusphere")
+            }
+        }
 
-        //stage('Test Release') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        script {
-        //            //jslDastOWASP('full', TEST_URL, API_KEY)
-        //            //jslDynamicApplicationSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010")
-        //
-        //            //jslDynamicApiSecurityTesting("http://${env.TEST_ENV_HOSTNAME}:5010/api/openapi.yaml")
-        //            //jslDastAPIOWASP(OPENAPI_URL, TEST_URL, API_KEY)
-        //            echo "Temp"
-        //        }
-        //    }
-        //    //post {
-        //    //     always {
-        //             //jslTestReleasePost()
-        //    //     }
-        //    //}
-        //}
+        stage('Test Release') {
+            when {
+                 expression {
+                    env.BRANCH_NAME ==~ /^release\/.*\/.*/
+                 }
+            }
+            steps {
+                script {
+                    jslDastOWASP('full', TEST_URL, API_KEY)
+                    jslDastAPIOWASP(OPENAPI_URL, TEST_URL, API_KEY)
+                }
+            }
+        }
 
         ////////// Quality Gate //////////
-        //stage("Quality Gate - Security") {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslSecurityQualityGate()
-        //    }
-        //}
+        stage("Quality Gate - Security") {
+            when {
+                 expression {
+                    env.BRANCH_NAME ==~ /^release\/.*\/.*/
+                 }
+            }
+            steps {
+                jslSecurityQualityGate()
+            }
+        }
 
-
-
-
-        //stage('Send Report') {
-        //    steps {
-        //        script {
-        //            jslSendMicrosoftTeamsMessage()
-        //            jslSendSecurityReportEmail()
-        //        }
-        //    }
-        //}
-
-
+        stage('Send Report') {
+            steps {
+                script {
+                    jslSendMicrosoftTeamsMessage()
+                    jslSendSecurityReportEmail()
+                }
+            }
+        }
 
         ////////// Deploy to Production //////////
         stage('Deploy') {
@@ -213,8 +203,11 @@ pipeline {
                 }
             }
             steps {
-                //jslDeployToProdWithSecrets()
-                jslKubernetesDeploy(pushDocker: false, deployFunction: 'jslDeployServiceB')
+                script {
+                    jslKubernetesDeploy([
+                        'serviceName': appName
+                    ])
+                }
             }
         }
 
