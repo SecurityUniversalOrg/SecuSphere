@@ -1,10 +1,15 @@
 environment: prod
 appName: "secusphere"
 
-azClientId: ""
-azClientSecret: ""
-azTenantId: ""
 
-tls.name: "dynamic"
-tls.crt: "dynamic"
-tls.key: "dynamic"
+azure:
+  credsEnabled: false
+  azClientId: ""
+  azClientSecret: ""
+  azTenantId: ""
+
+tls:
+  enabled: true
+  name: "dynamic"
+  crt: "dynamic"
+  key: "dynamic"
