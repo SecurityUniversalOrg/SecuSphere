@@ -206,7 +206,9 @@ pipeline {
                 script {
                     jslKubernetesDeploy([
                         'serviceName': appName,
-                        'tlsCredId': 'su-tls-wildcard'
+                        'tlsCredId': 'su-tls-wildcard',
+                        'secretsCredentials': [:],
+                        'serviceCredentials': [:]
                     ])
                 }
             }
