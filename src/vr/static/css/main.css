@@ -1571,3 +1571,62 @@ width: 0;
 .warnmsg_fail {
   color: white;
 }
+
+.table-responsive-db {
+    max-height: 150px; /* Adjust this value to set the desired fixed height */
+    overflow-y: scroll;
+}
+
+/* Optional: Styling for a fixed header */
+.thead-fixed th {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+}
+
+.onboarding-progress {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 5px;
+}
+
+.onboarding-progress h4 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.checklist {
+    list-style-type: none;
+    padding: 0;
+}
+
+.checklist-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: #555;
+    display: block;
+}
+
+.checklist-item.completed:before {
+    content: '\2713';
+    color: #5cb85c;
+    font-weight: bold;
+    display: inline-block;
+    width: 20px;
+    margin-right: 10px;
+}
+
+.checklist-item.incomplete:before {
+    content: '\2716';
+    color: #d9534f;
+    font-weight: bold;
+    display: inline-block;
+    width: 20px;
+    margin-right: 10px;
+}
