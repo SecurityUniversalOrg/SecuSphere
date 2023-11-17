@@ -795,8 +795,6 @@ def filtered_findings(appid, type, val):
             key = 'Severity'
         elif type == 'status':
             key = 'Status'
-        elif type == 'import':
-            key = 'VulnerablePackage'
         elif type == 'endpoint':
             key = 'Uri'
             val = base64.b64decode(val.encode()).decode()
@@ -820,6 +818,11 @@ def filtered_findings(appid, type, val):
             filter_list = [f"{key} LIKE '{val}%'"]
         elif isinstance(val, str) and val == 'ALL':
             filter_list = [f"{key} LIKE '%-%'"]
+        elif type == 'import':
+            raw_pkg_full = base64.b64decode(val.encode()).decode()
+            pkg_name = raw_pkg_full.split()[0]
+            pkg_ver = raw_pkg_full.split()[1]
+            filter_list = [f"VulnerablePackage LIKE '{pkg_name}%' AND VulnerablePackageVersion LIKE '{pkg_ver}%'"]
         else:
             filter_list = [f"{key} = '{val}'"]
         new_dict = {

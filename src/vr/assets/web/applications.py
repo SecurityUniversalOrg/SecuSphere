@@ -331,7 +331,7 @@ def application(component_id, app_type, entity_name):
         return render_template('assets/application.html', regs_all=data_map['regs_all'], vuln_data=data_map['vuln_data'], app_data=data_map['app_data'],
                                sla_data=data_map['sla_data'], ld=data_map['ld'], color_wheel=data_map['color_wheel'],
                                user=data_map['user'], NAV=data_map['NAV'], contacts=data_map['contacts'], dependency_map=data_map['dependency_map'],
-                               bm_assessments=data_map['bm_assessments'], app_type=app_type)
+                               bm_assessments=data_map['bm_assessments'], app_type=app_type, vuln_src_map=data_map['vuln_src_map'])
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500
 
@@ -728,6 +728,107 @@ def _application_data_handler(id, app_type=None, entity_name=None):
         "bm_assessments": bm_assessments
     }
     NAV['CAT']['url'] = '/all_applications'
+    vuln_src_map = {
+        'files': {},
+        'uris': {},
+        'packages': {},
+        'docker_containers': {}
+    }
+    for vuln in vuln_all:
+        if vuln.SourceType == 'Secret':
+            if vuln.VulnerableFileName not in vuln_src_map['files']:
+                vuln_src_map['files'][vuln.VulnerableFileName] = {
+                    "total": 0,
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "informational": 0
+                }
+            vuln_src_map['files'][vuln.VulnerableFileName]['total'] += 1
+            vuln_src_map['files'][vuln.VulnerableFileName][vuln.Severity.lower()] += 1
+        elif vuln.SourceType == 'SCA':
+            pkg_name = vuln.VulnerablePackage.capitalize() + " " + vuln.VulnerablePackageVersion
+            if pkg_name not in vuln_src_map['packages']:
+                vuln_src_map['packages'][pkg_name] = {
+                    "total": 0,
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "informational": 0
+                }
+            vuln_src_map['packages'][pkg_name]['total'] += 1
+            vuln_src_map['packages'][pkg_name][vuln.Severity.lower()] += 1
+        elif vuln.SourceType == 'SAST':
+            if vuln.VulnerableFileName not in vuln_src_map['files']:
+                vuln_src_map['files'][vuln.VulnerableFileName] = {
+                    "total": 0,
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "informational": 0
+                }
+            vuln_src_map['files'][vuln.VulnerableFileName]['total'] += 1
+            vuln_src_map['files'][vuln.VulnerableFileName][vuln.Severity.lower()] += 1
+        elif vuln.SourceType == 'Container':
+            pkg_name = vuln.VulnerablePackage.capitalize() + " " + vuln.VulnerablePackageVersion
+            if pkg_name not in vuln_src_map['packages']:
+                vuln_src_map['packages'][pkg_name] = {
+                    "total": 0,
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "informational": 0
+                }
+            vuln_src_map['packages'][pkg_name]['total'] += 1
+            vuln_src_map['packages'][pkg_name][vuln.Severity.lower()] += 1
+        elif vuln.SourceType == 'IaC':
+            if vuln.VulnerableFileName not in vuln_src_map['files']:
+                vuln_src_map['files'][vuln.VulnerableFileName] = {
+                    "total": 0,
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "informational": 0
+                }
+            vuln_src_map['files'][vuln.VulnerableFileName]['total'] += 1
+            vuln_src_map['files'][vuln.VulnerableFileName][vuln.Severity.lower()] += 1
+        elif vuln.SourceType == 'DAST':
+            if vuln.Uri not in vuln_src_map['uris']:
+                vuln_src_map['uris'][vuln.Uri] = {
+                    "total": 0,
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "informational": 0
+                }
+            vuln_src_map['uris'][vuln.Uri]['total'] += 1
+            vuln_src_map['uris'][vuln.Uri][vuln.Severity.lower()] += 1
+        elif vuln.SourceType == 'DASTAPI':
+            if vuln.Uri not in vuln_src_map['uris']:
+                vuln_src_map['uris'][vuln.Uri] = {
+                    "total": 0,
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "informational": 0
+                }
+            vuln_src_map['uris'][vuln.Uri]['total'] += 1
+            vuln_src_map['uris'][vuln.Uri][vuln.Severity.lower()] += 1
+        else:
+            pass
+
+    data_map['vuln_src_map'] = {
+        'files': sort_data_by_priority(vuln_src_map['files']),
+        'uris': sort_data_by_priority(vuln_src_map['uris']),
+        'packages': sort_data_by_priority(vuln_src_map['packages'])
+    }
     return data_map
 
 
@@ -955,4 +1056,8 @@ def delete_application(id):
             return redirect(url_for('assets.all_applications'))
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS)
+
+
+def sort_data_by_priority(data):
+    return sorted(data.items(), key=lambda x: (-x[1]['critical'], -x[1]['high'], -x[1]['medium'], -x[1]['low'], -x[1]['informational']))
 

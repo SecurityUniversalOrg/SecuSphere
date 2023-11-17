@@ -190,8 +190,9 @@ def application_benchmarks(app_id, id):
             default_benchmark = 'OWASP ASVS v. 3.1'
             NAV['appbar'] = 'benchmarks'
             app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
-            app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName}
-            return render_template('assessments/application_benchmarks.html', benchmarks=benchmark_dict[benchmark_id], default_benchmark=default_benchmark,
+            app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
+            return render_template('assessments/application_benchmarks.html', benchmarks=benchmark_dict[benchmark_id],
+                                   default_benchmark=default_benchmark,
                                    app_data=app_data, user=user, NAV=NAV)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500
