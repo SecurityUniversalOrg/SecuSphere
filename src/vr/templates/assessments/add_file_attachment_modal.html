@@ -1,0 +1,126 @@
+<!-- add_file_attachment modal -->
+<div id="add_file_attachment_modal" class="modal">
+  <!-- Modal content -->
+  <div class="settings_container">
+    
+    <div class="settings_row">
+      
+      <div class="settings_col_m8_center">
+    
+        <div class="settings_card">
+      
+          <div class="settings_card_header">
+            <span class="close" onclick="hideModal('add_file_attachment_modal')"><div class="fas fa-times" style="font-size: 3rem;"></div></span>
+            <h4 class="settings_card_title">Add File Attachment</h4>
+          </div>
+      
+          <div class="settings_card_body">
+
+              <h4>File Upload</h4>
+                <form  enctype="multipart/form-data">
+                    <input type="file" name="file">
+                </form>
+
+              <h4>File Description</h4>
+              <textarea name="new_file_note" id="new_file_note" rows="10" cols="145"></textarea>
+      
+            <div class="settings_form">
+              <div id="aim_warn_content"></div>
+            </div>
+
+            <div class="form-group">
+                <input class="btn btn-primary" type="submit" name="update_benchmarks" value="Add Attachment" onclick="addNewAttachment()">
+            </div>
+      
+          </div>
+      
+        </div>
+    
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+
+<script>
+function addNewAttachment() {
+    var noteVal = document.getElementById('new_file_note').value;
+    var fileInput = document.querySelector('input[type="file"]');
+    var file = fileInput.files[0]; // Get the file from the input
+    var fileName = file ? file.name : ''; // Get the file name
+    var active_app = document.getElementById('active_app').value;
+    var active_rule = document.getElementById('active_rule').value;
+
+    var event = new Date(Date.now());
+    event = event.toISOString().replace("T", " ").split('.')[0];
+
+    var formData = new FormData();
+    formData.append("file", file); // Append the file to the form data
+    formData.append("note", noteVal); // Append the note
+    formData.append("app_id", active_app); // Append other data as needed
+    formData.append("rule_id", active_rule);
+    formData.append("add_date", new Date().toISOString()); // Assuming 'event' is a date
+
+    var user = "{{ user.username }}";
+    var csrfToken = "{{ csrf_token() }}";
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var files_el = document.getElementById('bm_attachments')
+            var new_id = JSON.parse(this.responseText).response;
+            var new_el = document.createElement('p')
+            new_el.id = "rule_attach_id_" + new_id;
+            var date_el = document.createElement('div')
+            date_el.innerText = event;
+            date_el.innerHTML = event + `&nbsp;&nbsp;<div class="fas fa-trash-alt" onclick="deleteAttachment(${new_id})"></div>`
+
+            var username_el = document.createElement('div')
+            username_el.innerText = user;
+
+            var msg_el = document.createElement('div')
+
+            // Create an anchor element and set its properties
+            var link_el = document.createElement('a');
+            link_el.href = "/download_benchmark_attachment/" + new_id;
+            link_el.innerText = fileName;
+            link_el.target = "_blank"; // Open in a new tab
+
+            // Append the anchor element to the msg_el container
+            msg_el.appendChild(link_el);
+
+            new_el.appendChild(date_el);
+            new_el.appendChild(username_el);
+            new_el.appendChild(msg_el);
+
+            files_el.appendChild(new_el);
+
+            new_dict = {
+                "UploadDate": event,
+                "ApplicationID": active_app,
+                "ID": "placeholder",
+                "BenchmarkingID": active_rule,
+                "username": user,
+                "FileName": fileName,
+                "FileSize": 0,
+                "FileType": "placeholder",
+                "UploadedByUserID": "placeholder",
+                "AuditID": "placeholder",
+                "FilePath": "placeholder",
+                "Status": "Available",
+                "FileDescription": "placeholder"
+            }
+
+            rule_list[active_rule].Files.push(new_dict)
+            hideModal('add_file_attachment_modal');
+        }
+    };
+    xhttp.open("POST", "/add_benchmark_attachment", true);
+    xhttp.setRequestHeader("X-CSRF-Token", csrfToken);
+    xhttp.send(formData); // Send the form data
+}
+</script>
+
+
+<!-- end add modal -->

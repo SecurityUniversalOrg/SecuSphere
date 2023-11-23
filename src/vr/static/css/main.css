@@ -1630,3 +1630,31 @@ width: 0;
     width: 20px;
     margin-right: 10px;
 }
+
+.rp_tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.rp_tooltip .tooltiptext {
+    visibility: hidden;
+    width: 450px;
+    background-color: #f9f9f9;
+    color: #000;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -125px; /* Adjust this to ensure the tooltip is centered */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.rp_tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

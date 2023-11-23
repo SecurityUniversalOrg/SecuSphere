@@ -121,6 +121,7 @@
 
 {% include "assessments/bm_rule_modal.html" %}
 {% include "assessments/add_note_modal.html" %}
+{% include "assessments/add_file_attachment_modal.html" %}
 <script src='/static/js/core.js'></script>
 <script>
 var quick_notes_active = 'n'
@@ -147,6 +148,7 @@ var cur_user = "{{ user.username }}"
 function updateInfoModal(rule_id) {
     document.getElementById("active_rule").value = rule_id;
     document.getElementById('bm_notes').innerHTML = "";
+    document.getElementById('bm_attachments').innerHTML = "";
     var rule_info = rule_list[rule_id]
     document.getElementById('bm_rule_num').innerText = "# " + rule_info.Number;
     document.getElementById('bm_description').innerText = rule_info.Description;
@@ -157,9 +159,11 @@ function updateInfoModal(rule_id) {
         document.getElementById('bm_status').style.color = 'green';
     } else {
         var pass_status = 'Failed'
-        document.getElementById('bm_status').style.color = 'red';
+        document.getElementById('bm_status').style.color = '#ff00007d';
+        document.getElementById('bm_status').style.fontWeight = 'bolder';
     }
     document.getElementById('bm_status').innerText = pass_status;
+
     var notes_el = document.getElementById('bm_notes')
 
     for (let i = 0; i < rule_info.Notes.length; i++) {
@@ -181,12 +185,44 @@ function updateInfoModal(rule_id) {
         new_el.appendChild(msg_el);
         notes_el.appendChild(new_el);
 
+    }
+    var files_el = document.getElementById('bm_attachments')
 
+    for (let i = 0; i < rule_info.Files.length; i++) {
+        var new_el = document.createElement('p');
+        new_el.id = "rule_attach_id_" + rule_info.Files[i].ID;
+        var date_el = document.createElement('div');
+        if (cur_user == rule_info.Files[i].username) {
+            date_el.innerHTML = rule_info.Files[i].UploadDate + `&nbsp;&nbsp;<div class="fas fa-trash-alt" onclick="deleteAttachment(${rule_info.Files[i].ID})"></div>`;
+        } else {
+            date_el.innerText = rule_info.Files[i].UploadDate;
+        }
+        var username_el = document.createElement('div');
+        username_el.innerText = rule_info.Files[i].username;
 
+        // Create msg_el as a container
+        var msg_el = document.createElement('div');
+
+        // Create an anchor element and set its properties
+        var link_el = document.createElement('a');
+        link_el.href = "/download_benchmark_attachment/" + rule_info.Files[i].ID;
+        link_el.innerText = rule_info.Files[i].FileName;
+        link_el.target = "_blank"; // Open in a new tab
+
+        // Append the anchor element to the msg_el container
+        msg_el.appendChild(link_el);
+
+        // Append all elements to new_el
+        new_el.appendChild(date_el);
+        new_el.appendChild(username_el);
+        new_el.appendChild(msg_el);
+
+        // Append new_el to files_el
+        files_el.appendChild(new_el);
     }
 
     showModal('bm_rule_modal')
-}
+};
 </script>
 
 <script>

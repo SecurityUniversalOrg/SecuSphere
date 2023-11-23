@@ -167,6 +167,7 @@
 {#                                    <li><span class="checklist-item {% if task1_completed %}completed{% else %}incomplete{% endif %}">Complete Risk Profile</span></li>#}
 {#                                    <li><span class="checklist-item {% if task1_completed %}completed{% else %}incomplete{% endif %}">Add Sourcecode Integration</span></li>#}
 {#                                    <li><span class="checklist-item {% if task1_completed %}completed{% else %}incomplete{% endif %}">Add CI/CD Pipeline Integration</span></li>#}
+                                    <li><span class="checklist-item {% if app_data.Criticality and ')' in app_data.Criticality %}completed{% else %}incomplete{% endif %}">Complete Risk Profile <i class="fa-solid fa-share-from-square" onclick="addRiskProfile()"></i></span></li>
                                     <li><span class="checklist-item {% if bm_assessments %}completed{% else %}incomplete{% endif %}">Complete Benchmark Assessment</span></li>
                                 </ul>
 
@@ -996,6 +997,8 @@
 
     </div>
 
+{% include "assessments/add_risk_profile_modal.html" %}
+
 {#  Scripts  #}
 <script src="{{ url_for('static', filename='js/Chart.js') }}"></script>
 <script>
@@ -1040,4 +1043,11 @@ var newChart = new Chart(ctx, {
     }
 });
 </script>
+
+<script>
+function addRiskProfile() {
+    showModal('add_risk_profile_modal')
+}
+</script>
+
 {% endblock %}

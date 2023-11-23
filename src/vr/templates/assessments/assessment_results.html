@@ -8,7 +8,7 @@
             <div class="col-md-12 active">
                 <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
                 </h3>
-                {% include "assets/application_horizontal_bar.html" %}
+                {% include "assets/component_horizontal_bar.html" %}
             </div>
         </div>
 
@@ -155,9 +155,35 @@ function updateInfoModal(rule_id) {
         new_el.appendChild(username_el);
         new_el.appendChild(msg_el);
         notes_el.appendChild(new_el);
+    }
+
+    var files_el = document.getElementById('bm_attachments')
+
+    for (let i = 0; i < rule_info.Files.length; i++) {
+        var new_el = document.createElement('p')
+        new_el.id = "rule_attach_id_" + rule_info.Files[i].ID;
+        var date_el = document.createElement('div')
+        date_el.innerText = rule_info.Files[i].UploadDate;
+        var username_el = document.createElement('div')
+        username_el.innerText = rule_info.Files[i].username;
+        var msg_el = document.createElement('div')
+
+        // Create an anchor element and set its properties
+        var link_el = document.createElement('a');
+        link_el.href = "/download_benchmark_attachment/" + rule_info.Files[i].ID;
+        link_el.innerText = rule_info.Files[i].FileName;
+        link_el.target = "_blank"; // Open in a new tab
+
+        // Append the anchor element to the msg_el container
+        msg_el.appendChild(link_el);
 
 
 
+        new_el.appendChild(date_el);
+        new_el.appendChild(username_el);
+        new_el.appendChild(msg_el);
+
+        files_el.appendChild(new_el);
     }
 
     showModal('bm_rule_modal')
