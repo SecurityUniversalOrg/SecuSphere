@@ -186,67 +186,27 @@
                                         </td>
                                         <!-- End of Tags Column -->
                                         <td class="text-center">
-                                            <div class="has-popover" data-placement="bottom" data-content="{{ i.AppValue }}" data-original-title="" title="">
-                                                {% if i.AppValue == 'Minimal' %}
+                                            <div class="has-popover" data-placement="bottom" data-content="{{ i.Criticality }}" data-original-title="" title="">
+                                                {% if i.Criticality and i.Criticality.startswith('low') %}
                                                 <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
                                                     <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
-                                                        <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
-                                                            <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
-                                                                <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title=""></i>
-                                                            </i>
-                                                        </i>
+                                                        <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title=""></i>
                                                     </i>
                                                 </i>
-                                                {% elif i.AppValue == 'Low' %}
+                                                {% elif i.Criticality and i.Criticality.startswith('medium') %}
                                                 <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
                                                     <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                        <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
-                                                            <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
-                                                                <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title=""></i>
-                                                            </i>
-                                                        </i>
+                                                        <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title=""></i>
                                                     </i>
                                                 </i>
-                                                {% elif i.AppValue == 'Medium' %}
+                                                {% elif i.Criticality and i.Criticality.startswith('high') %}
                                                 <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
                                                     <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                        <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                            <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
-                                                                <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title=""></i>
-                                                            </i>
-                                                        </i>
-                                                    </i>
-                                                </i>
-                                                {% elif i.AppValue == 'High' %}
-                                                <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                    <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                        <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                            <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                                <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title=""></i>
-                                                            </i>
-                                                        </i>
-                                                    </i>
-                                                </i>
-                                                {% elif i.AppValue == 'Critical' %}
-                                                <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                    <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                        <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                            <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                                <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title=""></i>
-                                                            </i>
-                                                        </i>
+                                                        <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title=""></i>
                                                     </i>
                                                 </i>
                                                 {% else %}
-                                                <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                    <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                        <i class="fa fa-star has-popover" aria-hidden="true" data-original-title="" title="">
-                                                            <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title="">
-                                                                <i class="far fa-star text-muted has-popover" aria-hidden="true" data-original-title="" title=""></i>
-                                                            </i>
-                                                        </i>
-                                                    </i>
-                                                </i>
+                                                <i class="fa-solid fa-question" aria-hidden="true" data-original-title="" title=""></i>
                                                 {% endif %}
 
                                             </div>
@@ -257,27 +217,12 @@
                                                data-placement="bottom" data-content="Web" data-original-title=""
                                                title=""></i>
                                             {% endif %}
-                                            {% if not i.TargetRetirementDate or i.TargetRetirementDate == "1990-01-01T12:00:00" %}
-                                            <i class="fa fa-ship has-popover" data-trigger="hover"
-                                               data-placement="bottom" data-content="Sustain" data-original-title=""
-                                               title=""></i>
-                                            {% endif %}
-                                            {% if i.Origin == "COTS" %}
-                                            <i class="fa fa-money has-popover" data-trigger="hover"
-                                               data-placement="bottom" data-content="Purchased" data-original-title=""
-                                               title=""></i>
-                                            {% endif %}
-                                            {% if i.WebEnabled == 1 %}
-                                            <i class="fa fa-users has-popover" data-trigger="hover"
-                                               data-placement="bottom" data-content="External Audience"
-                                               data-original-title="" title=""></i>
-                                            {% endif %}
                                         </td>
                                         <td class="text-center"><a href="/open_findings/{{ i.ID }}" class="help_act_vuln_link">{{ entity_details[i.ID]['finding_cnt'] }}</a></td>
                                         <td class="text-center">
                                             <a href="/application_endpoints/{{ i.ID }}" class="help_vuln_eps_link">{{ entity_details[i.ID]['endpoint_cnt'] }}</a>
                                         </td>
-                                        <td>{{ i.Type }}</td>
+                                        <td>{{ i.Type if i.Type else "" }}</td>
                                     </tr>
                                     {% endfor %}
 

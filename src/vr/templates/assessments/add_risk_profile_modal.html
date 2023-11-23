@@ -1,0 +1,307 @@
+<!-- Modal -->
+<div id="add_risk_profile_modal" class="modal">
+
+    <!-- Modal content -->
+  <div class="settings_container">
+
+    <div class="settings_row">
+
+      <div class="settings_col_m8_center">
+
+        <div class="settings_card">
+
+          <div class="settings_card_header">
+            <span class="close" onclick="hideModal('add_risk_profile_modal')"><div class="fas fa-times" style="font-size: 3rem;"></div></span>
+            <h4 class="settings_card_title">Add Risk Profile</h4>
+          </div>
+                <form action="/submit_risk_profile" method="post" id="rp_form">
+
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <input type="hidden" name="app_id" value="{{ app_data.ID }}"/>
+
+                    <section>
+                        <h3>Environmental Factors</h3>
+                        <div class="form-group">
+                            <label>Where is the Application hosted?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">On-premise: Choose this if your application is hosted within your organization's physical facilities.<br><br>Cloud: Select this if your application is hosted on cloud services like AWS, Azure, or Google Cloud.<br><br>Hybrid: Opt for this if your application uses a combination of on-premise and cloud hosting.</span>
+                                </span>
+                            </label>
+
+                            <select name="hosting">
+                                <option value="on_premise">On-Premise</option>
+                                <option value="cloud">Cloud</option>
+                                <option value="hybrid">Hybrid</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Is the Application Exposed to the public Internet?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">Yes: Choose this if your application can be accessed over the internet by the general public.<br><br>No: Select this if your application is only accessible through a private network or intranet.</span>
+                                </span>
+                            </label>
+                            <select name="public_exposure">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Are there third-party integrations or dependencies?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">Yes: Choose this if your application relies on or integrates with services/products from external vendors.<br><br>No: Select this if your application operates independently without external integrations or dependencies.</span>
+                                </span>
+                            </label>
+                            <select name="third_party">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3>Data Sensitivity</h3>
+
+                        <div class="form-group">
+                        <label>What types of data does the application process?
+                            <span class="rp_tooltip">ℹ️
+                                <span class="tooltiptext">Personal Identifiable Information: Choose this if your application handles data like names, addresses, or social security numbers.<br><br>Financial: Select this if your application processes financial data like credit card information or bank details.<br><br>Health: Opt for this if your application deals with health-related data, such as medical records.<br><br>No sensitive data: Choose this if your application does not handle any sensitive personal, financial, or health data.</span>
+                            </span>
+                        </label>
+                        <select name="data_type">
+                            <option value="personal">Personal Identifiable Information</option>
+                            <option value="financial">Financial</option>
+                            <option value="health">Health</option>
+                            <option value="none">No sensitive data</option>
+                        </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>What is the volume of sensitive data handled?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">High: Choose this if your application handles large volumes of sensitive data regularly.<br><br>Medium: Select this for a moderate volume of sensitive data.<br><br>Low: Opt for this if your application handles a small amount of sensitive data.<br><br>None: Choose this if your application does not handle any sensitive data.</span>
+                                </span>
+                            </label>
+                            <select name="data_volume">
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Is the data subject to special regulatory requirements?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">GDPR: Select this if your data handling must comply with the General Data Protection Regulation.<br><br>HIPAA: Choose this for data that falls under Health Insurance Portability and Accountability Act regulations.<br><br>Others: Opt for this if you are subject to other data protection laws (not GDPR or HIPAA).<br><br>None: Select this if there are no specific data regulatory requirements for your application.</span>
+                                </span>
+                            </label>
+                            <select name="regulatory_requirements">
+                                <option value="gdpr">GDPR</option>
+                                <option value="hipaa">HIPAA</option>
+                                <option value="others">Others</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+
+                    </section>
+
+                    <section>
+                        <h3>Business Criticality</h3>
+
+                        <div class="form-group">
+                            <label>What is the role of the Application in business operations?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">Critical: Choose this if your application is essential for day-to-day business operations.<br><br>Important: Select this if the application plays a significant role but is not critical.<br><br>Non-critical: Opt for this if the application has a minimal impact on business operations.</span>
+                                </span>
+                            </label>
+                            <select name="business_role">
+                                <option value="critical">Critical</option>
+                                <option value="important">Important</option>
+                                <option value="non_critical">Non-critical</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>What is the impact of Application downtime on business operations?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">High: Choose this if downtime would significantly disrupt or halt business operations.<br><br>Medium: Select this for a moderate impact on business operations during downtime.<br><br>Low: Opt for this if downtime has a minimal or negligible impact on operations.</span>
+                                </span>
+                            </label>
+                            <select name="downtime_impact">
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Does the Application have a disaster recovery plan?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">Yes: Choose this if you have a formal plan to restore application functionality in the event of a disaster.<br><br>No: Select this if you lack a disaster recovery plan for the application.</span>
+                                </span>
+                            </label>
+                            <select name="disaster_recovery">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+
+                    </section>
+
+                    <section>
+                        <h3>Compliance Requirements</h3>
+
+                        <div class="form-group">
+                            <label>Is the Application subject to industry-specific compliance standards?
+                            <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">Yes: Choose this if your application must adhere to specific industry regulations (e.g., finance, healthcare).<br><br>No: Select this if there are no industry-specific compliance standards applicable to your application.</span>
+                                </span>
+                            </label>
+                            <select name="compliance_requirements">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Has the Application undergone compliance audits?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">Regularly: Opt for this if your application undergoes frequent compliance audits.<br><br>Occasionally: Select this for infrequent but periodic compliance audits.<br><br>Never: Choose this if your application has never undergone a compliance audit.</span>
+                                </span>
+                            </label>
+                            <select name="compliance_audits">
+                                <option value="regularly">Regularly</option>
+                                <option value="occasionally">Occasionally</option>
+                                <option value="never">Never</option>
+                            </select>
+                        </div>
+
+                    </section>
+
+                    <section>
+                        <h3>Technological Architecture</h3>
+
+                        <div class="form-group">
+                            <label>What is the complexity of the Application's architecture?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">High: Choose this for complex, multi-layered architectures or microservices.<br><br>Medium: Select this for moderately complex architectures with some integrated components.<br><br>Low: Opt for simple, monolithic architectures with few components.</span>
+                                </span>
+                            </label>
+                            <select name="architecture_complexity">
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Is the Application using legacy technologies?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">Yes: Choose this if the application relies on outdated or unsupported technologies.<br><br>No: Select this if the application uses current and supported technologies.</span>
+                                </span>
+                            </label>
+                            <select name="legacy_technologies">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+
+                    </section>
+
+                    <section>
+                        <h3>User Access</h3>
+
+                        <div class="form-group">
+                            <label>How many users have access to the application?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">Large number: Choose this for applications accessed by many users (e.g., company-wide or public).<br><br>Limited: Select this for applications with a limited, defined user base.<br><br>Very few: Opt for applications with very few users (e.g., specialized internal tools).</span>
+                                </span>
+                            </label>
+                            <select name="user_access">
+                                <option value="large">Large number</option>
+                                <option value="limited">Limited</option>
+                                <option value="few">Very few</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Are there multi-level access controls?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">Yes: Choose this if the application has multiple access levels (e.g., admin, user, guest).<br><br>No: Select this if the application has a single level of access for all users.</span>
+                                </span>
+                            </label>
+                            <select name="multi_level_access">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+
+                    </section>
+
+                    <section>
+                        <h3>Lifecycle Management</h3>
+
+                        <div class="form-group">
+                            <label>How frequently is the application updated?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">Regularly: Choose this for applications with frequent updates (e.g., monthly, quarterly).<br><br>Occasionally: Select this for applications with occasional updates.<br><br>Rarely: Opt for applications that are seldom updated.</span>
+                                </span>
+                            </label>
+                            <select name="update_frequency">
+                                <option value="regularly">Regularly</option>
+                                <option value="occasionally">Occasionally</option>
+                                <option value="rarely">Rarely</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Is there a formal change management process in place?
+                                <span class="rp_tooltip">ℹ️
+                                    <span class="tooltiptext">Yes: Choose this if changes to the application undergo a formal review process.<br><br>No: Select this if the application changes are made without a formal review process.</span>
+                                </span>
+                            </label>
+                            <select name="change_management">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+
+                    </section>
+
+                    <input type="submit" value="Submit">
+                </form>
+
+
+
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<!-- end modal -->

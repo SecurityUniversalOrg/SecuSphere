@@ -1,7 +1,7 @@
 {% extends 'bootstrap/base.html' %}
 
 {% block title %}
-    {% if title %}{{ title }} - Vulnerability Manager {% else %}Vulnerability Manager{% endif %}
+    {% if title %}{{ title }} - SecuSphere {% else %}SecuSphere{% endif %}
 {% endblock %}
 
 {% block head %}
@@ -9,7 +9,7 @@
   {{ super() }}
 
   <meta charset="UTF-8" />
-{#  <link rel="shortcut icon" type="image/x-icon" href="/static/images/lock_only.png" />#}
+  <link rel="shortcut icon" type="image/x-icon" href="/static/images/logo.ico" />
   <meta name="viewport" content="initial-scale=1.0, width=device-width" />
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome/css/all.css') }}" />
