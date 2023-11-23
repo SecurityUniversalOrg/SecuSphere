@@ -49,8 +49,3 @@ class MakeRiskProfileSchema(RiskProfileSchema):
     @post_load
     def make_it(self, data, **kwargs):
         return RiskProfile(**data)
-
-
-with app.app_context():
-    db.create_all()
-
