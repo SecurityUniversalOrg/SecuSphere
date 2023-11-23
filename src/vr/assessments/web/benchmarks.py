@@ -1,3 +1,5 @@
+import datetime
+
 from vr import db
 from vr.assessments import assessments
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter, _add_page_permissions_filter
@@ -10,10 +12,15 @@ from vr.assessments.model.assessmentbenchmarks import AssessmentBenchmarks, Asse
 from vr.assessments.model.assessmentbenchmarkrules import AssessmentBenchmarkRules
 from vr.assessments.model.assessmentbenchmarkruleaudits import AssessmentBenchmarkRuleAudits
 from vr.assessments.model.assessmentbenchmarkruleauditnotes import AssessmentBenchmarkRuleAuditNotes
+from vr.assessments.model.fileuploads import FileUploads
+from vr.assessments.model.riskprofile import RiskProfile
 from vr.assessments.model.assessmentbenchmarkassessments import AssessmentBenchmarkAssessments, AssessmentBenchmarkAssessmentsSchema
 from vr.admin.models import User
 from math import ceil
 from vr.functions.table_functions import load_table, update_table
+from werkzeug.utils import secure_filename
+from flask import send_file
+import os
 
 
 NAV = {
@@ -228,6 +235,18 @@ def _get_benchmark_details(app_id, id):
                     match = True
             if match:
                 benchmark_dict, n = _set_rule_match(benchmark_dict, n, i)
+        # Rule attachments section
+        rules_attachments = FileUploads.query \
+            .with_entities(FileUploads.ID, FileUploads.FileName,
+                           FileUploads.FileSize, FileUploads.FileType,
+                           FileUploads.UploadDate, FileUploads.BenchmarkingID,
+                           FileUploads.FilePath, FileUploads.Status, FileUploads.FileDescription,
+                           FileUploads.ApplicationID,
+                           User.username) \
+            .join(User, User.id == FileUploads.UploadedByUserID) \
+            .filter(text(f"ApplicationID = '{app_id}'")).all()
+        benchmark_dict[i.ID]['rules_attachments'] = _get_rule_attachments(rules_attachments)
+        #
         benchmark_dict[i.ID]['modal_rules'] = {}
         for r in benchmark_dict[i.ID]['rules']:
             benchmark_dict, r = _set_benchmark_rule(benchmark_dict, r, i)
@@ -242,6 +261,27 @@ def _get_benchmark_details(app_id, id):
             .order_by(desc(AssessmentBenchmarkRuleAudits.AssessmentID)) \
             .all()
     return benchmark_dict, benchmark_id
+
+
+def _get_rule_attachments(rule_attachment_list):
+    attachment_dict = {}
+    for i in rule_attachment_list:
+        if not i[5] in attachment_dict:
+            attachment_dict[i[5]] = []
+        attachment_dict[i[5]].append({
+            "ID": i[0],
+            "FileName": i[1],
+            "FileSize": i[2] if i[2] else 0,
+            "FileType": i[3],
+            "UploadDate": i[4].strftime("%Y-%m-%d %H:%M:%S"),
+            "RuleID": i[5],
+            "FilePath": i[6],
+            "Status": i[7],
+            "FileDescription": i[8],
+            "ApplicationID": i[9],
+            "username": i[10]
+        })
+    return attachment_dict
 
 
 def _set_rule_match(benchmark_dict, n, i):
@@ -261,7 +301,9 @@ def _set_benchmark_rule(benchmark_dict, r, i):
         "Description": r.Description, "ID": r.ID,
         "ImplementationLevels": r.ImplementationLevels,
         "Number": r.Number,
-        "Notes": benchmark_dict[i.ID]['rules_notes'][r.ID] if r.ID in benchmark_dict[i.ID]['rules_notes'] else []}
+        "Notes": benchmark_dict[i.ID]['rules_notes'][r.ID] if r.ID in benchmark_dict[i.ID]['rules_notes'] else [],
+        "Files": benchmark_dict[i.ID]['rules_attachments'][r.ID] if r.ID in benchmark_dict[i.ID]['rules_attachments'] else []
+    }
     return benchmark_dict, r
 
 
@@ -370,6 +412,7 @@ def _set_assessment_benchmarks(i, benchmark_dict, app_id, assessment_id):
                             "Version": i.Version, "username": i.username,
                             "L1_pass": [], "L2_pass": [], "L3_pass": []}
     benchmark_dict[i.ID]['rules'] = AssessmentBenchmarkRules.query.filter(text(f"BenchmarkID = '{i.ID}'")).all()
+
     rules_notes = AssessmentBenchmarkRuleAuditNotes.query \
         .with_entities(AssessmentBenchmarkRuleAuditNotes.ID, AssessmentBenchmarkRuleAuditNotes.AddDate,
                        AssessmentBenchmarkRuleAuditNotes.ApplicationID, AssessmentBenchmarkRuleAuditNotes.Note,
@@ -390,6 +433,46 @@ def _set_assessment_benchmarks(i, benchmark_dict, app_id, assessment_id):
                 {"ID": n.ID, "AddDate": n.AddDate.strftime(ISO_FORMAT), "ApplicationID": n.ApplicationID,
                  "Note": n.Note, "RuleID": n.RuleID, "Type": n.Type,
                  "username": n.username})
+
+    # Rule attachments section
+    rules_attachments = FileUploads.query \
+        .with_entities(FileUploads.ID, FileUploads.FileName,
+                       FileUploads.FileSize, FileUploads.FileType,
+                       FileUploads.UploadDate, FileUploads.UploadedByUserID,
+                       FileUploads.AuditID, FileUploads.BenchmarkingID,
+                       FileUploads.FilePath, FileUploads.Status, FileUploads.FileDescription,
+                       FileUploads.ApplicationID,
+                       User.username) \
+        .join(User, User.id == FileUploads.UploadedByUserID) \
+        .filter(text(f"ApplicationID = '{app_id}'")).all()
+    benchmark_dict[i.ID]['rules_attachments'] = {}
+    for n in rules_attachments:
+        match = False
+        for r in benchmark_dict[i.ID]['rules']:
+            if r.ID == n.BenchmarkingID:
+                match = True
+        if match:
+            if n.BenchmarkingID not in benchmark_dict[i.ID]['rules_attachments']:
+                benchmark_dict[i.ID]['rules_attachments'][n.BenchmarkingID] = []
+            benchmark_dict[i.ID]['rules_attachments'][n.BenchmarkingID].append(
+                {
+                    "ID": n.ID,
+                    "FileName": n.FileName,
+                    "FileSize": n.FileSize if n.FileSize else 0,
+                    "FileType": n.FileType,
+                    "UploadDate": n.UploadDate.strftime("%Y-%m-%d %H:%M:%S"),
+                    "UploadedByUserID": n.UploadedByUserID,
+                    "AuditID": n.AuditID if n.AuditID else 0,
+                    "BenchmarkingID": n.BenchmarkingID,
+                    "FilePath": n.FilePath,
+                    "Status": n.Status,
+                    "FileDescription": n.FileDescription,
+                    "ApplicationID": n.ApplicationID,
+                    "username": n.username
+                }
+            )
+    #
+
     benchmark_dict[i.ID]['modal_rules'] = {}
     for r in benchmark_dict[i.ID]['rules']:
         _set_modal_rules(r, benchmark_dict, i)
@@ -414,7 +497,8 @@ def _set_modal_rules(r, benchmark_dict, i):
         "Description": r.Description, "ID": r.ID,
         "ImplementationLevels": r.ImplementationLevels,
         "Number": r.Number,
-        "Notes": benchmark_dict[i.ID]['rules_notes'][r.ID] if r.ID in benchmark_dict[i.ID]['rules_notes'] else []}
+        "Notes": benchmark_dict[i.ID]['rules_notes'][r.ID] if r.ID in benchmark_dict[i.ID]['rules_notes'] else [],
+        "Files": benchmark_dict[i.ID]['rules_attachments'][r.ID] if r.ID in benchmark_dict[i.ID]['rules_attachments'] else []}
     return benchmark_dict
 
 
@@ -439,15 +523,14 @@ def add_benchmark_note():
             add_date = request.form.get('add_date')
             note_type = "User"
             new_note = AssessmentBenchmarkRuleAuditNotes(
-                AddDate=add_date,
-                ApplicationID = app_id,
+                ApplicationID = int(app_id),
                 RuleID = rule_id,
                 UserID = user.id,
                 Note = note,
                 Type = note_type
             )
             db.session.add(new_note)
-            db_connection_handler(db)
+            db.session.commit()
             return jsonify({'response': new_note.ID}), 200
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500
@@ -471,3 +554,232 @@ def delete_benchmark_note():
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500
 
+
+@assessments.route("/add_benchmark_attachment", methods=['POST'])
+@login_required
+def add_benchmark_attachment():
+    try:
+        admin_role = APP_ADMIN
+        role_req = [APP_ADMIN, APP_VIEWER]
+        perm_entity = 'Application'
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
+                                              permissions_entity=perm_entity)
+        if status == 401:
+            return redirect(url_for(ADMIN_LOGIN))
+        elif status == 403:
+            return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
+        app_id = request.form.get('app_id')
+        status = _entity_page_permissions_filter(app_id, user_roles, session, admin_role)
+        if status == 200:
+            file = request.files['file']
+            filename = secure_filename(file.filename)
+            upload_folder = 'file_uploads'
+            os.makedirs(upload_folder, exist_ok=True)
+            filepath = os.path.join(upload_folder, filename)
+            file.save(filepath)
+            file_size = file.content_length  # Get file size
+            file_type = file.mimetype  # Get file MIME type
+            rule_id = request.form.get('rule_id')
+            note = request.form.get('note')
+            add_date = request.form.get('add_date')
+            new_attachment = FileUploads(
+                 FileName  = filename,
+                 FileSize = file_size if file_size else 0,
+                 FileType = file_type,
+                 UploadDate = datetime.datetime.utcnow(),
+                 UploadedByUserID = user.id,
+                 AuditID = None,
+                 BenchmarkingID = rule_id,
+                 FilePath = filepath,
+                 Status = "Available",
+                 FileDescription = note,
+                 ApplicationID = app_id
+            )
+            db.session.add(new_attachment)
+            db.session.commit()
+            return jsonify({'response': new_attachment.ID}), 200
+    except RuntimeError:
+        return render_template(SERVER_ERR_STATUS), 500
+
+@assessments.route("/delete_benchmark_attachment", methods=['POST'])
+@login_required
+def delete_benchmark_attachment():
+    try:
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'])
+        if status == 401:
+            return redirect(url_for(ADMIN_LOGIN))
+        elif status == 403:
+            return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
+        if request.method == 'POST':
+            file_id = request.form.get('file_id')
+            del_note = FileUploads.query.filter(text(f"ID={file_id} AND UploadedByUserID={user.id}")).first()
+            db.session.delete(del_note)
+            db_connection_handler(db)
+            current_working_directory = os.getcwd()
+            file_path = os.path.join(current_working_directory, del_note.FilePath)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            return str(200)
+    except RuntimeError:
+        return render_template(SERVER_ERR_STATUS), 500
+
+
+@assessments.route("/download_benchmark_attachment/<file_id>", methods=['GET'])
+@login_required
+def download_benchmark_attachment(file_id):
+    try:
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'])
+        if status == 401:
+            return redirect(url_for(ADMIN_LOGIN))
+        elif status == 403:
+            return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
+
+        dl_file = FileUploads.query.filter(text(f"ID={file_id} AND UploadedByUserID={user.id}")).first()
+        if dl_file is None:
+            # Handle case where file is not found
+            return "File not found", 404
+
+        current_working_directory = os.getcwd()
+
+        file_path = os.path.join(current_working_directory, dl_file.FilePath)
+        return send_file(file_path)  # Send the file to the client
+    except RuntimeError:
+        return render_template(SERVER_ERR_STATUS), 500
+
+
+@assessments.route("/submit_risk_profile", methods=['POST'])
+@login_required
+def submit_risk_profile():
+    try:
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'])
+        if status == 401:
+            return redirect(url_for(ADMIN_LOGIN))
+        elif status == 403:
+            return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
+
+        referrer = request.referrer
+        all_answers = request.form
+        app_id = all_answers['app_id']
+        score, formatted_answers, criticality = _score_risk_profile(all_answers)
+        new_profile = RiskProfile(
+            AddDate=datetime.datetime.utcnow(),
+            CompletedByUserID=user.id,
+            Answers=formatted_answers,
+            Status='Completed',
+            Scores=score,
+            ApplicationID=app_id
+        )
+        db.session.add(new_profile)
+        db.session.commit()
+
+        db.session.query(BusinessApplications).filter(BusinessApplications.ID == app_id)\
+            .update({BusinessApplications.Criticality: criticality}, synchronize_session=False)
+        db_connection_handler(db)
+        return redirect(referrer)
+    except RuntimeError:
+        return render_template(SERVER_ERR_STATUS), 500
+
+
+def _score_risk_profile(answers):
+    score = 0
+    formatted_answers = ''
+    criticality = ''
+    formatted_scores = ''
+
+    score_map = {
+        1: {"on_premise": 2, "cloud": 3, "hybrid": 4},
+        2: {"yes": 5, "no": 1},
+        3: {"yes": 4, "no": 2},
+        4: {"personal": 5, "financial": 5, "health": 5, "none": 1},
+        5: {"high": 5, "medium": 3, "low": 2, "none": 1},
+        6: {"gdpr": 4, "hipaa": 4, "others": 3, "none": 1},
+        7: {"critical": 5, "important": 3, "non_critical": 1},
+        8: {"high": 5, "medium": 3, "low": 1},
+        9: {"yes": 1, "no": 4},
+        10: {"yes": 4, "no": 2},
+        11: {"regularly": 1, "occasionally": 3, "never": 5},
+        12: {"high": 4, "medium": 2, "low": 1},
+        13: {"yes": 4, "no": 1},
+        14: {"large": 3, "limited": 2, "few": 1},
+        15: {"yes": 1, "no": 3},
+        16: {"regularly": 1, "occasionally": 3, "rarely": 5},
+        17: {"yes": 1, "no": 4}
+    }
+
+    # 1: on_premise-2, cloud-3, hybrid-4
+    formatted_answers += f'1::hosting::{answers["hosting"]};;'
+    score += score_map[1][answers["hosting"]]
+    formatted_scores += f'1::{score_map[1][answers["hosting"]]};;'
+    # 2: yes-5, no-1
+    formatted_answers += f'2::public_exposure::{answers["public_exposure"]};;'
+    score += score_map[2][answers["public_exposure"]]
+    formatted_scores += f'2::{score_map[2][answers["public_exposure"]]};;'
+    # 3: yes-4, no-2
+    formatted_answers += f'3::third_party::{answers["third_party"]};;'
+    score += score_map[3][answers["third_party"]]
+    formatted_scores += f'3::{score_map[3][answers["third_party"]]};;'
+    # 4: personal-5, financial-5, health-5, none-1
+    formatted_answers += f'4::data_type::{answers["data_type"]};;'
+    score += score_map[4][answers["data_type"]]
+    formatted_scores += f'4::{score_map[4][answers["data_type"]]};;'
+    # 5: high-5, medium-3, low-2, none-1
+    formatted_answers += f'5::data_volume::{answers["data_volume"]};;'
+    score += score_map[5][answers["data_volume"]]
+    formatted_scores += f'5::{score_map[5][answers["data_volume"]]};;'
+    # 6: gdpr-4, hipaa-4, others-3, none-1
+    formatted_answers += f'6::regulatory_requirements::{answers["regulatory_requirements"]};;'
+    score += score_map[6][answers["regulatory_requirements"]]
+    formatted_scores += f'6::{score_map[6][answers["regulatory_requirements"]]};;'
+    # 7: critical-5, important-3, non_critical-1
+    formatted_answers += f'7::business_role::{answers["business_role"]};;'
+    score += score_map[7][answers["business_role"]]
+    formatted_scores += f'7::{score_map[7][answers["business_role"]]};;'
+    # 8: high-5, medium-3, low-1
+    formatted_answers += f'8::downtime_impact::{answers["downtime_impact"]};;'
+    score += score_map[8][answers["downtime_impact"]]
+    formatted_scores += f'8::{score_map[8][answers["downtime_impact"]]};;'
+    # 9: yes-1, no-4
+    formatted_answers += f'9::disaster_recovery::{answers["disaster_recovery"]};;'
+    score += score_map[9][answers["disaster_recovery"]]
+    formatted_scores += f'9::{score_map[9][answers["disaster_recovery"]]};;'
+    # 10: yes-4, no-2
+    formatted_answers += f'10::compliance_requirements::{answers["compliance_requirements"]};;'
+    score += score_map[10][answers["compliance_requirements"]]
+    formatted_scores += f'10::{score_map[10][answers["compliance_requirements"]]};;'
+    # 11: regularly-1, occasionally-3, never-5
+    formatted_answers += f'11::compliance_audits::{answers["compliance_audits"]};;'
+    score += score_map[11][answers["compliance_audits"]]
+    formatted_scores += f'11::{score_map[11][answers["compliance_audits"]]};;'
+    # 12: high-4, medium-2, low-1
+    formatted_answers += f'12::architecture_complexity::{answers["architecture_complexity"]};;'
+    score += score_map[12][answers["architecture_complexity"]]
+    formatted_scores += f'12::{score_map[12][answers["architecture_complexity"]]};;'
+    # 13: yes-4, no-1
+    formatted_answers += f'13::legacy_technologies::{answers["legacy_technologies"]};;'
+    score += score_map[13][answers["legacy_technologies"]]
+    formatted_scores += f'13::{score_map[13][answers["legacy_technologies"]]};;'
+    # 14: large-3, limited-2, few-1
+    formatted_answers += f'14::user_access::{answers["user_access"]};;'
+    score += score_map[14][answers["user_access"]]
+    formatted_scores += f'14::{score_map[14][answers["user_access"]]};;'
+    # 15: yes-1, no-3
+    formatted_answers += f'15::multi_level_access::{answers["multi_level_access"]};;'
+    score += score_map[15][answers["multi_level_access"]]
+    formatted_scores += f'15::{score_map[15][answers["multi_level_access"]]};;'
+    # 16: regularly-1, occasionally-3, rarely-5
+    formatted_answers += f'16::update_frequency::{answers["update_frequency"]};;'
+    score += score_map[16][answers["update_frequency"]]
+    formatted_scores += f'16::{score_map[16][answers["update_frequency"]]};;'
+    # 17: yes-1, no-4
+    formatted_answers += f'17::change_management::{answers["change_management"]};;'
+    score += score_map[17][answers["change_management"]]
+    formatted_scores += f'17::{score_map[17][answers["change_management"]]};;'
+    returned_store = f'{score}:::{formatted_scores}'
+    # Determine Risk Category (criticality), Low Risk: 17-35, Medium Risk: 36-53, High Risk: 54-71
+    if score < 36:
+        criticality = f'low ({score})'
+    elif score < 54:
+        criticality = f'medium ({score})'
+    else:
+        criticality = f'high ({score})'
+    return returned_store, formatted_answers, criticality

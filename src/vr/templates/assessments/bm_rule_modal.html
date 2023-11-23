@@ -25,8 +25,13 @@
               <h4>Status</h4>
               <p id="bm_status"></p>
 
+              <h4>Attachments&nbsp;&nbsp;<a href="#"><div class="fas fa-plus-square" onclick="addAttachment()"></div></a></h4>
+              <div id="bm_attachments"></div>
+
               <h4>Notes&nbsp;&nbsp;<a href="#"><div class="fas fa-plus-square" onclick="addNote()"></div></a></h4>
               <div id="bm_notes"></div>
+
+
 
       
             <div class="settings_form">
@@ -52,6 +57,10 @@
 <input type="hidden" value="{{ user.username }}" id="cur_user">
 
 <script>
+function addAttachment() {
+    showModal('add_file_attachment_modal')
+}
+
 function addNote() {
     document.getElementById('new_note').value = "";
     showModal('add_note_modal')
@@ -75,6 +84,26 @@ function deleteNote(note_id) {
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
     xhttp.send("note_id=" + note_id);
+}
+
+function deleteAttachment(file_id) {
+    var active_rule = document.getElementById('active_rule').value;
+    var xhttp = new XMLHttpRequest();
+    var csrf_token = "{{ csrf_token() }}";
+    xhttp.onreadystatechange = function() {
+        for (var i = 0; i < rule_list[active_rule].Files.length; i++) {
+            var this_note_id = rule_list[active_rule].Files[i].ID;
+            if (file_id == this_note_id) {
+                var deleted_dict = rule_list[active_rule].Files[i]
+            }
+        }
+        rule_list[active_rule].Files.pop(deleted_dict)
+        document.getElementById(`rule_attach_id_${file_id}`).remove();
+    };
+    xhttp.open("POST", "/delete_benchmark_attachment", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+    xhttp.send("file_id=" + file_id);
 }
 
 
