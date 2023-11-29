@@ -38,7 +38,7 @@ OPTS = [
          }
     }
     steps {
-        jslSecSoftwareCompositionAnalysis('Java', 'JavaScript', 'Python')
+        jslSecSoftwareCompositionAnalysis({{languages}})
     }
 }""",
             "env_data": """@Library('security-pipeline-library')_
@@ -72,7 +72,7 @@ environment {
          }
     }
     steps {
-        jslStaticApplicationSecurityTesting()
+        jslStaticApplicationSecurityTesting({{languages}})
     }
 }""",
             "env_data": """@Library('security-pipeline-library')_

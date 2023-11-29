@@ -1,14 +1,17 @@
+import requests
 from vr.orchestration import orchestration
 from math import ceil
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter
 from flask import request, render_template, session, redirect, url_for
 from flask_login import login_required
 from sqlalchemy import text
+from requests.auth import HTTPBasicAuth
 from vr.functions.table_functions import load_table, update_table
 from vr.assets.model.businessapplications import BusinessApplications
 from vr.orchestration.model.cicdpipelines import CICDPipelines, CICDPipelinesSchema
 from vr.orchestration.model.pipelinejobs import PipelineJobs, PipelineJobsSchema
 from vr.orchestration.web.pipeline_stage_data import OPTS
+from config_engine import JENKINS_USER, JENKINS_KEY, JENKINS_STAGING_PROJECT, JENKINS_HOST, JENKINS_TOKEN
 
 
 NAV = {
@@ -176,6 +179,8 @@ def get_cicd_pipeline_stage_data():
     elif status == 403:
         return render_template('403.html', user=user, NAV=NAV)
     stage = request.form.get('stage')
+    extra_data = request.form.get('extra')
+    language_recs = ["SCA", "SAST"]
     resp = {}
     if stage:
         opts = OPTS
@@ -184,8 +189,56 @@ def get_cicd_pipeline_stage_data():
                 resp['stage_data'] = opt['stage_data']
                 resp['env_data'] = opt['env_data']
                 resp['pre_reqs'] = opt['pre_reqs']
+
+                if stage in language_recs:
+                    resp['stage_data'] = resp['stage_data'].replace('{{languages}}', extra_data)
+
                 break
         return resp, 200
     else:
         return resp, 500
+
+
+@orchestration.route("/validate_cicd_pipeline_stage/<appid>", methods=['POST'])
+@login_required
+def validate_cicd_pipeline_stage(appid):
+    NAV['curpage'] = {"name": "Validate CI/CD Pipeline Stage"}
+    admin_role = APP_ADMIN
+    role_req = [APP_ADMIN, 'Application Viewer']
+    perm_entity = 'Application'
+    user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
+                                          permissions_entity=perm_entity)
+    status = _entity_page_permissions_filter(id, user_roles, session, admin_role)
+    if status == 401:
+        return redirect(url_for('admin.login'))
+    elif status == 403:
+        return render_template('403.html', user=user, NAV=NAV)
+
+    stage = request.form.get('stage')
+    pre_reqs = request.form.get('pre_reqs')
+    env = request.form.get('env')
+    stage_data = request.form.get('stage_data')
+    git_branch = request.form.get('gitBranch')
+
+
+    app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
+    git_url = request.form.get('gitUrl')
+
+    app_name = app.ApplicationName
+
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    data = {
+        'token': JENKINS_TOKEN,
+        'GIT_URL': git_url,
+        'GIT_BRANCH': git_branch,
+        'APP_NAME': app_name,
+        'STAGE': stage
+    }
+    url = f'{JENKINS_HOST}/job/{JENKINS_STAGING_PROJECT}/buildWithParameters'
+    resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(JENKINS_USER, JENKINS_KEY))
+
+    return redirect(request.referrer)
 
