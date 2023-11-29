@@ -78,8 +78,9 @@ def all_dockerimages():
             for a in apps:
                 if a:
                     app_data = BusinessApplications.query.filter(text(f"ID = {a}")).first()
-                    app_name = app_data.ApplicationName
-                    new_dict['app_names'].append({'ID': a, 'AppName': app_name})
+                    if app_data:
+                        app_name = app_data.ApplicationName
+                        new_dict['app_names'].append({'ID': a, 'AppName': app_name})
             entities.append(new_dict)
 
         table_details = {
@@ -151,8 +152,9 @@ def dockerimages(appid):
             for a in apps:
                 if a:
                     app_data = BusinessApplications.query.filter(text(f"ID = {a}")).first()
-                    app_name = app_data.ApplicationName
-                    new_dict['app_names'].append({'ID': a, 'AppName': app_name})
+                    if app_data:
+                        app_name = app_data.ApplicationName
+                        new_dict['app_names'].append({'ID': a, 'AppName': app_name})
             entities.append(new_dict)
         NAV['appbar'] = 'endpoints'
         app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
