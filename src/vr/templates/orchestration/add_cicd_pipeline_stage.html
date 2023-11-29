@@ -18,7 +18,7 @@
         <div class="row">
             <div class="col-md-4">
                 <label for="assessment-type" style="color: white;">Select Assessment Type:</label>
-                <select id="assessment-type" class="form-control" onchange="updateCode();">
+                <select id="assessment-type" class="form-control" onchange="updateOpts();">
                     <option value="">--Select Assessment Type--</option>
                     <option value="Secret Scanning">Secret Scanning</option>
                     <option value="SCA">SCA</option>
@@ -36,7 +36,7 @@
 
         </div>
 
-        <div class="row">
+        <div class="row" id="language_container" style="display: none;">
             <div class="col-md-2">
                 <label style="color: white;margin-top: 1em;">Languages Used:</label>
 
@@ -200,7 +200,7 @@
 
         <div class="row" style="padding-top: 1.5rem;">
             <div class="col-md-12">
-                <button class="btn btn-primary mt-4" onclick="copyToClipboard()">Submit</button>
+                <button class="btn btn-primary mt-4" onclick="updateCode();">Submit</button>
             </div>
         </div>
 
@@ -258,6 +258,10 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
+                            <label for="gitBranch">Git Branch (required):</label>
+                            <input type="text" class="form-control" id="gitBranch" placeholder="main" value="main">
+                        </div>
+                        <div class="form-group">
                             <label for="emailDistribution">Email Distribution List (optional):</label>
                             <input type="text" class="form-control" id="emailDistribution" placeholder="Enter email distribution list">
                         </div>
@@ -265,7 +269,7 @@
                     <p>NOTE: This will perform a Security Assessment with these configurations on the OnDemand Security Pipeline.  This process can take up to 1 hour to complete and the results will be emailed to your registered email in addition to the optional Email distribution list entered above.</p>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-primary" onclick="validateStageData()">Submit</button>
                     </div>
                 </div>
             </div>
@@ -289,6 +293,21 @@
             }
         };
 
+        function updateOpts() {
+            document.getElementById("pre_reqs_container").style.display = "none";
+            document.getElementById("env_container").style.display = "none";
+            document.getElementById("stage_data_container").style.display = "none";
+            var assessmentType = document.getElementById('assessment-type').value;
+
+            if (assessmentType) {
+                // Generate the code based on the selected CI/CD Pipeline Integration, Assessment Type, and Vendor
+                var language_rec = ["SCA", "SAST"];
+                if (language_rec.includes(assessmentType)) {
+                    document.getElementById("language_container").style.display = "block";
+                }
+            }
+        }
+
         function updateCode() {
             var assessmentType = document.getElementById('assessment-type').value;
 
@@ -309,6 +328,15 @@
           var stage = document.getElementById('assessment-type').value;
           var xhttp = new XMLHttpRequest();
           var csrf_token = "{{ csrf_token() }}";
+          var extra_data = ""
+          var extra_rec = ["SCA", "SAST"]
+          if (extra_rec.includes(stage)) {
+              var checkboxes = document.querySelectorAll("#language_container input[type='checkbox']:checked");
+              var checkedValues = Array.from(checkboxes).map(function(checkbox) {
+                  return checkbox.value;
+              });
+              extra_data = checkedValues.join(', ');
+          }
           xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 var resp = JSON.parse(this.responseText);
@@ -326,7 +354,27 @@
           xhttp.open("POST", "/get_cicd_pipeline_stage_data", true);
           xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
           xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
-          xhttp.send("stage=" + stage);
+          xhttp.send("stage=" + stage + "&extra=" + extra_data);
+        }
+
+        function validateStageData() {
+          var stage = document.getElementById('assessment-type').value;
+          var xhttp = new XMLHttpRequest();
+          var csrf_token = "{{ csrf_token() }}";
+          var pre_reqs = document.getElementById('output-prereqs').innerText;
+          var env = document.getElementById('output-env').value;
+          var stage_data = document.getElementById('output-stage_data').value;
+          var gitBranch = document.getElementById('gitBranch').value;
+          xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var resp = JSON.parse(this.responseText);
+                $('#validateModal').modal('hide');
+            }
+          };
+          xhttp.open("POST", "/validate_cicd_pipeline_stage/" + "{{ app_data.ID }}", true);
+          xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
+          xhttp.send("stage=" + stage + "&pre_reqs=" + pre_reqs + "&env=" + env + "&stage_data=" + stage_data + "&gitBranch=" + gitBranch);
         }
 
     </script>

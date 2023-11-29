@@ -187,6 +187,7 @@ def securitygatescorecard(id):
             entity = []
             scorecard_results = {}
             scorecard_results['OVERALL'] = 'No Tests'
+        NAV['appbar'] = 'ci_cd'
         return render_template('vulns/securitygatescorecard.html', app_data=app_data, entities=entity, user=user, NAV=NAV,
                                scorecard_results=scorecard_results)
     except RuntimeError:
