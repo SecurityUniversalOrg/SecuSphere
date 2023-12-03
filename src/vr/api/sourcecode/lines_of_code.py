@@ -82,7 +82,7 @@ def add_loc():
 
     app_name = form['appName']
     git_branch = form['gitBranch']
-    application_id = get_app_id(app_name)
+    application_id = get_app_id(app_name, None)
     new_entry = AppCodeComposition(ApplicationID=application_id, BranchName=git_branch, **language_stats)
     db.session.add(new_entry)
     db_connection_handler(db)

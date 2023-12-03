@@ -124,7 +124,7 @@ environment {
          }
     }
     steps {
-        jslContainerSecurityScanning(env.K8_NAMESPACE)
+        jslContainerSecurityScanning({{image_name}}, '{{image_tag}}', '{{image_registry}}')
     }
 }""",
             "env_data": """@Library('security-pipeline-library')_
@@ -155,7 +155,7 @@ environment {
          }
     }
     steps {
-        jslDynamicApplicationSecurityTesting("http://192.168.0.150:5080")
+        jslDynamicApplicationSecurityTesting("{{target_url}}")
     }
     post {
          always {
@@ -177,7 +177,7 @@ environment {
          }
     }
     steps {
-        jslDynamicApiSecurityTesting("http://192.168.0.150:5080")
+        jslDynamicApiSecurityTesting("{{target_url}}")
     }
     post {
          always {
