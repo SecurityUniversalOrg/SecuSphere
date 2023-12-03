@@ -105,8 +105,8 @@
             </div>
             <div class="col-md-2" style="margin-top: 2.75em;">
                 <div class="checkbox">
-                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="JavaScript/TypeScript">
-                        <span style="padding-left: 1.75em;">JavaScript/TypeScript</span>
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="JavaScript">
+                        <span style="padding-left: 1.75em;">JavaScript</span>
                     </label>
                 </div>
                 <div class="checkbox">
@@ -174,13 +174,18 @@
                     </label>
                 </div>
                 <div class="checkbox">
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Titanium">
+                        <span style="padding-left: 1.75em;">Titanium</span>
+                    </label>
+                </div>
+                <div class="checkbox">
                     <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Transact-SQL">
                         <span style="padding-left: 1.75em;">Transact-SQL</span>
                     </label>
                 </div>
                 <div class="checkbox">
-                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="Titanium">
-                        <span style="padding-left: 1.75em;">Titanium</span>
+                    <label class="dyn_checkbox"><input style="margin-left: 0em !important;" type="checkbox" name="tests[]" value="TypeScript">
+                        <span style="padding-left: 1.75em;">TypeScript</span>
                     </label>
                 </div>
                 <div class="checkbox">
@@ -197,6 +202,27 @@
             </div>
 
         </div>
+
+        <div class="row" id="docker_container" style="display: none;">
+            <div class="col-md-4">
+                <label for="image_name" style="color: white;">Container Image Name:</label>
+                <input id="image_name" class="form-control" type="text"/>
+                <label for="image_tag" style="color: white;">Container Image Tag:</label>
+                <input id="image_tag" class="form-control" type="text" placeholder="latest"/>
+                <label for="image_registry" style="color: white;">Container Registry Name:</label>
+                <input id="image_registry" class="form-control" type="text"/>
+            </div>
+        </div>
+
+        <div class="row" id="dast_container" style="display: none;">
+            <div class="col-md-4">
+                <label for="target_url" style="color: white;">Target URL:</label>
+                <input id="target_url" class="form-control" type="text"/>
+            </div>
+        </div>
+
+
+
 
         <div class="row" style="padding-top: 1.5rem;">
             <div class="col-md-12">
@@ -275,6 +301,25 @@
             </div>
         </div>
 
+        <!-- Confirm Modal -->
+        <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="confirmModalLabel">Validation In Progress</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <p>Thank you for your submission.  You should expect an email with the results of the testing within the next 30 minutes depending on the scope of the desired testing.</p>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -297,6 +342,9 @@
             document.getElementById("pre_reqs_container").style.display = "none";
             document.getElementById("env_container").style.display = "none";
             document.getElementById("stage_data_container").style.display = "none";
+            document.getElementById("language_container").style.display = "none";
+            document.getElementById("docker_container").style.display = "none";
+            document.getElementById("dast_container").style.display = "none";
             var assessmentType = document.getElementById('assessment-type').value;
 
             if (assessmentType) {
@@ -304,6 +352,13 @@
                 var language_rec = ["SCA", "SAST"];
                 if (language_rec.includes(assessmentType)) {
                     document.getElementById("language_container").style.display = "block";
+                }
+                if (assessmentType == "Container Security Scanning") {
+                    document.getElementById("docker_container").style.display = "block";
+                }
+
+                if (assessmentType == "Dynamic Application Security Testing (DAST)" || assessmentType == "Dynamic API Security Testing (DAST-API)") {
+                    document.getElementById("dast_container").style.display = "block";
                 }
             }
         }
@@ -328,15 +383,19 @@
           var stage = document.getElementById('assessment-type').value;
           var xhttp = new XMLHttpRequest();
           var csrf_token = "{{ csrf_token() }}";
-          var extra_data = ""
-          var extra_rec = ["SCA", "SAST"]
-          if (extra_rec.includes(stage)) {
+          var lang_data = ""
+          var lang_rec = ["SCA", "SAST"]
+          if (lang_rec.includes(stage)) {
               var checkboxes = document.querySelectorAll("#language_container input[type='checkbox']:checked");
               var checkedValues = Array.from(checkboxes).map(function(checkbox) {
                   return checkbox.value;
               });
-              extra_data = checkedValues.join(', ');
+              lang_data = checkedValues.join(', ');
           }
+          var image_name = document.getElementById('image_name').value;
+          var image_tag = document.getElementById('image_tag').value;
+          var image_registry = document.getElementById('image_registry').value;
+          var target_url = document.getElementById('target_url').value;
           xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 var resp = JSON.parse(this.responseText);
@@ -354,27 +413,41 @@
           xhttp.open("POST", "/get_cicd_pipeline_stage_data", true);
           xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
           xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
-          xhttp.send("stage=" + stage + "&extra=" + extra_data);
+          xhttp.send("stage=" + stage + "&lang_data=" + lang_data + "&image_name=" + image_name + "&image_tag=" + image_tag + "&image_registry=" + image_registry + "&target_url=" + target_url);
         }
 
         function validateStageData() {
           var stage = document.getElementById('assessment-type').value;
           var xhttp = new XMLHttpRequest();
           var csrf_token = "{{ csrf_token() }}";
-          var pre_reqs = document.getElementById('output-prereqs').innerText;
-          var env = document.getElementById('output-env').value;
-          var stage_data = document.getElementById('output-stage_data').value;
+
+          var languages = ""
+          var lang_rec = ["SCA", "SAST"]
+          if (lang_rec.includes(stage)) {
+              var checkboxes = document.querySelectorAll("#language_container input[type='checkbox']:checked");
+              var checkedValues = Array.from(checkboxes).map(function(checkbox) {
+                  return checkbox.value;
+              });
+              languages = checkedValues.join(', ');
+          }
+
+          var emails = document.getElementById('emailDistribution').value;
           var gitBranch = document.getElementById('gitBranch').value;
+          var image_name = document.getElementById('image_name').value;
+          var image_tag = document.getElementById('image_tag').value;
+          var image_registry = document.getElementById('image_registry').value;
+          var target_url = document.getElementById('target_url').value;
           xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 var resp = JSON.parse(this.responseText);
                 $('#validateModal').modal('hide');
+                $('#confirmModal').modal('show');
             }
           };
           xhttp.open("POST", "/validate_cicd_pipeline_stage/" + "{{ app_data.ID }}", true);
           xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
           xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
-          xhttp.send("stage=" + stage + "&pre_reqs=" + pre_reqs + "&env=" + env + "&stage_data=" + stage_data + "&gitBranch=" + gitBranch);
+          xhttp.send("stage=" + stage + "&languages=" + languages + "&emails=" + emails + "&gitBranch=" + gitBranch + "&image_name=" + image_name + "&image_tag=" + image_tag + "&image_registry=" + image_registry + "&target_url=" + target_url);
         }
 
     </script>
