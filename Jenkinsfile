@@ -181,6 +181,11 @@ pipeline {
         }
 
         stage('Send Report') {
+            when {
+                 expression {
+                    env.BRANCH_NAME ==~ /^release\/.*\/.*/
+                 }
+            }
             steps {
                 script {
                     jslSendMicrosoftTeamsMessage()
