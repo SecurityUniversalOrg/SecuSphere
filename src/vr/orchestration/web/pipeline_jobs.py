@@ -179,7 +179,11 @@ def get_cicd_pipeline_stage_data():
     elif status == 403:
         return render_template('403.html', user=user, NAV=NAV)
     stage = request.form.get('stage')
-    extra_data = request.form.get('extra')
+    lang_data = request.form.get('lang_data')
+    image_name = request.form.get('image_name')
+    image_tag = request.form.get('image_tag')
+    image_registry = request.form.get('image_registry')
+    target_url = request.form.get('target_url')
     language_recs = ["SCA", "SAST"]
     resp = {}
     if stage:
@@ -191,8 +195,13 @@ def get_cicd_pipeline_stage_data():
                 resp['pre_reqs'] = opt['pre_reqs']
 
                 if stage in language_recs:
-                    resp['stage_data'] = resp['stage_data'].replace('{{languages}}', extra_data)
-
+                    resp['stage_data'] = resp['stage_data'].replace('{{languages}}', lang_data)
+                elif stage == 'Container Security Scanning':
+                    resp['stage_data'] = resp['stage_data'].replace('{{image_name}}', image_name)
+                    resp['stage_data'] = resp['stage_data'].replace('{{image_tag}}', image_tag)
+                    resp['stage_data'] = resp['stage_data'].replace('{{image_registry}}', image_registry)
+                elif stage == 'Dynamic Application Security Testing (DAST)' or stage == 'Dynamic API Security Testing (DAST-API)':
+                    resp['stage_data'] = resp['stage_data'].replace('{{target_url}}', target_url)
                 break
         return resp, 200
     else:
@@ -215,16 +224,24 @@ def validate_cicd_pipeline_stage(appid):
         return render_template('403.html', user=user, NAV=NAV)
 
     stage = request.form.get('stage')
-    pre_reqs = request.form.get('pre_reqs')
-    env = request.form.get('env')
-    stage_data = request.form.get('stage_data')
+    languages = request.form.get('languages')
+    emails = request.form.get('emails')
     git_branch = request.form.get('gitBranch')
-
+    image_name = request.form.get('image_name')
+    image_tag = request.form.get('image_tag')
+    image_registry = request.form.get('image_registry')
+    target_url = request.form.get('target_url')
 
     app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
-    git_url = request.form.get('gitUrl')
+    git_url = app.RepoURL
 
     app_name = app.ApplicationName
+
+    email_list = []
+    if emails:
+        email_list = emails.replace(' ', '').split(',')
+    email_list.append(user.email)
+    emails_str = ','.join(email_list)
 
     headers = {
         "Accept": "application/json",
@@ -235,10 +252,17 @@ def validate_cicd_pipeline_stage(appid):
         'GIT_URL': git_url,
         'GIT_BRANCH': git_branch,
         'APP_NAME': app_name,
-        'STAGE': stage
+        'STAGE': stage,
+        'LANGUAGES': languages,
+        'EMAILS': emails_str,
+        'DOCKER_IMG_NAME': image_name,
+        'DOCKER_IMG_TAG': image_tag,
+        'DOCKER_IMG_REGISTRY': image_registry,
+        'TARGET_URL': target_url
+
     }
     url = f'{JENKINS_HOST}/job/{JENKINS_STAGING_PROJECT}/buildWithParameters'
     resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(JENKINS_USER, JENKINS_KEY))
 
-    return redirect(request.referrer)
+    return str(200)
 
