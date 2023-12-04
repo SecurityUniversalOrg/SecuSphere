@@ -213,9 +213,9 @@ pipeline {
                         'serviceName': appName,
                         'tlsCredId': 'su-tls-wildcard',
                         'secretsCredentials': [
-                            'string': ['azClientId': 'AZ-TF-client_id'],
-                            'string': ['azClientSecret': 'AZ-TF-client_secret'],
-                            'string': ['azTenantId': 'AZ-TF-tenant_id'],
+                            'azClientId': 'AZ-TF-client_id',
+                            'azClientSecret': 'AZ-TF-client_secret',
+                            'azTenantId': 'AZ-TF-tenant_id',
                         ],
                         'serviceCredentials': [:]
                     ])
