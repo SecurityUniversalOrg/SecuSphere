@@ -217,6 +217,11 @@ pipeline {
                             'azClientSecret': 'AZ-TF-client_secret',
                             'azTenantId': 'AZ-TF-tenant_id',
                         ],
+                        'secretsSetStrings': [
+                            'azClientId': '${azClientId}',
+                            'azClientSecret': '${azClientSecret}',
+                            'azTenantId': '${azTenantId}',
+                        ],
                         'serviceCredentials': [:]
                     ])
                 }
