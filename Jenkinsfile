@@ -221,9 +221,7 @@ pipeline {
                             'azure.credsEnabled': true,
                             'azure.azClientId': 'azClientId',
                             'azure.azClientSecret': 'azClientSecret',
-                            'azure.azTenantId': 'azTenantId',
-                            'tls.cert': 'tlscert',
-                            'tls.key': 'tlskey'
+                            'azure.azTenantId': 'azTenantId'
                         ],
                         'serviceCredentials': [:]
                     ])
