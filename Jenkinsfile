@@ -219,9 +219,9 @@ pipeline {
                         ],
                         'secretsSetStrings': [
                             'azure.credsEnabled': true,
-                            'azure.azClientId': 'azClientId',
-                            'azure.azClientSecret': 'azClientSecret',
-                            'azure.azTenantId': 'azTenantId',
+                            'azure.azClientId': '${azClientId}',
+                            'azure.azClientSecret': '${azClientSecret}',
+                            'azure.azTenantId': '${azTenantId}',
                         ],
                         'serviceCredentials': [:]
                     ])
