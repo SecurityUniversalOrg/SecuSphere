@@ -218,9 +218,10 @@ pipeline {
                             'azTenantId': 'AZ-TF-tenant_id',
                         ],
                         'secretsSetStrings': [
-                            'azClientId': 'azClientId',
-                            'azClientSecret': 'azClientSecret',
-                            'azTenantId': 'azTenantId',
+                            'azure.credsEnabled': true,
+                            'azure.azClientId': 'azClientId',
+                            'azure.azClientSecret': 'azClientSecret',
+                            'azure.azTenantId': 'azTenantId',
                         ],
                         'serviceCredentials': [:]
                     ])
