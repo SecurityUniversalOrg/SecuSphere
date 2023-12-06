@@ -232,10 +232,12 @@ pipeline {
                     echo "Global Config: ${globalConfig}"
                     echo "Deploy Config: ${deployConfig}"
 
+                    def tlsCred = deployConfig.get('tlsCredId')
+
                     if (!deployConfig.isEmpty()) {
                             jslKubernetesDeploy([
                                 'serviceName': appName,
-                                'tlsCredId': deployConfig.get('tlsCredId'),
+                                'tlsCredId': tlsCred,
                                 'secretsCredentials': [
                                     'azClientId': 'AZ-TF-client_id',
                                     'azClientSecret': 'AZ-TF-client_secret',
