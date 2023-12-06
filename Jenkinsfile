@@ -222,7 +222,9 @@ pipeline {
             }
             steps {
                 script {
+                    echo "CONFIG IS: ${CONFIG}"
                     def globalConfig = jslGroovyFromJsonString(CONFIG)
+                    echo "globalConfig is: ${globalConfig}"
 
                     jslKubernetesDeploy([
                         'serviceName': globalConfig.stages.deploy.serviceName,
