@@ -224,18 +224,25 @@ pipeline {
                 script {
                     def parsedConfig = jslGroovyFromJsonString(CONFIG)
 
-                    def serializedConfig = jslSerializableMapConverter(parsedConfig)
-                    echo "Serialized config: ${serializedConfig}"
+                    // Ensure the top-level keys are correctly accessed
+                    def globalConfig = parsedConfig?.get('global') ?: [:]
+                    def stagesConfig = parsedConfig?.get('stages') ?: [:]
+                    def deployConfig = stagesConfig?.get('deploy') ?: [:]
 
-                    def deployConfig = serializedConfig.stages.deploy
+                    echo "Global Config: ${globalConfig}"
+                    echo "Deploy Config: ${deployConfig}"
 
-                    jslKubernetesDeploy([
-                        'serviceName': deployConfig.serviceName,
-                        'tlsCredId': deployConfig.tlsCredId,
-                        'secretsCredentials': deployConfig.secretsCredentials ?: [:],
-                        'secretsSetStrings': deployConfig.secretsSetStrings ?: [:],
-                        'serviceCredentials': deployConfig.serviceCredentials ?: [:]
-                    ])
+                    if (!deployConfig.isEmpty()) {
+                            jslKubernetesDeploy([
+                                'serviceName': deployConfig.get('serviceName'),
+                                'tlsCredId': deployConfig.get('tlsCredId'),
+                                'secretsCredentials': deployConfig.get('secretsCredentials') ?: [:],
+                                'secretsSetStrings': deployConfig.get('secretsSetStrings') ?: [:],
+                                'serviceCredentials': deployConfig.get('serviceCredentials') ?: [:]
+                            ])
+                    } else {
+                        echo "Deploy configuration not found"
+                    }
                 }
             }
         }
