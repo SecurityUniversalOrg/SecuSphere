@@ -9,6 +9,9 @@ pipeline {
         timeout(time: 600, unit: 'MINUTES')
     }
 
+    // Read the YAML file at the top level
+    def config = readYaml file: 'pipeline-config.yaml'
+
     // Some global default variables
     environment {
 //        GIT_BRANCH = "${globalVars.GIT_BRANCH}"
@@ -35,7 +38,7 @@ pipeline {
         TEST_ENV_HOSTNAME = "192.168.0.68"
         OPENAPI_URL = 'http://192.168.0.68:5010/api/openapi.yaml'
         TEST_URL = 'http://192.168.0.68:5010'
-        API_KEY = 'API_KEY'
+        API_KEY = "${config.global.API_KEY}"
     }
 
 
@@ -210,8 +213,8 @@ pipeline {
             steps {
                 script {
                     jslKubernetesDeploy([
-                        'serviceName': appName,
-                        'tlsCredId': 'su-tls-wildcard',
+                        'serviceName': config.stages.deploy.serviceName,
+                        'tlsCredId': "${config.stages.deploy.tlsCredId}",
                         'secretsCredentials': [
                             'azClientId': 'AZ-TF-client_id',
                             'azClientSecret': 'AZ-TF-client_secret',
