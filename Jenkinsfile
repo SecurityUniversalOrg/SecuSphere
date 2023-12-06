@@ -222,25 +222,19 @@ pipeline {
             }
             steps {
                 script {
-                    echo "CONFIG IS: ${CONFIG}"
-                    def globalConfig = jslGroovyFromJsonString(CONFIG)
-                    echo "globalConfig is: ${globalConfig}"
+                    def parsedConfig = jslGroovyFromJsonString(CONFIG)
+
+                    def serializedConfig = jslSerializableMapConverter(parsedConfig)
+                    echo "Serialized config: ${serializedConfig}"
+
+                    def deployConfig = serializedConfig.stages.deploy
 
                     jslKubernetesDeploy([
-                        'serviceName': globalConfig.stages.deploy.serviceName,
-                        'tlsCredId': globalConfig.stages.deploy.tlsCredId,
-                        'secretsCredentials': [
-                            'azClientId': 'AZ-TF-client_id',
-                            'azClientSecret': 'AZ-TF-client_secret',
-                            'azTenantId': 'AZ-TF-tenant_id',
-                        ],
-                        'secretsSetStrings': [
-                            'azure.credsEnabled': true,
-                            'azure.azClientId': 'azClientId',
-                            'azure.azClientSecret': 'azClientSecret',
-                            'azure.azTenantId': 'azTenantId'
-                        ],
-                        'serviceCredentials': [:]
+                        'serviceName': deployConfig.serviceName,
+                        'tlsCredId': deployConfig.tlsCredId,
+                        'secretsCredentials': deployConfig.secretsCredentials ?: [:],
+                        'secretsSetStrings': deployConfig.secretsSetStrings ?: [:],
+                        'serviceCredentials': deployConfig.serviceCredentials ?: [:]
                     ])
                 }
             }
