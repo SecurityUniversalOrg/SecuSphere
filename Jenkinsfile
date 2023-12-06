@@ -38,7 +38,7 @@ pipeline {
         TEST_ENV_HOSTNAME = "192.168.0.68"
         OPENAPI_URL = 'http://192.168.0.68:5010/api/openapi.yaml'
         TEST_URL = 'http://192.168.0.68:5010'
-        API_KEY = "${config.global.API_KEY}"
+        API_KEY = "API_KEY"
         CONFIG = ''
     }
 
