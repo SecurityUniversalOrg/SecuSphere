@@ -222,9 +222,8 @@ pipeline {
             }
             steps {
                 script {
-                    //def wholeConfig = jslGroovyFromJsonString(CONFIG)
-                    //def deployConfig = new HashMap<>(CONFIG.stages.deploy)
-                    def deployConfig = CONFIG.stages.deploy
+                    def wholeConfig = jslGroovyFromJsonString(CONFIG)
+                    def deployConfig = wholeConfig.stages.deploy
 
                     jslKubernetesDeploy([
                         'serviceName': deployConfig.serviceName,
