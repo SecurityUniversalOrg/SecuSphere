@@ -1,8 +1,16 @@
 global:
   API_KEY: 'API_KEY'
-
 stages:
   deploy:
     serviceName: appName
     tlsCredId: 'su-tls-wildcard'
-
+    secretsCredentials:
+      azClientId: 'AZ-TF-client_id'
+      azClientSecret: 'AZ-TF-client_secret'
+      azTenantId: 'AZ-TF-tenant_id'
+    secretsSetStrings:
+      azure.credsEnabled: true
+      azure.azClientId: 'azClientId'
+      azure.azClientSecret: 'azClientSecret'
+      azure.azTenantId: 'azTenantId'
+    serviceCredentials: {}
