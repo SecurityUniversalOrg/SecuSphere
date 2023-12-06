@@ -232,13 +232,29 @@ pipeline {
                     echo "Global Config: ${globalConfig}"
                     echo "Deploy Config: ${deployConfig}"
 
+                    def tlsCred = deployConfig.get('tlsCredId')
+
                     if (!deployConfig.isEmpty()) {
                             jslKubernetesDeploy([
-                                'serviceName': deployConfig.get('serviceName'),
-                                'tlsCredId': deployConfig.get('tlsCredId'),
-                                'secretsCredentials': deployConfig.get('secretsCredentials') ?: [:],
-                                'secretsSetStrings': deployConfig.get('secretsSetStrings') ?: [:],
-                                'serviceCredentials': deployConfig.get('serviceCredentials') ?: [:]
+                                'serviceName': appName,
+                                'tlsCredId': tlsCred,
+                                'secretsCredentials': [
+                                    'azClientId': 'AZ-TF-client_id',
+                                    'azClientSecret': 'AZ-TF-client_secret',
+                                    'azTenantId': 'AZ-TF-tenant_id',
+                                ],
+                                'secretsSetStrings': [
+                                    'azure.credsEnabled': true,
+                                    'azure.azClientId': '${azClientId}',
+                                    'azure.azClientSecret': '${azClientSecret}',
+                                    'azure.azTenantId': '${azTenantId}',
+                                    'azure.azClientId': 'azClientId',
+                                    'azure.azClientSecret': 'azClientSecret',
+                                    'azure.azTenantId': 'azTenantId',
+                                    'tls.cert': 'tlscert',
+                                    'tls.key': 'tlskey'
+                                ],
+                                'serviceCredentials': [:]
                             ])
                     } else {
                         echo "Deploy configuration not found"
