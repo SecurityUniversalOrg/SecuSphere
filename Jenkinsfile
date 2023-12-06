@@ -39,6 +39,7 @@ pipeline {
         OPENAPI_URL = 'http://192.168.0.68:5010/api/openapi.yaml'
         TEST_URL = 'http://192.168.0.68:5010'
         API_KEY = "${config.global.API_KEY}"
+        CONFIG = ''
     }
 
 
@@ -197,6 +198,18 @@ pipeline {
         //    }
         //}
 
+        stage('Initialize') {
+            steps {
+                script {
+                    def config = jslReadYamlConfig(env.WORKSPACE, 'pipeline-config.yaml')
+                    echo "Loaded config: ${config.toString()}"
+
+                    CONFIG = jslGroovyToJsonString(config)
+                    echo "Converted to JSON: ${CONFIG}"
+                }
+            }
+        }
+
         ////////// Deploy to Production //////////
         stage('Deploy') {
             when {
@@ -212,14 +225,13 @@ pipeline {
             }
             steps {
                 script {
+
+                    def deployConfig = globalConfig.stages.deploy
+
                     jslKubernetesDeploy([
-                        'serviceName': config.stages.deploy.serviceName,
-                        'tlsCredId': "${config.stages.deploy.tlsCredId}",
-                        'secretsCredentials': [
-                            'azClientId': 'AZ-TF-client_id',
-                            'azClientSecret': 'AZ-TF-client_secret',
-                            'azTenantId': 'AZ-TF-tenant_id',
-                        ],
+                        'serviceName': deployConfig.serviceName,
+                        'tlsCredId': deployConfig.tlsCredId,
+                        'secretsCredentials': deployConfig.secretsCredentials ?: [:],
                         'secretsSetStrings': [
                             'azure.credsEnabled': true,
                             'azure.azClientId': 'azClientId',
