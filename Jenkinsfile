@@ -223,7 +223,7 @@ pipeline {
             steps {
                 script {
 
-                    def deployConfig = globalConfig.stages.deploy
+                    def deployConfig = config.stages.deploy
 
                     jslKubernetesDeploy([
                         'serviceName': deployConfig.serviceName,
