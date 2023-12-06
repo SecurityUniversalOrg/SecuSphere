@@ -1,0 +1,8 @@
+global:
+  API_KEY: 'API_KEY'
+
+stages:
+  deploy:
+    serviceName: appName
+    tlsCredId: 'su-tls-wildcard'
+
