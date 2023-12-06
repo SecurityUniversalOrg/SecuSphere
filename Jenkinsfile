@@ -9,9 +9,6 @@ pipeline {
         timeout(time: 600, unit: 'MINUTES')
     }
 
-    // Read the YAML file at the top level
-    def config = readYaml file: 'pipeline-config.yaml'
-
     // Some global default variables
     environment {
 //        GIT_BRANCH = "${globalVars.GIT_BRANCH}"
