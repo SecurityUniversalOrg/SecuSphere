@@ -226,7 +226,7 @@ pipeline {
 
                     jslKubernetesDeploy([
                         'serviceName': globalConfig.stages.deploy.serviceName,
-                        'tlsCredId': deployConfig.tlsCredId,
+                        'tlsCredId': globalConfig.stages.deploy.tlsCredId,
                         'secretsCredentials': [
                             'azClientId': 'AZ-TF-client_id',
                             'azClientSecret': 'AZ-TF-client_secret',
