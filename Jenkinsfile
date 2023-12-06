@@ -228,7 +228,11 @@ pipeline {
                     jslKubernetesDeploy([
                         'serviceName': deployConfig.serviceName,
                         'tlsCredId': deployConfig.tlsCredId,
-                        'secretsCredentials': deployConfig.secretsCredentials ?: [:],
+                        'secretsCredentials': [
+                            'azClientId': 'AZ-TF-client_id',
+                            'azClientSecret': 'AZ-TF-client_secret',
+                            'azTenantId': 'AZ-TF-tenant_id',
+                        ],
                         'secretsSetStrings': [
                             'azure.credsEnabled': true,
                             'azure.azClientId': 'azClientId',
