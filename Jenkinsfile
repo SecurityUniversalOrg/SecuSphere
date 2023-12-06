@@ -222,11 +222,10 @@ pipeline {
             }
             steps {
                 script {
-                    def wholeConfig = jslGroovyFromJsonString(CONFIG)
-                    def deployConfig = wholeConfig.stages.deploy
+                    def globalConfig = jslGroovyFromJsonString(CONFIG)
 
                     jslKubernetesDeploy([
-                        'serviceName': deployConfig.serviceName,
+                        'serviceName': globalConfig.stages.deploy.serviceName,
                         'tlsCredId': deployConfig.tlsCredId,
                         'secretsCredentials': [
                             'azClientId': 'AZ-TF-client_id',
