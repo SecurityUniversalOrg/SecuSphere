@@ -235,6 +235,8 @@ pipeline {
                     def tlsCred = deployConfig.get('tlsCredId')
                     echo "TLS Cred ID: ${tlsCred}"
 
+                    jslFunctionTest(deployConfig.get('tlsCredId'))
+
                     if (!deployConfig.isEmpty()) {
                             jslKubernetesDeploy([
                                 'serviceName': appName,
