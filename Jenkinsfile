@@ -1,208 +1,265 @@
 @Library('security-pipeline-library')_
 
 
-
 pipeline {
 
-    options {
-        // Build auto timeout
-        timeout(time: 600, unit: 'MINUTES')
-    }
-
-    // Some global default variables
-    environment {
-//        GIT_BRANCH = "${globalVars.GIT_BRANCH}"
-        EMAIL_FROM = "${globalVars.EMAIL_FROM}"
-        SUPPORT_EMAIL = "${globalVars.SUPPORT_EMAIL}"
-        RELEASE_NUMBER = "${globalVars.RELEASE_NUMBER}"
-        DOCKER_REG = "${globalVars.DOCKER_REG}"
-        DOCKER_TAG = "0.1.0-beta"
-        IMG_PULL_SECRET = "${globalVars.IMG_PULL_SECRET}"
-        GIT_CREDS_ID = "${globalVars.GIT_CREDS_ID}"
-        ANCHORE_URL = "${globalVars.ANCHORE_URL}"
-        VULNMANAGER_URL = "${globalVars.VULNMANAGER_URL}"
-        SONARQUBE_SERVER_URL = "${globalVars.SONARQUBE_SERVER_URL}"
-        SONARQUBE_SCANNER_HOME = "${globalVars.SONARQUBE_SCANNER_HOME}"
-        SONARQUBE_AUTH_TOKEN = credentials('SonarQube Global Analysis')
-        SNYK_API_KEY = credentials('snyk-api-key')
-        // App-specific settings
-        appName = "SECUSPHERE--${env.GIT_URL.split('/')[-1].split('\\.')[0]}"
-        K8_ENV = "su_pubweb"
-        K8_NAMESPACE = "secusphere"
-        SOURCE_DIR = "src"
-        API_DEFINITION_FILE = "src/vr/templates/openapi.yaml"
-        KUBECONFIG = "${WORKSPACE}/kubeconfig"
-        TEST_ENV_HOSTNAME = "192.168.0.68"
-        OPENAPI_URL = 'http://192.168.0.68:5010/api/openapi.yaml'
-        TEST_URL = 'http://192.168.0.68:5010'
-        API_KEY = "API_KEY"
-        CONFIG = ''
-    }
-
-
-    // In this example, all is built and run from the master
     agent any
 
 
-
-    // Pipeline stages
     stages {
-
-        //stage('Prep Job') {
-        //    when {
-        //        expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //        }
-        //    }
-        //    steps {
-        //        script {
-        //            jslCountLinesOfCode()
-        //        }
-        //    }
-        //}
-
-        //stage('Unit Testing') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslPythonUnitTesting()
-        //    }
-        //}
-
-        //stage('Secret Scanning') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslSecretScanning()
-        //    }
-        //}
-
-        //stage('Software Composition Analysis') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslSecuritySCA('Python,Javascript')
-        //    }
-        //}
-
-        //stage('Static Application Security Testing') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslStaticApplicationSecurityTesting('Python')
-        //    }
-        //}
-
-        //stage('Infrastructure-as-Code Security Testing') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslInfrastructureAsCodeAnalysis()
-        //    }
-        //}
-
-        ////////// Build //////////
-        //stage('Build Docker Service') {
-        //    when {
-        //        expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //        }
-        //    }
-        //    steps {
-        //        script {
-        //            jslBuildDocker([
-        //                'serviceName': appName
-        //            ])
-        //        }
-        //    }
-        //}
-
-        //stage('Docker Container Scanning') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslContainerSecurityScanning(env.K8_NAMESPACE, 'latest', 'securityuniversal')
-        //    }
-        //}
-
-        ////////// Release //////////
-        //stage('Release to Test') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslRunDockerCompose("secusphere")
-        //    }
-        //}
-
-        //stage('Test Release') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        script {
-        //            jslDastOWASP('full', TEST_URL, API_KEY)
-        //            jslDastAPIOWASP(OPENAPI_URL, TEST_URL, API_KEY)
-        //        }
-        //    }
-        //}
-
-        ////////// Quality Gate //////////
-        //stage("Quality Gate - Security") {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        jslSecurityQualityGate()
-        //    }
-        //}
-
-        //stage('Send Report') {
-        //    when {
-        //         expression {
-        //            env.BRANCH_NAME ==~ /^release\/.*\/.*/
-        //         }
-        //    }
-        //    steps {
-        //        script {
-        //            jslSendMicrosoftTeamsMessage()
-        //            jslSendSecurityReportEmail()
-        //        }
-        //    }
-        //}
-
-        stage('Initialize') {
+        stage('Initialize Config') {
             steps {
                 script {
-                    def config = jslReadYamlConfig(env.WORKSPACE, 'pipeline-config.yaml')
-                    echo "Loaded config: ${config.toString()}"
+                    def config = jslReadYamlConfig()
+                    env.appName = config.global.appName
 
-                    CONFIG = jslGroovyToJsonString(config)
-                    echo "Converted to JSON: ${CONFIG}"
+                    // Set the global branch list
+                    env.GLOBAL_BRANCH_LIST = config.global.defaultBranches.join(',')
+                    env.CURRENT_STAGE_BRANCH_LIST = ""
+
+                    jslStageWrapper.initReport()
+
+                }
+            }
+        }
+
+        stage('Prep Job') {
+            when {
+                expression {
+                    def config = jslReadYamlConfig('prepJob')
+                    env.CURRENT_STAGE_BRANCH_LIST = env.GLOBAL_BRANCH_LIST
+                    if (config.branches) {
+                        env.CURRENT_STAGE_BRANCH_LIST = config.branches.join(',')
+                    }
+                    def branchType = env.BRANCH_NAME.tokenize('/')[0]
+                    env.CURRENT_STAGE_BRANCH_LIST.tokenize(',').contains(branchType) && config.enabled
+                }
+            }
+            steps {
+                jslStageWrapper('Prep Job') {
+                    script {
+                        jslCountLinesOfCode()
+                    }
+                }
+            }
+        }
+
+        stage('Unit Testing') {
+            when {
+                 expression {
+                    def config = jslReadYamlConfig('unitTesting')
+                    env.CURRENT_STAGE_BRANCH_LIST = env.GLOBAL_BRANCH_LIST
+                    if (config.branches) {
+                        env.CURRENT_STAGE_BRANCH_LIST = config.branches.join(',')
+                    }
+                    def branchType = env.BRANCH_NAME.tokenize('/')[0]
+                    env.CURRENT_STAGE_BRANCH_LIST.tokenize(',').contains(branchType) && config.enabled
+                 }
+            }
+            steps {
+                jslStageWrapper('Unit Testing') {
+                    jslPythonUnitTesting()
+                }
+            }
+        }
+
+        stage('Secret Scanning') {
+            when {
+                 expression {
+                    def config = jslReadYamlConfig('secretScanning')
+                    env.CURRENT_STAGE_BRANCH_LIST = env.GLOBAL_BRANCH_LIST
+                    if (config.branches) {
+                        env.CURRENT_STAGE_BRANCH_LIST = config.branches.join(',')
+                    }
+                    def branchType = env.BRANCH_NAME.tokenize('/')[0]
+                    env.CURRENT_STAGE_BRANCH_LIST.tokenize(',').contains(branchType) && config.enabled
+                 }
+            }
+            steps {
+                jslStageWrapper('Secret Scanning') {
+                    jslSecretScanning()
+                }
+            }
+        }
+
+        stage('Software Composition Analysis') {
+            when {
+                 expression {
+                    def config = jslReadYamlConfig('sca')
+                    env.CURRENT_STAGE_BRANCH_LIST = env.GLOBAL_BRANCH_LIST
+                    if (config.branches) {
+                        env.CURRENT_STAGE_BRANCH_LIST = config.branches.join(',')
+                    }
+                    def branchType = env.BRANCH_NAME.tokenize('/')[0]
+                    env.CURRENT_STAGE_BRANCH_LIST.tokenize(',').contains(branchType) && config.enabled
+                 }
+            }
+            steps {
+                jslStageWrapper('Software Composition Analysis') {
+                    script {
+                        def stageConfig = jslReadYamlConfig('sca')
+                        def codeLanguages = stageConfig?.codeLanguages.join(',')
+                        jslSecuritySCA(codeLanguages)
+                    }
+                }
+            }
+        }
+
+        stage('Static Application Security Testing') {
+            when {
+                 expression {
+                    def config = jslReadYamlConfig('sast')
+                    env.CURRENT_STAGE_BRANCH_LIST = env.GLOBAL_BRANCH_LIST
+                    if (config.branches) {
+                        env.CURRENT_STAGE_BRANCH_LIST = config.branches.join(',')
+                    }
+                    def branchType = env.BRANCH_NAME.tokenize('/')[0]
+                    env.CURRENT_STAGE_BRANCH_LIST.tokenize(',').contains(branchType) && config.enabled
+                 }
+            }
+            steps {
+                jslStageWrapper('Static Application Security Testing') {
+                    script {
+                        def stageConfig = jslReadYamlConfig('sast')
+                        def codeLanguages = stageConfig?.codeLanguages
+                        jslStaticApplicationSecurityTesting(codeLanguages)
+                    }
+                }
+            }
+        }
+
+        stage('Infrastructure-as-Code Security Testing') {
+            when {
+                 expression {
+                    def config = jslReadYamlConfig('iac')
+                    env.CURRENT_STAGE_BRANCH_LIST = env.GLOBAL_BRANCH_LIST
+                    if (config.branches) {
+                        env.CURRENT_STAGE_BRANCH_LIST = config.branches.join(',')
+                    }
+                    def branchType = env.BRANCH_NAME.tokenize('/')[0]
+                    env.CURRENT_STAGE_BRANCH_LIST.tokenize(',').contains(branchType) && config.enabled
+                 }
+            }
+            steps {
+                jslStageWrapper('Infrastructure-as-Code Security Testing') {
+                    jslInfrastructureAsCodeAnalysis()
+                }
+            }
+        }
+
+        stage('Build Docker Service') {
+            when {
+                expression {
+                    def config = jslReadYamlConfig('buildDocker')
+                    env.CURRENT_STAGE_BRANCH_LIST = env.GLOBAL_BRANCH_LIST
+                    if (config.branches) {
+                        env.CURRENT_STAGE_BRANCH_LIST = config.branches.join(',')
+                    }
+                    def branchType = env.BRANCH_NAME.tokenize('/')[0]
+                    env.CURRENT_STAGE_BRANCH_LIST.tokenize(',').contains(branchType) && config.enabled
+                }
+            }
+            steps {
+                jslStageWrapper('Build Docker Service') {
+                    script {
+                        jslBuildDocker([
+                            'serviceName': env.appName
+                        ])
+                    }
+                }
+            }
+        }
+
+        stage('Docker Container Scanning') {
+            when {
+                 expression {
+                    def config = jslReadYamlConfig('containerScan')
+                    env.CURRENT_STAGE_BRANCH_LIST = env.GLOBAL_BRANCH_LIST
+                    if (config.branches) {
+                        env.CURRENT_STAGE_BRANCH_LIST = config.branches.join(',')
+                    }
+                    def branchType = env.BRANCH_NAME.tokenize('/')[0]
+                    env.CURRENT_STAGE_BRANCH_LIST.tokenize(',').contains(branchType) && config.enabled
+                 }
+            }
+            steps {
+                jslStageWrapper('Docker Container Scanning') {
+                    script {
+                        def stageConfig = jslReadYamlConfig('containerScan')
+                        def containerName = stageConfig?.containerName
+                        def containerTag = stageConfig?.containerTag
+                        jslContainerSecurityScanning(containerName, containerTag)
+                    }
+                }
+            }
+        }
+
+        stage('Release to Test') {
+            when {
+                 expression {
+                    def config = jslReadYamlConfig('releaseToTest')
+                    env.CURRENT_STAGE_BRANCH_LIST = env.GLOBAL_BRANCH_LIST
+                    if (config.branches) {
+                        env.CURRENT_STAGE_BRANCH_LIST = config.branches.join(',')
+                    }
+                    def branchType = env.BRANCH_NAME.tokenize('/')[0]
+                    env.CURRENT_STAGE_BRANCH_LIST.tokenize(',').contains(branchType) && config.enabled
+                 }
+            }
+            steps {
+                jslStageWrapper('Release to Test') {
+                    script {
+                        def stageConfig = jslReadYamlConfig('releaseToTest')
+                        def serviceName = stageConfig?.serviceName
+                        def containerTag = stageConfig?.containerTag
+                        jslRunDockerCompose(serviceName, containerTag)
+                    }
+                }
+            }
+        }
+
+        stage('Test Release') {
+            when {
+                 expression {
+                    def config = jslReadYamlConfig('testRelease')
+                    env.CURRENT_STAGE_BRANCH_LIST = env.GLOBAL_BRANCH_LIST
+                    if (config.branches) {
+                        env.CURRENT_STAGE_BRANCH_LIST = config.branches.join(',')
+                    }
+                    def branchType = env.BRANCH_NAME.tokenize('/')[0]
+                    env.CURRENT_STAGE_BRANCH_LIST.tokenize(',').contains(branchType) && config.enabled
+                 }
+            }
+            steps {
+                jslStageWrapper('Test Release') {
+                    script {
+                        def stageConfig = jslReadYamlConfig('testRelease')
+                        def targetUrl = stageConfig?.targetUrl
+                        def dastTestType = stageConfig?.dastTestType
+                        def apiTargetUrl = stageConfig?.apiTargetUrl
+                        jslDastOWASP(dastTestType, targetUrl)
+                        jslDastAPIOWASP(apiTargetUrl, targetUrl)
+                    }
+                }
+            }
+        }
+
+        ////////// Quality Gate //////////
+        stage("Quality Gate - Security") {
+            when {
+                 expression {
+                    def config = jslReadYamlConfig('securityQualityGate')
+                    env.CURRENT_STAGE_BRANCH_LIST = env.GLOBAL_BRANCH_LIST
+                    if (config.branches) {
+                        env.CURRENT_STAGE_BRANCH_LIST = config.branches.join(',')
+                    }
+                    def branchType = env.BRANCH_NAME.tokenize('/')[0]
+                    env.CURRENT_STAGE_BRANCH_LIST.tokenize(',').contains(branchType) && config.enabled
+                 }
+            }
+            steps {
+                jslStageWrapper('Quality Gate - Security') {
+                    jslSecurityQualityGate()
                 }
             }
         }
@@ -216,55 +273,47 @@ pipeline {
                     // Condition for a Test-* branch
                     expression {
                         // Split the branch name by '/' and check if the last segment starts with 'Test-'
-                        env.BRANCH_NAME.split('/').last().startsWith('Test-')
+                        env.BRANCH_NAME.split('/').last().startsWith('Test')
                     }
                 }
             }
             steps {
-                script {
-                    def parsedConfig = jslGroovyFromJsonString(CONFIG)
+                jslStageWrapper('Deploy') {
+                    script {
+                        def stageConfig = jslReadYamlConfig('deploy')
 
-                    // Ensure the top-level keys are correctly accessed
-                    def globalConfig = parsedConfig?.get('global') ?: [:]
-                    def stagesConfig = parsedConfig?.get('stages') ?: [:]
-                    def deployConfig = stagesConfig?.get('deploy') ?: [:]
+                        jslKubernetesDeploy([
+                            'serviceName': env.appName,
+                            'tlsCredId': stageConfig?.tlsCredId,
+                            'secretsCredentials': stageConfig?.secretsCredentials,
+                            'secretsSetStrings': stageConfig?.secretsSetStrings,
+                            'serviceCredentials': stageConfig?.serviceCredentials
+                        ])
 
-                    echo "Global Config: ${globalConfig}"
-                    echo "Deploy Config: ${deployConfig}"
-
-                    def tlsCred = deployConfig.get('tlsCredId')
-                    echo "TLS Cred ID: ${tlsCred}"
-
-                    jslFunctionTest(deployConfig.get('tlsCredId'))
-
-                    if (!deployConfig.isEmpty()) {
-                            jslKubernetesDeploy([
-                                'serviceName': appName,
-                                'tlsCredId': 'su-tls-wildcard',
-                                'secretsCredentials': [
-                                    'azClientId': 'AZ-TF-client_id',
-                                    'azClientSecret': 'AZ-TF-client_secret',
-                                    'azTenantId': 'AZ-TF-tenant_id',
-                                ],
-                                'secretsSetStrings': [
-                                    'azure.credsEnabled': true,
-                                    'azure.azClientId': '${azClientId}',
-                                    'azure.azClientSecret': '${azClientSecret}',
-                                    'azure.azTenantId': '${azTenantId}',
-                                    'azure.azClientId': 'azClientId',
-                                    'azure.azClientSecret': 'azClientSecret',
-                                    'azure.azTenantId': 'azTenantId',
-                                    'tls.cert': 'tlscert',
-                                    'tls.key': 'tlskey'
-                                ],
-                                'serviceCredentials': [:]
-                            ])
-                    } else {
-                        echo "Deploy configuration not found"
                     }
                 }
             }
         }
-
     }
+    post {
+        always {
+            script {
+                def reportProcessor = new PipelineReportProcessor(this)
+                reportProcessor.processReport('pipeline_stage_report.json')
+
+                def reportFile = 'pipeline_stage_report.json'
+                archiveArtifacts artifacts: reportFile, allowEmptyArchive: true
+
+                def stageConfig = jslReadYamlConfig('post')
+                def recipientEmails = stageConfig?.recipientEmails
+                def recipientTeamsChannels = stageConfig?.recipientTeamsChannels
+
+                jslSendMicrosoftTeamsPipelineReportMessage(recipientTeamsChannels)
+                jslSendMicrosoftTeamsMessage(recipientTeamsChannels)
+                jslSendPipelineStageReportEmail(recipientEmails)
+                jslSendSecurityReportEmail(recipientEmails)
+            }
+        }
+    }
+
 }
