@@ -1,0 +1,480 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+<div class="container-fluid">
+    <!-- start of tabs -->
+    <div class="row">
+        <div class="col-md-12 active">
+            <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}:{{ app_data.Component }}
+
+            </h3>
+            {% include "assets/component_horizontal_bar.html" %}
+        </div>
+    </div>
+</div>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        .generator_container body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .generator_container h2 {
+            color: #0d6efd;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .generator_container #pipeline-stages, #pipeline-container {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 80%;
+            max-width: 600px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .generator_container #pipeline-stages li, #pipeline-container li {
+            margin: 0;
+            padding: 15px;
+            font-size: 1.1em;
+            text-align: center;
+            background-color: #e9ecef;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .generator_container #pipeline-container {
+            min-height: 150px;
+            margin-top: 20px;
+            border: 2px dashed #0d6efd;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .generator_container #pipeline-container p {
+            color: #6c757d;
+            text-align: center;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .generator_container .pipeline-inputs {
+            width: 80%;
+            max-width: 600px;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: darkgray;
+        }
+
+        .generator_container .pipeline-inputs input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        .generator_container button {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            width: auto;
+        }
+
+        .generator_container button:hover {
+            background-color: #0b5ed7;
+        }
+
+        .generator_container button:disabled {
+            background-color: #6c757d;
+            cursor: default;
+        }
+
+        .generator_container .download-link {
+            text-decoration: none;
+            color: white;
+            background-color: #198754;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .generator_container .download-link:hover {
+            background-color: #157347;
+        }
+        .generator_container select {
+            width: 80%;
+            max-width: 600px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: white;
+            font-size: 1em;
+            color: #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            -webkit-appearance: none;  /* Removes default styling for select in Chrome */
+            -moz-appearance: none;     /* Removes default styling for select in Firefox */
+            appearance: none;         /* Removes default styling for select in modern browsers */
+            position: relative;
+        }
+
+        /* Arrow indicator for the select element */
+        .generator_container select:after {
+            content: '\25BC';
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            color: #333;
+            pointer-events: none;
+        }
+
+        /* Focus and hover styles */
+        .generator_container select:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+        }
+
+        .generator_container select:hover {
+            border-color: #0b5ed7;
+        }
+        .generator_container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%; /* Adjust the width as necessary */
+            max-width: 600px; /* Adjust maximum width as necessary */
+            margin: 0 auto; /* This centers the container horizontally */
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional for adding shadow */
+        }
+
+        /* Ensure child elements take full width */
+        .generator_container > * {
+            width: 100%;
+        }
+
+        .generator_container a {
+            display: block;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+<div class="generator_container">
+
+
+    <h2>Configure Your CI/CD Pipeline</h2>
+    <select id="pipeline-config-selector">
+        <option value="">Select a Pipeline Configuration</option>
+        <option value="basic">Basic (Build -> Test -> Deploy)</option>
+        <option value="advanced">Advanced (Deploy -> Test -> Build)</option>
+        <!-- Add more configurations as needed -->
+    </select>
+
+
+    <ul id="pipeline-stages">
+        <li draggable="true" data-stage="Build">Build</li>
+        <li draggable="true" data-stage="Test">Test</li>
+        <li draggable="true" data-stage="Deploy">Deploy</li>
+        <!-- Add more stages as needed -->
+    </ul>
+
+    <div id="pipeline-container" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <p>Drag and drop stages here</p>
+    </div>
+
+    <div class="pipeline-inputs" id="additional-inputs">
+        <!-- Additional input fields will be populated here -->
+    </div>
+
+    <button id="analyze-btn">Analyze Stages</button>
+    <button id="submit-btn" style="display:none;">Submit Pipeline</button>
+
+</div>
+<script>
+    document.getElementById('pipeline-config-selector').addEventListener('change', function() {
+        const selectedConfig = this.value;
+        setupPipelineContainer(selectedConfig);
+    });
+
+    function setupPipelineContainer(config) {
+        // Clear the pipeline container first
+        pipelineContainer.innerHTML = '';
+
+        // Reset the original list of stages
+        resetStages();
+
+        let stagesToAdd = [];
+        if (config === "basic") {
+            stagesToAdd = ["Build", "Test", "Deploy"];
+        } else if (config === "advanced") {
+            stagesToAdd = ["Deploy", "Test", "Build"];
+        }
+
+        stagesToAdd.forEach(stageName => {
+            let stageElement = document.querySelector(`#pipeline-stages [data-stage="${stageName}"]`);
+            if (stageElement) {
+                // Clone the stage, add it to the pipeline container, and remove it from the original list
+                let newStageElement = stageElement.cloneNode(true);
+                setupStage(newStageElement);
+                pipelineContainer.appendChild(newStageElement);
+                stageElement.remove(); // Remove the stage from the original list
+            }
+        });
+    }
+
+    function setupStage(stageElement) {
+        stageElement.addEventListener('click', stageClick); // Add click event listener
+        stageElement.addEventListener('dragstart', dragStart);
+        stageElement.addEventListener('dragend', dragEnd);
+    }
+
+    function stageClick(e) {
+        const stage = e.target;
+        if (pipelineContainer.contains(stage)) {
+            // Move back to the original list of stages
+            stage.remove(); // Remove the stage from the pipeline container
+            let newStageElement = stage.cloneNode(true);
+            setupStage(newStageElement);
+            document.getElementById('pipeline-stages').appendChild(newStageElement);
+        }
+    }
+
+    function resetStages() {
+        const allStages = ["Build", "Test", "Deploy"]; // Add all the stage names here
+        const stagesList = document.getElementById('pipeline-stages');
+        stagesList.innerHTML = ''; // Clear current stages
+
+        allStages.forEach(stageName => {
+            // Create new stage element
+            let stageElement = document.createElement('li');
+            stageElement.draggable = true;
+            stageElement.dataset.stage = stageName;
+            stageElement.textContent = stageName;
+
+            // Add event listeners
+            setupStage(stageElement);
+
+            // Append stage to the list
+            stagesList.appendChild(stageElement);
+        });
+    }
+
+    function setupPipelineContainer(config) {
+        // Clear the pipeline container first
+        pipelineContainer.innerHTML = '';
+
+        // Reset the original list of stages
+        resetStages();
+
+        let stagesToAdd = [];
+        if (config === "basic") {
+            stagesToAdd = ["Build", "Test", "Deploy"];
+        } else if (config === "advanced") {
+            stagesToAdd = ["Deploy", "Test", "Build"];
+        }
+        // Add more configurations if needed
+
+        stagesToAdd.forEach(stageName => {
+            let stageElement = document.querySelector(`#pipeline-stages [data-stage="${stageName}"]`);
+            if (stageElement) {
+                stageElement.remove(); // Remove the stage from the original list
+                let newStageElement = stageElement.cloneNode(true);
+                setupStage(newStageElement);
+                pipelineContainer.appendChild(newStageElement);
+            }
+        });
+    }
+
+
+    // Existing JavaScript code...
+
+
+    let dragged, originalParent;
+
+    let stages = document.querySelectorAll('#pipeline-stages li');
+    let pipelineContainer = document.getElementById('pipeline-container');
+
+    stages.forEach(stage => {
+        stage.draggable = true;
+        stage.addEventListener('dragstart', dragStart);
+        stage.addEventListener('dragend', dragEnd);
+        stage.addEventListener('click', stageClick); // Add click event listener
+    });
+
+    function dragStart(e) {
+        dragged = e.target;
+        originalParent = dragged.parentNode;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData("text/plain", e.target.dataset.stage);
+    }
+
+    function dragEnd(e) {
+        e.preventDefault();
+        dragged = null;
+        originalParent = null;
+    }
+
+    function stageClick(e) {
+        const stage = e.target;
+        if (pipelineContainer.contains(stage)) {
+            // Move back to the original list of stages
+            document.getElementById('pipeline-stages').appendChild(stage);
+        }
+    }
+
+    pipelineContainer.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    });
+
+    pipelineContainer.addEventListener('drop', e => {
+        e.preventDefault();
+        if (dragged && originalParent !== pipelineContainer) {
+            const stageExists = [...pipelineContainer.children].some(child => child.dataset.stage === dragged.dataset.stage);
+            if (!stageExists) {
+                // Move the stage to the pipeline container
+                pipelineContainer.appendChild(dragged);
+            }
+        }
+
+        // Find drop position for rearranging within the container
+        const afterElement = getDragAfterElement(pipelineContainer, e.clientY);
+        if (afterElement) {
+            pipelineContainer.insertBefore(dragged, afterElement);
+        }
+    });
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
+
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    // Rest of your existing code for submit and analyze buttons...
+    document.getElementById('submit-btn').addEventListener('click', () => {
+        let pipelineStages = pipelineContainer.querySelectorAll('li');
+        let stageData = Array.from(pipelineStages).map(stage => stage.dataset.stage);
+        let stageInputs = Array.from(document.querySelectorAll('.pipeline-inputs input')).map(input => ({ name: input.name, value: input.value }));
+
+        // Collect data from stages and inputs
+        let requestData = { stages: stageData, inputs: stageInputs };
+
+        // Get CSRF token from meta tag
+        let csrfToken = "{{ csrf_token() }}";
+
+        // Submit the data to the server
+        fetch('/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,  // Include CSRF token in the request header
+            },
+            body: JSON.stringify(requestData)  // Send both stages and input values
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            // Instead of automatically downloading, create a link for download
+            let url = window.URL.createObjectURL(blob);
+            let downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.innerText = 'Download Pipeline Configuration';
+            downloadLink.download = 'pipeline.yaml'; // Optional, if you want to suggest a filename
+            downloadLink.style.display = "block";
+            downloadLink.style.textAlign = "center";
+            downloadLink.style.marginTop = "10px";
+
+            // Append the link to the body or any specific element
+            document.body.appendChild(downloadLink);
+        });
+    });
+
+    document.getElementById('analyze-btn').addEventListener('click', () => {
+        let pipelineStages = pipelineContainer.querySelectorAll('li');
+        let stageData = Array.from(pipelineStages).map(stage => stage.dataset.stage);
+
+        let csrfToken = "{{ csrf_token() }}"
+
+        fetch('/analyze', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({ stages: stageData })
+        })
+        .then(response => response.json())
+        .then(data => {
+            populateAdditionalInputs(data);
+            document.getElementById('submit-btn').style.display = 'block';
+        });
+    });
+
+    function populateAdditionalInputs(data) {
+        let inputsContainer = document.getElementById('additional-inputs');
+        inputsContainer.innerHTML = ''; // Clear existing inputs
+
+        data.fields.forEach(field => {
+            // Create a label for the input
+            let label = document.createElement('label');
+            label.textContent = field.label;
+            label.htmlFor = field.name;
+
+            // Create an input field
+            let input = document.createElement('input');
+            input.type = 'text';
+            input.id = field.name;
+            input.name = field.name;
+            input.placeholder = field.placeholder;
+
+            // Append the label and input to the container
+            inputsContainer.appendChild(label);
+            inputsContainer.appendChild(input);
+        });
+
+        inputsContainer.style.display = data.fields.length ? 'block' : 'none';
+    }
+</script>
+
+
+</body>
+</html>
+{% endblock %}

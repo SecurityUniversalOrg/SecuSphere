@@ -219,6 +219,7 @@
         {% if user.is_admin %}
           <a href="{{ url_for('admin.users') }}" class="menu_child_btn reg">Users</a>
           <a href="{{ url_for('admin.create_client') }}" class="menu_child_btn reg">Create App Client</a>
+          <a href="{{ url_for('admin.settings') }}" class="menu_child_btn reg">Settings</a>
         {% endif %}
       </div>
 

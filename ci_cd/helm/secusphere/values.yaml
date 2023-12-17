@@ -7,13 +7,52 @@ appDomain: "acme.com"
 
 tlsSecretName: su-wildcard-tls
 
-azKeyVaultName: ""
-azKeyVaultDbUriRefName: ""
-azKeyVaultSmtpPasswordRefName: ""
-
-
-
-
+app:
+  env: prod
+  authType: local
+  insecureOauth: true
+  extUrl: 192.168.0.150
+  db:
+    prodDbUriRef: PROD-DB-URI
+  smtp:
+    host: "smtp.sendgrid.net:587"
+    user: apikey
+    adminEmail: "admin@securityuniversal.com"
+    passwordRef: SENDGRID-SMTP-PW
+  az:
+    keyVaultName: unset
+    clientId: unset
+    clientSecret: unset
+    tenantId: unset
+  azureAd:
+    clientId: unset
+    clientSecretRef: AZAD-CLIENT-SECRET
+    authority: unset
+  ldap:
+    host: unset
+    port: unset
+    baseDn: unset
+    userDn: unset
+    groupDn: unset
+    userRdnAttr: unset
+    userLoginAttr: unset
+    bindUserDn: unset
+    bindUserPassword: unset
+  jenkins:
+    enabled: false
+    user: JENKINS-USER
+    keyRef: JENKINS-KEY
+    tokenRef: JENKINS-TOKEN
+    host: "http://192.168.0.68:8080"
+    project: "OnDemandSecurityTesting"
+    stagingProject: "StageValidation"
+  snow:
+    enabled: false
+    instanceName: "dev124268"
+    clientId: unset
+    clientSecret: SNOW-SECRET
+    username: admin
+    passwordRef: SNOW-PASSWORD
 
 ## These values are not commonly modified.  Change at your own risk.
 replicaCount: 1

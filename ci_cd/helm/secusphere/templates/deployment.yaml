@@ -29,16 +29,84 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           env:
-            - name: VM_RUNTIME
-              value: "prod"
-            - name: PROD_DB_URI_REF
-              value: "{{ .Values.azKeyVaultDbUriRefName }}"
-            - name: SMTP_PW_REF
-              value: "{{ .Values.azKeyVaultSmtpPasswordRefName }}"
-            - name: AZURE_KEYVAULT_NAME
-              value: "{{ .Values.azKeyVaultName }}"
+            - name: ENV
+              value: "{{ .Values.app.env }}"
+            - name: AUTH_TYPE
+              value: "{{ .Values.app.authType }}"
+            - name: INSECURE_OAUTH
+              value: "{{ .Values.app.insecureOauth }}"
             - name: APP_EXT_URL
-              value: "https://{{ .Values.appName }}.{{ .Values.appDomain }}"
+              value: "{{ .Values.app.extUrl }}"
+            - name: PROD_DB_URI_REF
+              value: "{{ .Values.app.db.prodDbUriRef }}"
+            - name: SMTP_HOST
+              value: "{{ .Values.app.smtp.host }}"
+            - name: SMTP_USER
+              value: "{{ .Values.app.smtp.user }}"
+            - name: SMTP_ADMIN_EMAIL
+              value: "{{ .Values.app.smtp.adminEmail }}"
+            - name: SMTP_PW_REF
+              value: "{{ .Values.app.smtp.passwordRef }}"
+            - name: AZURE_KEYVAULT_NAME
+              value: "{{ .Values.app.az.keyVaultName }}"
+            # Conditional Azure Active Directory environment variables
+            {{ - if eq .Values.app.authType "azuread" }}
+            - name: AZAD_CLIENT_ID
+              value: "{{ .Values.app.azureAd.clientId }}"
+            - name: AZAD_CLIENT_SECRET
+              value: "{{ .Values.app.azureAd.clientSecretRef }}"
+            - name: AZAD_AUTHORITY
+              value: "{{ .Values.app.azureAd.authority }}"
+            {{- end }}
+            # Conditional LDAP environment variables
+            {{- if eq .Values.app.authType "ldap" }}
+            - name: LDAP_HOST
+              value: "{{ .Values.app.ldap.host }}"
+            - name: LDAP_PORT
+              value: "{{ .Values.app.ldap.port }}"
+            - name: LDAP_BASE_DN
+              value: "{{ .Values.app.ldap.baseDn }}"
+            - name: LDAP_USER_DN
+              value: "{{ .Values.app.ldap.userDn }}"
+            - name: LDAP_GROUP_DN
+              value: "{{ .Values.app.ldap.groupDn }}"
+            - name: LDAP_USER_RDN_ATTR
+              value: "{{ .Values.app.ldap.userRdnAttr }}"
+            - name: LDAP_USER_LOGIN_ATTR
+              value: "{{ .Values.app.ldap.userLoginAttr }}"
+            - name: LDAP_BIND_USER_DN
+              value: "{{ .Values.app.ldap.bindUserDn }}"
+            - name: LDAP_BIND_USER_PASSWORD
+              value: "{{ .Values.app.ldap.bindUserPassword }}"
+            {{- end }}
+            # Conditional Jenkins environment variables
+            {{- if .Values.app.jenkins.enabled -}}
+            - name: JENKINS_USER
+              value: "{{ .Values.app.jenkins.user }}"
+            - name: JENKINS_KEY
+              value: "{{ .Values.app.jenkins.keyRef }}"
+            - name: JENKINS_TOKEN
+              value: "{{ .Values.app.jenkins.tokenRef }}"
+            - name: JENKINS_HOST
+              value: "{{ .Values.app.jenkins.host }}"
+            - name: JENKINS_PROJECT
+              value: "{{ .Values.app.jenkins.project }}"
+            - name: JENKINS_STAGING_PROJECT
+              value: "{{ .Values.app.jenkins.stagingProject }}"
+            {{- end }}
+            # Conditional ServiceNow environment variables
+            {{ - if .Values.app.jenkins.enabled - }}
+            - name: SNOW_INSTANCE_NAME
+              value: "{{ .Values.app.snow.instanceName }}"
+            - name: SNOW_CLIENT_ID
+              value: "{{ .Values.app.snow.clientId }}"
+            - name: SNOW_CLIENT_SECRET
+              value: "{{ .Values.app.snow.clientSecret }}"
+            - name: SNOW_USERNAME
+              value: "{{ .Values.app.snow.username }}"
+            - name: SNOW_PASSWORD
+              value: "{{ .Values.app.snow.passwordRef }}"
+            {{- end }}
             - name: AZURE_CLIENT_ID
               valueFrom:
                 secretKeyRef:

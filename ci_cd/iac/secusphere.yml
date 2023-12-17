@@ -5,7 +5,7 @@ services:
     image: securityuniversal/secusphere:latest
     restart: always
     environment:
-      VM_RUNTIME: 'test'
+      ENV: 'test'
       API_PAIRING_KEY: 'dynamic'
       AZURE_TENANT_ID: 'dynamic'
       AZURE_CLIENT_ID: 'dynamic'
