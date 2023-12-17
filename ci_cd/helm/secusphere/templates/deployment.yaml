@@ -50,7 +50,7 @@ spec:
             - name: AZURE_KEYVAULT_NAME
               value: "{{ .Values.app.az.keyVaultName }}"
             # Conditional Azure Active Directory environment variables
-            {{ - if eq .Values.app.authType "azuread" }}
+            {{- if eq .Values.app.authType "azuread" }}
             - name: AZAD_CLIENT_ID
               value: "{{ .Values.app.azureAd.clientId }}"
             - name: AZAD_CLIENT_SECRET
@@ -95,7 +95,7 @@ spec:
               value: "{{ .Values.app.jenkins.stagingProject }}"
             {{- end }}
             # Conditional ServiceNow environment variables
-            {{ - if .Values.app.jenkins.enabled - }}
+            {{- if .Values.app.jenkins.enabled -}}
             - name: SNOW_INSTANCE_NAME
               value: "{{ .Values.app.snow.instanceName }}"
             - name: SNOW_CLIENT_ID
