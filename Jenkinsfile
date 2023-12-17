@@ -287,7 +287,8 @@ pipeline {
                             'tlsCredId': stageConfig?.tlsCredId,
                             'secretsCredentials': stageConfig?.secretsCredentials,
                             'secretsSetStrings': stageConfig?.secretsSetStrings,
-                            'serviceCredentials': stageConfig?.serviceCredentials
+                            'serviceCredentials': stageConfig?.serviceCredentials,
+                            'serviceSetStrings': stageConfig?.serviceSetStrings,
                         ])
 
                     }
