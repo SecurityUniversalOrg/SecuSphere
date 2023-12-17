@@ -74,6 +74,14 @@ stages:
       azure.azClientSecret: 'azClientSecret'
       azure.azTenantId: 'azTenantId'
     serviceCredentials: {}
+    serviceSetStrings:
+      app.extUrl: "192.168.0.150"
+      app.db.prodDbUriRef: "PROD-DB-URI"
+      app.smtp.host: "smtp.sendgrid.net:587"
+      app.smtp.user: apikey
+      app.smtp.adminEmail: "admin@securityuniversal.com"
+      app.smtp.passwordRef: "SENDGRID-SMTP-PW"
+      app.az.keyVaultName: "BkDevSecOpsKeyVault"
   post:
     enabled: true
     branches:

@@ -1,0 +1,36 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+
+
+
+  {{ super() }}
+
+  <div class="settings_container app_settings">
+    <div class="settings_row">
+
+      <div class="settings_col_m10_center">
+        <div class="container">
+            <h2>Application Settings</h2>
+            <!-- Navigation Panel -->
+            <nav>
+                <!-- Navigation Items -->
+            </nav>
+            <!-- Settings Form -->
+            <form method="post">
+                <!-- Dynamically generate form fields based on settings -->
+                {% for key, value in settings.items() %}
+                <div class="form-group">
+                    <label for="{{ key }}">{{ key }}</label>
+                    <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}">
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Update Settings</button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!-- Optional: Include JavaScript for dynamic form handling -->
+
+{% endblock %}

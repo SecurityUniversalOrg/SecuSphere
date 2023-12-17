@@ -163,8 +163,8 @@ class KeyVaultManager(object):
 
 
 ## CORE Config Variables ##
-if os.getenv('VM_RUNTIME'):
-    ENV = os.getenv('VM_RUNTIME')
+if os.getenv('ENV'):
+    ENV = os.getenv('ENV')
 else:
     ENV = SET_ENV
 
@@ -267,4 +267,3 @@ else:
     SNOW_INSTANCE_NAME = SET_SNOW_INSTANCE_NAME
     SNOW_CLIENT_ID = SET_SNOW_CLIENT_ID
     SNOW_USERNAME = SET_SNOW_USERNAME
-

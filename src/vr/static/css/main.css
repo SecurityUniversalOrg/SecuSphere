@@ -1658,3 +1658,74 @@ width: 0;
     visibility: visible;
     opacity: 1;
 }
+
+.app_settings body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.app_settings .container {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.app_settings h2 {
+    color: #0056b3; /* Brand color example */
+}
+
+/* Navigation Panel Styles */
+.app_settings nav {
+    background-color: #e3f2fd;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.app_settings nav a {
+    color: #007bff;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.app_settings nav a:hover {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+/* Form Styles */
+.app_settings .form-group {
+    margin-bottom: 15px;
+}
+
+.app_settings label {
+    font-weight: bold;
+}
+
+.app_settings input[type="text"],
+.app_settings input[type="email"],
+.app_settings input[type="password"] {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    width: 100%;
+}
+
+.app_settings button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.app_settings button[type="submit"]:hover {
+    background-color: #0056b3;
+}
