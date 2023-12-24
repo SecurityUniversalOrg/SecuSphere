@@ -3,6 +3,7 @@ global:
   defaultBranches:
     - release
     - hotfix
+    - security
 stages:
   prepJob:
     enabled: true
