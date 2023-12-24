@@ -12,7 +12,7 @@ stages:
     enabled: true
     branches: []
   secretScanning:
-    enabled: false
+    enabled: true
     branches:
       - release
   sca:
