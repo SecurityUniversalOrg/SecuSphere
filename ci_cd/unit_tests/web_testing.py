@@ -1880,6 +1880,11 @@ class TestWebApp(unittest.TestCase):
         response = self._get_test_handler(route)
         assert response.status_code == 200
 
+    def test_securitygatesettings_get(self):
+        route = f"/securitygatesettings"
+        response = self._get_test_handler(route)
+        assert response.status_code == 200
+
 
 def _three_o_two_handler(headers, target):
     match = False

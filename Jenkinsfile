@@ -313,6 +313,7 @@ pipeline {
                 jslSendMicrosoftTeamsMessage(recipientTeamsChannels)
                 jslSendPipelineStageReportEmail(recipientEmails)
                 jslSendSecurityReportEmail(recipientEmails)
+                jslSendPipelineReport()
             }
         }
     }
