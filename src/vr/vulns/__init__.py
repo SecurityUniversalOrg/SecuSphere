@@ -11,3 +11,4 @@ from vr.vulns.web import securitygatescorecard
 from vr.vulns.web import testing
 from vr.vulns.web import visual_pipeline
 from vr.vulns.web import vulnerabilities
+from vr.vulns.web import securitygatesettings
