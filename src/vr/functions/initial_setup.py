@@ -214,6 +214,14 @@ def setup_core_db_tables(ENV):
         args = (now, i['Number'], i['Description'], i['ImplementationLevels'], i['BanchmarkName'])
         cur.execute(sql, args)
         db.commit()
+    if ENV == 'test':
+        sql = 'INSERT INTO SgGlobalThresholds (Name, AddDate, ThreshScaLow, ThreshScaMedium, ThreshScaHigh, ThreshScaCritical, ThreshContainerLow, ThreshContainerMedium, ThreshContainerHigh, ThreshContainerCritical, ThreshDastLow, ThreshDastMedium, ThreshDastHigh, ThreshDastCritical, ThreshDastApiLow, ThreshDastApiMedium, ThreshDastApiHigh, ThreshDastApiCritical, ThreshInfrastructureLow, ThreshInfrastructureMedium, ThreshInfrastructureHigh, ThreshInfrastructureCritical, ThreshSastLow, ThreshSastMedium, ThreshSastHigh, ThreshSastCritical, ThreshIacLow, ThreshIacMedium, ThreshIacHigh, ThreshIacCritical, ThreshSecretsLow, ThreshSecretsMedium, ThreshSecretsHigh, ThreshSecretsCritical) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+    else:
+        sql = 'INSERT INTO SgGlobalThresholds (Name, AddDate, ThreshScaLow, ThreshScaMedium, ThreshScaHigh, ThreshScaCritical, ThreshContainerLow, ThreshContainerMedium, ThreshContainerHigh, ThreshContainerCritical, ThreshDastLow, ThreshDastMedium, ThreshDastHigh, ThreshDastCritical, ThreshDastApiLow, ThreshDastApiMedium, ThreshDastApiHigh, ThreshDastApiCritical, ThreshInfrastructureLow, ThreshInfrastructureMedium, ThreshInfrastructureHigh, ThreshInfrastructureCritical, ThreshSastLow, ThreshSastMedium, ThreshSastHigh, ThreshSastCritical, ThreshIacLow, ThreshIacMedium, ThreshIacHigh, ThreshIacCritical, ThreshSecretsLow, ThreshSecretsMedium, ThreshSecretsHigh, ThreshSecretsCritical) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+    args = ("General", now, None,None,4,0,None,None,2,0,None,None,0,2,None,None,0,2,None,None,0,2,None,None,0,2,None,None,0,2,None,None,0,2)
+    cur.execute(sql, args)
+    db.commit()
+
     db.close()
 
 

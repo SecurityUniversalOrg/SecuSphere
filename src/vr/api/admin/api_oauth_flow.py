@@ -1,3 +1,4 @@
+import traceback
 from flask import request, session, url_for, jsonify
 from flask import render_template, redirect, Response
 from authlib.oauth2 import OAuth2Error
@@ -44,15 +45,19 @@ def authorize():
         grant_user = None
     return authorization.create_authorization_response(grant_user=grant_user)
 
-
 @api.route('/api/oauth/token', methods=['POST'])
 def issue_token():
     max_attempts = 5
     for attempt in range(max_attempts):
         try:
-            return authorization.create_token_response()
+            response = authorization.create_token_response()
+            return response
+
         except Exception as e:
-            if attempt < max_attempts - 1:  # i.e. if it's not the final attempt
+            print(f"ERROR: Exception during token generation: {e}")
+            traceback.print_exc()
+
+            if attempt < max_attempts - 1:  # i.e., if it's not the final attempt
                 sleep(1)
                 continue  # go to the next iteration of the loop
             else:  # if it's the final attempt

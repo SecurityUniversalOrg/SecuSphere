@@ -1,0 +1,76 @@
+{% extends 'base_auth.html' %}
+
+{% block app_content %}
+<head>
+    <title>Settings</title>
+    <style>
+        /* Add some basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            color: azure !important;
+        }
+        input[type="number"] {
+            margin-bottom: 10px;
+        }
+        .submit-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+
+    <div class="container-fluid">
+        <!-- start of tabs -->
+
+
+
+        <!-- end of tabs -->
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+
+        <h1 style="color: azure;">Edit Security Gate Thresholds</h1>
+        <form action="{{ url_for('vulns.update_securitygatesettings') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <!-- Repeat this block for each setting -->
+            {% for field in settings.__table__.columns %}
+                {% if field.name != 'ID' and field.name != 'Name' and field.name != 'AddDate' %}
+                <label for="{{ field.name }}">
+                    {{ field.name.replace('Thresh',' Threshold').replace('Low',' Low').replace('Medium',' Medium').replace('High',' High').replace('Critical',' Critical').replace('Sca',' SCA').replace('Dast',' DAST').replace('Sast',' SAST').replace('Iac',' IAC').replace('Secrets',' Secrets').replace('Container',' Container').replace('Infrastructure',' Infrastructure').replace('Api',' API') }}:
+                </label>
+                <!-- Use the 'default' filter to provide a fallback value if the attribute is not set -->
+                <input type="number" id="{{ field.name }}" name="{{ field.name }}" value="{{ settings[field.name] | default('', true) }}">
+                {% endif %}
+            {% endfor %}
+            <input type="submit" value="Update Settings" class="submit-button">
+        </form>
+
+    </div>
+
+
+<script>
+
+</script>
+
+{% endblock %}
