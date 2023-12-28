@@ -1,4 +1,4 @@
-<ul class="nav nav-tabs horizontal-bar in">
+<ul class="nav nav-tabs horizontal-bar in" id="top-level-nav">
     <li role="presentation" {% if NAV['appbar'] == 'application' %} class="active"{% endif %}>
         <a href="/application/{{ app_data.ID }}/Component/main">
             <span class="fa fa-globe" aria-hidden="true"></span>
@@ -24,7 +24,7 @@
             <span class="hidden-xs">Contacts</span>
         </a>
     </li>
-    <li role="presentation" class="dropdown{% if NAV['appbar'] == 'metrics' %} active{% endif %}">
+    <li id="nav_metrics" role="presentation" class="dropdown{% if NAV['appbar'] == 'metrics' %} active{% endif %}">
         <a class="dropdown-toggle active" data-toggle="dropdown" href="">
             <span class="fa fa-sitemap" aria-hidden="true"></span>
             <span class="hidden-xs">Metrics</span>

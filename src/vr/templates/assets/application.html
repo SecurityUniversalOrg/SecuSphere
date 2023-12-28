@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 active">
-                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">
+                <h3 id="app_name" class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">
                     {% if app_type == 'App' %}
                         {{ app_data.ApplicationName }}
                     {% else %}
@@ -30,6 +30,10 @@
                                 <div class="clearfix">
                                     <h3 class="pull-left">Description</h3>
                                     <div class="dropdown pull-right">
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+
                                         <div class="btn-group">
                                             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
                                                 <span class="fa fa-bars"></span>
@@ -72,12 +76,12 @@
                                 </div>
                             </div>
                             {% if app_data.Description %}
-                            <div class="panel-body">
+                            <div class="panel-body" id="app_description">
                                 <p>{{ app_data.Description }}</p>
 
                             </div>
                             {% else %}
-                            <div class="panel-body">
+                            <div class="panel-body" id="app_description">
                                 <small class="text-muted"><em>No application description provided.</em></small>
                             </div>
                             {% endif %}
@@ -86,7 +90,7 @@
                         <!-- metrics -->
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="panel panel-default">
+                                <div id="nav_severity" class="panel panel-default">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">
                                             <span class="fa fa-pie-chart" aria-hidden="true"></span>&nbsp;&nbsp;Findings by Severity
@@ -122,7 +126,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="panel panel-default">
+                                <div id="nav_assessment_type" class="panel panel-default">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">
                                             <span class="fa-solid fa-layer-group" aria-hidden="true"></span>&nbsp;&nbsp;Findings by Assessment Type
@@ -132,7 +136,7 @@
                                         <tbody>
                                             <tr>
                                                 {% if app_type == 'App' %}
-                                                    <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/Secret" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['secrets'] }}<span class="hidden-xs"><br><small>SECRETS</small></span></div></a></th>
+                                                    <th id="nav_secrets" class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/Secret" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['secrets'] }}<span class="hidden-xs"><br><small>SECRETS</small></span></div></a></th>
                                                     <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/SCA" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['sca'] }}<span class="hidden-xs"><br><small>SCA</small></span></div></a></th>
                                                     <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/SAST" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['sast'] }}<span class="hidden-xs"><br><small>SAST</small></span></div></a></th>
                                                     <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/IaC" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['iac'] }}<span class="hidden-xs"><br><small>IAC</small></span></div></a></th>
@@ -140,7 +144,7 @@
                                                     <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/DAST" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['dast'] }}<span class="hidden-xs"><br><small>DAST</small></span></div></a></th>
                                                     <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/all_app_vulns_filtered/{{ app_data.ApplicationName }}/classification/DASTAPI" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['dastapi'] }}<span class="hidden-xs"><br><small>DAST_API</small></span></div></a></th>
                                                 {% else %}
-                                                    <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/filtered_findings/{{ app_data.ID }}/classification/Secret" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['secrets'] }}<span class="hidden-xs"><br><small>SECRETS</small></span></div></a></th>
+                                                    <th id="nav_secrets" class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/filtered_findings/{{ app_data.ID }}/classification/Secret" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['secrets'] }}<span class="hidden-xs"><br><small>SECRETS</small></span></div></a></th>
                                                     <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/filtered_findings/{{ app_data.ID }}/classification/SCA" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['sca'] }}<span class="hidden-xs"><br><small>SCA</small></span></div></a></th>
                                                     <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/filtered_findings/{{ app_data.ID }}/classification/SAST" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['sast'] }}<span class="hidden-xs"><br><small>SAST</small></span></div></a></th>
                                                     <th class="bg-muted vuln-count text-center" style="width: 5%;"><a href="/filtered_findings/{{ app_data.ID }}/classification/IaC" style="text-decoration: none;color: black;"><div style="height:100%;width:100%">{{ vuln_data['iac'] }}<span class="hidden-xs"><br><small>IAC</small></span></div></a></th>
@@ -158,7 +162,7 @@
                         <!-- Onboarding Tab -->
                         <div class="row">
                           <div class="col-md-12">
-                            <div class="panel panel-default">
+                            <div id="nav_onboarding" class="panel panel-default">
                               <div class="panel-heading">
                                 <h3 class="panel-title"><span class="fa-solid fa-square-check" aria-hidden="true"></span>&nbsp;&nbsp;Onboarding Progress</h3>
                               </div>
@@ -167,7 +171,7 @@
 {#                                    <li><span class="checklist-item {% if task1_completed %}completed{% else %}incomplete{% endif %}">Complete Risk Profile</span></li>#}
 {#                                    <li><span class="checklist-item {% if task1_completed %}completed{% else %}incomplete{% endif %}">Add Sourcecode Integration</span></li>#}
 {#                                    <li><span class="checklist-item {% if task1_completed %}completed{% else %}incomplete{% endif %}">Add CI/CD Pipeline Integration</span></li>#}
-                                    <li><span class="checklist-item {% if app_data.Criticality and ')' in app_data.Criticality %}completed{% else %}incomplete{% endif %}">Complete Risk Profile <i class="fa-solid fa-share-from-square" onclick="addRiskProfile()"></i></span></li>
+                                    <li><span class="checklist-item {% if app_data.Criticality and ')' in app_data.Criticality %}completed{% else %}incomplete{% endif %}">Complete Risk Profile <i id="onboarding_btn" class="fa-solid fa-share-from-square" onclick="addRiskProfile()"></i></span></li>
                                     <li><span class="checklist-item {% if bm_assessments %}completed{% else %}incomplete{% endif %}">Complete Benchmark Assessment</span></li>
                                 </ul>
 
@@ -178,7 +182,7 @@
                         <!-- Benchmark Tab -->
                         <div class="row">
                           <div class="col-md-12">
-                            <div class="panel panel-default">
+                            <div id="nav_benchmark" class="panel panel-default">
                               <div class="panel-heading">
                                 <h3 class="panel-title"><span class="fa fa-balance-scale" aria-hidden="true"></span>&nbsp;&nbsp;Benchmark Progress</h3>
                               </div>
@@ -206,7 +210,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="panel panel-default">
+                                <div id="nav_findings_source_code" class="panel panel-default">
                                     <div class="panel-heading">
                                         <h3 class="panel-title"><span class="fa-regular fa-file-code" aria-hidden="true"></span> Findings by Source Code File</h3>
                                     </div>
@@ -242,7 +246,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="panel panel-default">
+                                <div id="nav_findings_package" class="panel panel-default">
                                     <div class="panel-heading">
                                         <h3 class="panel-title"><span class="fa-solid fa-file-import" aria-hidden="true"></span> Findings by Package</h3>
                                     </div>
@@ -278,7 +282,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="panel panel-default">
+                                <div id="nav_findings_uri" class="panel panel-default">
                                     <div class="panel-heading">
                                         <h3 class="panel-title"><span class="fa-solid fa-window-maximize" aria-hidden="true"></span> Findings by URI</h3>
                                     </div>
@@ -318,7 +322,7 @@
                     </div>
                     <!-- Meta Data -->
                     <div class="col-md-4">
-                      <div class="panel panel-default panel-default-secondary">
+                      <div id="nav_metadata" class="panel panel-default panel-default-secondary">
                         <div class="panel-heading">
                           <h3 class="panel-title"><span class="fa fa-info-circle fa-fw" aria-hidden="true"></span>&nbsp;&nbsp;Metadata</h3>
                         </div>
@@ -658,7 +662,7 @@
                     <!-- End metadata -->
                     <!-- SLA -->
 
-                        <div class="panel panel-default panel-default-secondary">
+                        <div id="nav_sla" class="panel panel-default panel-default-secondary">
                         <div class="panel-heading">
                           <h3 class="panel-title"><span class="fa-solid fa-calendar fa-fw" aria-hidden="true"></span>&nbsp;&nbsp;Service Level Agreement</h3>
                         </div><div class="panel-body">
@@ -693,7 +697,7 @@
                     <!-- End SLA -->
                     <!-- Data Classifications -->
 
-                        <div class="panel panel-default panel-default-secondary">
+                        <div id="nav_data_classification" class="panel panel-default panel-default-secondary">
                         <div class="panel-heading">
                           <h3 class="panel-title"><span class="fa fa-info-circle fa-fw" aria-hidden="true"></span>&nbsp;&nbsp;Data Classifications</h3>
                         </div>
@@ -768,7 +772,7 @@
                     <!-- End Data Classifications -->
                     <!-- Lang -->
 
-                      <div class="panel panel-default panel-default-secondary">
+                      <div id="nav_languages" class="panel panel-default panel-default-secondary">
                         <div class="panel-heading">
                           <h3 class="panel-title">
                               <span class="fa fa-language" aria-hidden="true"></span>&nbsp;&nbsp;Languages ({{ ld['active_languages']|length }})
@@ -817,7 +821,7 @@
 
                     <!-- Regulations -->
 
-                        <div class="panel panel-default panel-default-secondary">
+                        <div id="nav_regulations" class="panel panel-default panel-default-secondary">
                         <div class="panel-heading">
                           <h3 class="panel-title"><span class="fa fa-gavel" aria-hidden="true"></span>&nbsp;&nbsp;Regulations ({{ regs_all|length }})</h3>
                         </div>
@@ -844,7 +848,7 @@
 
                     <!-- Entity Relationships -->
 
-                        <div class="panel panel-default panel-default-secondary">
+                        <div id="nav_entity_relationships" class="panel panel-default panel-default-secondary">
                             <div class="panel-heading">
                               <h3 class="panel-title"><span class="fa-solid fa-repeat" aria-hidden="true"></span>&nbsp;&nbsp;Entity Relationships</h3>
                             </div>
@@ -905,7 +909,7 @@
 
                     <!-- Contacts -->
 
-                        <div class="panel panel-default panel-default-secondary">
+                        <div id="nav_app_contacts" class="panel panel-default panel-default-secondary">
                             <div class="panel-heading">
                               <h3 class="panel-title">&nbsp;&nbsp;Contacts</h3>
                             </div>
@@ -968,7 +972,7 @@
 
                     <!-- Group -->
 
-                        <div class="panel panel-default panel-default-secondary">
+                        <div id="nav_app_groups" class="panel panel-default panel-default-secondary">
                             <div class="panel-heading">
                               <h3 class="panel-title">&nbsp;&nbsp;Groups</h3>
                             </div>
@@ -999,7 +1003,156 @@
 
 {% include "assessments/add_risk_profile_modal.html" %}
 
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
 {#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Application Dashboard!  On this page, you can view a summary of the application risk and security status. Let's take a quick tour!"
+      },
+      {
+        title: 'Application Name',
+        element: document.querySelector('#app_name'),
+        intro: "The name of the Application is shown here."
+      },
+      {
+        title: 'Top Navigation Bar',
+        element: document.querySelector('#top-level-nav'),
+        intro: "The view and managed different aspects of the application, use the top navigation bar."
+      },
+      {
+        title: 'Top Navigation Bar - Explanation',
+        element: document.querySelector('#nav_metrics'),
+        intro: "Application reports and management activities are grouped by category in the top navigation bar.  Click on each tab to view the sub-menu."
+      },
+      {
+        title: 'Quick Management',
+        element: document.querySelector('#dropdownMenu1'),
+        intro: "To Edit, Delete, and create Application Reports, click on the Quick Management tab."
+      },
+      {
+        title: 'Description Section',
+        element: document.querySelector('#app_description'),
+        intro: "The Description for the Application is located here."
+      },
+      {
+        title: 'Findings by Severity Section',
+        element: document.querySelector('#nav_severity'),
+        intro: "The Current Open Findings are Grouped by Severity here."
+      },
+      {
+        title: 'Findings by Severity Section - Explained',
+        element: document.querySelector('.bg-vuln-critical'),
+        intro: "Each Severity button is clickable and will bring you to a list of filtered Vulnerability findings matching that category."
+      },
+      {
+        title: 'Findings by Assessment Type Section',
+        element: document.querySelector('#nav_assessment_type'),
+        intro: "The Current Open Findings are Grouped by Assessment Type here."
+      },
+      {
+        title: 'Findings by Assessment Type Section - Explained',
+        element: document.querySelector('#nav_secrets'),
+        intro: "Each Assessment Type button is clickable and will bring you to a list of filtered Vulnerability findings matching that category."
+      },
+      {
+        title: 'Onboarding Progress Section',
+        element: document.querySelector('#nav_onboarding'),
+        intro: "The Status of Application-specific Onboarding tasks are listed here."
+      },
+      {
+        title: 'Complete Onboarding Tasks',
+        element: document.querySelector('#onboarding_btn'),
+        intro: "Click on the button next to each task to start the onboarding task."
+      },
+      {
+        title: 'Benchmark Progress Section',
+        element: document.querySelector('#nav_benchmark'),
+        intro: "The Status of Application-specific Benchmarks are listed here."
+      },
+      {
+        title: 'Findings By Source Code File Section',
+        element: document.querySelector('#nav_findings_source_code'),
+        intro: "This section lists the Vulnerability findings grouped by Source Code File."
+      },
+      {
+        title: 'Findings By Package Section',
+        element: document.querySelector('#nav_findings_package'),
+        intro: "This section lists the Vulnerability findings grouped by imported Library or Package."
+      },
+      {
+        title: 'Findings By URI Section',
+        element: document.querySelector('#nav_findings_uri'),
+        intro: "This section lists the Vulnerability findings grouped by URI."
+      },
+      {
+        title: 'Application Metadata Section',
+        element: document.querySelector('#nav_metadata'),
+        intro: "This section shows the Application-specific metadata that has been captured."
+      },
+
+      {
+        title: 'Findings Service Level Agreement Section',
+        element: document.querySelector('#nav_sla'),
+        intro: "This section shows the Service Level Agreement assigned to the Application."
+      },
+      {
+        title: 'Data Classifications Section',
+        element: document.querySelector('#nav_data_classification'),
+        intro: "This section shows the Application-specific Data Classifications that have been captured."
+      },
+      {
+        title: 'Source Code Languages Section',
+        element: document.querySelector('#nav_languages'),
+        intro: "This section shows the Application-specific source code languages that have been identified."
+      },
+      {
+        title: 'Regulations Section',
+        element: document.querySelector('#nav_regulations'),
+        intro: "This section shows the Application-specific regulatory compliance requirements."
+      },
+      {
+        title: 'Entity Relationships Section',
+        element: document.querySelector('#nav_entity_relationships'),
+        intro: "This section shows the Application-specific entity relationships."
+      },
+      {
+        title: 'Application Contacts Section',
+        element: document.querySelector('#nav_app_contacts'),
+        intro: "This section shows the Application-specific contacts."
+      },
+      {
+        title: 'Application Groups Section',
+        element: document.querySelector('#nav_app_groups'),
+        intro: "This section shows the Application-specific groups."
+      },
+      {
+        intro: "Application Dashboard Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
+
 <script src="{{ url_for('static', filename='js/Chart.js') }}"></script>
 <script>
 
