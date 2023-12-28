@@ -47,7 +47,7 @@
             {% if NAV['CAT']['name'] == NAV['curpage']['name'] %}
             {% else %}
                 {% if 'url' in NAV['CAT'] %}
-                    <li><a href="{{ NAV['CAT']['url'] }}">{{ NAV['CAT']['name'] }}</a></li>
+                    <li>{{ NAV['CAT']['name'] }}</li>
                 {% else %}
                     <li>{{ NAV['CAT']['name'] }}</li>
                 {% endif %}

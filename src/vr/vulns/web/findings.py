@@ -5,7 +5,8 @@ from vr.vulns import vulns
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter, check_if_jira_enabled
 from vr.admin.models import User, Messages, MessagesStatus
 from sqlalchemy import text, and_
-from flask import request, render_template, session, redirect, url_for, send_file
+from flask import request, render_template, session, redirect, url_for, send_file, make_response, flash, jsonify
+from werkzeug.utils import secure_filename
 from flask_login import login_required
 from vr.assets.model.businessapplications import BusinessApplications, MakeBusinessApplicationsSchema, BusinessApplicationsSchema
 from vr.functions.table_functions import load_table, update_table
@@ -1387,3 +1388,232 @@ def delete_issue_note():
                 return str(200)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS)
+
+
+@vulns.route("/download_csv_template/<app_name>", methods=['GET'])
+@login_required
+def download_csv_template(app_name):
+    try:
+        NAV['curpage'] = {"name": "Add Finding Disposition"}
+        admin_role = APP_ADMIN
+        role_req = [APP_ADMIN, APP_VIEWER]
+        perm_entity = 'Application'
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
+                                              permissions_entity=perm_entity)
+        if status == 401:
+            return redirect(url_for(ADMIN_LOGIN))
+        elif status == 403:
+            return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
+
+        # Define the CSV structure
+        csv_columns = [
+            "Application Name",
+            "Vulnerability Name",
+            "Source Type",
+            "CVE-ID",
+            "CWE-ID",
+            "Description",
+            "Severity",
+            "Source",
+            "Reference Name",
+            "Reference URL",
+            "Reference Tags",
+            "Vulnerable File Name",
+            "Sourcecode File Start Line",
+            "Sourcecode File Start Column",
+            "Sourcecode File End Line",
+            "Sourcecode File End Column",
+            "URI",
+            "HTML Method",
+            "HTML Request Parameters",
+            "Attack",
+            "Evidence",
+            "Solution",
+            "Vulnerable Package",
+            "Vulnerable File Path",
+            "Vulnerable Package Version"
+        ]
+
+        # Create a CSV in memory
+        si = StringIO()
+        cw = csv.writer(si)
+        cw.writerow(csv_columns)  # Write the header
+
+        # Example row, you can add more rows or modify as needed
+        cw.writerow([
+            app_name,
+            "Example Vulnerability Name",
+            "SCA",
+            "CVE-2023-36054",
+            "CWE-89",
+            "Example Vulnerability Description",
+            "High",
+            "Snyk",
+            "Example Vulnerability Reference Name",
+            "https://www.example.com/vulnerability_context",
+            "security,third_party",
+            "jquery.min.js",
+            "1",
+            "1",
+            "8",
+            "3",
+            "https://www.example.com/vulnerable_endpoint",
+            "POST",
+            "?attack=yes",
+            "https://www.example.com/vulnerable_endpoint?attack=yes",
+            "POST https://www.example.com/vulnerable_endpoint?attack=yes",
+            "Update to the latest version of the library",
+            "jquery",
+            "deb",
+            "2.2.2"
+        ])
+
+        output = make_response(si.getvalue())
+        output.headers["Content-Disposition"] = "attachment; filename=template.csv"
+        output.headers["Content-type"] = "text/csv"
+        return output
+
+    except RuntimeError:
+        return render_template(SERVER_ERR_STATUS)
+
+
+@vulns.route("/upload_csv/<app_id>", methods=['POST'])
+@login_required
+def upload_csv(app_id):
+    try:
+        original_source = request.referrer
+        NAV['curpage'] = {"name": "Add Finding Disposition"}
+        admin_role = APP_ADMIN
+        role_req = [APP_ADMIN, APP_VIEWER]
+        perm_entity = 'Application'
+        user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
+                                              permissions_entity=perm_entity)
+        if status == 401:
+            return redirect(url_for(ADMIN_LOGIN))
+        elif status == 403:
+            return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
+
+        # Check if the post request has the file part
+        if 'csvFile' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+
+        file = request.files['csvFile']
+
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+
+        if file:
+            # Secure the filename
+            filename = secure_filename(file.filename)
+
+            # Use StringIO to read the CSV file
+            stream = StringIO(file.stream.read().decode("UTF8"), newline=None)
+            csv_input = csv.reader(stream)
+
+            errors = []
+            for row_num, row in enumerate(csv_input, start=1):
+                if row_num == 1:  # Assuming the first row is the header
+                    continue
+
+                # Validate each field
+                acceptable = ['Secret', 'SCA', 'SAST', 'IAC', 'Container', 'Infrastructure', 'DAST', 'DASTAPI']
+                if not row[2].lower() in acceptable:
+                    errors.append(
+                        f"Row {row_num}: 'Source Type' must be one of the following values: Secret, SCA, SAST, IAC, Container, Infrastructure, DAST, DASTAPI.    <strong>Current Value: {row[2]}</strong>")
+                if not row[3].startswith('CVE-'):
+                    errors.append(f"Row {row_num}: 'CVE-ID' must start with 'CVE-'.    <strong>Current Value: {row[3]}</strong>")
+                if not row[4].startswith('CWE-'):
+                    errors.append(f"Row {row_num}: 'CWE-ID' must start with 'CWE-'.    <strong>Current Value: {row[4]}</strong>")
+                if not isinstance(row[5], str):
+                    errors.append(f"Row {row_num}: 'Description' must be a string.    <strong>Current Value: {row[5]}</strong>")
+                acceptable = ['low', 'medium', 'high', 'critical']
+                if not row[6].lower() in acceptable:
+                    errors.append(f"Row {row_num}: 'Severity' must be one of the following values: Low, Medium, High, Critical.    <strong>Current Value: {row[6]}</strong>")
+                if not isinstance(row[7], str):
+                    errors.append(f"Row {row_num}: 'Source' must be a string.    <strong>Current Value: {row[7]}</strong>")
+                if row[12] and not row[12][0].isdigit():
+                    errors.append(f"Row {row_num}: 'Sourcecode File Start Line' must be an integer.    <strong>Current Value: {row[12]}</strong>")
+                if row[13] and not row[13][0].isdigit():
+                    errors.append(f"Row {row_num}: 'Sourcecode File Start Column' must be an integer.    <strong>Current Value: {row[13]}</strong>")
+                if row[14] and not row[14][0].isdigit():
+                    errors.append(f"Row {row_num}: 'Sourcecode File End Line' must be an integer.    <strong>Current Value: {row[14]}</strong>")
+                if row[15] and not row[15][0].isdigit():
+                    errors.append(f"Row {row_num}: 'Sourcecode File End Column' must be an integer.    <strong>Current Value: {row[15]}</strong>")
+                if row[16] and not row[16].startswith('http'):
+                    errors.append(f"Row {row_num}: 'URI' must start with either http or https.    <strong>Current Value: {row[16]}</strong>")
+
+            if errors:
+                return jsonify({'errors': errors}), 400
+
+            scan_id = _add_new_vuln_scan(app_id)
+
+            # Process each row in the CSV
+            for row in csv_input:
+                # Skip header row or validate the header
+                if row[0] == 'Application Name':
+                    continue
+
+                _add_new_vuln(app_id, scan_id, row)
+
+            # Redirect or respond after processing the file
+            return redirect(url_for('vulns.open_findings', id=app_id))
+
+    except RuntimeError:
+        return render_template(SERVER_ERR_STATUS)
+
+
+def _add_new_vuln_scan(app_id):
+    new_scan = VulnerabilityScans(
+        ScanName="Manual Upload",
+        ScanType="Manual Upload",
+        ScanStartDate=datetime.datetime.utcnow(),
+        ScanEndDate=datetime.datetime.utcnow(),
+        ApplicationId=app_id,
+        Branch="main"
+    )
+    db.session.add(new_scan)
+    db.session.commit()
+    return new_scan.ID
+
+
+def _add_new_vuln(app_id, scan_id, row):
+    app_name, vuln_name, source_type, cve_id, cwe_id, description, severity, source, ref_name, ref_url, ref_tags, vulnerable_file_name, start_line, start_column, end_line, end_column, uri, html_method, html_params, attack, evidence, solution, vulnerable_package, file_path, package_version = row
+    new_vuln = Vulnerabilities(
+        VulnerabilityName=vuln_name,
+        CVEID = cve_id,
+        CWEID = cwe_id,
+        Description = description,
+        Severity = severity,
+        Classification = source_type,
+        Source = f"{source}-CI_CD",
+        LastModifiedDate = datetime.datetime.utcnow(),
+        ReferenceName = ref_name,
+        ReferenceUrl = ref_url,
+        ReferenceTags = ref_tags,
+        AddDate = datetime.datetime.utcnow(),
+        ReleaseDate=datetime.datetime.utcnow(),
+        SourceCodeFileStartLine = start_line,
+        SourceCodeFileStartCol = start_column,
+        SourceCodeFileEndLine = end_line,
+        SourceCodeFileEndCol = end_column,
+        ApplicationId = app_id,
+        Uri = uri,
+        HtmlMethod = html_method,
+        Param = html_params,
+        Attack = attack,
+        Evidence = evidence,
+        Solution = solution,
+        VulnerablePackage = vulnerable_package,
+        VulnerableFileName = vulnerable_file_name,
+        VulnerableFilePath = file_path,
+        ScanId = scan_id,
+        InitialScanId = scan_id,
+        SourceType = source_type,
+        VulnerablePackageVersion = package_version
+    )
+    db.session.add(new_vuln)
+    db.session.commit()

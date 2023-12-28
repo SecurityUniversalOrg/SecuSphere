@@ -47,7 +47,7 @@
 
                                         </ul>
                                         <!-- Filter Button -->
-                                        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#filterModal">
+                                        <button id="filter-btn" class="btn btn-primary" type="button" data-toggle="modal" data-target="#filterModal">
                                             <span class="fa fa-filter"></span> Filter
                                         </button>
 
@@ -257,9 +257,14 @@ var ijs = introJs()
         intro: "In the main window, you can view a list of all applications within the SecuSphere system."
       },
       {
-        title: 'Application Column',
+        title: 'Top-Level Application Column',
         element: document.querySelector('#hdr_app'),
-        intro: "In this column, the application name is listed.  This application name is a unique identifer."
+        intro: "In this column, the top-level application name is listed.  This application name is a unique identifer."
+      },
+      {
+        title: 'Application Component Column',
+        element: document.querySelector('#hdr_component'),
+        intro: "In this column, the application component name is listed.  This application component name is a unique identifer."
       },
       {
         title: 'Tags Column',
@@ -320,6 +325,11 @@ var ijs = introJs()
         title: 'Add New Application',
         element: document.querySelector('#dropdownMenu1'),
         intro: "To manually add a new Application, click on the settings button."
+      },
+      {
+        title: 'Filter Applications List',
+        element: document.querySelector('#filter-btn'),
+        intro: "To filter the list of Applications, click on the Filter button."
       },
       {
         intro: "Application Directory Page tour completed!"
