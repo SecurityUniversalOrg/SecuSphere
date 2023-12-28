@@ -30,6 +30,13 @@
                             <div class="panel-heading tight">
                                 <h3 class="has-filters">
                                     Messages
+                                    <div class="dropdown pull-right" style="top: -0.85rem;">
+
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+
+                                    </div>
 
                                 </h3>
                             </div>
@@ -55,10 +62,10 @@
 
 
 
-                                    <th>Add Date</th>
-                                    <th class="text-center">Message Type</th>
-                                    <th>From</th>
-                                    <th>Message</th>
+                                    <th id="add_date">Add Date</th>
+                                    <th id="message_type" class="text-center">Message Type</th>
+                                    <th id="from">From</th>
+                                    <th id="msg_text">Message</th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -83,19 +90,19 @@
                                     </td>
                                     <td>
                                         <div data-toggle="modal" data-target="#messageModal{{ i.ID }}">
-                                            <div class="fa fa-info-circle"></div>
+                                            <div class="fa fa-info-circle info-btn"></div>
                                         </div>
                                     </td>
                                     <td>
                                        {% if i.EntityType == 'Vulnerability' %}
-                                       <a href="/finding/{{ i.ApplicationId }}/{{ i.EntityID }}">
+                                       <a class="info-btn" href="/finding/{{ i.ApplicationId }}/{{ i.EntityID }}">
                                            <div class="fa-solid fa-toolbox"></div>
                                        </a>
                                        {% endif %}
                                     </td>
                                     <td>
                                         <div data-toggle="modal" data-target="#deleteModal-{{ i.ID }}">
-                                            <div class="fa-solid fa-trash"></div>
+                                            <div class="fa-solid fa-trash delete-btn"></div>
                                         </div>
                                     </td>
 
@@ -155,7 +162,9 @@
                         </div>
                         <div class="clearfix"></div>
 
+                        <div id="help_pagination">
                         {% include "pagination_tab_all.html" %}
+                        </div>
 
                     </div>
                 </div>
@@ -167,7 +176,9 @@
     </div>
 
 
-
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
 <script>
 function deleteMsg(msg_id) {
     var xhttp = new XMLHttpRequest();
@@ -236,6 +247,69 @@ function fieldSorter(field_name, new_dir) {
   xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
   xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
 }
+
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Messages Directory!  On this page, you can view your messages within the SecuSphere system. Let's take a quick tour!"
+      },
+      {
+        title: 'Main Window',
+        element: document.querySelector('#endpoints'),
+        intro: "In the main window, you can view a list of all of your active messages within the SecuSphere system."
+      },
+      {
+        title: 'Add Date',
+        element: document.querySelector('#add_date'),
+        intro: "The Add Date is the date and time that the message was created."
+      },
+      {
+        title: 'Message Type',
+        element: document.querySelector('#message_type'),
+        intro: "The category or type of the message."
+      },
+      {
+        title: 'Message Sender',
+        element: document.querySelector('#from'),
+        intro: "The SecuSphere username that sent the message."
+      },
+      {
+        title: 'Message Preview',
+        element: document.querySelector('#msg_text'),
+        intro: "The first 20 characters of the message."
+      },
+      {
+        title: 'Full Message',
+        element: document.querySelector('.info-btn'),
+        intro: "Click on the 'info' icon to view the full message content."
+      },
+      {
+        title: 'Delete Message',
+        element: document.querySelector('.delete-btn'),
+        intro: "Click on the 'delete' icon to delete the full message."
+      },
+      {
+        title: 'Pagination',
+        element: document.querySelector('.help_pagination'),
+        intro: "To scroll through multiple pages of listings and to adjust the entries per page, use the Pagination menu."
+      },
+      {
+        intro: "Messages Directory Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
 </script>
 
 {% endblock %}

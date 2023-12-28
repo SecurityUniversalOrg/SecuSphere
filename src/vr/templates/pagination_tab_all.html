@@ -3,7 +3,7 @@
                                 Showing entries {% if table_details['item_tot'] %}{{ table_details['rec_start'] }}{% else %}0{% endif %} to {{ table_details['rec_end'] }} of {{ table_details['item_tot'] }}
                             </div>
                             <nav class="pull-right">
-                                <ul class="pagination pagination-sm">
+                                <ul class="pagination pagination-sm help_pagination">
                                     {% if table_details['page'] != 1 %}
                                     <li onclick="updatePagination({{ table_details['page'] - 1 }})">
                                         <a href="#"> Back</a>
