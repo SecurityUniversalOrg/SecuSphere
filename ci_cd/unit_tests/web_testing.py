@@ -1632,7 +1632,9 @@ class TestWebApp(unittest.TestCase):
             'regulations': 1,
         }
         response = self._post_test_handler(route, data_dict)
-        assert response.status_code == 200
+        match = _three_o_two_handler(response.headers, f"/edit_application/{app.ID}")
+        assert response.status_code == 302
+        assert match
 
     def test_contacts_get(self):
         app = BusinessApplications.query.filter_by(ApplicationName=TEST_APP_NAME).first()
