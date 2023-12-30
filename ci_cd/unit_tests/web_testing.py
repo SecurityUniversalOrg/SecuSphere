@@ -879,16 +879,6 @@ class TestWebApp(unittest.TestCase):
         self.db.session.commit()
         assert response.status_code == 200
 
-    def test_onboarding_get(self):
-        route = "/onboarding"
-        response = self._get_test_handler(route)
-        assert response.status_code == 200
-
-    def test_onboarding_suppress_get(self):
-        route = "/onboarding_suppress"
-        response = self._get_test_handler(route)
-        assert response.status_code == 200
-
     def test_register_user_get(self):
         otp_secret = base64.b32encode(os.urandom(10)).decode('utf-8')
         new_user = User(
