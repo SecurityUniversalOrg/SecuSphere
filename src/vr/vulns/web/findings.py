@@ -768,7 +768,7 @@ def finding(appid, id):
         else:
             finding_accuracy = 'N/A'
         referrer = request.referrer
-        if 'all_app_vulns_filtered/' in referrer:
+        if referrer and 'all_app_vulns_filtered/' in referrer:
             nav_bar = 'Application'
         else:
             nav_bar = 'Component'
