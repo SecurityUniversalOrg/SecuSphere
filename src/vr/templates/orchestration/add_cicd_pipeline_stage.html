@@ -13,7 +13,13 @@
             </div>
         </div>
 
-        <h2 class="my-4" style="color: white;">CI/CD Pipeline Integrations</h2>
+        <h2 class="my-4" style="color: white;">CI/CD Pipeline Integrations
+        <div class="dropdown pull-right">
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+                                    </div>
+        </h2>
 
         <div class="row">
             <div class="col-md-4">
@@ -226,7 +232,7 @@
 
         <div class="row" style="padding-top: 1.5rem;">
             <div class="col-md-12">
-                <button class="btn btn-primary mt-4" onclick="updateCode();">Submit</button>
+                <button id="nav_submit_btn" class="btn btn-primary mt-4" onclick="updateCode();">Submit</button>
             </div>
         </div>
 
@@ -451,4 +457,48 @@
         }
 
     </script>
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the CI/CD Pipeline Integrations Page!  On this page, you use the wizard to auto-generate CI/CD Pipeline integration code and snippets. Let's take a quick tour!"
+      },
+      {
+        title: 'Assessment Type',
+        element: document.querySelector('#assessment-type'),
+        intro: "Select the CI/CD Security Assessment Type here."
+      },
+      {
+        title: 'Submit Assessment Type',
+        element: document.querySelector('#nav_submit_btn'),
+        intro: "After selecting the Assessment Type, click on the Submit button.  You will then be presented with Assessment Type-specific instructions."
+      },
+      {
+        intro: "CI/CD Pipeline Integrations Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
+
 {% endblock %}

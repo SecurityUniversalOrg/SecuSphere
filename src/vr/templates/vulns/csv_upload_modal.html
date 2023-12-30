@@ -1,0 +1,65 @@
+<div class="modal fade" id="csvModal" tabindex="-1" role="dialog" aria-labelledby="csvModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="csvModalLabel">Upload Vulnerabilities</h5>
+                <button id="nav_modal_close_btn" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="display: contents;">
+                <div id="uploadErrors" class="alert alert-danger" style="display: none;font-size: 12px;"></div>
+
+                <!-- Download CSV Template -->
+                <a id="nav_download_csv_template" href="{{ url_for('vulns.download_csv_template', app_name=app_data.ApplicationName) }}" download="template.csv" class="btn btn-primary" style="margin-left: 1em;">
+                    <span class="fa fa-download"></span> Download CSV Template
+                </a>
+
+                <!-- Button to Open CSV Column Explanation Modal -->
+                <button id="nav_csv_explanation_btn" type="button" class="btn btn-info" data-toggle="modal" data-target="#csvColumnExplanationModal">
+                    <span class="fa fa-info-circle"></span> CSV Column Explanation
+                </button>
+
+                <!-- Upload Form -->
+                <form id="csvUploadForm" action="/upload_csv/{{ app_data.ID }}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <div class="form-group" style="display: block;">
+                        <label for="csvFile">Upload Completed CSV</label>
+                        <input type="file" class="form-control-file" id="csvFile" name="csvFile" style="font-size: small;">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("csvUploadForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.errors) {
+                const errorsContainer = document.getElementById("uploadErrors");
+                errorsContainer.innerHTML = data.errors.join('<br>');
+                errorsContainer.style.display = 'block';
+            } else {
+                window.location.href = '/vulns/open_findings/' + {{ app_data.ID }};
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+});
+
+</script>

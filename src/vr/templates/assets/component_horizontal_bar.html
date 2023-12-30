@@ -148,52 +148,7 @@
         </ul>
 
         <!-- Modal -->
-        <div id="securityTestModal" class="modal fade" role="dialog">
-            <div class="modal-dialog" style="width: 70%;">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Run On-Demand Security Tests</h4>
-                    </div>
-                    <form action="/on_demand_testing" method="post">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                        <input type="hidden" name="app_name" value="{{ app_data.ApplicationName }}"/>
-                        <div class="modal-body">
-
-                                <div class="form-group">
-                                    <label for="gitUrl" style="margin-right: 64px;">Git URL:</label>
-                                    <input type="text" class="form-control" id="gitUrl" name="gitUrl" value="{{ app_data.RepoURL }}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="gitBranch" style="margin-right: 42px;">Git Branch:</label>
-                                    <input type="text" class="form-control" id="gitBranch" name="gitBranch" value="main">
-                                </div>
-                                <div class="form-group">
-                                    <label for="tests">Tests to Run:</label>
-                                    <select multiple class="form-control" id="tests" name="tests[]">
-                                        <option value="ALL">ALL</option>
-                                        <option value="SECRET">Secret Scanning</option>
-                                        <option value="SAST">Static Application Security Testing (SAST)</option>
-                                        <option value="IAC">Infrastructure-as-Code Security Scanning</option>
-                                        <option value="DOCKER">Container Security Scanning</option>
-                                        <option value="DAST">Dynamic Application Security Testing (DAST)</option>
-                                        <option value="DAST-API">Dynamic API Security Testing (DAST-API)</option>
-                                    </select>
-                                </div>
-
-
-                        </div>
-                        <div class="modal-footer">
-                            <p style="display: flex;font-size: small;">WARNING: By clicking the Submit button below, the Security Assessments you selected will be executed by the OnDemand Security Testing Jenkins Integration!</p>
-                            <button type="submit" id="submitConfirm" class="btn btn-default">Submit</button>
-                        </div>
-
-
-                    </form>
-                </div>
-            </div>
-        </div>
+        {% include "vulns/ondemand_security_tests_modal.html" %}
 
 
 
@@ -330,7 +285,12 @@
             <li>
                 <a href="/filtered_findings/{{ app_data.ID }}/status/Closed">
                     <div class="fa fa-fire-extinguisher"></div>
-                    &nbsp;&nbsp;View Closed Findings
+                    View Closed Findings
+                </a>
+            </li>
+            <li>
+                <a href="#" data-toggle="modal" data-target="#csvModal">
+                    <div class="fa fa-upload"></div> Manual Upload
                 </a>
             </li>
 
@@ -431,3 +391,8 @@
 </ul>
 
 
+<!-- CSV Template and Upload Modal -->
+{% include "vulns/csv_upload_modal.html" %}
+
+<!-- CSV Column Explanation Modal -->
+{% include "vulns/csv_upload_explanation_modal.html" %}

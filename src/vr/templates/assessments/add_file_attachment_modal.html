@@ -10,7 +10,7 @@
         <div class="settings_card">
       
           <div class="settings_card_header">
-            <span class="close" onclick="hideModal('add_file_attachment_modal')"><div class="fas fa-times" style="font-size: 3rem;"></div></span>
+            <span id="nav_close_file_attachment_modal" class="close" onclick="hideModal('add_file_attachment_modal')"><div class="fas fa-times" style="font-size: 3rem;"></div></span>
             <h4 class="settings_card_title">Add File Attachment</h4>
           </div>
       
@@ -18,10 +18,10 @@
 
               <h4>File Upload</h4>
                 <form  enctype="multipart/form-data">
-                    <input type="file" name="file">
+                    <input id="nav_file_upload" type="file" name="file">
                 </form>
 
-              <h4>File Description</h4>
+              <h4 id="nav_file_description">File Description</h4>
               <textarea name="new_file_note" id="new_file_note" rows="10" cols="145"></textarea>
       
             <div class="settings_form">
@@ -29,7 +29,7 @@
             </div>
 
             <div class="form-group">
-                <input class="btn btn-primary" type="submit" name="update_benchmarks" value="Add Attachment" onclick="addNewAttachment()">
+                <input id="nav_add_attachment_btn" class="btn btn-primary" type="submit" name="update_benchmarks" value="Add Attachment" onclick="addNewAttachment()">
             </div>
       
           </div>

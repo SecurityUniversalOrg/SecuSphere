@@ -13,33 +13,17 @@
             </div>
         </div>
 
-        <div class="row hidden-xs">
-            <div class="col-lg-12">
 
-                <ul class="breadcrumb main">
-
-                    <li class="">
-                        <a class="" href="/">Home</a>
-                    </li>
-
-                    <li class="">
-                        <a class="" href="/all_integrations">Integration List</a>
-                    </li>
-
-                    <li class="active">
-                        <a class="active" href="/add_integration">New Integration</a>
-                    </li>
-
-                </ul>
-
-            </div>
-        </div>
 
 
         <!-- end of tabs -->
         <div class="row">
             <div class="col-lg-12">
-
+                <div class="dropdown pull-right">
+                    <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                        <i class="fa-solid fa-question"></i>
+                    </button>
+                </div>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -116,6 +100,60 @@ function submitIntegration() {
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
     xhttp.send("tool_type=" + tool_type + "&project_key=" + project_key);
+}
+
+</script>
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Add an Integration Page!  On this page, you can add and configure a new Application Integration. Let's take a quick tour!"
+      },
+      {
+        title: 'Tool Type',
+        element: document.querySelector('#id_tool_type'),
+        intro: "First, select the Tool Type for the Application Integration."
+      },
+      {
+        title: 'Project Key',
+        element: document.querySelector('#id_username'),
+        intro: "Next, add an Application component-specific Project Key."
+      },
+      {
+        title: 'Validate Integration',
+        element: document.querySelector('#validate_btn'),
+        intro: "After choosing the Tool Type and adding a Project Key, click on the 'Validate' button to validate the integration.  This will attempt to connect to the 3rd party source to try to confirm correct settings."
+      },
+      {
+        title: 'Submit Integration',
+        element: document.querySelector('#submit_btn'),
+        intro: "Once the settings have been validated, click on the 'Submit' button to complete the new integration setup."
+      },
+      {
+        intro: "Add an Integration Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
 }
 
 </script>

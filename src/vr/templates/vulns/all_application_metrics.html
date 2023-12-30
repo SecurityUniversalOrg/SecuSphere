@@ -22,10 +22,16 @@
             <div class="panel panel-default">
                 <div class="panel-heading tight">
                     <div class="clearfix">
-                        <h3 class="has-filters">
+                        <h3 class="pull-left">
                             Metrics Overview
 
                         </h3>
+
+                        <div class="dropdown pull-right">
+                            <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                <i class="fa-solid fa-question"></i>
+                            </button>
+                        </div>
 
 
                     </div>
@@ -36,7 +42,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="row">
-                                    <div class="col-xs-12">
+                                    <div class="col-xs-12" id="nav_reviewed_findings">
                                         <div class="fa fa-crosshairs fa-2x"></div>
 
                                         <div class="pull-right inline-block text-right">
@@ -61,7 +67,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="row">
-                                    <div class="col-xs-12">
+                                    <div class="col-xs-12" id="nav_open_findings">
                                         <div class="fa fa-bug fa-2x"></div>
 
                                         <div class="pull-right inline-block text-right">
@@ -85,7 +91,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="row">
-                                    <div class="col-xs-12">
+                                    <div class="col-xs-12" id="nav_risk_accepted_findings">
                                         <div class="fa fa-check fa-2x"></div>
 
                                         <div class="pull-right text-right">
@@ -109,7 +115,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="row">
-                                    <div class="col-xs-12">
+                                    <div class="col-xs-12" id="nav_closed_findings">
                                         <div class="fa fa-fire-extinguisher fa-2x"></div>
 
                                         <div class="text-right pull-right">
@@ -133,7 +139,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="row">
-                                    <div class="col-xs-12">
+                                    <div class="col-xs-12" id="nav_false_positive_findings">
                                         <div class="fa fa-fire-extinguisher fa-2x"></div>
 
                                         <div class="text-right pull-right">
@@ -158,7 +164,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="row">
-                                    <div class="col-xs-12">
+                                    <div class="col-xs-12" id="nav_manually_closed_findings">
                                         <div class="fa fa-fire-extinguisher fa-2x"></div>
 
                                         <div class="pull-right inline-block text-right">
@@ -182,7 +188,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="row">
-                                    <div class="col-xs-12">
+                                    <div class="col-xs-12" id="nav_total_findings">
                                         <div class="fa fa-bullseye fa-2x"></div>
 
                                         <div class="text-right pull-right">
@@ -206,7 +212,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="row">
-                                    <div class="col-xs-12">
+                                    <div class="col-xs-12" id="nav_needs_security_review_findings">
                                         <div class="fa fa-bug fa-2x"></div>
 
                                         <div class="pull-right inline-block text-right">
@@ -243,7 +249,7 @@
                     </div>
                 </div>
                 <div class="panel-body product-graphs">
-                    <div class="col-md-6">
+                    <div class="col-md-6" id="nav_open_closed_and_accepted_week_to_week">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 Open, Closed, and Accepted Week to Week
@@ -261,7 +267,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" id="nav_week_to_week_severity">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 Week to Week by Severity
@@ -279,7 +285,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" id="nav_critical_week_to_week">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 Critical Week to Week
@@ -297,7 +303,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" id="nav_high_week_to_week">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 High Week to Week
@@ -315,7 +321,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" id="nav_medium_week_to_week">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 Medium Week to Week
@@ -333,7 +339,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" id="nav_finding_age">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 Finding Age
@@ -351,7 +357,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-7">
+                    <div class="col-md-7" id="nav_weekly_activity_of_findings_reported">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 Weekly activity of findings reported
@@ -369,7 +375,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-5" id="nav_findings_of_test_type">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 Findings by Test Type
@@ -388,7 +394,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6" id="nav_open_cwe_vulnerabilities">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 Open CWE Vulnerabilities
@@ -405,7 +411,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" id="nav_total_cwe_vulnerabilities">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 Total CWE Vulnerabilities
@@ -1209,4 +1215,129 @@ var total_cwe_vulnsChart = new Chart(total_cwe_vulns_ctx, {
     }
 });
 </script>
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Global Metrics Page!  On this page, you can view a breakdown of the vulnerability findings for the Application component. Let's take a quick tour!"
+      },
+      {
+        title: 'Metrics Overview',
+        element: document.querySelector('#base-content'),
+        intro: "Here you can find several metrics, charts, and graphs which represent the current risk of the Application component."
+      },
+      {
+        title: 'Reviewed Findings Chart',
+        element: document.querySelector('#nav_reviewed_findings'),
+        intro: "This chart shows the count of Reviewed vulnerability findings for this Application component."
+      },
+      {
+        title: 'Open Findings Chart',
+        element: document.querySelector('#nav_open_findings'),
+        intro: "This chart shows the count of Open vulnerability findings for this Application component."
+      },
+      {
+        title: 'Risk Accepted Findings Chart',
+        element: document.querySelector('#nav_risk_accepted_findings'),
+        intro: "This chart shows the count of Risk Accepted vulnerability findings for this Application component."
+      },
+      {
+        title: 'Closed Findings Chart',
+        element: document.querySelector('#nav_closed_findings'),
+        intro: "This chart shows the count of Closed vulnerability findings for this Application component."
+      },
+      {
+        title: 'False Positive Findings Chart',
+        element: document.querySelector('#nav_false_positive_findings'),
+        intro: "This chart shows the count of False Positive vulnerability findings for this Application component."
+      },
+      {
+        title: 'Manually Closed Findings Chart',
+        element: document.querySelector('#nav_manually_closed_findings'),
+        intro: "This chart shows the count of Manually Closed vulnerability findings for this Application component."
+      },
+      {
+        title: 'Total Findings Chart',
+        element: document.querySelector('#nav_total_findings'),
+        intro: "This chart shows the count of Total vulnerability findings for this Application component."
+      },
+      {
+        title: 'Needs Security Review Findings Chart',
+        element: document.querySelector('#nav_needs_security_review_findings'),
+        intro: "This chart shows the count of vulnerability findings that need a Security Review for this Application component."
+      },
+      {
+        title: 'Open, Closed, and Accepted Week to Week Chart',
+        element: document.querySelector('#nav_open_closed_and_accepted_week_to_week'),
+        intro: "This chart shows the open, closed, and accepted Findings on a weekly basis for this Application component."
+      },
+      {
+        title: 'Week to Week by Severity Chart',
+        element: document.querySelector('#nav_week_to_week_severity'),
+        intro: "This chart shows findings by severity on a weekly basis for this Application component."
+      },
+      {
+        title: 'Critical Week to Week Chart',
+        element: document.querySelector('#nav_critical_week_to_week'),
+        intro: "This chart shows Critical severity findings on a weekly basis for this Application component."
+      },
+      {
+        title: 'High Week to Week Chart',
+        element: document.querySelector('#nav_high_week_to_week'),
+        intro: "This chart shows High severity findings on a weekly basis for this Application component."
+      },
+      {
+        title: 'Medium Week to Week Chart',
+        element: document.querySelector('#nav_medium_week_to_week'),
+        intro: "This chart shows Medium severity findings on a weekly basis for this Application component."
+      },
+      {
+        title: 'Finding Age Chart',
+        element: document.querySelector('#nav_finding_age'),
+        intro: "This chart shows the most common finding ages for this Application component."
+      },
+      {
+        title: 'Weekly Activity of Findings Chart',
+        element: document.querySelector('#nav_weekly_activity_of_findings_reported'),
+        intro: "This chart shows which day of the week finding were identified for this Application component."
+      },
+      {
+        title: 'Findings by Test Type Chart',
+        element: document.querySelector('#nav_findings_of_test_type'),
+        intro: "This chart shows findings by Test type for this Application component."
+      },
+      {
+        title: 'Open CWE Vulnerabilities Chart',
+        element: document.querySelector('#nav_open_cwe_vulnerabilities'),
+        intro: "This chart shows findings organized by Open CWE for this Application component."
+      },
+      {
+        title: 'Total CWE Vulnerabilities Chart',
+        element: document.querySelector('#nav_total_cwe_vulnerabilities'),
+        intro: "This chart shows findings organized by Total CWE for this Application component."
+      },
+      {
+        intro: "Global Metrics Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
+
 {% endblock %}

@@ -6,10 +6,14 @@
         <!-- start of tabs -->
         <div class="row">
             <div class="col-md-12 active">
-                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}
+                <h3 class="no-margin-top" style="padding-bottom: 5px;color: floralwhite;">{{ app_data.ApplicationName }}{% if nav_bar == 'Component' %}:{{ app_data.Component }}{% endif %}
 
                 </h3>
+                {% if nav_bar == 'Application' %}
                 {% include "assets/application_horizontal_bar.html" %}
+                {% elif nav_bar == 'Component' %}
+                {% include "assets/component_horizontal_bar.html" %}
+                {% endif %}
             </div>
         </div>
 
@@ -56,22 +60,23 @@
 
 
                                 </h3>
-                                <div class="dropdown pull-right">
+                                <div id="nav_dispo" class="dropdown pull-right">
                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
                                             data-toggle="dropdown" aria-expanded="true">
                                         <span class="fa fa-bars"></span>
                                         <span class="caret"></span>
                                     </button>
+
                                     <ul class="dropdown-menu dropdown-menu-right" role="menu"
                                         aria-labelledby="dropdownMenu1">
 
-                                        <li role="presentation" data-toggle="modal" data-target="#peerReviewModal">
+                                        <li id="nav_request_security_review" role="presentation" data-toggle="modal" data-target="#peerReviewModal">
                                             <a href="#">
                                                 <div class="fa-regular fa-hand"></div> Request Security Review
                                             </a>
                                         </li>
 
-                                        <li role="presentation" data-toggle="modal" data-target="#devReviewedModal">
+                                        <li id="nav_mark_reviewed" role="presentation" data-toggle="modal" data-target="#devReviewedModal">
                                             <a href="#">
                                                 <div class="fa-regular fa-circle-check"></div> Mark Reviewed
                                             </a>
@@ -118,6 +123,13 @@
                                         </li>
                                         {% endif %}
                                     </ul>
+
+
+                                    <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                        <i class="fa-solid fa-question"></i>
+                                    </button>
+
+
                                     <!-- Need Security Review Modal -->
                                     <div class="modal fade" id="peerReviewModal" role="dialog">
                                         <div class="modal-dialog">
@@ -312,17 +324,17 @@
                             <table id="notes" class="table-striped table table-condensed table-hover centered" aria-describedby="Component Table">
                                 <tbody>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Severity</th>
-                                    <th>SLA</th>
-                                    <th>Status</th>
-                                    <th>Type</th>
-                                    <th>Date discovered</th>
-                                    <th>Age</th>
-                                    <th>CWE</th>
-                                    <th>CVE</th>
-                                    <th>Found by</th>
-                                    <th>ML Accuracy %</th>
+                                    <th id="nav_id">ID</th>
+                                    <th id="nav_severity">Severity</th>
+                                    <th id="nav_sla">SLA</th>
+                                    <th id="nav_status">Status</th>
+                                    <th id="nav_type">Type</th>
+                                    <th id="nav_date_discovered">Date discovered</th>
+                                    <th id="nav_age">Age</th>
+                                    <th id="nav_cwe">CWE</th>
+                                    <th id="nav_cve">CVE</th>
+                                    <th id="nav_found_by">Found by</th>
+                                    <th id="nav_ml_accuracy">ML Accuracy %</th>
                                     {% if details.KnownExploit %}
                                         <th>Known Exploit</th>
                                     {% endif %}
@@ -421,7 +433,7 @@
                     {% endif %}
 
 
-                    <div class="view-finding">
+                    <div class="view-finding" id="nav_cwe_section">
                         {% if details.CVEID %}
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -558,7 +570,7 @@
                         {% endif %}
 
 
-                        <div class="panel panel-default">
+                        <div id="nav_description_section" class="panel panel-default">
                             <div class="panel-heading">
                                 <h4>Description <span class="pull-right"><a data-toggle="collapse" href="#vuln_desc"><div
                                         class="glyphicon glyphicon-chevron-up"></div></a></span></h4>
@@ -569,7 +581,7 @@
                         </div>
 
 
-                        <div class="panel panel-default">
+                        <div id="nav_mitigation_section" class="panel panel-default">
                             <div class="panel-heading">
                                 <h4>Mitigation <span class="pull-right"><a data-toggle="collapse"
                                                                            href="#vuln_mitigation"><div
@@ -580,7 +592,7 @@
                             </div>
                         </div>
 
-                        <div class="panel panel-default">
+                        <div id="nav_impact_section" class="panel panel-default">
                             <div class="panel-heading">
                                 <h4>Impact <span class="pull-right"><a data-toggle="collapse" href="#vuln_impact"><div
                                         class="glyphicon glyphicon-chevron-down"></div></a></span></h4>
@@ -590,7 +602,7 @@
                             </div>
                         </div>
 
-                        <div class="panel panel-default" id="steps">
+                        <div id="nav_steps_to_reproduce_section" class="panel panel-default">
                             <div class="panel-heading">
                                 <h4>Steps To Reproduce <span class="pull-right"><a data-toggle="collapse"
                                                                                    href="#vuln_reproduce"><div
@@ -601,7 +613,7 @@
                             </div>
                         </div>
 
-                        <div class="panel panel-default">
+                        <div id="nav_severity_justification_section" class="panel panel-default">
                             <div class="panel-heading">
                                 <h4>Severity Justification <span class="pull-right"><a data-toggle="collapse"
                                                                                        href="#sev_just"><div
@@ -612,7 +624,7 @@
                             </div>
                         </div>
 
-                        <div class="panel panel-default">
+                        <div id="nav_references_section" class="panel panel-default">
                             <div class="panel-heading">
                                 <h4>References <span class="pull-right"><a data-toggle="collapse" href="#vuln_refs"><div
                                         class="glyphicon glyphicon-chevron-up"></div></a></span></h4>
@@ -631,7 +643,7 @@
                     </div>
 
 
-                    <div class="panel panel-default table-responsive">
+                    <div id="nav_notes_section" class="panel panel-default table-responsive">
                         <div class="panel-heading">
                             <h4>Notes <span class="pull-right"><a data-toggle="collapse" href="#vuln_notes"><div
                                     class="glyphicon glyphicon-chevron-up"></div></a></span></h4>
@@ -763,7 +775,7 @@
 {% endif %}
                     </textarea>
                 </div>
-                <input type="button" class="submit-button" value="Submit" onclick="submitIssue()">
+                <input type="button" id="nav_note_submit_btn" class="submit-button" value="Submit" onclick="submitIssue()">
             </form>
         </div>
     </div>
@@ -1065,5 +1077,163 @@ function submitIssue() {
 }
 {% endif %}
 </script>
+
+
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Vulnerability Finding Details Page!  On this page, you can view details of the vulnerability finding. Let's take a quick tour!"
+      },
+      {
+        title: 'Finding Title',
+        element: document.querySelector('.finding-title'),
+        intro: "The name of the specific Vulnerability Finding is shown here."
+      },
+      {
+        title: 'Disposition Finding',
+        element: document.querySelector('#dropdownMenu1'),
+        intro: "To disposition the finding, click on the menu tab on the right side of the table."
+      },
+      {
+        intro: "The Disposition Menu will appear."
+      },
+      {
+        title: 'Select Disposition Category',
+        element: document.querySelector('#nav_mark_reviewed'),
+        intro: "Select the disposition category to add disposition details.",
+        position: 'bottom'
+      },
+      {
+        title: 'Finding ID',
+        element: document.querySelector('#nav_id'),
+        intro: "The system generated unique finding Identifier (ID) is shown here."
+      },
+      {
+        title: 'Severity',
+        element: document.querySelector('#nav_severity'),
+        intro: "The Severity level of the vulnerability finding is shown here."
+      },
+      {
+        title: 'SLA',
+        element: document.querySelector('#nav_sla'),
+        intro: "The Service Level Agreement (SLA) for the vulnerability finding is listed here."
+      },
+      {
+        title: 'Status',
+        element: document.querySelector('#nav_status'),
+        intro: "The current Status of the vulnerability finding is shown here."
+      },
+      {
+        title: 'Type',
+        element: document.querySelector('#nav_type'),
+        intro: "The type or classification of the vulnerability finding is listed here."
+      },
+      {
+        title: 'Date Discovered',
+        element: document.querySelector('#nav_date_discovered'),
+        intro: "The Date and Time that the vulnerability finding was discovered is shown here."
+      },
+      {
+        title: 'Age',
+        element: document.querySelector('#nav_age'),
+        intro: "The current age of the vulnerability finding is listed here."
+      },
+      {
+        title: 'CWE',
+        element: document.querySelector('#nav_cwe'),
+        intro: "The Common Weakness Enumeration (CWE) identifier is shown here."
+      },
+      {
+        title: 'CVE',
+        element: document.querySelector('#nav_cve'),
+        intro: "The Common Vulnerability Enumeration (CVE) identifier is shown here."
+      },
+      {
+        title: 'Found By',
+        element: document.querySelector('#nav_found_by'),
+        intro: "The source of the vulnerability finding is listed here."
+      },
+      {
+        title: 'ML Accuracy %',
+        element: document.querySelector('#nav_ml_accuracy'),
+        intro: "The Machine Learning accuracy of the vulnerability finding is shown here."
+      },
+      {
+        title: 'Resource Information Section',
+        element: document.querySelector('#error_notes'),
+        intro: "Additional information about the resource related to the vulnerability finding is listed in this section"
+      },
+      {
+        title: 'Common Weakness Enumeration Section',
+        element: document.querySelector('#nav_cwe_section'),
+        intro: "If available, Common Weakness Enumeration data for the vulnerability finding is listed in this section"
+      },
+      {
+        title: 'Description Section',
+        element: document.querySelector('#nav_description_section'),
+        intro: "If available, Description data for the vulnerability finding is listed in this section"
+      },
+      {
+        title: 'Mitigation Section',
+        element: document.querySelector('#nav_mitigation_section'),
+        intro: "If available, Mitigation data for the vulnerability finding is listed in this section"
+      },
+      {
+        title: 'Impact Section',
+        element: document.querySelector('#nav_impact_section'),
+        intro: "If available, Impact data for the vulnerability finding is listed in this section"
+      },
+      {
+        title: 'Steps to Reproduce Section',
+        element: document.querySelector('#nav_steps_to_reproduce_section'),
+        intro: "If available, Steps to Reproduce data for the vulnerability finding is listed in this section"
+      },
+      {
+        title: 'Severity Justification Section',
+        element: document.querySelector('#nav_severity_justification_section'),
+        intro: "If available, Severity Justification data for the vulnerability finding is listed in this section"
+      },
+      {
+        title: 'References Section',
+        element: document.querySelector('#nav_references_section'),
+        intro: "If available, References data for the vulnerability finding is listed in this section"
+      },
+      {
+        title: 'Notes Section',
+        element: document.querySelector('#nav_notes_section'),
+        intro: "If available, Notes data for the vulnerability finding is listed in this section"
+      },
+      {
+        title: 'Add New Note',
+        element: document.querySelector('#add_note'),
+        intro: "After adding your note, click on the 'Add Note' button to save it."
+      },
+      {
+        intro: "Vulnerability Finding Details Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+  console.log("Current step:", this._currentStep);
+  if (this._currentStep === 3 || this._currentStep === 4) {
+
+    setTimeout(function() {
+        $('#dropdownMenu1').dropdown('toggle');
+    }, 500); // Adjust the timeout as needed
+  }
+});
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
+
 {% endblock %}
 

@@ -13,23 +13,7 @@
         </div>
 
 
-        <div class="row hidden-xs">
-            <div class="col-lg-12">
 
-                <ul class="breadcrumb main">
-
-                    <li class="">
-                        <a class="" href="/">Home</a>
-                    </li>
-
-                    <li class="active">
-                        <a class="active" href="/all_integrations">Integration Configuration List</a>
-                    </li>
-
-                </ul>
-
-            </div>
-        </div>
 
 
         <!-- end of tabs -->
@@ -66,6 +50,10 @@
                                             </li>
                                         </ul>
 
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+
                                     </div>
                                 </h3>
                             </div>
@@ -81,9 +69,9 @@
                             <table id="products" class="tablesorter-bootstrap table table-condensed table-striped" aria-describedby="Component Table" >
                                 <thead>
                                 <tr>
-                                    <th>Project Key</th>
-                                    <th>Category</th>
-                                    <th></th>
+                                    <th id="nav_project_key">Project Key</th>
+                                    <th id="nav_category">Category</th>
+                                    <th id="nav_delete"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -157,5 +145,59 @@ function deleteUser(env_id) {
 </script>
 
 
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Integration Configurations Page!  On this page, you can view and configure 3rd party integrations. Let's take a quick tour!"
+      },
+      {
+        title: 'Project Key Column',
+        element: document.querySelector('#nav_project_key'),
+        intro: "The name of the Application component-specific Integration is shown here."
+      },
+      {
+        title: 'Category Column',
+        element: document.querySelector('#nav_category'),
+        intro: "The category or source of the integration is listed in this column."
+      },
+      {
+        title: 'Delete Column',
+        element: document.querySelector('#nav_delete'),
+        intro: "To remove or delete the integration, click on the 'Trash' icon."
+      },
+      {
+        title: 'Add New Integration',
+        element: document.querySelector('#dropdownMenu1'),
+        intro: "To add a new integration, click on the dropdown menu to get started."
+      },
+      {
+        intro: "Integration Configurations Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
 
 {% endblock %}
