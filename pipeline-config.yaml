@@ -2,7 +2,6 @@ global:
   appName: 'SECUSPHERE--SecuSphere'
   defaultBranches:
     - release
-    - hotfix
     - security
 stages:
   prepJob:
