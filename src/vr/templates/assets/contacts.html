@@ -30,11 +30,21 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading tight">
-                                <h3 class="has-filters">
+                                <div class="clearfix">
+                                <h3 class="pull-left">
                                     Contacts
                                     <!-- Button trigger modal -->
-                                    <span class="fa-solid fa-user-plus" data-toggle="modal" data-target="#addContactModal"></span>
+                                    <span id="nav_add_new" class="fa-solid fa-user-plus" data-toggle="modal" data-target="#addContactModal"></span>
                                 </h3>
+
+                                    <div class="dropdown pull-right">
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                </div>
 
                                 <!-- Modal -->
                                 <div class="modal fade" id="addContactModal" tabindex="-1" role="dialog" aria-labelledby="addContactModalLabel" aria-hidden="true">
@@ -49,7 +59,7 @@
                                       <div class="modal-body">
                                         <form>
                                           <div class="form-group">
-                                            <label for="role-input" class="col-form-label">Role:</label>
+                                            <label id="nav_new_contact_details" for="role-input" class="col-form-label">Role:</label>
                                             <select class="form-control" id="role-input">
                                                 <option value="">--Select Role--</option>
                                                 <option value="Full Stack Developer">Full Stack Developer</option>
@@ -100,8 +110,8 @@
                                         </form>
                                       </div>
                                       <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="saveNewContact({{ app_data.ID }})">Save Contact</button>
+                                        <button id="new_contact_close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button id="new_contact_submit" type="button" class="btn btn-primary" onclick="saveNewContact({{ app_data.ID }})">Save Contact</button>
                                       </div>
                                     </div>
                                   </div>
@@ -134,23 +144,23 @@
                                             rowspan="1" colspan="1"  style="width: 5%;"
                                             aria-label="Delete: activate to sort column ascending">
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                        <th id="nav_role" class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
                                             colspan="1" style="width: 142.783px;"
                                             aria-label="Name: activate to sort column ascending">Role
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                        <th id="nav_name" class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
                                             colspan="1" style="width: 142.783px;"
                                             aria-label="Name: activate to sort column ascending">Name
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                        <th id="nav_add_date" class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
                                             colspan="1" style="width: 169.417px;"
                                             aria-label="Version: activate to sort column ascending">AddDate
                                         </th>
-                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                        <th id="nav_cuid" class="text-center sorting" tabindex="0" aria-controls="components-table"
                                             rowspan="1" colspan="1" style="width: 147.783px;"
                                             aria-label="Active: activate to sort column ascending">CUID
                                         </th>
-                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                        <th id="nav_email" class="text-center sorting" tabindex="0" aria-controls="components-table"
                                             rowspan="1" colspan="1" style="width: 200.65px;"
                                             aria-label="Duplicate: activate to sort column ascending">Email
                                         </th>
@@ -276,6 +286,83 @@ function fieldSorter(app_id, field_name, new_dir) {
   xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
   xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
 }
+</script>
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+ <script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Support Contact Page!  On this page, you can view the Support Contacts associated with this application. Let's take a quick tour!"
+      },
+      {
+        title: 'Role Column',
+        element: document.querySelector('#nav_role'),
+        intro: "The name of the Support Contact Role is shown here."
+      },
+      {
+        title: 'Name Column',
+        element: document.querySelector('#nav_name'),
+        intro: "The first and last name of the Support Contact is listed in this column."
+      },
+      {
+        title: 'Add Date Column',
+        element: document.querySelector('#nav_add_date'),
+        intro: "The date that the Support Contact was added to the system is shown here."
+      },
+      {
+        title: 'Unique ID Column',
+        element: document.querySelector('#nav_cuid'),
+        intro: "The Unique ID of the Support Contact is listed in this column."
+      },
+      {
+        title: 'Email Column',
+        element: document.querySelector('#nav_email'),
+        intro: "The Email address of the Support Contact is list in this column."
+      },
+      {
+        title: 'Add New Contact',
+        element: document.querySelector('#nav_add_new'),
+        intro: "Click on the Plus button to add a new Support Contact."
+      },
+      {
+        title: 'Add Contact Details',
+        intro: "Enter in the specific details for the Support Contact."
+      },
+      {
+        title: 'Save New Contact',
+        element: document.querySelector('#new_contact_submit'),
+        intro: "Click on the 'Save Contact' button to save the new Support Contact."
+      },
+      {
+        title: 'Pagination',
+        element: document.querySelector('.help_pagination'),
+        intro: "To scroll through multiple pages of listings and to adjust the entries per page, use the Pagination menu."
+      },
+      {
+        intro: "Support Contact Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 7) {
+          document.getElementById('nav_add_new').click();
+      } else if (this._currentStep === 9) {
+          document.getElementById('new_contact_close').click();
+      };
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
 </script>
 
 {% endblock %}

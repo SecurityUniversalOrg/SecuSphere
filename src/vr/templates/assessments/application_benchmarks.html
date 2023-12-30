@@ -30,8 +30,13 @@
                     <div class="panel-heading">
                         <div class="clearfix">
                             <span class="pull-left">
-                                <h4>{{ benchmarks.Name }} (<span id="pass_percent">{{ "%.2f"|format(((benchmarks.L1_pass|length / benchmarks.rules|length) * 100)) }}</span>%) Pass: <span id="pass_total">{{ benchmarks.L1_pass|length }}</span> Total:  {{ benchmarks.rules|length }}</h4>
+                                <h4><span id="nav_benchmark_name">{{ benchmarks.Name }}</span> (<span id="pass_percent">{{ "%.2f"|format(((benchmarks.L1_pass|length / benchmarks.rules|length) * 100)) }}</span>%) Pass: <span id="pass_total">{{ benchmarks.L1_pass|length }}</span> Total:  <span id="rule_total">{{ benchmarks.rules|length }}</span></h4>
                             </span>
+                            <div class="dropdown pull-right">
+                                <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                    <i class="fa-solid fa-question"></i>
+                                </button>
+                            </div>
                             <div id="test-pulldown" class="dropdown pull-right">
                                 <form method="post" id="summary" name="summary" style="display: inline-flex;">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -60,14 +65,14 @@
                     <table id="test_findings" class="table-bordered table table-condensed table-hover" aria-describedby="Component Table">
                         <thead>
                         <tr>
-                            <th></th>
-                            <th>#</th>
-                            <th>Description</th>
-                            <th>L1</th>
+                            <th id="nav_info"></th>
+                            <th id="nav_rule_number">#</th>
+                            <th id="nav_rule_description">Description</th>
+                            <th id="nav_rule_level">L1</th>
                             <th>L2</th>
                             <th>L3</th>
-                            <th>Applicable</th>
-                            <th>Pass</th>
+                            <th id="nav_applicable">Applicable</th>
+                            <th id="nav_pass">Pass</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -82,7 +87,7 @@
                                 {% set rule_passed = False %}
                             {% endif %}
                             <tr class="rule_row" id="rule_row_{{ j.ID }}">
-                                <td onclick="updateInfoModal({{ j.ID }})"><a href="#"><div class="fas fa-info-circle"></div></a></td>
+                                <td id="nav_info_modal" onclick="updateInfoModal({{ j.ID }})"><a href="#"><div class="fas fa-info-circle"></div></a></td>
                                 <td class="highlight_asvs_level_1">{{ j.Number }}</td>
                                 <td>{{ j.Description }}</td>
                                 <td class="level1_select level1">{% if '1' in j.ImplementationLevels %}✓{% endif %}</td>
@@ -110,7 +115,7 @@
 
                 </div>
                 <div class="form-group">
-                    <input class="btn btn-primary" type="submit" name="update_benchmarks" value="Submit Assessment" onclick="updateBenchmarkStatus()">
+                    <input id="nav_submit_assessment" class="btn btn-primary" type="submit" name="update_benchmarks" value="Submit Assessment" onclick="updateBenchmarkStatus()">
                 </div>
 
 
@@ -314,6 +319,153 @@ function changeLevel() {
         }
     }
 }
+</script>
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the New Benchmark Assessment Page!  On this page, you can view a summary of the vulnerability findings grouped by source code branch. Let's take a quick tour!"
+      },
+      {
+        title: 'Assessment Benchmark Name',
+        element: document.querySelector('#nav_benchmark_name'),
+        intro: "The name of the specific Assessment Benchmark is shown here."
+      },
+      {
+        title: 'Current Pass Percent',
+        element: document.querySelector('#pass_percent'),
+        intro: "The current pass percentage for the Assessment Benchmark is shown here.  As you check off rules as 'Pass', this value will dynamically update."
+      },
+      {
+        title: 'Total Passed',
+        element: document.querySelector('#pass_total'),
+        intro: "The current count of passed rules for the Assessment Benchmark is shown here.  As you check off rules as 'Pass', this value will dynamically update."
+      },
+      {
+        title: 'Total Rules',
+        element: document.querySelector('#rule_total'),
+        intro: "The total number of rules for the Assessment Benchmark is shown here."
+      },
+      {
+        title: 'Set Target Level',
+        element: document.querySelector('#desired_level'),
+        intro: "To change the Target Level for the Assessment Benchmark, click on the dropdown window."
+      },
+      {
+        title: 'Add Rule Notes',
+        element: document.querySelector('#dropdownMenu1'),
+        intro: "To add notes to each rule, toggle the 'Quick Notes' button."
+      },
+      {
+        title: 'Rule Number Column',
+        element: document.querySelector('#nav_rule_number'),
+        intro: "The Rule Number is shown in this column."
+      },
+      {
+        title: 'Rule Description Column',
+        element: document.querySelector('#nav_rule_description'),
+        intro: "The Rule Description is shown here."
+      },
+      {
+        title: 'Rule Level Column',
+        element: document.querySelector('#nav_rule_level'),
+        intro: "If the rule is applicable per the selected Target Level, a checkmark will appear in this box."
+      },
+      {
+        title: 'Rule Applicable Column',
+        element: document.querySelector('#nav_applicable'),
+        intro: "If the rule is applicable per the selected Target Level, a checkmark will appear in this box."
+      },
+      {
+        title: 'Pass Column',
+        element: document.querySelector('#nav_pass'),
+        intro: "If application component has successfully complied with the rule requirements, check the 'Pass' checkbox next to the rule."
+      },
+      {
+        title: 'Additional Rule Details Column',
+        element: document.querySelector('#nav_info'),
+        intro: "To view more details about the rule, click on the 'info' icon."
+      },
+      {
+        intro: "The Additional Details Window will appear."
+      },
+      {
+        title: 'Attachments',
+        element: document.querySelector('#nav_attachments'),
+        intro: "To add file attachments as evidence of rule compliance, click on the 'plus' button."
+      },
+      {
+        intro: "The Add File Attachment Window will appear."
+      },
+      {
+        title: 'Upload File',
+        element: document.querySelector('#nav_file_upload'),
+        intro: "Click on the Browse button to upload a file."
+      },
+      {
+        title: 'Add File Description',
+        element: document.querySelector('#nav_file_description'),
+        intro: "Add an optional File Description here."
+      },
+      {
+        title: 'Add Attachment',
+        element: document.querySelector('#nav_add_attachment_btn'),
+        intro: "After uploading the file and adding an optional description, click on the 'Add Attachment' button."
+      },
+      {
+        title: 'Notes',
+        element: document.querySelector('#nav_notes'),
+        intro: "To add notes to the rule, click on the 'plus' button."
+      },
+      {
+        intro: "The Add Note Window will appear."
+      },
+      {
+        title: 'Add Note',
+        element: document.querySelector('#nav_add_new_note'),
+        intro: "After adding the Note details, click on the 'Add Note' button."
+      },
+      {
+        title: 'Submit Assessment',
+        element: document.querySelector('#nav_submit_assessment'),
+        intro: "Once the assessment has been completed, click on the 'Submit Assessment' button."
+      },
+      {
+        intro: "New Benchmark Assessment Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 6 || this._currentStep === 7) {
+          document.querySelector('#dropdownMenu1').click();
+      } else if (this._currentStep === 13) {
+          document.querySelector('#nav_info_modal').click();
+      } else if (this._currentStep === 15) {
+          document.querySelector('#nav_attachments').click();
+      } else if (this._currentStep === 19) {
+          document.querySelector('#nav_close_file_attachment_modal').click();
+      } else if (this._currentStep === 20) {
+          document.querySelector('#nav_notes').click();
+      } else if (this._currentStep === 22) {
+          document.querySelector('#nav_close_add_note_modal').click();
+          document.querySelector('#nav_close_bm_rule_modal').click();
+      }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
 </script>
 
 {% endblock %}

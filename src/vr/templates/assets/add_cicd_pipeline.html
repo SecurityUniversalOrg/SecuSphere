@@ -16,17 +16,11 @@
 
         <div class="row hidden-xs">
             <div class="col-lg-12">
-                <ul class="breadcrumb main">
-                    <li class="">
-                        <a class="" href="/">Home</a>
-                    </li>
-                    <li class="">
-                        <a class="" href="#">Settings</a>
-                    </li>
-                    <li class="active">
-                        <a class="active" href="#">Add CI/CD Pipeline Integration</a>
-                    </li>
-                </ul>
+                <div class="dropdown pull-right">
+                    <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                        <i class="fa-solid fa-question"></i>
+                    </button>
+                </div>
             </div>
         </div>
         <!-- end of tabs -->
@@ -72,7 +66,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <input style="width: max-content;margin-left: 94px;margin-top: 1rem;" class="btn btn-primary" type="submit" value="Submit">
+                            <input style="width: max-content;margin-left: 94px;margin-top: 1rem;" class="btn btn-primary" type="submit" value="Submit" id="nav_submit_btn">
                         </div>
                     </div>
                 </form>
@@ -84,6 +78,65 @@
 
 <script src="/static/js/index.js"></script>
 
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Add CI/CD Pipeline Integration Page!  On this page, you can add a new CI/CD Pipeline Integration for the Application component. Let's take a quick tour!"
+      },
+      {
+        title: 'Project Name',
+        element: document.querySelector('#projectName'),
+        intro: "Add the name of the CI/CD Pipeline Job or Project here."
+      },
+      {
+        title: 'Pipeline URL',
+        element: document.querySelector('#url'),
+        intro: "If available, add the Pipeline URL in this field."
+      },
+      {
+        title: 'Description',
+        element: document.querySelector('#description'),
+        intro: "Add an optional description of the CI/CD Pipeline integration."
+      },
+      {
+        title: 'Pipeline Source',
+        element: document.querySelector('#source'),
+        intro: "Select the source of the CI/CD Pipeline."
+      },
+      {
+        title: 'Submit New Pipeline',
+        element: document.querySelector('#nav_submit_btn'),
+        intro: "After adding the necessary information, click on the 'Submit' button to save the new integration."
+      },
+      {
+        intro: "Add CI/CD Pipeline Integration Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
 
 {% endblock %}
 

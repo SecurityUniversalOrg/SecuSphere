@@ -750,7 +750,7 @@ def finding(appid, id):
         NAV['appbar'] = 'findings'
         app = BusinessApplications.query\
             .filter(text(f'ID={appid}')).first()
-        app_data = {'ID': appid, 'ApplicationName': app.ApplicationName}
+        app_data = {'ID': appid, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         jira_integrations = check_if_jira_enabled(appid)
 
         # Call the prediction function with the input data
@@ -767,10 +767,14 @@ def finding(appid, id):
             finding_accuracy = "{:.1f}".format(prediction_response.json['probability'])
         else:
             finding_accuracy = 'N/A'
-
+        referrer = request.referrer
+        if 'all_app_vulns_filtered/' in referrer:
+            nav_bar = 'Application'
+        else:
+            nav_bar = 'Component'
         return render_template('vulns/view_finding.html', details=response, app_data=app_data, user=user,
                                NAV=NAV, issue_notes=issue_notes, sla_policy=sla_policy, jira=jira_integrations,
-                               finding_accuracy=finding_accuracy)
+                               finding_accuracy=finding_accuracy, nav_bar=nav_bar)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS)
 
@@ -824,6 +828,16 @@ def filtered_findings(appid, type, val):
             pkg_name = raw_pkg_full.split()[0]
             pkg_ver = raw_pkg_full.split()[1]
             filter_list = [f"VulnerablePackage LIKE '{pkg_name}%' AND VulnerablePackageVersion LIKE '{pkg_ver}%'"]
+        elif type == 'status':
+            if val == 'Closed':
+                filter_list = [f"Status LIKE 'Closed%'"]
+        elif type == 'Branch&Status':
+            filter_list = []
+            if val.split('&')[1] == 'Closed':
+                filter_list = [f"Status LIKE 'Closed%'"]
+            val = val.split('&')[0]
+            type = 'Branch'
+            key = 'Branch'
         else:
             filter_list = [f"{key} = '{val}'"]
         new_dict = {
@@ -853,8 +867,11 @@ def filtered_findings(appid, type, val):
         app_data = {'ID': appid, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         table_details = _set_table_details(assets, sla_policy, pg_cnt, page, vuln_all, per_page, orderby)
 
+        heading = f"{key} is {val}"
+
         return render_template('vulns/open_findings_filtered.html', entities=assets, app_data=app_data, user=user, NAV=NAV,
-                               sla_policy=sla_policy, table_details=table_details, filter_type=type, filter_value=val)
+                               sla_policy=sla_policy, table_details=table_details, filter_type=type, filter_value=val,
+                               heading = heading)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS)
 
@@ -1069,7 +1086,7 @@ def filtered_findings_csv(appid, type, val):
 def _get_assets(val, orderby, per_page, page, filter_list, app_id, type=None ):
     if type == 'Branch':
         new_val = val.replace('_', '/')
-        if filter_list and filter_list[0] == "Status LIKE 'Closed-%'":
+        if filter_list and ('Status' in filter_list[0] and 'Closed' in filter_list[0]):
             vuln_all = Vulnerabilities \
                 .query \
                 .with_entities(Vulnerabilities.VulnerabilityName, Vulnerabilities.VulnerabilityID, Vulnerabilities.CWEID,
@@ -1081,6 +1098,7 @@ def _get_assets(val, orderby, per_page, page, filter_list, app_id, type=None ):
                 .join(VulnerabilityScans, VulnerabilityScans.ID == Vulnerabilities.ScanId) \
                 .filter(text(f"VulnerabilityScans.Branch LIKE '{new_val}'")) \
                 .filter(text(f"Vulnerabilities.ApplicationId={app_id}")) \
+                .filter(text(filter_list[0]))\
                 .order_by(text(orderby)) \
                 .yield_per(per_page) \
                 .paginate(page=page, per_page=per_page, error_out=False)
@@ -1102,7 +1120,7 @@ def _get_assets(val, orderby, per_page, page, filter_list, app_id, type=None ):
                 .yield_per(per_page) \
                 .paginate(page=page, per_page=per_page, error_out=False)
     else:
-        if filter_list and filter_list[0] ==  "Status LIKE 'Closed-%'":
+        if filter_list and ('Status' in filter_list[0] and 'Closed' in filter_list[0]):
             vuln_all = Vulnerabilities \
                 .query \
                 .filter(text("".join(filter_list))) \
@@ -1520,7 +1538,7 @@ def upload_csv(app_id):
                     continue
 
                 # Validate each field
-                acceptable = ['Secret', 'SCA', 'SAST', 'IAC', 'Container', 'Infrastructure', 'DAST', 'DASTAPI']
+                acceptable = ['secret', 'sca', 'sast', 'iac', 'container', 'infrastructure', 'dast', 'dastapi']
                 if not row[2].lower() in acceptable:
                     errors.append(
                         f"Row {row_num}: 'Source Type' must be one of the following values: Secret, SCA, SAST, IAC, Container, Infrastructure, DAST, DASTAPI.    <strong>Current Value: {row[2]}</strong>")

@@ -40,10 +40,18 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading tight">
-                                <h3 class="has-filters">
+                                <div class="clearfix">
+                                <h3 class="pull-left">
                                     Pipeline Jobs
                                     
                                 </h3>
+                                    <div class="dropdown pull-right">
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
                             </div>
 
                         </div>
@@ -62,11 +70,11 @@
                                     <input type="hidden" id="val_orderby" value="{{ table_details['orderby'] }}">
 
 
-                                    <th>Build Number</th>
-                                    <th>Pipeline Name</th>
-                                    <th>Start Date</th>
-                                    <th>Job Name</th>
-                                    <th>Branch</th>
+                                    <th id="nav_build_number">Build Number</th>
+                                    <th id="nav_pipeline_name">Pipeline Name</th>
+                                    <th id="nav_start_date">Start Date</th>
+                                    <th id="nav_job_name">Job Name</th>
+                                    <th id="nav_branch">Branch</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -163,6 +171,70 @@ function fieldSorter(app_id, field_name, new_dir) {
   xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
   xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
 }
+</script>
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Pipeline Jobs Page!  On this page, you can view a summary of the CI/CD Pipeline jobs run for this application component. Let's take a quick tour!"
+      },
+      {
+        title: 'Build Number Column',
+        element: document.querySelector('#nav_build_number'),
+        intro: "The Build Number for the CI/CD Pipeline Job is shown here.  Clicking on the link will bring you to the Security Gate Scorecard for the Pipeline Job."
+      },
+      {
+        title: 'Pipeline Name Column',
+        element: document.querySelector('#nav_pipeline_name'),
+        intro: "The CI/CD Pipeline Name is listed in this column."
+      },
+      {
+        title: 'Start Date Column',
+        element: document.querySelector('#nav_start_date'),
+        intro: "The UTC Start Time that the CI/CD Pipeline job was initiated is shown here."
+      },
+      {
+        title: 'Job Name Column',
+        element: document.querySelector('#nav_job_name'),
+        intro: "The name of the CI/CD Pipeline Job is listed in this column."
+      },
+      {
+        title: 'Branch Column',
+        element: document.querySelector('#nav_branch'),
+        intro: "The GIT branch related to the CI/CD Pipeline Job is shown here."
+      },
+      {
+        title: 'Pagination',
+        element: document.querySelector('.help_pagination'),
+        intro: "To scroll through multiple pages of listings and to adjust the entries per page, use the Pagination menu."
+      },
+      {
+        intro: "Pipeline Jobs Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
 </script>
 
 {% endblock %}

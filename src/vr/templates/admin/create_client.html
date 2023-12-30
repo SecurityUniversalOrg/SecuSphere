@@ -17,15 +17,22 @@
   }
 </script>
 
+    <div class="dropdown pull-right">
+        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+            <i class="fa-solid fa-question"></i>
+        </button>
+    </div>
+
+
 <form action="" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
   <label>
     <span style="color: white;">Client Name</span>
-    <input type="text" name="client_name" style="margin: 0;width: 20%;">
+    <input id="nav_client_name" type="text" name="client_name" style="margin: 0;width: 20%;">
   </label>
   <label>
     <br>
-    <span style="color: white;">Allowed Scope</span>
+    <span id="nav_allowed_scopes" style="color: white;">Allowed Scopes</span>
       <div class="form-group" style="display: flex;">
         <input type="checkbox" id="masterCheckbox" onclick="toggleAllCheckboxes()">
         <label for="masterCheckbox" style="margin: 2px 4px; color: white;"> CHECK/UNCHECK ALL</label><br>
@@ -41,7 +48,51 @@
       </div>
   </label>
 
-  <button style="width: 10%;">Submit</button>
+  <button class="nav_submit_btn" style="width: 10%;">Submit</button>
 </form>
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Create API Client Page!  On this page, you can create an API Client to use with CI/CD Pipeline or other integrations that utilize the system's REST API. Let's take a quick tour!"
+      },
+      {
+        title: 'Client Name',
+        element: document.querySelector('#nav_client_name'),
+        intro: "Add a unique name for the API Client here."
+      },
+      {
+        title: 'Allowed Scopes',
+        element: document.querySelector('#nav_allowed_scopes'),
+        intro: "Choose the required OAuth permissions scopes to attach to the API Client."
+      },
+      {
+        title: 'Create New API Client',
+        element: document.querySelector('.nav_submit_btn'),
+        intro: "When ready, click on the 'Submit' button to create the new API Client."
+      },
+      {
+        intro: "Create API Client Page tour completed!"
+      }
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
 
 {% endblock %}

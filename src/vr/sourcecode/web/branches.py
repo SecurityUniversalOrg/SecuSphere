@@ -5,7 +5,7 @@ from flask import request, render_template, session, redirect, url_for
 from flask_login import login_required
 from vr.vulns.model.vulnerabilities import Vulnerabilities, MakeVulnerabilitiesSchema, VulnerabilitiesSchema
 from vr.vulns.model.vulnerabilityscans import VulnerabilityScans, VulnerabilityScansSchema
-from sqlalchemy import text, func
+from sqlalchemy import text, func, case, not_
 from vr.functions.table_functions import load_table, update_table
 from vr.assets.model.businessapplications import BusinessApplications
 
@@ -20,7 +20,7 @@ APP_ADMIN = "Application Admin"
 @login_required
 def branches(id):
     try:
-        NAV['curpage'] = {"name": "Release Versions"}
+        NAV['curpage'] = {"name": "Branches"}
         admin_role = APP_ADMIN
         role_req = [APP_ADMIN, 'Application Viewer']
         perm_entity = 'Application'
@@ -47,14 +47,16 @@ def branches(id):
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict)
 
-        branches = VulnerabilityScans.query\
+        branches = VulnerabilityScans.query \
             .with_entities(
             VulnerabilityScans.Branch,
-            func.count(Vulnerabilities.VulnerabilityID).label('findings_cnt')
+            func.count(case([(Vulnerabilities.Status.like('Closed%'), Vulnerabilities.VulnerabilityID)])).label(
+                'closed_findings_cnt'),
+            func.count(case([(not_(Vulnerabilities.Status.like('Closed%')), Vulnerabilities.VulnerabilityID)])).label(
+                'open_findings_cnt')
         ) \
-            .join(Vulnerabilities, Vulnerabilities.ScanId==VulnerabilityScans.ID, isouter=True) \
+            .join(Vulnerabilities, Vulnerabilities.ScanId == VulnerabilityScans.ID, isouter=True) \
             .group_by(VulnerabilityScans.Branch) \
-            .filter(text("Vulnerabilities.Status != 'Closed'")) \
             .filter(text("".join(filter_list))) \
             .order_by(text(orderby)) \
             .yield_per(per_page) \
@@ -78,7 +80,7 @@ def branches(id):
             "rec_end": int(page) * per_page if (int(page) * per_page) < branches.total else branches.total
         }
 
-        return render_template('sourcecode/versions.html', app_data=app_data, entities=assets, user=user, NAV=NAV,
+        return render_template('sourcecode/branches.html', app_data=app_data, entities=assets, user=user, NAV=NAV,
                                table_details= table_details)
     except RuntimeError:
         return render_template('500.html'), 500

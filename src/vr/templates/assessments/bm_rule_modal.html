@@ -10,7 +10,7 @@
         <div class="settings_card">
       
           <div class="settings_card_header">
-            <span class="close" onclick="hideModal('bm_rule_modal')"><div class="fas fa-times" style="font-size: 3rem;"></div></span>
+            <span id="nav_close_bm_rule_modal" class="close" onclick="hideModal('bm_rule_modal')"><div class="fas fa-times" style="font-size: 3rem;"></div></span>
             <h4 class="settings_card_title" id="bm_rule_num"># </h4>
           </div>
       
@@ -25,10 +25,10 @@
               <h4>Status</h4>
               <p id="bm_status"></p>
 
-              <h4>Attachments&nbsp;&nbsp;<a href="#"><div class="fas fa-plus-square" onclick="addAttachment()"></div></a></h4>
+              <h4>Attachments&nbsp;&nbsp;<a href="#"><div id="nav_attachments" class="fas fa-plus-square" onclick="addAttachment()"></div></a></h4>
               <div id="bm_attachments"></div>
 
-              <h4>Notes&nbsp;&nbsp;<a href="#"><div class="fas fa-plus-square" onclick="addNote()"></div></a></h4>
+              <h4>Notes&nbsp;&nbsp;<a href="#"><div id="nav_notes" class="fas fa-plus-square" onclick="addNote()"></div></a></h4>
               <div id="bm_notes"></div>
 
 

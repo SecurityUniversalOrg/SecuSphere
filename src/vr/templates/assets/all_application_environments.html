@@ -46,6 +46,12 @@
                                             </li>
                                         </ul>
 
+
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+
+
                                     </div>
                                 </h3>
                             </div>
@@ -61,13 +67,13 @@
                             <table id="products" class="tablesorter-bootstrap table table-condensed table-striped" aria-describedby="Component Table" >
                                 <thead>
                                 <tr>
-                                    <th>Environment Name</th>
-                                    <th>Environment Classification</th>
-                                    <th>Add Date</th>
-                                    <th>Status</th>
-                                    <th>Web App</th>
-                                    <th>Implements API</th>
-                                    <th>Web URL</th>
+                                    <th id="nav_environment_name">Environment Name</th>
+                                    <th id="nav_environment_classification">Environment Classification</th>
+                                    <th id="nav_add_date">Add Date</th>
+                                    <th id="nav_status">Status</th>
+                                    <th id="nav_web_app">Web App</th>
+                                    <th id="nav_implements_api">Implements API</th>
+                                    <th id="nav_web_url">Web URL</th>
                                     <th></th>
                                     <th></th>
                                 </tr>
@@ -145,5 +151,79 @@ function deleteUser(env_id) {
 }
 </script>
 
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Application Environments Page!  On this page, you can view and add Application environment data. Let's take a quick tour!"
+      },
+      {
+        title: 'Environment Name',
+        element: document.querySelector('#nav_environment_name'),
+        intro: "The name of the Application Environment is shown here."
+      },
+      {
+        title: 'Environment Classification',
+        element: document.querySelector('#nav_environment_classification'),
+        intro: "The Classification for the Application Environment is shown in this field."
+      },
+      {
+        title: 'Add Date',
+        element: document.querySelector('#nav_add_date'),
+        intro: "The date and time that the Application Environment was created is listed here."
+      },
+      {
+        title: 'Status',
+        element: document.querySelector('#nav_status'),
+        intro: "The current status of the Application environment is listed here."
+      },
+      {
+        title: 'Web App',
+        element: document.querySelector('#nav_web_app'),
+        intro: "If the Application is considered a Web App within the Application Environment, this column will be checked."
+      },
+      {
+        title: 'Implements API',
+        element: document.querySelector('#nav_implements_api'),
+        intro: "If the Application is provides an API within the Application Environment, this column will be checked."
+      },
+      {
+        title: 'Web URL',
+        element: document.querySelector('#nav_web_url'),
+        intro: "The URL for the Application within the Application Environment is listed here."
+      },
+      {
+        title: 'Add New Application Environment',
+        element: document.querySelector('#dropdownMenu1'),
+        intro: "To add a new Application Environment, click on the dropdown menu."
+      },
+      {
+        intro: "Application Environments Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
 
 {% endblock %}

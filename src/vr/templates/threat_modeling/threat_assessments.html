@@ -30,10 +30,19 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading tight">
-                                <h3 class="has-filters">
+                                <div class="clearfix">
+                                <h3 class="pull-left">
                                     Threat Assessments
 
                                 </h3>
+
+                                    <div class="dropdown pull-right">
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
 
@@ -54,23 +63,23 @@
                                     <input type="hidden" id="val_orderby" value="{{ table_details['orderby'] }}">
 
                                     <tr>
-                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                        <th id="nav_info" class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
                                             colspan="1" style="width: 169.417px;"
                                             aria-label="Version: activate to sort column ascending">Info
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                        <th id="nav_add_date" class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
                                             colspan="1" style="width: 169.417px;"
                                             aria-label="Version: activate to sort column ascending">AddDate
                                         </th>
-                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                        <th id="nav_submitted_by" class="text-center sorting" tabindex="0" aria-controls="components-table"
                                             rowspan="1" colspan="1" style="width: 147.783px;"
                                             aria-label="Active: activate to sort column ascending">Submitted By
                                         </th>
-                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                        <th id="nav_status" class="text-center sorting" tabindex="0" aria-controls="components-table"
                                             rowspan="1" colspan="1" style="width: 200.65px;"
                                             aria-label="Duplicate: activate to sort column ascending">Status
                                         </th>
-                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                        <th id="nav_identified_threats" class="text-center sorting" tabindex="0" aria-controls="components-table"
                                             rowspan="1" colspan="1" style="width: 200.65px;"
                                             aria-label="Duplicate: activate to sort column ascending">Identified Threats
                                         </th>
@@ -159,6 +168,70 @@ function fieldSorter(app_id, field_name, new_dir) {
   xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
   xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
 }
+</script>
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Threat Assessments Page!  On this page, you can view a list of all Threat Assessments that have been completed for the Application component. Let's take a quick tour!"
+      },
+      {
+        title: 'Info Column',
+        element: document.querySelector('#nav_info'),
+        intro: "The name of the specific Threat Assessment is shown here."
+      },
+      {
+        title: 'Add Date Column',
+        element: document.querySelector('#nav_add_date'),
+        intro: "The date and time that the Assessment was completed is listed here."
+      },
+      {
+        title: 'Submitted By Column',
+        element: document.querySelector('#nav_submitted_by'),
+        intro: "The user that completed the Security Assessment is shown in this column."
+      },
+      {
+        title: 'Status Column',
+        element: document.querySelector('#nav_status'),
+        intro: "The status of the Security Assessment is listed here."
+      },
+      {
+        title: 'Identified Threats Column',
+        element: document.querySelector('#nav_identified_threats'),
+        intro: "The number of identified threats for the specific Assessment is listed here.  You can click on the link to view the individual findings."
+      },
+      {
+        title: 'Pagination',
+        element: document.querySelector('.help_pagination'),
+        intro: "To scroll through multiple pages of listings and to adjust the entries per page, use the Pagination menu."
+      },
+      {
+        intro: "Threat Assessments Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
 </script>
 
 {% endblock %}

@@ -30,9 +30,18 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading tight">
-                                <h3 class="has-filters">
+                                <div class="clearfix">
+                                <h3 class="pull-left">
                                     Service Tickets
                                 </h3>
+
+                                    <div class="dropdown pull-right">
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
                             </div>
 
                         </div>
@@ -50,11 +59,11 @@
                                     <input type="hidden" id="val_per_page" value="{{ table_details['per_page'] }}">
                                     <input type="hidden" id="val_orderby" value="{{ table_details['orderby'] }}">
 
-                                    <th>Ticket Name</th>
-                                    <th>Add Date</th>
-                                    <th>Application</th>
-                                    <th>Source</th>
-                                    <th>Status</th>
+                                    <th id="nav_ticket_name">Ticket Name</th>
+                                    <th id="nav_add_date">Add Date</th>
+                                    <th id="nav_application">Application</th>
+                                    <th id="nav_source">Source</th>
+                                    <th id="nav_status">Status</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -151,6 +160,70 @@ function fieldSorter(app_id, field_name, new_dir) {
   xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
   xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
 }
+</script>
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Service Tickets Page!  On this page, you can view a list of service tickets related to the application component. Let's take a quick tour!"
+      },
+      {
+        title: 'Ticket Name Column',
+        element: document.querySelector('#nav_ticket_name'),
+        intro: "The name of the Service Ticket is shown here."
+      },
+      {
+        title: 'Add Date Column',
+        element: document.querySelector('#nav_add_date'),
+        intro: "The Date and Time that the Service Ticket was created is listed in this column."
+      },
+      {
+        title: 'Application Column',
+        element: document.querySelector('#nav_application'),
+        intro: "The name of the Application associated with the Service Ticket is listed here."
+      },
+      {
+        title: 'Source Column',
+        element: document.querySelector('#nav_source'),
+        intro: "The Source of the Service Ticket is listed here."
+      },
+      {
+        title: 'Status Column',
+        element: document.querySelector('#nav_status'),
+        intro: "The Status of the Service Ticket is listed here."
+      },
+      {
+        title: 'Pagination',
+        element: document.querySelector('.help_pagination'),
+        intro: "To scroll through multiple pages of listings and to adjust the entries per page, use the Pagination menu."
+      },
+      {
+        intro: "Service Tickets Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
 </script>
 
 {% endblock %}

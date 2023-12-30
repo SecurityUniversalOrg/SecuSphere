@@ -92,6 +92,22 @@
                                     Open Findings
                                     <div class="dropdown pull-right" style="top: -0.5em;">
                                         &nbsp;
+
+                                        <!-- Filter Button -->
+                                        <button id="nav_filter_btn" class="btn btn-primary" type="button" data-toggle="modal" data-target="#filterModal">
+                                            <span class="fa fa-filter"></span> Filter
+                                        </button>
+
+                                        <button id="nav_csv_upload" class="btn btn-success" type="button" data-toggle="modal" data-target="#csvModal">
+                                            <span class="fa fa-upload"></span> CSV Template & Upload
+                                        </button>
+
+                                        <!-- CSV Template and Upload Modal -->
+                                        {% include "vulns/csv_upload_modal.html" %}
+
+                                        <!-- CSV Column Explanation Modal -->
+                                        {% include "vulns/csv_upload_explanation_modal.html" %}
+
                                         <button class="btn btn-primary dropdown-toggle" type="button" id="downloadMenu"
                                                 data-toggle="dropdown" aria-expanded="true">
                                             <span class="fa fa-download"></span>
@@ -112,243 +128,11 @@
                                                 </a>
                                             </li>
                                         </ul>
-                                        <!-- Filter Button -->
-                                        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#filterModal">
-                                            <span class="fa fa-filter"></span> Filter
+
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
                                         </button>
 
-                                        <button class="btn btn-success" type="button" data-toggle="modal" data-target="#csvModal">
-                                            <span class="fa fa-upload"></span> CSV Template & Upload
-                                        </button>
-
-                                        <!-- CSV Template and Upload Modal -->
-                                        <div class="modal fade" id="csvModal" tabindex="-1" role="dialog" aria-labelledby="csvModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="csvModalLabel">Upload Vulnerabilities</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body" style="display: contents;">
-                                                        <div id="uploadErrors" class="alert alert-danger" style="display: none;font-size: 12px;"></div>
-
-                                                        <!-- Download CSV Template -->
-                                                        <a href="{{ url_for('vulns.download_csv_template', app_name=app_data.ApplicationName) }}" download="template.csv" class="btn btn-primary" style="margin-left: 1em;">
-                                                            <span class="fa fa-download"></span> Download CSV Template
-                                                        </a>
-
-                                                        <!-- Button to Open CSV Column Explanation Modal -->
-                                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#csvColumnExplanationModal">
-                                                            <span class="fa fa-info-circle"></span> CSV Column Explanation
-                                                        </button>
-
-                                                        <!-- Upload Form -->
-                                                        <form id="csvUploadForm" action="/upload_csv/{{ app_data.ID }}" method="post" enctype="multipart/form-data">
-                                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                                            <div class="form-group" style="display: block;">
-                                                                <label for="csvFile">Upload Completed CSV</label>
-                                                                <input type="file" class="form-control-file" id="csvFile" name="csvFile" style="font-size: small;">
-                                                            </div>
-                                                            <button type="submit" class="btn btn-primary">Upload</button>
-                                                        </form>
-
-                                                    </div>
-
-
-
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- CSV Column Explanation Modal -->
-                                        <div class="modal fade" id="csvColumnExplanationModal" tabindex="-1" role="dialog" aria-labelledby="csvColumnExplanationModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content" style="width: 100%;">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="csvColumnExplanationModalLabel">CSV Column Explanation</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <!-- Vulnerability Name -->
-                                                        <h5>Vulnerability Name</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> The name of the vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> Example Vulnerability Name</p>
-
-                                                        <!-- CVE-ID -->
-                                                        <h5>CVE-ID</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> The Common Vulnerability Enumeration (CVE) Identifier for the vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> String values starting with "CVE-"</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> CVE-2023-36054</p>
-
-                                                        <!-- CWE-ID -->
-                                                        <h5>CWE-ID</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> The Common Weakness Enumeration (CWE) Identifier for the vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> String values starting with "CWE-"</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> CWE-89</p>
-
-                                                        <!-- Description -->
-                                                        <h5>Description</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> A description of the vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> Example Vulnerability Description</p>
-
-                                                        <!-- Severity -->
-                                                        <h5>Severity</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> The severity classification of the vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Low, Medium, High, Critical</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> High</p>
-
-                                                        <!-- Source -->
-                                                        <h5>Source</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> The tool source that identified the vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</pv>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> Snyk</p>
-
-                                                        <!-- Reference Name -->
-                                                        <h5>Reference Name</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> The optional reference name of any vulnerability finding references included.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> Example Vulnerability Reference Name</p>
-
-                                                        <!-- Reference URL -->
-                                                        <h5>Reference URL</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> The optional URL for the finding reference.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String starting with "http(s)"</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> https://www.example.com/vulnerability_context</p>
-
-                                                        <!-- Reference Tags -->
-                                                        <h5>Reference Tags</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> The optional Tags for the finding reference.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String (Comma separated values)</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Comma separated strings</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> security,third_party</p>
-
-                                                        <!-- Vulnerable File Name -->
-                                                        <h5>Vulnerable File Name</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> The name of the file related to the Vulnerability finding, if applicable.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> jquery.min.js</p>
-
-                                                        <!-- Sourcecode File Start Line -->
-                                                        <h5>Sourcecode File Start Line</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the start line in the file related to the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> Integer</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any Integer</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> 1</p>
-
-                                                        <!-- Sourcecode File Start Column -->
-                                                        <h5>Sourcecode File Start Column</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the start column in the file related to the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> Integer</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any Integer</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> 1</p>
-
-                                                        <!-- Sourcecode File End Line -->
-                                                        <h5>Sourcecode File End Line</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the end line in the file related to the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> Integer</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any Integer</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> 8</p>
-
-                                                        <!-- Sourcecode File End Column -->
-                                                        <h5>Sourcecode File End Column</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the end column in the file related to the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> Integer</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any Integer</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> 3</p>
-
-                                                        <!-- URI -->
-                                                        <h5>URI</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the URI related to the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String starting with "http(s)"</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> https://www.example.com/vulnerable_endpoint</p>
-
-                                                        <!-- HTML Method -->
-                                                        <h5>HTML Method</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the HTML Method related to the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any HTML Method</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> POST</p>
-
-                                                        <!-- HTML Request Parameters -->
-                                                        <h5>HTML Request Parameters</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the HTML request parameters related to the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> ?attack=yes</p>
-
-                                                        <!-- Attack -->
-                                                        <h5>Attack</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> An example or description of any attacks related to the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> https://www.example.com/vulnerable_endpoint?attack=yes</p>
-
-                                                        <!-- Evidence -->
-                                                        <h5>Evidence</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> Any available evidence that either validates or provides context for the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> POST https://www.example.com/vulnerable_endpoint?attack=yes</pv>
-
-                                                        <!-- Solution -->
-                                                        <h5>Solution</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> Information available to assist in remediation efforts for the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> Update to the latest version of the library.</p>
-
-                                                        <!-- Vulnerable Package -->
-                                                        <h5>Vulnerable Package</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the name of the imported package or library related to the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> jquery</p>
-
-                                                        <!-- Vulnerable File Path -->
-                                                        <h5>Vulnerable File Path</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the file path of the file or imported package related to the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> deb</p>
-
-                                                        <!-- Vulnerable Package Version -->
-                                                        <h5>Vulnerable Package Version</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the version of the Vulnerable package or imported library.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> 2.2.2</p>
-
-                                                        <!-- Source Type -->
-                                                        <h5>Source Type</h5>
-                                                        <p class="modal_elem"><strong>Description:</strong> The testing type or category for the Vulnerability finding.</p>
-                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
-                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Secret, SCA, SAST, IAC, Container, Infrastructure, DAST, DASTAPI</p>
-                                                        <p class="modal_elem"><strong>Example:</strong> SCA</p>
-
-
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
 
                                     </div>
                                 </h3>
@@ -381,8 +165,8 @@
                                                 <input type="text" id="filterValue" class="form-control" placeholder="Enter filter value">
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                <button type="button" class="btn btn-primary" onclick="setFilter({{ app_data.ID }})">Apply Filter</button>
+                                                <button id="nav_filter_cancel_btn" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                <button id="nav_apply_filter_btn" type="button" class="btn btn-primary" onclick="setFilter({{ app_data.ID }})">Apply Filter</button>
                                             </div>
                                         </div>
                                     </div>
@@ -439,25 +223,25 @@
 
 
                                         <th class="noVis sorting_disabled" rowspan="1" colspan="1" style="width: 0px;" data-column-index="1" aria-label=""></th>
-                                        <th onclick="fieldSorter({{ app_data.ID }}, 'Severity', 'dynamic')" class="nowrap centered sorting" tabindex="0" aria-controls="open_findings"
+                                        <th id="nav_severity" onclick="fieldSorter({{ app_data.ID }}, 'Severity', 'dynamic')" class="nowrap centered sorting" tabindex="0" aria-controls="open_findings"
                                             rowspan="1" colspan="1" style="width: 70px;color: black;" data-column-index="2"
                                             aria-label="Severity&amp;nbsp;: activate to sort column ascending"><a
                                                 title="Click to sort descending"
                                                 href="#">Severity&nbsp;<div class="fa fa-sort dd-sort"></div></a></th>
-                                        <th onclick="fieldSorter({{ app_data.ID }}, 'VulnerabilityName', 'dynamic')" class="nowrap sorting" tabindex="0" aria-controls="open_findings"
+                                        <th id="nav_name" onclick="fieldSorter({{ app_data.ID }}, 'VulnerabilityName', 'dynamic')" class="nowrap sorting" tabindex="0" aria-controls="open_findings"
                                             rowspan="1" colspan="1" style="width: 82px;" data-column-index="3"
                                             aria-label="Name&amp;nbsp;: activate to sort column ascending"><a
                                                 title="Click to sort ascending"
                                                 href="#">Name&nbsp;<div
                                                 class="fa fa-sort dd-sort"></div></a></th>
-                                        <th onclick="fieldSorter({{ app_data.ID }}, 'CWEID', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                        <th id="nav_cwe" onclick="fieldSorter({{ app_data.ID }}, 'CWEID', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
                                             colspan="1" style="width: 32px;" data-column-index="4"
                                             aria-label="CWE: activate to sort column ascending"><a
                                                 title="Click to sort ascending"
                                                 href="#">CWE&nbsp;<div
                                                 class="fa fa-sort dd-sort"></div></a>
                                         </th>
-                                        <th onclick="fieldSorter({{ app_data.ID }}, 'CVEID', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                        <th id="nav_cve" onclick="fieldSorter({{ app_data.ID }}, 'CVEID', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
                                             colspan="1" style="width: 86px;" data-column-index="5"
                                             aria-label="Vulnerability Id: activate to sort column ascending">
                                             <a
@@ -465,38 +249,38 @@
                                                 href="#">CVE&nbsp;<div
                                                 class="fa fa-sort dd-sort"></div></a>
                                         </th>
-                                        <th onclick="fieldSorter({{ app_data.ID }}, 'AddDate', 'dynamic')" class="nowrap sorting" tabindex="0" aria-controls="open_findings"
+                                        <th id="nav_date" onclick="fieldSorter({{ app_data.ID }}, 'AddDate', 'dynamic')" class="nowrap sorting" tabindex="0" aria-controls="open_findings"
                                             rowspan="1" colspan="1" style="width: 79px;" data-column-index="6"
                                             aria-label="Date&amp;nbsp;: activate to sort column ascending"><a
                                                 title="Click to sort ascending"
                                                 href="#">Date&nbsp;<div
                                                 class="fa fa-sort dd-sort"></div></a></th>
-                                        <th class="nowrap sorting" tabindex="0" aria-controls="open_findings"
+                                        <th id="nav_age" class="nowrap sorting" tabindex="0" aria-controls="open_findings"
                                             rowspan="1" colspan="1" style="width: 27px;" data-column-index="7"
                                             aria-label="Age: activate to sort column ascending">Age&nbsp;
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                        <th id="nav_sla" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
                                             colspan="1" style="width: 27.4333px;color: black;" data-column-index="8"
                                             aria-label="SLA: activate to sort column ascending">SLA&nbsp;
                                         </th>
-                                        <th onclick="fieldSorter({{ app_data.ID }}, 'Source', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                        <th id="nav_found_by" onclick="fieldSorter({{ app_data.ID }}, 'Source', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
                                             colspan="1" style="width: 60px;" data-column-index="10"
                                             aria-label="Found By: activate to sort column ascending"><a
                                                 title="Click to sort ascending"
                                                 href="#">Found By&nbsp;<div
                                                 class="fa fa-sort dd-sort"></div></a>
                                         </th>
-                                        <th onclick="fieldSorter({{ app_data.ID }}, 'Status', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                        <th id="nav_status" onclick="fieldSorter({{ app_data.ID }}, 'Status', 'dynamic')" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
                                             colspan="1" style="width: 87px;" data-column-index="11"
                                             aria-label="Status: activate to sort column ascending"><a
                                                 title="Click to sort ascending"
                                                 href="#">Status&nbsp;<div
                                                 class="fa fa-sort dd-sort"></div></a>
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                        <th id="nav_resource_type" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
                                             colspan="1" style="width: 87px;" data-column-index="11">Resource Type
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
+                                        <th id="nav_resource" class="sorting" tabindex="0" aria-controls="open_findings" rowspan="1"
                                             colspan="1" style="width: 87px;" data-column-index="11">Resource
                                         </th>
 
@@ -679,28 +463,144 @@ function fieldSorter(app_id, field_name, new_dir) {
 }
 </script>
 
+
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("csvUploadForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        fetch(this.action, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.errors) {
-                const errorsContainer = document.getElementById("uploadErrors");
-                errorsContainer.innerHTML = data.errors.join('<br>');
-                errorsContainer.style.display = 'block';
-            } else {
-                window.location.href = '/vulns/open_findings/' + {{ app_data.ID }};
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
-});
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Vulnerability Findings Page!  On this page, you can view a list of the vulnerability findings for the Application component. Let's take a quick tour!"
+      },
+      {
+        title: 'Filter Button',
+        element: document.querySelector('#nav_filter_btn'),
+        intro: "To filter the vulnerability findings, click on the 'Filter' button."
+      },
+      {
+        intro: "The Filter Window will soon appear."
+      },
+      {
+        title: 'Filter Modal',
+        element: document.querySelector('#filterField'),
+        intro: "Select the Field to apply the filter to and then add the filter Value."
+      },
+      {
+        title: 'Apply Filter',
+        element: document.querySelector('#nav_apply_filter_btn'),
+        intro: "Click on the 'Apply Filter' button to save the filter."
+      },
+      {
+        title: 'CSV Manual Upload',
+        element: document.querySelector('#nav_csv_upload'),
+        intro: "To manually upload findings for this Application Component, click on the 'CSV Template & Upload' button."
+      },
+      {
+        intro: 'The CSV Upload Window will appear.'
+      },
+      {
+        title: 'Download CSV File Template',
+        element: document.querySelector('#nav_download_csv_template'),
+        intro: "To download the CSV Upload Template File, click on the 'Download CSV Template' button."
+      },
+      {
+        title: 'CSV Column Explanation',
+        element: document.querySelector('#nav_csv_explanation_btn'),
+        intro: "To view a breakdown of acceptable fields and examples for the CSV Upload Template, click on the 'CSV Column Explanation' button."
+      },
+      {
+        title: 'Report Downloads',
+        element: document.querySelector('#downloadMenu'),
+        intro: "To download a report of the Vulnerability findings, click on the 'Download' button."
+      },
+      {
+        title: 'Severity Column',
+        element: document.querySelector('#nav_severity'),
+        intro: "The Severity for the Vulnerability Finding is listed here."
+      },
+      {
+        title: 'Name Column',
+        element: document.querySelector('#nav_name'),
+        intro: "The Name of the Vulnerability Finding is listed here.  Click on the link to view details about the Vulnerability Finding."
+      },
+      {
+        title: 'CWE Column',
+        element: document.querySelector('#nav_cwe'),
+        intro: "The Common Weakness Enumerator (CWE) identifier of the Vulnerability Finding is listed here."
+      },
+      {
+        title: 'CVE Column',
+        element: document.querySelector('#nav_cve'),
+        intro: "The Common Vulnerability Enumerator (CVE) identifier of the Vulnerability Finding is listed here."
+      },
+      {
+        title: 'Date Column',
+        element: document.querySelector('#nav_date'),
+        intro: "The Date and Time the Vulnerability Finding was added is listed here."
+      },
+      {
+        title: 'Age Column',
+        element: document.querySelector('#nav_age'),
+        intro: "The Age of the Vulnerability Finding is listed here."
+      },
+      {
+        title: 'SLA Column',
+        element: document.querySelector('#nav_sla'),
+        intro: "The assigned SLA (by severity) of the Vulnerability Finding is listed here."
+      },
+      {
+        title: 'Found By Column',
+        element: document.querySelector('#nav_found_by'),
+        intro: "The source of the Vulnerability Finding is listed here."
+      },
+      {
+        title: 'Status Column',
+        element: document.querySelector('#nav_status'),
+        intro: "The Status of the Vulnerability Finding is listed here."
+      },
+      {
+        title: 'Resource Type Column',
+        element: document.querySelector('#nav_resource_type'),
+        intro: "The Resource Type of the Vulnerability Finding is listed here."
+      },
+      {
+        title: 'Resource Column',
+        element: document.querySelector('#nav_resource'),
+        intro: "The Resource related to the Vulnerability Finding is listed here."
+      },
+      {
+        title: 'Pagination',
+        element: document.querySelector('.help_pagination'),
+        intro: "To scroll through multiple pages of listings and to adjust the entries per page, use the Pagination menu."
+      },
+      {
+        intro: "Vulnerability Findings Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 2) {
+          document.querySelector('#nav_filter_btn').click();
+      } else if (this._currentStep === 5) {
+          document.querySelector('#nav_filter_cancel_btn').click();
+      } else if (this._currentStep === 6) {
+          document.querySelector('#nav_csv_upload').click();
+      } else if (this._currentStep === 9) {
+          document.querySelector('#nav_modal_close_btn').click();
+      }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
 
 </script>
 

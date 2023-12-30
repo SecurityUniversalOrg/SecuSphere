@@ -22,7 +22,7 @@
             <label for="end_date" style="color: white !important;">End Date and Time:</label>
             <input type="datetime-local" id="end_date" name="end_date" style="width: 30%;">
 
-            <button type="submit" style="width: 15%;display: block;">Filter</button>
+            <button id="filter-btn" type="submit" style="width: 15%;display: block;">Filter</button>
         </form>
 
 
@@ -40,58 +40,65 @@
             <div class="panel panel-default">
                 <div class="panel-heading tight">
                     <div class="clearfix">
-                        <h3 class="has-filters" style="color: #333;">
+                        <h3 class="pull-left" style="color: #333;">
                             Security Scanning Metrics
                             <i id="filter-icon" class="fa fa-filter" style="cursor: pointer;"></i>
                         </h3>
+
+                        <div class="dropdown pull-right">
+                            <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                <i class="fa-solid fa-question"></i>
+                            </button>
+                        </div>
+
                     </div>
                 </div>
 
                 <!-- Secret Scanning -->
-                <h2 style="margin-left: 0.5em; color: #555;">Secret Scanning</h2>
+                <h2 id="nav_category_title" style="margin-left: 0.5em; color: #555;">Secret Scanning</h2>
                 <table class="table-style" style="margin-left: 2em;">
                     <tr>
-                        <th>Metric</th>
-                        <th style="padding-left: 1em;">Value</th>
+                        <th id="nav_metric">Metric</th>
+                        <th id="nav_value" style="padding-left: 1em;">Value</th>
                     </tr>
                     <tr>
-                        <td>Total Findings</td>
+                        <td id="nav_total_findings">Total Findings</td>
                         <td style="padding-left: 1em;">{% if vuln_metrics['Secret'] %}{{ vuln_metrics['Secret']['total_findings'] }}{% else %}N/A{% endif %}</td>
                     </tr>
                     <tr>
-                        <td>Open Findings</td>
+                        <td id="nav_open_findings">Open Findings</td>
                         <td style="padding-left: 1em;">{% if vuln_metrics['Secret'] %}{{ vuln_metrics['Secret']['open_findings'] }}{% else %}N/A{% endif %}</td>
                     </tr>
                     <tr>
-                        <td>Mitigated Findings</td>
+                        <td id="nav_mitigated_findings">Mitigated Findings</td>
                         <td style="padding-left: 1em;">{% if vuln_metrics['Secret'] %}{{ vuln_metrics['Secret']['mitigated_findings'] }}{% else %}N/A{% endif %}</td>
                     </tr>
                     <tr>
-                        <td>Risk Accepted Findings</td>
+                        <td id="nav_risk_accepted_findings">Risk Accepted Findings</td>
                         <td style="padding-left: 1em;">{% if vuln_metrics['Secret'] %}{{ vuln_metrics['Secret']['riskaccepted_findings'] }}{% else %}N/A{% endif %}</td>
                     </tr>
                     <tr>
-                        <td>Detection Accuracy Rate</td>
+                        <td id="nav_detection_accuracy_rate">Detection Accuracy Rate</td>
                         <td style="padding-left: 1em;">{% if vuln_metrics['Secret']['metrics'] %}{{ vuln_metrics['Secret']['metrics']['finding_accuracy'] }}%{% else %}N/A{% endif %}</td>
                     </tr>
                     <tr>
-                        <td>Mean Time to Remediate</td>
+                        <td id="nav_mean_time_to_remediate">Mean Time to Remediate</td>
                         <td style="padding-left: 1em;">{% if vuln_metrics['Secret']['metrics'] and vuln_metrics['Secret']['metrics']['mttr'] != 'N/A' %}{{ vuln_metrics['Secret']['metrics']['mttr'] }} days{% else %}N/A{% endif %}</td>
                     </tr>
                     <tr>
-                        <td>Average Scan Time</td>
+                        <td id="nav_average_scan_time">Average Scan Time</td>
                         <td style="padding-left: 1em;">{{ metrics['secret']['ave_scan_time'][0] }} mins, {{ metrics['secret']['ave_scan_time'][1] }} secs</td>
                     </tr>
                     <tr>
-                        <td>Maximum Scan Time</td>
+                        <td id="nav_maximum_scan_time">Maximum Scan Time</td>
                         <td style="padding-left: 1em;">{{ metrics['secret']['highest_build_time'][0] }} mins, {{ metrics['secret']['highest_build_time'][1] }} secs</td>
                     </tr>
                     <tr>
-                        <td>Percentage of Pipeline Failures</td>
+                        <td id="nav_percentage_of_pipeline_failures">Percentage of Pipeline Failures</td>
                         <td style="padding-left: 1em;">{{ metrics['secret']['percent_of_all_pipeline_failures'] }}%</td>
                     </tr>
                     <tr>
-                        <td>Total CI/CD Pipeline Time Percentage</td>
+                        <td id="nav_total_cicd_pipeline_time_percentage">Total CI/CD Pipeline Time Percentage</td>
                         <td style="padding-left: 1em;">{{ metrics['secret']['total_build_time_percent'] }}%</td>
                     </tr>
                 </table>
@@ -490,4 +497,114 @@
             filterForm.style.display = filterForm.style.display === 'none' ? 'block' : 'none';
         });
     </script>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Security Scanning Metrics Page!  On this page, you can view a breakdown of the security scanning metrics grouped by testing type. Let's take a quick tour!"
+      },
+      {
+        title: 'Assessment Type',
+        element: document.querySelector('#nav_category_title'),
+        intro: "The name of the specific Assessment Type is shown here."
+      },
+      {
+        title: 'Metric Column',
+        element: document.querySelector('#nav_metric'),
+        intro: "The metric column is shown on the left."
+      },
+      {
+        title: 'Value Column',
+        element: document.querySelector('#nav_value'),
+        intro: "The value column is shown on the left."
+      },
+      {
+        title: 'Total Findings Row',
+        element: document.querySelector('#nav_total_findings'),
+        intro: "This row shows the total findings for the assessment category."
+      },
+      {
+        title: 'Open Findings Row',
+        element: document.querySelector('#nav_open_findings'),
+        intro: "This row shows the open findings for the assessment category."
+      },
+      {
+        title: 'Mitigated Findings Row',
+        element: document.querySelector('#nav_mitigated_findings'),
+        intro: "This row shows the mitigated findings for the assessment category."
+      },
+      {
+        title: 'Risk Accepted Findings Row',
+        element: document.querySelector('#nav_risk_accepted_findings'),
+        intro: "This row shows the risk accepted findings for the assessment category."
+      },
+      {
+        title: 'Detection Accuracy Rate Row',
+        element: document.querySelector('#nav_detection_accuracy_rate'),
+        intro: "This row shows the detection accuracy rate of findings for the assessment category."
+      },
+      {
+        title: 'Mean Time to Remediate Row',
+        element: document.querySelector('#nav_mean_time_to_remediate'),
+        intro: "This row shows the mean time to remediate findings for the assessment category."
+      },
+      {
+        title: 'Average Scan Time Row',
+        element: document.querySelector('#nav_average_scan_time'),
+        intro: "This row shows the average scan time for the assessment category."
+      },
+      {
+        title: 'Maximum Scan Time Row',
+        element: document.querySelector('#nav_maximum_scan_time'),
+        intro: "This row shows the maximum scan time for the assessment category."
+      },
+      {
+        title: 'Percentage of Pipeline Failures Row',
+        element: document.querySelector('#nav_percentage_of_pipeline_failures'),
+        intro: "This row shows the percentage of pipeline failures for the assessment category."
+      },
+      {
+        title: 'Total CI/CD Pipeline Time Percentage Row',
+        element: document.querySelector('#nav_total_cicd_pipeline_time_percentage'),
+        intro: "This row shows the total percentage of time allocated to the assessment category."
+      },
+      {
+        title: 'Filtering Metrics',
+        element: document.querySelector('#filter-icon'),
+        intro: "To filter the metrics by date, click on the 'filter' button."
+      },
+      {
+        title: 'Adding Filter',
+        element: document.querySelector('#filter-btn'),
+        intro: "Enter the start and end dates, then click on the 'Filter' button."
+      },
+      {
+        intro: "Security Scanning Metrics Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 15) {
+          document.querySelector('#filter-icon').click();
+    } else if (this._currentStep === 16) {
+          document.querySelector('#filter-icon').click();
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
+
 {% endblock %}

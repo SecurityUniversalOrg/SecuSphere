@@ -1,14 +1,5 @@
 {% extends 'base_auth.html' %}
 
-<head>
-
-    <title>Vulnerability Manager</title>
-<style>
-
-
-</style>
-</head>
-
 
 {% block app_content %}
 
@@ -44,6 +35,11 @@
 
 
     <h1 class="page_title">Create Threat Model</h1>
+        <div class="dropdown pull-right">
+            <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                <i class="fa-solid fa-question"></i>
+            </button>
+        </div>
     <p class="page_subtitle">Please complete this form to create a Threat Model.</p>
     <hr>
     <br>
@@ -286,6 +282,50 @@ function dynamic_questions() {
 
 </script>
 
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Create Threat Model Page!  On this page, you can utilize the dynamic questions to create a Threat Model. Let's take a quick tour!"
+      },
+      {
+        title: 'Dynamic Questions',
+        element: document.querySelector('#dynamic_section_one'),
+        intro: "As you respond to each question, new questions may appear.  By sure to answer them all to the best of you knowledge."
+      },
+      {
+        title: 'Submit Threat Model',
+        element: document.querySelector('.submit_btn'),
+        intro: "When all of the questions have been answered, click on the 'Create Threat Model' button to complete the Threat Assessment."
+      },
+      {
+        intro: "Create Threat Model Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
 
 {% endblock %}
 
