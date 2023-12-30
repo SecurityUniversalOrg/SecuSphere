@@ -14,6 +14,7 @@ from vr.assets.model.regulations import Regulations
 from vr.assets.model.appenvironmentdata import AppEnvironmentData, AppEnvironmentDataSchema
 from vr.orchestration.model.cicdpipelines import CICDPipelines, CICDPipelinesSchema
 from vr.assets.model.appintegrations import AppIntegrations
+from vr.assessments.model.applicationregulations import ApplicationRegulations
 
 
 NAV = {
@@ -43,7 +44,7 @@ def edit_application(id):
             return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
         if request.method == 'POST':
             _set_application_config(request, id)
-            return str(200)
+            return redirect(url_for('assets.edit_application', id=id))
         app = BusinessApplications.query.with_entities(
             BusinessApplications.ID, BusinessApplications.ApplicationName, BusinessApplications.Description,
             BusinessApplications.AppValue, BusinessApplications.Version, BusinessApplications.InHouseDev,
@@ -65,18 +66,25 @@ def edit_application(id):
         product_types = ['Billing', 'Commerce', 'Internal', 'Research and Development', 'Security']
         all_slas = VulnerabilitySLAs.query.all()
         all_regs = Regulations.query.all()
+
+        app_regs = ApplicationRegulations.query.filter(ApplicationRegulations.ApplicationID==id).all()
+
+        NAV['appbar'] = 'settings'
         return render_template('assets/edit_application.html', user=user, NAV=NAV, app_data=app_data,
-                               product_types=product_types, all_slas=all_slas, all_regs=all_regs)
+                               product_types=product_types, all_slas=all_slas, all_regs=all_regs, app_regs=app_regs)
     except RuntimeError:
         return render_template(SERVER_ERR_STATUS), 500
 
 
 def _set_application_config(request, app_id):
+    all = request.form
     app_name = request.form.get('name')
-    description = request.form.get('description')
+    component_name = request.form.get('componentname')
+    description = request.form.get('description').replace('None', '')
     app_value = request.form.get('business_criticality')
-    version = request.form.get('initial_version')
-    data_types = request.form.get('data_types')
+    version = request.form.get('initial_version').replace('None', '')
+    data_types = request.form.getlist('data_types')
+    regulations = request.form.getlist('regulations')
     platform = request.form.get('platform')
     internet_access = request.form.get('internet_accessible')
     repo_url = request.form.get('repo_url')
@@ -106,11 +114,32 @@ def _set_application_config(request, app_id):
             BusinessApplications.Lifecycle: lifecycle,
             BusinessApplications.Origin: origin,
             BusinessApplications.UserRecords: user_records,
-            BusinessApplications.Revenue: revenue
+            BusinessApplications.Revenue: revenue,
+            BusinessApplications.ApplicationAcronym: component_name
         },
         synchronize_session=False)
     db_connection_handler(db)
 
+    _set_regulations_config(regulations, app_id)
+
+def _set_regulations_config(regulations, app_id):
+    app_regs = ApplicationRegulations.query.filter(ApplicationRegulations.ApplicationID==app_id).all()
+    for i in app_regs:
+        if str(i.RegulationID) not in regulations:
+            db.session.delete(i)
+            db.session.commit()
+    for i in regulations:
+        new = True
+        for j in app_regs:
+            if int(i) == j.RegulationID:
+                new = False
+        if new:
+            new_reg = ApplicationRegulations(
+                ApplicationID=app_id,
+                RegulationID=int(i)
+            )
+            db.session.add(new_reg)
+            db.session.commit()
 
 @assets.route("/add_application_environment/<app_id>", methods=['GET', 'POST'])
 @login_required

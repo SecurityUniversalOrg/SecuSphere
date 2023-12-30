@@ -16,17 +16,14 @@
 
         <div class="row hidden-xs">
             <div class="col-lg-12">
-                <ul class="breadcrumb main">
-                    <li class="">
-                        <a class="" href="/">Home</a>
-                    </li>
-                    <li class="">
-                        <a class="" href="#">Settings</a>
-                    </li>
-                    <li class="active">
-                        <a class="active" href="#">Edit Application</a>
-                    </li>
-                </ul>
+
+
+                <div class="dropdown pull-right">
+                    <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                        <i class="fa-solid fa-question"></i>
+                    </button>
+                </div>
+
             </div>
         </div>
         <!-- end of tabs -->
@@ -44,75 +41,41 @@
                     <script src="/static/tagulous/tagulous.js"></script>
                     <script src="/static/tagulous/adaptor/select2-4.js"></script>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="id_name" style="color:white;">Name<sup>*</sup></label>
+                        <label id="nav_app_name" class="col-sm-2 control-label" for="id_appname" style="color:white;">Application Name<sup>*</sup></label>
                         <div class="col-sm-10  ">
-                            <input type="text" name="name" maxlength="255" class="form-control" required="" id="id_name" value="{{ app_data.ApplicationName }}">
+                            <input type="text" name="name" maxlength="255" class="form-control" required="" id="id_appname" value="{{ app_data.ApplicationName }}">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="id_description" style="color:white;">Description<sup>*</sup></label>
+                        <label class="col-sm-2 control-label" for="id_componentname" style="color:white;">Component Name<sup>*</sup></label>
+                        <div class="col-sm-10  ">
+                            <input type="text" name="componentname" maxlength="255" class="form-control" required="" id="id_componentname" value="{{ app_data.Component }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_description" style="color:white;">Description</label>
                         <div class="col-sm-10  ">
                             <textarea name="description" cols="40" rows="10" class="form-control" id="req">{{ app_data.Description }}</textarea>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="id_initial_version" style="color:white;">Initial Version<sup>*</sup></label>
+                        <label class="col-sm-2 control-label" for="id_initial_version" style="color:white;">Initial Version</label>
                         <div class="col-sm-10  ">
-                            <input type="text" name="initial_version" maxlength="255" class="form-control" required="" id="id_initial_version" value="{{ app_data.Version }}">
+                            <input type="text" name="initial_version" maxlength="255" class="form-control" id="id_initial_version" value="{{ app_data.Version }}">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="id_repo_url" style="color:white;">Code Repository URL<sup>*</sup></label>
+                        <label class="col-sm-2 control-label" for="id_repo_url" style="color:white;">Code Repository URL</label>
                         <div class="col-sm-10  ">
-                            <input type="text" name="repo_url" maxlength="255" class="form-control" required="" id="id_repo_url" value="{{ app_data.RepoURL }}">
+                            <input type="text" name="repo_url" maxlength="255" class="form-control" id="id_repo_url" value="{{ app_data.RepoURL }}">
                         </div>
                     </div>
 
+
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="id_tags" style="color:white;">Tags
-                            <div class="fa fa-question-circle has-popover" data-trigger="hover"
-                               data-content="Add tags that help describe this product. Choose from the list or add new tags. Press Enter key to add."
-                               data-placement="right" data-container="body" data-original-title="" title="">
-                            </div>
-                        </label>
+                        <label class="col-sm-2 control-label" for="id_prod_type" style="color:white;">Product Type</label>
                         <div class="col-sm-10  ">
-                            <input type="text" name="application_tags" id="id_application_tags" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" for="id_product_manager" style="color:white;">Product manager</label>
-                        <div class="col-sm-10  ">
-                            <select name="product_manager" class="form-control selectpicker" id="id_product_manager" data-live-search="true"
-                                    data-container="body" style="width: 70%;">
-                                <option value="">---------</option>
-                                <option value="1" selected="">Admin User (admin)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" for="id_technical_contact" style="color:white;">Technical contact</label>
-                        <div class="col-sm-10  ">
-                            <select name="technical_contact" class="form-control selectpicker" id="id_technical_contact"
-                                    data-live-search="true" data-container="body" style="width: 70%;">
-                                <option value="">---------</option>
-                                <option value="1" selected="">Admin User (admin)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" for="id_team_manager" style="color:white;">Team manager</label>
-                        <div class="col-sm-10  ">
-                            <select name="team_manager" class="form-control selectpicker" id="id_team_manager"
-                                    data-live-search="true" data-container="body" style="width: 70%;">
-                                <option value="">---------</option>
-                                <option value="1" selected="">Admin User (admin)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" for="id_prod_type" style="color:white;">Product Type<sup>*</sup></label>
-                        <div class="col-sm-10  ">
-                            <select name="prod_type" class="form-control selectpicker" required="" id="id_prod_type"
+                            <select name="prod_type" class="form-control selectpicker" id="id_prod_type"
                                     data-live-search="true" data-container="body" style="width: 70%;">
                                 <option value="">---------</option>
                                 {% for i in product_types %}
@@ -139,7 +102,10 @@
                             <select name="regulations" class="form-control selectpicker" id="id_regulations" multiple=""
                                     data-live-search="true" data-container="body" style="width: 70%;">
                                 {% for i in all_regs %}
-                                    <option value="{{ i.ID }}" {% if i.ID == app_data.SlaID %}selected=""{% endif %}>{{ i.Acronym }} ({{ i.Jusisdiction }})</option>
+
+                                    <option value="{{ i.ID }}" {% for j in app_regs %}{% if i.ID == j.RegulationID %}selected=""{% endif %}{% endfor %}>{{ i.Acronym }} ({{ i.Jurisdiction }})</option>
+
+
                                 {% endfor %}
                             </select>
                         </div>
@@ -249,41 +215,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10 ">
-                            <div class="checkbox">
-                                <label style="color:white;">
-                                    <input type="checkbox" name="enable_simple_risk_acceptance"
-                                           id="id_enable_simple_risk_acceptance">
-                                    <span style="margin-left: 50px;">Enable simple risk acceptance</span>
-                                    <div class="fa fa-question-circle has-popover" data-trigger="hover"
-                                       data-content="Allows simple risk acceptance by checking/unchecking a checkbox."
-                                       data-placement="right" data-container="body" data-original-title="" title="">
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10 ">
-                            <div class="checkbox">
-                                <label style="color:white;">
-                                    <input type="checkbox" name="enable_full_risk_acceptance"
-                                           id="id_enable_full_risk_acceptance" checked="">
-                                    <span style="margin-left: 50px;">Enable full risk acceptance</span>
-                                    <div class="fa fa-question-circle has-popover" data-trigger="hover"
-                                       data-content="Allows full risk acceptance using a risk acceptance form, expiration date, uploaded proof, etc."
-                                       data-placement="right" data-container="body" data-original-title="" title="">
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+
 
 
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <input style="width: max-content;margin-left: 94px;margin-top: 1rem;" class="btn btn-primary" type="submit" value="Submit">
+                            <input style="width: max-content;margin-left: 94px;margin-top: 1rem;" class="btn btn-primary" type="submit" value="Submit" id="nav_submit_btn">
                         </div>
                     </div>
                 </form>
@@ -293,133 +230,55 @@
         </div>
     </div>
 
-<script src="/static/js/index.js"></script>
-<script src="/static/js/cvsscalc30_helptext.js"></script>
-<script src="/static/js/cvsscalc30.js"></script>
-<script src="/static/js/cvss_calculator.js"></script>
-<script type="application/javascript">
-            $(document).ready(function() {
-                disable_count = document.getElementById('disable_count').innerHTML
-                refresh = document.getElementById('alert_refresh').innerHTML
 
-                $('.has-popover').popover({'trigger':'hover'});
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Edit Application Page!  On this page, you can edit information about the Application component. Let's take a quick tour!"
+      },
+      {
+        title: 'Data Field',
+        element: document.querySelector('#nav_app_name'),
+        intro: "On the left, you will see the name of the data field."
+      },
+      {
+        title: 'Data Value',
+        element: document.querySelector('#id_appname'),
+        intro: "On the right, you can modify the value of the field."
+      },
+      {
+        title: 'Save Changes',
+        element: document.querySelector('#nav_submit_btn'),
+        intro: "Once you have updated the necessary fields, click on the 'Submit' button to save your changes."
+      },
+      {
+        intro: "Edit Application Page tour completed!"
+      },
 
-                    $('.dropdown-toggle-alerts').click(function() {
-                        get_alerts();
-                    });
 
-                    if (disable_count == "False") {
-                        if(refresh == 'True') {
-                            setInterval(function() {
-                                update_alertcount();
-                            }, 10000);
-                        } else {
-                            update_alertcount();
-                        }
-                    }
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
 
 
-                function update_alertcount() {
-                    $.get("/alerts/count", function (data) {
-                        if (data.count != $('#alert_count').text()) {
-                            $('#alert_count').text(data.count);
-                            $('#alert_count').removeClass().addClass('badge badge-count badge-count' + data.count);
-                        }
-                    });
-                }
+function startIntroTour() {
+    ijs.start();
+}
 
-                function htmlEscape(str) {
-                return str
-                    .replace(/\n/g, " ")
-                    .replace(/&/g, '&amp;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#39;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;');
-                }
-
-                function get_alerts() {
-                    $('.dropdown-alerts').html('<div class="text-center"><div class="fa fa-spin fa-spinner"></div></div>');
-                    $.get("/alerts/json?limit=12", function (data) {
-                        $('.dropdown-alerts').empty();
-                        $.each(data, function(i, elem) {
-                        var titleField = elem.fields.title ? elem.fields.title : elem.fields.description;
-                        var display_title = titleField.length < 50 ? titleField : titleField.trim().substring(0,50).trim(this) + '...';
-                        var description = elem.fields.description
-                        var display_description = description ? description.length < 100 ? description : description.trim().substring(0,100).trim(this) + '...': ''
-                        var dropdown_alert = "alert-list" + i;
-                        $('.dropdown-alerts').append('<li><div style="padding: 3px 20px;"><div class="fa fa-' + htmlEscape(elem.fields.icon) +
-                                                        ' fa-fw"></div><a href="' + htmlEscape(elem.fields.url) + '" id=' + dropdown_alert +
-                                                        ' title="' + htmlEscape(display_description) + '"></a><span class="pull-right text-muted small">' +
-                                                    htmlEscape(elem.fields.source) + '</span></div></li><li class="divider"></li>');
-                        $("#" + dropdown_alert).text(display_title);
-                        });
-
-                        if (data.length > 0) {
-                            $('.dropdown-alerts').append('<li><a class="text-center" href="/alerts"><strong>See All Alerts</strong>' +
-                                                        '<div class="fa fa-angle-right"></div></a></li>');
-                            $('.dropdown-alerts').append('<li><a class="text-center" href="/delete_alerts"><strong>Clear All Alerts</strong>' +
-                                                    '<div class="fa fa-angle-right"></div></a></li>');
-                        }
-                        else {
-                            $('.dropdown-alerts').append('<li class="text-center"><strong>No alerts found</strong></li>');
-                        }
-                    });
-                    update_alertcount()
-                }
-
-                $("#id_jiraform-jira_issue").on('paste', function(e) {
-                    var clipboardData = e.clipboardData || e.originalEvent.clipboardData || window.clipboardData;
-                    var pastedData = clipboardData.getData('text');
-
-                    $this = $(this)
-                    // if someone entered/pasted a full URL, we strip evertyhing until last '/'
-                    setTimeout(function (elem) {
-                        $this.val($this.val().substring($this.val().lastIndexOf("/") + 1));
-                    }, 100);
-                });
-
-                <!-- TODO not working with django tagulous which uses select2, break styling -->
-                <!-- $('#id_tags').select2({ -->
-                    <!-- 'placeholder': 'Select or add some tags...', -->
-                    <!-- 'no_results_text': "Tag not found, press TAB key to add.", -->
-                <!-- }); -->
-
-                $('select').not('#notification-scope').addClass('selectpicker');
-                $('.selectpicker').attr('data-live-search', 'true');
-                $('.selectpicker').attr('data-container', 'body');
-                $('.selectpicker').css('width', '70%');
-                $('.selectpicker').selectpicker('render');
-
-            });
-        </script>
-<script type="application/javascript" src="/static/easymde/dist/easymde.min.js"></script>
-<script type="application/javascript">
-        $(function () {
-            $("textarea").each(function (index, elem) {
-                if (elem.hasAttribute("required")) {
-                    elem.removeAttribute("required");
-                    elem.id = "req"
-                }
-
-                if(!$(elem).hasClass('select2-search__field')) {
-                    var mde = new EasyMDE({
-                        spellChecker: false,
-                        element: elem,
-                        autofocus: false,
-                        forceSync: true,
-                        toolbar: ["bold", "italic", "heading", "|",
-                            "quote", "unordered-list", "ordered-list", "|",
-                            "link", "image", "|",
-                            "table", "horizontal-rule", "code", "|",
-                            "guide"
-                        ]
-                    });
-                    mde.render();
-                }
-            });
-        });
-    </script>
+</script>
 
 {% endblock %}
 

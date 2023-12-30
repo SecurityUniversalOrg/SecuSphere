@@ -1,0 +1,186 @@
+<div class="modal fade" id="csvColumnExplanationModal" tabindex="-1" role="dialog" aria-labelledby="csvColumnExplanationModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content" style="width: 100%;">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="csvColumnExplanationModalLabel">CSV Column Explanation</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <!-- Vulnerability Name -->
+                                                        <h5>Vulnerability Name</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> The name of the vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> Example Vulnerability Name</p>
+
+                                                        <!-- CVE-ID -->
+                                                        <h5>CVE-ID</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> The Common Vulnerability Enumeration (CVE) Identifier for the vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> String values starting with "CVE-"</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> CVE-2023-36054</p>
+
+                                                        <!-- CWE-ID -->
+                                                        <h5>CWE-ID</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> The Common Weakness Enumeration (CWE) Identifier for the vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> String values starting with "CWE-"</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> CWE-89</p>
+
+                                                        <!-- Description -->
+                                                        <h5>Description</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> A description of the vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> Example Vulnerability Description</p>
+
+                                                        <!-- Severity -->
+                                                        <h5>Severity</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> The severity classification of the vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Low, Medium, High, Critical</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> High</p>
+
+                                                        <!-- Source -->
+                                                        <h5>Source</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> The tool source that identified the vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</pv>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> Snyk</p>
+
+                                                        <!-- Reference Name -->
+                                                        <h5>Reference Name</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> The optional reference name of any vulnerability finding references included.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> Example Vulnerability Reference Name</p>
+
+                                                        <!-- Reference URL -->
+                                                        <h5>Reference URL</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> The optional URL for the finding reference.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String starting with "http(s)"</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> https://www.example.com/vulnerability_context</p>
+
+                                                        <!-- Reference Tags -->
+                                                        <h5>Reference Tags</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> The optional Tags for the finding reference.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String (Comma separated values)</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Comma separated strings</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> security,third_party</p>
+
+                                                        <!-- Vulnerable File Name -->
+                                                        <h5>Vulnerable File Name</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> The name of the file related to the Vulnerability finding, if applicable.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> jquery.min.js</p>
+
+                                                        <!-- Sourcecode File Start Line -->
+                                                        <h5>Sourcecode File Start Line</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the start line in the file related to the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> Integer</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any Integer</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> 1</p>
+
+                                                        <!-- Sourcecode File Start Column -->
+                                                        <h5>Sourcecode File Start Column</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the start column in the file related to the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> Integer</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any Integer</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> 1</p>
+
+                                                        <!-- Sourcecode File End Line -->
+                                                        <h5>Sourcecode File End Line</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the end line in the file related to the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> Integer</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any Integer</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> 8</p>
+
+                                                        <!-- Sourcecode File End Column -->
+                                                        <h5>Sourcecode File End Column</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the end column in the file related to the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> Integer</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any Integer</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> 3</p>
+
+                                                        <!-- URI -->
+                                                        <h5>URI</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the URI related to the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String starting with "http(s)"</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> https://www.example.com/vulnerable_endpoint</p>
+
+                                                        <!-- HTML Method -->
+                                                        <h5>HTML Method</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the HTML Method related to the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any HTML Method</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> POST</p>
+
+                                                        <!-- HTML Request Parameters -->
+                                                        <h5>HTML Request Parameters</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the HTML request parameters related to the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> ?attack=yes</p>
+
+                                                        <!-- Attack -->
+                                                        <h5>Attack</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> An example or description of any attacks related to the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> https://www.example.com/vulnerable_endpoint?attack=yes</p>
+
+                                                        <!-- Evidence -->
+                                                        <h5>Evidence</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> Any available evidence that either validates or provides context for the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> POST https://www.example.com/vulnerable_endpoint?attack=yes</pv>
+
+                                                        <!-- Solution -->
+                                                        <h5>Solution</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> Information available to assist in remediation efforts for the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> Update to the latest version of the library.</p>
+
+                                                        <!-- Vulnerable Package -->
+                                                        <h5>Vulnerable Package</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the name of the imported package or library related to the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> jquery</p>
+
+                                                        <!-- Vulnerable File Path -->
+                                                        <h5>Vulnerable File Path</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the file path of the file or imported package related to the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> deb</p>
+
+                                                        <!-- Vulnerable Package Version -->
+                                                        <h5>Vulnerable Package Version</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> If applicable, the version of the Vulnerable package or imported library.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Any String</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> 2.2.2</p>
+
+                                                        <!-- Source Type -->
+                                                        <h5>Source Type</h5>
+                                                        <p class="modal_elem"><strong>Description:</strong> The testing type or category for the Vulnerability finding.</p>
+                                                        <p class="modal_elem"><strong>Field Type:</strong> String</p>
+                                                        <p class="modal_elem"><strong>Accepted Values:</strong> Secret, SCA, SAST, IAC, Container, Infrastructure, DAST, DASTAPI</p>
+                                                        <p class="modal_elem"><strong>Example:</strong> SCA</p>
+
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>

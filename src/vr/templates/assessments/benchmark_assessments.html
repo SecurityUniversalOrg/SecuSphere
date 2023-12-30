@@ -29,10 +29,18 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading tight">
-                                <h3 class="has-filters">
+                                <div class="clearfix">
+                                <h3 class="pull-left">
                                     Benchmark Assessments
 
                                 </h3>
+                                <div class="dropdown pull-right">
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
 
@@ -51,31 +59,31 @@
                                         <input type="hidden" id="val_per_page" value="{{ table_details['per_page'] }}">
                                         <input type="hidden" id="val_orderby" value="{{ table_details['orderby'] }}">
 
-                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                        <th id="nav_info" class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
                                             colspan="1" style="width: 142.783px;"
                                             aria-label="Name: activate to sort column ascending">
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                        <th id="nav_name" class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
                                             colspan="1" style="width: 142.783px;"
                                             aria-label="Name: activate to sort column ascending">Name
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                        <th id="nav_version" class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
                                             colspan="1" style="width: 169.417px;"
                                             aria-label="Version: activate to sort column ascending">Version
                                         </th>
-                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                        <th id="nav_add_date" class="text-center sorting" tabindex="0" aria-controls="components-table"
                                             rowspan="1" colspan="1" style="width: 147.783px;"
                                             aria-label="Active: activate to sort column ascending">Add Date
                                         </th>
-                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                        <th id="nav_assessed_by" class="text-center sorting" tabindex="0" aria-controls="components-table"
                                             rowspan="1" colspan="1" style="width: 147.783px;"
                                             aria-label="Active: activate to sort column ascending">Assessed By
                                         </th>
-                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                        <th id="nav_type" class="text-center sorting" tabindex="0" aria-controls="components-table"
                                             rowspan="1" colspan="1" style="width: 147.783px;"
                                             aria-label="Active: activate to sort column ascending">Type
                                         </th>
-                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                        <th id="nav_pass_count" class="text-center sorting" tabindex="0" aria-controls="components-table"
                                             rowspan="1" colspan="1" style="width: 147.783px;"
                                             aria-label="Active: activate to sort column ascending">Pass Count
                                         </th>
@@ -167,6 +175,80 @@ function fieldSorter(app_id, field_name, new_dir) {
   xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
   xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
 }
+</script>
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Benchmark Assessments Page!  On this page, you can view a list of previously conducted Benchmark Assessments. Let's take a quick tour!"
+      },
+      {
+        title: 'Benchmark Assessment Details Column',
+        element: document.querySelector('#nav_info'),
+        intro: "To view details about the specific Benchmark Assessment, click on the 'info' icon."
+      },
+      {
+        title: 'Benchmark Name Column',
+        element: document.querySelector('#nav_name'),
+        intro: "The name of the Benchmark is listed in this column."
+      },
+      {
+        title: 'Benchmark Version Column',
+        element: document.querySelector('#nav_version'),
+        intro: "The version of the Benchmark is shown in this column."
+      },
+      {
+        title: 'Add Date Column',
+        element: document.querySelector('#nav_add_date'),
+        intro: "The date that the Benchmark Assessment was completed is shown in this column."
+      },
+      {
+        title: 'Assessed By Column',
+        element: document.querySelector('#nav_assessed_by'),
+        intro: "The user that completed the Benchmark Assessment is shown in this column."
+      },
+      {
+        title: 'Type Column',
+        element: document.querySelector('#nav_type'),
+        intro: "The type of Benchmark Assessment is shown in this column."
+      },
+      {
+        title: 'Pass Count Column',
+        element: document.querySelector('#nav_pass_count'),
+        intro: "The number of rules that passed for Benchmark Assessment is shown in this column."
+      },
+      {
+        title: 'Pagination',
+        element: document.querySelector('.help_pagination'),
+        intro: "To scroll through multiple pages of listings and to adjust the entries per page, use the Pagination menu."
+      },
+      {
+        intro: "Benchmark Assessments Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
 </script>
 
 {% endblock %}

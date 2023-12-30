@@ -32,10 +32,20 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading tight">
-                                <h3 class="has-filters">
+                                <div class="clearfix">
+                                <h3 class="pull-left">
                                     Vulnerable Endpoints
 
                                 </h3>
+
+                                    <div class="dropdown pull-right">
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
+
                             </div>
 
                         </div>
@@ -59,11 +69,11 @@
 
 
 
-                                    <th>Endpoint&nbsp;</th>
+                                    <th id="nav_endpoint">Endpoint&nbsp;</th>
 
 
-                                    <th class="text-center">Active Verified Findings</th>
-                                    <th>Status</th>
+                                    <th id="nav_active_verified_findings" class="text-center">Active Verified Findings</th>
+                                    <th id="nav_status">Status</th>
                                 </tr>
 
                                 {% for i in entities %}
@@ -157,6 +167,60 @@ function fieldSorter(app_id, field_name, new_dir) {
   xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
   xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
 }
+</script>
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Vulnerable Endpoints Page!  On this page, you can view a summary of the vulnerability findings grouped by application endpoints. Let's take a quick tour!"
+      },
+      {
+        title: 'Endpoint Column',
+        element: document.querySelector('#nav_endpoint'),
+        intro: "The URI of the application endpoint is shown here."
+      },
+      {
+        title: 'Active Verified Findings Column',
+        element: document.querySelector('#nav_active_verified_findings'),
+        intro: "This column shows the total count of findings for application endpoint.  You can click on the link to view the individual findings."
+      },
+      {
+        title: 'Status Column',
+        element: document.querySelector('#nav_status'),
+        intro: "The vulnerability status of the source code file."
+      },
+      {
+        title: 'Pagination',
+        element: document.querySelector('.help_pagination'),
+        intro: "To scroll through multiple pages of listings and to adjust the entries per page, use the Pagination menu."
+      },
+      {
+        intro: "Vulnerable Endpoints Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
 </script>
 
 {% endblock %}

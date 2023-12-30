@@ -57,6 +57,18 @@
                                         <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#filterModal">
                                             <span class="fa fa-filter"></span> Filter
                                         </button>
+
+                                        <button class="btn btn-success" type="button" data-toggle="modal" data-target="#csvModal">
+                                            <span class="fa fa-upload"></span> CSV Template & Upload
+                                        </button>
+
+                                        <!-- CSV Template and Upload Modal -->
+                                        {% include "vulns/csv_upload_modal.html" %}
+
+                                        <!-- CSV Column Explanation Modal -->
+                                        {% include "vulns/csv_upload_explanation_modal.html" %}
+
+
                                     </div>
                                 </h3>
 

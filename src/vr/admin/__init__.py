@@ -12,7 +12,6 @@ from vr.admin.routes import unauth_403
 from vr.admin.routes import forgotpw
 from vr.admin.routes import forgotun
 from vr.admin.routes import users
-from vr.admin.routes import onboarding
 from vr.admin.routes import messages
 from vr.admin.routes import documentation
 from vr.admin.routes import settings

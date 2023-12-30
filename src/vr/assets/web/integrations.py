@@ -155,7 +155,7 @@ def check_jira_key(jira_key, integration):
 @login_required
 def add_app_integration(app_id):
     try:
-        NAV['curpage'] = {"name": "All Integrations"}
+        NAV['curpage'] = {"name": "Add App Integration"}
         role_req = ['Admin']
         user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req)
         if status == 401:

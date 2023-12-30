@@ -30,10 +30,18 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading tight">
-                                <h3 class="has-filters">
+                                <div class="clearfix">
+                                <h3 class="pull-left">
                                     Branches
 
                                 </h3>
+
+                                <div class="dropdown pull-right">
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -60,7 +68,11 @@
                                         </th>
                                         <th class="text-center sorting" tabindex="0" aria-controls="components-table"
                                             rowspan="1" colspan="1" style="width: 121.367px;"
-                                            aria-label="Total: activate to sort column ascending">Total Vulns
+                                            aria-label="Total: activate to sort column ascending">Closed Vulns
+                                        </th>
+                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                            rowspan="1" colspan="1" style="width: 121.367px;"
+                                            aria-label="Total: activate to sort column ascending">Open Vulns
                                         </th>
                                     </tr>
                                     </thead>
@@ -68,8 +80,9 @@
 
                                     {% for i in entities %}
                                     <tr class="odd">
-                                        <td class="text-center">{{ i.Branch }}</td>
-                                        <td class="text-center">{% if i.Branch %}<a href="/filtered_findings/{{ app_data.ID }}/Branch/{{ i.Branch.replace('/', '_') }}">{% endif %}{{ i.findings_cnt }}{% if i.Branch %}</a>{% endif %}</td>
+                                        <td class="text-center nav_branch">{{ i.Branch }}</td>
+                                        <td class="text-center nav_closed">{% if i.Branch %}<a href="/filtered_findings/{{ app_data.ID }}/Branch&Status/{{ i.Branch.replace('/', '_') }}&Closed">{% endif %}{{ i.closed_findings_cnt }}{% if i.Branch %}</a>{% endif %}</td>
+                                        <td class="text-center nav_open">{% if i.Branch %}<a href="/filtered_findings/{{ app_data.ID }}/Branch&Status/{{ i.Branch.replace('/', '_') }}&Open">{% endif %}{{ i.open_findings_cnt }}{% if i.Branch %}</a>{% endif %}</td>
                                     </tr>
                                     {% endfor %}
 
@@ -144,6 +157,60 @@ function fieldSorter(app_id, field_name, new_dir) {
   xhttp.setRequestHeader("X-CSRF-Token", csrf_token);
   xhttp.send("field_name=" + field_name + "&cur_page=" + cur_page + "&cur_per_page=" + cur_per_page + "&cur_orderby=" + cur_orderby + "&new_dir=" + new_dir);
 }
+</script>
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Source Code Branches Page!  On this page, you can view a summary of the vulnerability findings grouped by source code branch. Let's take a quick tour!"
+      },
+      {
+        title: 'Branch Name',
+        element: document.querySelector('.nav_branch'),
+        intro: "The name of the specific Branch is shown here."
+      },
+      {
+        title: 'Number of Closed Vulnerabilities',
+        element: document.querySelector('.nav_closed'),
+        intro: "The number of closed vulnerabilities for the specific Branch is listed here.  You can click on the link to view the individual findings."
+      },
+      {
+        title: 'Number of Open Vulnerabilities',
+        element: document.querySelector('.nav_open'),
+        intro: "The number of open vulnerabilities for the specific Branch is listed here.  You can click on the link to view the individual findings."
+      },
+      {
+        title: 'Pagination',
+        element: document.querySelector('.help_pagination'),
+        intro: "To scroll through multiple pages of listings and to adjust the entries per page, use the Pagination menu."
+      },
+      {
+        intro: "Source Code Branches Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
 </script>
 
 {% endblock %}

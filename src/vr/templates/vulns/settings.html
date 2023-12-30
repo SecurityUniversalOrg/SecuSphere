@@ -51,12 +51,19 @@
         <!-- /.row -->
 
         <h1 style="color: azure;">Edit Security Gate Thresholds</h1>
+        <div class="dropdown pull-right">
+            <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                <i class="fa-solid fa-question"></i>
+            </button>
+        </div>
+
+
         <form action="{{ url_for('vulns.update_securitygatesettings') }}" method="post">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <!-- Repeat this block for each setting -->
             {% for field in settings.__table__.columns %}
                 {% if field.name != 'ID' and field.name != 'Name' and field.name != 'AddDate' %}
-                <label for="{{ field.name }}">
+                <label for="{{ field.name }}" class="nav_category_name">
                     {{ field.name.replace('Thresh',' Threshold').replace('Low',' Low').replace('Medium',' Medium').replace('High',' High').replace('Critical',' Critical').replace('Sca',' SCA').replace('Dast',' DAST').replace('Sast',' SAST').replace('Iac',' IAC').replace('Secrets',' Secrets').replace('Container',' Container').replace('Infrastructure',' Infrastructure').replace('Api',' API') }}:
                 </label>
                 <!-- Use the 'default' filter to provide a fallback value if the attribute is not set -->
@@ -70,6 +77,51 @@
 
 
 <script>
+
+</script>
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Edit Security Gate Thresholds Page!  On this page, you can modify the Global CI/CD Pipeline Security Settings. Let's take a quick tour!"
+      },
+      {
+        title: 'Category Name',
+        element: document.querySelector('.nav_category_name'),
+        intro: "The category name is listed first.  In this example, we are configuring the threshold for SCA Findings with a Low severity rating."
+      },
+      {
+        title: 'Threshold Value',
+        element: document.querySelector('#ThreshScaLow'),
+        intro: "Add an integer value to set the threshold for the specific category.  Leaving the category blank means that a Gate will NOT be enforced for that category."
+      },
+      {
+        title: 'Save Changes',
+        element: document.querySelector('.submit-button'),
+        intro: "To save the changes to the Security Gate Thresholds, click on the 'Update Settings' button."
+      },
+      {
+        intro: "Edit Security Gate Thresholds Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
 
 </script>
 

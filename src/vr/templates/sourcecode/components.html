@@ -30,10 +30,19 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading tight">
-                                <h3 class="has-filters">
+                                <div class="clearfix">
+                                <h3 class="pull-left">
                                     Imports
 
                                 </h3>
+
+                                    <div class="dropdown pull-right">
+                                        <button class="btn btn-primary" type="button" id="help_btn" onclick="startIntroTour()">
+                                            <i class="fa-solid fa-question"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -53,15 +62,15 @@
                                         <input type="hidden" id="val_per_page" value="{{ table_details['per_page'] }}">
                                         <input type="hidden" id="val_orderby" value="{{ table_details['orderby'] }}">
 
-                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                        <th id="nav_name" class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
                                             colspan="1" style="width: 142.783px;"
                                             aria-label="Name: activate to sort column ascending">Name
                                         </th>
-                                        <th class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
+                                        <th id="nav_version" class="sorting" tabindex="0" aria-controls="components-table" rowspan="1"
                                             colspan="1" style="width: 169.417px;"
                                             aria-label="Version: activate to sort column ascending">Version
                                         </th>
-                                        <th class="text-center sorting" tabindex="0" aria-controls="components-table"
+                                        <th id="nav_total_vulnerabilities" class="text-center sorting" tabindex="0" aria-controls="components-table"
                                             rowspan="1" colspan="1" style="width: 121.367px;"
                                             aria-label="Total: activate to sort column ascending">Total Vulnerabilities
                                         </th>
@@ -149,5 +158,59 @@ function fieldSorter(app_id, field_name, new_dir) {
 }
 </script>
 
+
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+{#  Scripts  #}
+<script>
+var ijs = introJs()
+  ijs.setOptions({
+    steps: [
+      {
+        intro: "Welcome to the Source Code Imports Page!  On this page, you can view a summary of the vulnerability findings grouped by source code library or import. Let's take a quick tour!"
+      },
+      {
+        title: 'Library or Import Name',
+        element: document.querySelector('#nav_name'),
+        intro: "The name of the source code library or import is shown here."
+      },
+      {
+        title: 'Version Column',
+        element: document.querySelector('#nav_version'),
+        intro: "The specific version of the source code library or import."
+      },
+      {
+        title: 'Total Vulnerabilities Column',
+        element: document.querySelector('#nav_total_vulnerabilities'),
+        intro: "The number of total vulnerabilities for the specific source code library or import is listed here.  You can click on the link to view the individual findings."
+      },
+      {
+        title: 'Pagination',
+        element: document.querySelector('.help_pagination'),
+        intro: "To scroll through multiple pages of listings and to adjust the entries per page, use the Pagination menu."
+      },
+      {
+        intro: "Source Code Imports Page tour completed!"
+      },
+
+
+    ]
+  })
+  ijs.onchange(function(targetElement) {
+    console.log(this._currentStep)
+      if (this._currentStep === 3) {
+          console.log(document.querySelector('#nav_metrics').classList)
+          document.querySelector('#nav_metrics').classList.add('open');
+          console.log(document.querySelector('#nav_metrics').classList)
+    }
+  });
+
+
+function startIntroTour() {
+    ijs.start();
+}
+
+</script>
 
 {% endblock %}

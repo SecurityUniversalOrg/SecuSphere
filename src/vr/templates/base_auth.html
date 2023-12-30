@@ -209,20 +209,21 @@
       <a href="{{ url_for('admin.profile') }}" class="menu_main_row menu_btn">
           <div class="fas fa-address-card side_menu_btn"></div>Profile
       </a>
-      
+
+      {% if user.is_admin %}
       <button id="admin_menu" class="menu_main_row dropdown_btn">
           <div class="fab fa-expeditedssl side_menu_btn"></div>Admin
           <div class="fa fa-caret-down"></div>
       </button>
       <div class="dropdown_container">
-        <a id="onboarding_tab" href="{{ url_for('admin.onboarding') }}" class="menu_child_btn reg">Onboarding</a>
-        {% if user.is_admin %}
+
           <a href="{{ url_for('admin.users') }}" class="menu_child_btn reg">Users</a>
           <a href="{{ url_for('admin.create_client') }}" class="menu_child_btn reg">Create App Client</a>
           <a href="{{ url_for('vulns.securitygatesettings') }}" class="menu_child_btn reg">Security Gate Thresholds</a>
           <a href="{{ url_for('admin.settings') }}" class="menu_child_btn reg">Settings</a>
-        {% endif %}
+
       </div>
+      {% endif %}
 
 
       <button class="menu_main_row dropdown_btn">
