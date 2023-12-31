@@ -299,21 +299,7 @@ pipeline {
     post {
         always {
             script {
-                def reportProcessor = new PipelineReportProcessor(this)
-                reportProcessor.processReport('pipeline_stage_report.json')
-
-                def reportFile = 'pipeline_stage_report.json'
-                archiveArtifacts artifacts: reportFile, allowEmptyArchive: true
-
-                def stageConfig = jslReadYamlConfig('post')
-                def recipientEmails = stageConfig?.recipientEmails
-                def recipientTeamsChannels = stageConfig?.recipientTeamsChannels
-
-                jslSendMicrosoftTeamsPipelineReportMessage(recipientTeamsChannels)
-                jslSendMicrosoftTeamsMessage(recipientTeamsChannels)
-                jslSendPipelineStageReportEmail(recipientEmails)
-                jslSendSecurityReportEmail(recipientEmails)
-                jslSendPipelineReport()
+                jslPipelineReporter()
             }
         }
     }
