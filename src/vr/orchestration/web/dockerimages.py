@@ -18,6 +18,7 @@ APP_VIEWER = "Application Viewer"
 LOGIN_URL = "admin.login"
 UNAUTH_URL = "403.html"
 SERVER_ERR_URL = "500.html"
+VULN_STATUS_IS_NOT_CLOSED = "Vulnerabilities.Status NOT LIKE 'Closed-%' AND Vulnerabilities.Status NOT LIKE 'Open-RiskAccepted-%'"
 
 
 @orchestration.route("/all_dockerimages", methods=['GET', 'POST'])
@@ -128,6 +129,7 @@ def dockerimages(appid):
             DockerImages.ID, DockerImages.AddDate, DockerImages.ImageName, DockerImages.ImageTag, DockerImages.ImageId,
             DockerImages.AppIdList, func.count(Vulnerabilities.VulnerabilityID).label('total_vulnerabilities')
         ).join(Vulnerabilities, Vulnerabilities.DockerImageId == DockerImages.ID) \
+            .filter(text(VULN_STATUS_IS_NOT_CLOSED)) \
             .filter(text(f"DockerImages.AppIdList LIKE '%{appid},%'")) \
             .group_by(DockerImages.ID) \
             .order_by(text(orderby)) \

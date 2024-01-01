@@ -22,6 +22,7 @@ import re
 
 ERROR_RESP = "Error: Invalid API Request"
 
+
 @api.route("/api/vulnerabilities")
 @require_oauth('read:vulnerabilities')
 def get_vulnerabilities():
@@ -93,12 +94,21 @@ def update_vulnerabilities_status(app_cmdb_id, scan_id, req_raw):
         if i.ID not in scans_to_check:
             scans_to_check.append(i.ID)
         scans_to_check = sorted(scans_to_check, reverse=True)
-
-    previous_vulns = Vulnerabilities\
-        .query\
-        .join(VulnerabilityScans, VulnerabilityScans.ID==Vulnerabilities.ScanId)\
-        .filter(text(f"(Vulnerabilities.Status NOT LIKE 'Closed-%' OR Vulnerabilities.Status='Closed-Mitigated') AND (Vulnerabilities.ApplicationId='{app_cmdb_id}') AND (Vulnerabilities.SourceType='{scan_type.split('CI/CD-')[1]}') AND (Vulnerabilities.InitialScanId!='{scan_id}')"))\
-        .all()
+    if req_raw['scanType'] == 'Container':
+        if 'dockerImg' in req_raw:
+            previous_vulns = Vulnerabilities \
+                .query \
+                .join(VulnerabilityScans, VulnerabilityScans.ID == Vulnerabilities.ScanId) \
+                .join(DockerImages, DockerImages.ID == Vulnerabilities.DockerImageId) \
+                .filter(text(
+                f"(Vulnerabilities.Status NOT LIKE 'Closed-%' OR Vulnerabilities.Status='Closed-Mitigated') AND (Vulnerabilities.ApplicationId='{app_cmdb_id}') AND (Vulnerabilities.SourceType='{scan_type.split('CI/CD-')[1]}') AND (Vulnerabilities.InitialScanId!='{scan_id}') AND (DockerImages.ImageName=='{req_raw['dockerImg']}')")) \
+                .all()
+    else:
+        previous_vulns = Vulnerabilities\
+            .query\
+            .join(VulnerabilityScans, VulnerabilityScans.ID==Vulnerabilities.ScanId)\
+            .filter(text(f"(Vulnerabilities.Status NOT LIKE 'Closed-%' OR Vulnerabilities.Status='Closed-Mitigated') AND (Vulnerabilities.ApplicationId='{app_cmdb_id}') AND (Vulnerabilities.SourceType='{scan_type.split('CI/CD-')[1]}') AND (Vulnerabilities.InitialScanId!='{scan_id}')"))\
+            .all()
     closed_cnt = 0
     new_vulns = req_raw['findings']
 
@@ -107,7 +117,7 @@ def update_vulnerabilities_status(app_cmdb_id, scan_id, req_raw):
         prev_id_check = i.VulnerabilityID
         for j in new_vulns:
             new_id_check = j['b_VulnerabilityID'] if 'b_VulnerabilityID' in j else None
-            if prev_id_check == new_id_check:
+            if (prev_id_check == new_id_check) and (i.SourceType == j['SourceType']):
                 found = True
                 break
         if not found and i.Status != "Closed-Mitigated":

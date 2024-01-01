@@ -1,156 +1,156 @@
 Endpoint,Methods
-/create_client,GET
-/api/documentation,GET
-/forgotpw,"GET, POST"
-/resetpw/<id>/<token>,"GET, POST"
-/forgotun,"GET, POST"
-/displayun/<id>/<token>,"GET, POST"
 /,GET
-/login,"GET, POST"
-,GET
+/add_app_integration/<app_id>,GET
+/add_application,"GET, POST"
+/add_application_environment/<app_id>,"GET, POST"
+/add_benchmark_attachment,POST
+/add_benchmark_note,POST
+/add_cicd_pipeline/<app_id>,"GET, POST"
+/add_cicd_pipeline_stage/<appid>,GET
+/add_contact/<appid>,POST
+/add_integration,"GET, POST"
+/add_issue_dispo,POST
+/add_issue_note,POST
+/add_new_user,POST
+/add_service_ticket/<app_id>,POST
+/add_user_role,POST
+/all_app_integrations/<app_id>,GET
+/all_app_vulns_filtered/<app_name>/<type>/<val>,"GET, POST"
+/all_app_vulns_filtered/<app_name>/<type>/<val>/csv,"GET, POST"
+/all_app_vulns_filtered/<app_name>/<type>/<val>/export,"GET, POST"
+/all_application_benchmarks/<id>,"GET, POST"
+/all_application_environments/<app_id>,GET
+/all_application_metrics,GET
+/all_applications,"GET, POST"
+/all_applications_filtered/<type>/<val>,"GET, POST"
+/all_cheatsheets,GET
+/all_cicd_pipelines/<app_id>,GET
+/all_dockerimages,"GET, POST"
+/all_git_repos,GET
+/all_integrations,GET
+/all_pipeline_jobs,"GET, POST"
+/all_pipelines,GET
+/all_regulations,GET
+/all_service_tickets,"GET, POST"
+/all_vulnerabilities,"GET, POST"
+/all_vulnerabilities/csv,"GET, POST"
+/all_vulnerabilities/export,"GET, POST"
+/all_vulnerabilities_filtered/<type>/<val>,"GET, POST"
+/all_vulnerabilities_filtered/<type>/<val>/csv,"GET, POST"
+/all_vulnerabilities_filtered/<type>/<val>/export,"GET, POST"
+/analyze,POST
+/api/add_application_profile/<repo_name>,POST
+/api/add_loc,POST
+/api/add_sg_results,POST
+/api/add_vulnerabilities,POST
+/api/check_security_scan_status/<report_id>,GET
+/api/closeout_security_scan/<report_id>,POST
+/api/delete_vulnerabilities,POST
+/api/documentation,GET
+/api/edit_vulnerabilities,POST
+/api/get_application_profile/<app_id>,GET
+/api/jenkins_pipeline_reporter,POST
+/api/jenkins_webhook,POST
+/api/oauth/authorize,"GET, POST"
+/api/oauth/revoke,POST
+/api/oauth/token,POST
+/api/onboard_new_application,POST
+/api/openapi.yaml,GET
+/api/parallel_security_scan,POST
+/api/search_vulnerabilities,POST
+/api/vulnerabilities,GET
+/applevel_metrics/<app_name>,GET
+/application/<component_id>/<app_type>/<entity_name>,GET
+/application/<id>/csv,GET
+/application/<id>/export,GET
+/application_benchmarks/<app_id>/<id>,"GET, POST"
+/application_endpoints/<id>,"GET, POST"
+/application_issues/<id>,"GET, POST"
+/application_KPIs/<app_name>,"GET, POST"
+/application_profile/<app_id>,GET
+/assessment_results/<app_id>/<id>,GET
+/benchmark_assessments/<id>,"GET, POST"
+/branches/<id>,"GET, POST"
+/cheatsheets/<sheet_name>,GET
 /check_if_mfa,POST
+/component_KPIs/<app_id>,"GET, POST"
+/components/<id>,"GET, POST"
+/contacts/<id>,GET
+/create_client,GET
+/dashboard,GET
+/delete_application/<id>,GET
+/delete_benchmark_attachment,POST
+/delete_benchmark_note,POST
+/delete_contact,POST
+/delete_issue_note,POST
+/devopsscorecard/<id>,"GET, POST"
+/display_mfa_qr,GET
+/displayun/<id>/<token>,"GET, POST"
+/dockerimages/<appid>,"GET, POST"
+/download_benchmark_attachment/<file_id>,GET
+/edit_application/<id>,"GET, POST"
+/edit_application_environment/<app_id>/<env_id>,"GET, POST"
+/edit_profile,"GET, POST"
+/filtered_findings/<appid>/<type>/<val>,"GET, POST"
+/filtered_findings/<appid>/<type>/<val>/csv,"GET, POST"
+/filtered_findings/<appid>/<type>/<val>/export,"GET, POST"
+/finding/<appid>/<id>,GET
+/finding/<appid>/<id>/request_review,GET
+/forgotpw,"GET, POST"
+/forgotun,"GET, POST"
+/get_cicd_pipeline_stage_data,POST
+/global_KPIs,"GET, POST"
+/issue/<appid>/<id>,GET
+/login,"GET, POST"
 /logout,GET
 /logout,GET
 /messages,"GET, POST"
-/suppress_msg,POST
+/metrics/<id>,GET
+/mfa_qrcode,GET
+/mobile_qrcode,GET
+/mobile_sync,GET
+/on_demand_testing,POST
 /onboarding,GET
 /onboarding_suppress,GET
+/open_findings/<id>,"GET, POST"
+/open_findings/<id>/csv,"GET, POST"
+/open_findings/<id>/export,"GET, POST"
+/open_findings_for_scan/<appid>/<id>,"GET, POST"
+/open_findings_for_scan/<appid>/<id>/csv,"GET, POST"
+/open_findings_for_scan/<appid>/<id>/export,"GET, POST"
+/pipeline_generator/<appid>,GET
+/pipeline_jobs/<id>,"GET, POST"
+/profile,GET
+/qrcode,GET
 /register,GET
+/register_submit,POST
 /register_user/<token>,GET
 /register_user_submit,POST
-/register_submit,POST
-/qrcode,GET
-/settings,GET
-/unauth_403,GET
-/users,"GET, POST"
-/add_user_role,POST
-/remove_user_role,POST
-/remove_user_appview_role,POST
-/remove_user,POST
-/add_new_user,POST
-/edit_profile,"GET, POST"
-/update_mfa_status,POST
-/display_mfa_qr,GET
-/mobile_sync,GET
-/profile,GET
-/mobile_qrcode,GET
-/mfa_qrcode,GET
-/api/oauth/authorize,"GET, POST"
-/api/oauth/token,POST
-/api/oauth/revoke,POST
-/api/openapi.yaml,GET
-/api/onboard_new_application,POST
-/api/add_loc,POST
-/api/get_application_profile/<app_id>,GET
-/api/add_application_profile/<repo_name>,POST
-/api/jenkins_webhook,POST
-/api/jenkins_pipeline_reporter,POST
-/api/parallel_security_scan,POST
-/api/check_security_scan_status/<report_id>,GET
-/api/closeout_security_scan/<report_id>,POST
-/api/add_sg_results,POST
-/api/vulnerabilities,GET
-/api/search_vulnerabilities,POST
-/api/add_vulnerabilities,POST
-/api/edit_vulnerabilities,POST
-/api/delete_vulnerabilities,POST
-/all_application_benchmarks/<id>,"GET, POST"
-/benchmark_assessments/<id>,"GET, POST"
-/application_benchmarks/<app_id>/<id>,"GET, POST"
-/assessment_results/<app_id>/<id>,GET
-/add_benchmark_note,POST
-/delete_benchmark_note,POST
-/add_benchmark_attachment,POST
-/delete_benchmark_attachment,POST
-/download_benchmark_attachment/<file_id>,GET
-/submit_risk_profile,POST
-/all_applications,"GET, POST"
-/all_applications_filtered/<type>/<val>,"GET, POST"
-/application/<component_id>/<app_type>/<entity_name>,GET
-/application/<id>/export,GET
-/application/<id>/csv,GET
-/add_application,"GET, POST"
-/application_issues/<id>,"GET, POST"
-/delete_application/<id>,GET
-/application_endpoints/<id>,"GET, POST"
-/add_integration,"GET, POST"
-/all_integrations,GET
-/validate_integration,POST
-/add_app_integration/<app_id>,GET
-/submit_app_integration/<app_id>,POST
-/all_app_integrations/<app_id>,GET
 /remove_app_integration,POST
-/all_regulations,GET
-/edit_application/<id>,"GET, POST"
-/add_application_environment/<app_id>,"GET, POST"
-/all_application_environments/<app_id>,GET
 /remove_application_environment,POST
-/edit_application_environment/<app_id>/<env_id>,"GET, POST"
-/add_cicd_pipeline/<app_id>,"GET, POST"
-/all_cicd_pipelines/<app_id>,GET
 /remove_cicd_pipeline,POST
-/contacts/<id>,GET
-/add_contact/<appid>,POST
-/delete_contact,POST
-/all_pipelines,GET
-/pipeline_generator/<appid>,GET
-/analyze,POST
-/submit,POST
-/all_dockerimages,"GET, POST"
-/dockerimages/<appid>,"GET, POST"
-/all_pipeline_jobs,"GET, POST"
-/pipeline_jobs/<id>,"GET, POST"
-/add_cicd_pipeline_stage/<appid>,GET
-/get_cicd_pipeline_stage_data,POST
-/validate_cicd_pipeline_stage/<appid>,POST
-/branches/<id>,"GET, POST"
-/all_cheatsheets,GET
-/cheatsheets/<sheet_name>,GET
-/all_git_repos,GET
-/components/<id>,"GET, POST"
-/all_service_tickets,"GET, POST"
-/issue/<appid>/<id>,GET
-/add_service_ticket/<app_id>,POST
-/sourcecode_files/<id>,"GET, POST"
-/threat_modeler/<id>,"GET, POST"
-/threat_assessments/<id>,"GET, POST"
-/threat_assessment/<appid>/<id>,GET
-/dashboard,GET
-/devopsscorecard/<id>,"GET, POST"
-/open_findings/<id>,"GET, POST"
-/open_findings/<id>/export,"GET, POST"
-/open_findings/<id>/csv,"GET, POST"
-/open_findings_for_scan/<appid>/<id>,"GET, POST"
-/open_findings_for_scan/<appid>/<id>/export,"GET, POST"
-/open_findings_for_scan/<appid>/<id>/csv,"GET, POST"
-/finding/<appid>/<id>/request_review,GET
-/finding/<appid>/<id>,GET
-/filtered_findings/<appid>/<type>/<val>,"GET, POST"
-/filtered_findings/<appid>/<type>/<val>/export,"GET, POST"
-/filtered_findings/<appid>/<type>/<val>/csv,"GET, POST"
-/add_issue_dispo,POST
-/add_issue_note,POST
-/delete_issue_note,POST
-/metrics/<id>,GET
-/all_application_metrics,GET
-/applevel_metrics/<app_name>,GET
-/application_KPIs/<app_name>,"GET, POST"
-/component_KPIs/<app_id>,"GET, POST"
-/global_KPIs,"GET, POST"
+/remove_user,POST
+/remove_user_appview_role,POST
+/remove_user_role,POST
+/resetpw/<id>/<token>,"GET, POST"
 /securitygatescorecard/<id>,GET
 /securitygatesettings,GET
+/settings,GET
+/sourcecode_files/<id>,"GET, POST"
+/submit,POST
+/submit_app_integration/<app_id>,POST
+/submit_risk_profile,POST
+/suppress_msg,POST
+/threat_assessment/<appid>/<id>,GET
+/threat_assessments/<id>,"GET, POST"
+/threat_modeler/<id>,"GET, POST"
+/unauth_403,GET
+/update_mfa_status,POST
 /update_securitygatesettings,POST
-/vulnerability_scans/<id>,"GET, POST"
-/on_demand_testing,POST
-/application_profile/<app_id>,GET
+/users,"GET, POST"
+/validate_cicd_pipeline_stage/<appid>,POST
+/validate_integration,POST
 /visual_pipeline/<id>,GET
 /visual_vulnerabilities/<id>,GET
-/all_vulnerabilities,"GET, POST"
-/all_vulnerabilities/export,"GET, POST"
-/all_vulnerabilities/csv,"GET, POST"
-/all_vulnerabilities_filtered/<type>/<val>,"GET, POST"
-/all_vulnerabilities_filtered/<type>/<val>/export,"GET, POST"
-/all_vulnerabilities_filtered/<type>/<val>/csv,"GET, POST"
-/all_app_vulns_filtered/<app_name>/<type>/<val>,"GET, POST"
-/all_app_vulns_filtered/<app_name>/<type>/<val>/export,"GET, POST"
-/all_app_vulns_filtered/<app_name>/<type>/<val>/csv,"GET, POST"
+/vulnerability_scans/<id>,"GET, POST"
+,GET
