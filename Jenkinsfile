@@ -316,6 +316,7 @@ pipeline {
             agent {
                 docker {
                     image 'securityuniversal/jenkins-deploy-agent:latest'
+                    args '--group-add 999'
                 }
             }
             when {
