@@ -51,7 +51,7 @@ pipeline {
         stage('Unit Testing') {
             agent {
                 docker {
-                    image 'securityuniversal/jenkins-python-agent:latest'
+                    image 'securityuniversal/jenkins:latest'
                 }
             }
             when {
