@@ -34,7 +34,7 @@ def _init_db(db=None, app=None):
 
     class User(UserMixin, db.Model):
         __tablename__ = 'User'
-        extend_existing = True
+        __table_args__ = {'extend_existing': True}
         id = db.Column(db.Integer, primary_key=True)
         is_active = db.Column('is_active', db.Boolean(), nullable=False, server_default='1')
         is_admin = db.Column('is_admin', db.Boolean(), nullable=False, server_default='0')
@@ -78,6 +78,7 @@ def _init_db(db=None, app=None):
     # Define the Role data-model
     class UserRoles(db.Model):
         __tablename__ = 'UserRoles'
+        __table_args__ = {'extend_existing': True}
         id = db.Column(db.Integer(), primary_key=True)
         name = db.Column(db.String(50), unique=True)
         description = db.Column(db.String(200))
@@ -87,6 +88,7 @@ def _init_db(db=None, app=None):
     # Define the UserRoles association table
     class UserRoleAssignments(db.Model):
         __tablename__ = 'UserRoleAssignments'
+        __table_args__ = {'extend_existing': True}
         id = db.Column(db.Integer(), primary_key=True)
         user_id = db.Column(db.Integer(), db.ForeignKey(USER_ID, ondelete='CASCADE'))
         role_id = db.Column(db.Integer(), db.ForeignKey('UserRoles.id', ondelete='CASCADE'))
@@ -99,6 +101,7 @@ def _init_db(db=None, app=None):
 
     class EntityPermissions(db.Model):
         __tablename__ = 'EntityPermissions'
+        __table_args__ = {'extend_existing': True}
         ID = db.Column(db.Integer, primary_key=True)
         AddDate = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
         UserID = db.Column(db.Integer, db.ForeignKey(USER_ID, ondelete='CASCADE'))
@@ -111,6 +114,7 @@ def _init_db(db=None, app=None):
 
     class AppConfig(db.Model):
         __tablename__ = 'AppConfig'
+        __table_args__ = {'extend_existing': True}
         id = db.Column(db.Integer, primary_key=True)
         first_access = db.Column(db.Boolean, nullable=False, default=True)
 

@@ -3,8 +3,12 @@
 
 pipeline {
 
-    agent any
-
+    agent {
+        docker {
+            image 'securityuniversal/jenkins-pipeline-agent:latest'
+            args '--group-add 999'
+        }
+    }
 
     stages {
         stage('Initialize Config') {
@@ -45,6 +49,11 @@ pipeline {
         }
 
         stage('Unit Testing') {
+            agent {
+                docker {
+                    image 'securityuniversal/jenkins-python-agent:latest'
+                }
+            }
             when {
                  expression {
                     def config = jslReadYamlConfig('unitTesting')
@@ -64,6 +73,11 @@ pipeline {
         }
 
         stage('Secret Scanning') {
+            agent {
+                docker {
+                    image 'securityuniversal/jenkins-secret-agent:latest'
+                }
+            }
             when {
                  expression {
                     def config = jslReadYamlConfig('secretScanning')
@@ -83,6 +97,11 @@ pipeline {
         }
 
         stage('Software Composition Analysis') {
+            agent {
+                docker {
+                    image 'securityuniversal/jenkins-codetesting-agent:latest'
+                }
+            }
             when {
                  expression {
                     def config = jslReadYamlConfig('sca')
@@ -106,6 +125,11 @@ pipeline {
         }
 
         stage('Static Application Security Testing') {
+            agent {
+                docker {
+                    image 'securityuniversal/jenkins-codetesting-agent:latest'
+                }
+            }
             when {
                  expression {
                     def config = jslReadYamlConfig('sast')
@@ -129,6 +153,12 @@ pipeline {
         }
 
         stage('Infrastructure-as-Code Security Testing') {
+            agent {
+                docker {
+                    image 'securityuniversal/jenkins-iac-agent:latest'
+                    args '--group-add 999'
+                }
+            }
             when {
                  expression {
                     def config = jslReadYamlConfig('iac')
@@ -148,6 +178,12 @@ pipeline {
         }
 
         stage('Build Docker Service') {
+            agent {
+                docker {
+                    image 'securityuniversal/jenkins-iac-agent:latest'
+                    args '--group-add 999'
+                }
+            }
             when {
                 expression {
                     def config = jslReadYamlConfig('buildDocker')
@@ -171,6 +207,12 @@ pipeline {
         }
 
         stage('Docker Container Scanning') {
+            agent {
+                docker {
+                    image 'securityuniversal/jenkins-iac-agent:latest'
+                    args '--group-add 999'
+                }
+            }
             when {
                  expression {
                     def config = jslReadYamlConfig('containerScan')
@@ -195,6 +237,11 @@ pipeline {
         }
 
         stage('Release to Test') {
+            agent {
+                docker {
+                    image 'securityuniversal/jenkins-deploy-agent:latest'
+                }
+            }
             when {
                  expression {
                     def config = jslReadYamlConfig('releaseToTest')
@@ -266,6 +313,11 @@ pipeline {
 
         ////////// Deploy to Production //////////
         stage('Deploy') {
+            agent {
+                docker {
+                    image 'securityuniversal/jenkins-deploy-agent:latest'
+                }
+            }
             when {
                 anyOf {
                     // Condition for the PROD branch

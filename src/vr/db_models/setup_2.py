@@ -47,7 +47,7 @@ def _init_db(db):
         UniqueIDType = db.Column(db.String(20))
         Description = db.Column(db.String(200))
         RegComplete = db.Column(db.String(1))
-        RegDate = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
+        RegDate = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 
     Technologies()
