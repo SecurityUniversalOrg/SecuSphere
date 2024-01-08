@@ -1,7 +1,48 @@
 {% extends 'base_auth.html' %}
 
 {% block app_content %}
+<head>
+    <style>
+            /* Modal styles */
+            .modal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgb(0,0,0); /* Fallback color */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
 
+            .modal-content {
+                background-color: #fefefe;
+                margin: 15% auto; /* 15% from the top and centered */
+                padding: 20px;
+                border: 1px solid #888;
+                width: 80%; /* Could be more or less, depending on screen size */
+            }
+
+            /* Close button */
+            .close {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+    </style>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
 
 
   {{ super() }}
@@ -14,7 +55,61 @@
             <h2>Application Settings</h2>
             <!-- Navigation Panel -->
             <nav>
-                <!-- Navigation Items -->
+                <!-- Trigger button -->
+                <button id="deleteButton">Delete All Data</button>
+
+                <!-- Modal -->
+                <div id="deleteModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <p>Are you sure you want to delete all data? This action cannot be undone.</p>
+                        <button id="confirmDelete">Confirm Delete</button>
+                    </div>
+                </div>
+
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                <script>
+                    $(document).ready(function(){
+                    // When the user clicks the button, open the modal
+                    $('#deleteButton').click(function() {
+                        $('#deleteModal').show();
+                    });
+
+                    // When the user clicks on <span> (x), close the modal
+                    $('.close').click(function() {
+                        $('#deleteModal').hide();
+                    });
+
+                    // When the user clicks anywhere outside of the modal, close it
+                    $(window).click(function(event) {
+                        if (event.target.id === 'deleteModal') {
+                            $('#deleteModal').hide();
+                        }
+                    });
+
+                    var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                    $('#confirmDelete').click(function() {
+                        $.ajax({
+                            url: '/dangerous/delete_all',
+                            type: 'POST',
+                            beforeSend: function(xhr) {
+                                // Include the CSRF token in the header
+                                xhr.setRequestHeader('X-CSRFToken', csrfToken);
+                            },
+                            success: function(response) {
+                                alert('Data deleted successfully.');
+                                $('#deleteModal').hide();
+                                location.reload();
+                            },
+                            error: function(xhr, status, error) {
+                                alert('An error occurred.');
+                            }
+                        });
+                    });
+                });
+
+                </script>
             </nav>
             <!-- Settings Form -->
             <form method="post">
