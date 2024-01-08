@@ -99,7 +99,7 @@ pipeline {
         stage('Software Composition Analysis') {
             agent {
                 docker {
-                    image 'securityuniversal/jenkins-codetesting-agent:latest'
+                    image 'securityuniversal/jenkins:latest'
                 }
             }
             when {
@@ -127,7 +127,7 @@ pipeline {
         stage('Static Application Security Testing') {
             agent {
                 docker {
-                    image 'securityuniversal/jenkins-codetesting-agent:latest'
+                    image 'securityuniversal/jenkins:latest'
                 }
             }
             when {
