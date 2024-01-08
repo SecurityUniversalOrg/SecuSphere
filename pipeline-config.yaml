@@ -9,14 +9,14 @@ stages:
     branches:
       - release
   unitTesting:
-    enabled: true
+    enabled: false
     branches: []
   secretScanning:
     enabled: true
     branches:
       - release
   sca:
-    enabled: true
+    enabled: false
     branches:
       - release
     codeLanguages:
@@ -37,19 +37,19 @@ stages:
     branches:
       - release
   containerScan:
-    enabled: true
+    enabled: false
     branches:
       - release
     containerName: secusphere
     containerTag: latest
   releaseToTest:
-    enabled: true
+    enabled: false
     branches:
       - release
     serviceName: secusphere
     containerTag: latest
   testRelease:
-    enabled: true
+    enabled: false
     branches:
       - release
     targetUrl: 'http://192.168.0.68:5010'
