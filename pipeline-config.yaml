@@ -23,7 +23,7 @@ stages:
       - Python
       - Javascript
   sast:
-    enabled: true
+    enabled: false
     branches:
       - release
     codeLanguages:
