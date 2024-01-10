@@ -8,7 +8,7 @@ class SgGlobalThresholds(db.Model):
     __tablename__ = 'SgGlobalThresholds'
     __table_args__ = {'extend_existing': True}
     ID = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String)
+    Name = db.Column(db.String(100))
     AddDate = db.Column(db.DateTime)
     ThreshScaLow = db.Column(db.Integer)
     ThreshScaMedium = db.Column(db.Integer)
