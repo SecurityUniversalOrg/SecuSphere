@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 environment: prod
 appName: "secusphere"
-appDomain: "acme.com"
+appDomain: "securityuniversal.com"
 
 tlsSecretName: su-wildcard-tls
 
