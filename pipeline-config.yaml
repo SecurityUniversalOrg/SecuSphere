@@ -75,6 +75,7 @@ stages:
       azure.azTenantId: 'azTenantId'
     serviceCredentials: {}
     serviceSetStrings:
+      app.env: test
       app.extUrl: "192.168.0.150"
       app.db.prodDbUriRef: "PROD-DB-URI"
       app.smtp.host: "smtp.sendgrid.net:587"
