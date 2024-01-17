@@ -9,7 +9,7 @@ from settings import SET_ENV, SET_AZURE_KEYVAULT_NAME, SET_AUTH_TYPE, SET_INSECU
     SET_APP_EXT_URL
 from settings import SET_PROD_DB_URI_REF, SET_SMTP_PW_REF, SET_JENKINS_KEY_REF, SET_JENKINS_USER_REF, SET_JENKINS_TOKEN_REF
 from settings import SET_PROD_DB_URI, SET_SMTP_PW, SET_JENKINS_KEY, SET_JENKINS_USER, \
-    SET_JENKINS_HOST, SET_JENKINS_PROJECT, SET_JENKINS_TOKEN, SET_JENKINS_STAGING_PROJECT
+    SET_JENKINS_HOST, SET_JENKINS_PROJECT, SET_JENKINS_TOKEN, SET_JENKINS_STAGING_PROJECT, SET_JENKINS_ENABLED, SET_SNOW_ENABLED
 from settings import SET_AZAD_CLIENT_ID, SET_AZAD_CLIENT_SECRET, SET_AZAD_AUTHORITY
 from settings import SET_SNOW_INSTANCE_NAME, SET_SNOW_CLIENT_ID, SET_SNOW_CLIENT_SECRET, SET_SNOW_USERNAME, SET_SNOW_PASSWORD, SET_SNOW_CLIENT_SECRET_REF, SET_SNOW_PASSWORD_REF
 
@@ -205,65 +205,87 @@ else:
 
 ##
 ## GitHub to Jenkins Webhook ##
-if ENV == 'prod':
-    if os.getenv('JENKINS_USER'):
-        JENKINS_USER = KeyVaultManager().get_secret(os.getenv('JENKINS_USER'))
+if os.getenv('JENKINS_ENABLED'):
+    JENKINS_ENABLED = os.getenv('JENKINS_ENABLED')
+else:
+    JENKINS_ENABLED = SET_JENKINS_ENABLED
+if JENKINS_ENABLED == 'yes':
+    if ENV == 'prod':
+        if os.getenv('JENKINS_USER'):
+            JENKINS_USER = KeyVaultManager().get_secret(os.getenv('JENKINS_USER'))
+        else:
+            JENKINS_USER = KeyVaultManager().get_secret(SET_JENKINS_USER_REF)
+        if os.getenv('JENKINS_KEY'):
+            JENKINS_KEY = KeyVaultManager().get_secret(os.getenv('JENKINS_KEY'))
+        else:
+            JENKINS_KEY = KeyVaultManager().get_secret(SET_JENKINS_KEY_REF)
+        if os.getenv('JENKINS_TOKEN'):
+            JENKINS_TOKEN = KeyVaultManager().get_secret(os.getenv('JENKINS_TOKEN'))
+        else:
+            JENKINS_TOKEN = KeyVaultManager().get_secret(SET_JENKINS_TOKEN_REF)
     else:
-        JENKINS_USER = KeyVaultManager().get_secret(SET_JENKINS_USER_REF)
-    if os.getenv('JENKINS_KEY'):
-        JENKINS_KEY = KeyVaultManager().get_secret(os.getenv('JENKINS_KEY'))
+        JENKINS_USER = SET_JENKINS_USER
+        JENKINS_KEY = SET_JENKINS_KEY
+        JENKINS_TOKEN = SET_JENKINS_TOKEN
+
+    if os.getenv('JENKINS_PROJECT'):
+        JENKINS_PROJECT = os.getenv('JENKINS_PROJECT')
     else:
-        JENKINS_KEY = KeyVaultManager().get_secret(SET_JENKINS_KEY_REF)
-    if os.getenv('JENKINS_TOKEN'):
-        JENKINS_TOKEN = KeyVaultManager().get_secret(os.getenv('JENKINS_TOKEN'))
+        JENKINS_PROJECT = SET_JENKINS_PROJECT
+
+    if os.getenv('JENKINS_HOST'):
+        JENKINS_HOST = os.getenv('JENKINS_HOST')
     else:
-        JENKINS_TOKEN = KeyVaultManager().get_secret(SET_JENKINS_TOKEN_REF)
-else:
-    JENKINS_USER = SET_JENKINS_USER
-    JENKINS_KEY = SET_JENKINS_KEY
-    JENKINS_TOKEN = SET_JENKINS_TOKEN
+        JENKINS_HOST = SET_JENKINS_HOST
 
-if os.getenv('JENKINS_PROJECT'):
-    JENKINS_PROJECT = os.getenv('JENKINS_PROJECT')
+    if os.getenv('JENKINS_STAGING_PROJECT'):
+        JENKINS_STAGING_PROJECT = os.getenv('JENKINS_STAGING_PROJECT')
+    else:
+        JENKINS_STAGING_PROJECT = SET_JENKINS_STAGING_PROJECT
 else:
-    JENKINS_PROJECT = SET_JENKINS_PROJECT
-
-if os.getenv('JENKINS_HOST'):
-    JENKINS_HOST = os.getenv('JENKINS_HOST')
-else:
-    JENKINS_HOST = SET_JENKINS_HOST
-
-if os.getenv('JENKINS_STAGING_PROJECT'):
-    JENKINS_STAGING_PROJECT = os.getenv('JENKINS_STAGING_PROJECT')
-else:
-    JENKINS_STAGING_PROJECT = SET_JENKINS_STAGING_PROJECT
-
+    JENKINS_USER = ""
+    JENKINS_KEY = ""
+    JENKINS_TOKEN = ""
+    JENKINS_PROJECT = ""
+    JENKINS_HOST = ""
+    JENKINS_STAGING_PROJECT = ""
 
 ## ServiceNOW Integration
-if ENV == 'prod':
-    if os.getenv('SNOW_PASSWORD'):
-        SNOW_PASSWORD = KeyVaultManager().get_secret(os.getenv('SNOW_PASSWORD'))
-    else:
-        SNOW_PASSWORD = KeyVaultManager().get_secret(SET_SNOW_PASSWORD_REF)
-    if os.getenv('SNOW_CLIENT_SECRET'):
-        SNOW_CLIENT_SECRET = KeyVaultManager().get_secret(os.getenv('SNOW_CLIENT_SECRET'))
-    else:
-        SNOW_CLIENT_SECRET = KeyVaultManager().get_secret(SET_SNOW_CLIENT_SECRET_REF)
-    if os.getenv('SNOW_INSTANCE_NAME'):
-        SNOW_INSTANCE_NAME = KeyVaultManager().get_secret(os.getenv('SNOW_INSTANCE_NAME'))
-    else:
-        SNOW_INSTANCE_NAME = KeyVaultManager().get_secret(SET_SNOW_INSTANCE_NAME)
-    if os.getenv('SNOW_CLIENT_ID'):
-        SNOW_CLIENT_ID = KeyVaultManager().get_secret(os.getenv('SNOW_CLIENT_ID'))
-    else:
-        SNOW_CLIENT_ID = KeyVaultManager().get_secret(SET_SNOW_CLIENT_ID)
-    if os.getenv('SNOW_USERNAME'):
-        SNOW_USERNAME = KeyVaultManager().get_secret(os.getenv('SNOW_USERNAME'))
-    else:
-        SNOW_USERNAME = KeyVaultManager().get_secret(SET_SNOW_USERNAME)
+if os.getenv('SNOW_ENABLED'):
+    SNOW_ENABLED = os.getenv('SNOW_ENABLED')
 else:
-    SNOW_PASSWORD = SET_SNOW_PASSWORD
-    SNOW_CLIENT_SECRET = SET_SNOW_CLIENT_SECRET
-    SNOW_INSTANCE_NAME = SET_SNOW_INSTANCE_NAME
-    SNOW_CLIENT_ID = SET_SNOW_CLIENT_ID
-    SNOW_USERNAME = SET_SNOW_USERNAME
+    SNOW_ENABLED = SET_SNOW_ENABLED
+if SNOW_ENABLED == 'yes':
+    if ENV == 'prod':
+        if os.getenv('SNOW_PASSWORD'):
+            SNOW_PASSWORD = KeyVaultManager().get_secret(os.getenv('SNOW_PASSWORD'))
+        else:
+            SNOW_PASSWORD = KeyVaultManager().get_secret(SET_SNOW_PASSWORD_REF)
+        if os.getenv('SNOW_CLIENT_SECRET'):
+            SNOW_CLIENT_SECRET = KeyVaultManager().get_secret(os.getenv('SNOW_CLIENT_SECRET'))
+        else:
+            SNOW_CLIENT_SECRET = KeyVaultManager().get_secret(SET_SNOW_CLIENT_SECRET_REF)
+        if os.getenv('SNOW_INSTANCE_NAME'):
+            SNOW_INSTANCE_NAME = os.getenv('SNOW_INSTANCE_NAME')
+        else:
+            SNOW_INSTANCE_NAME = SET_SNOW_INSTANCE_NAME
+        if os.getenv('SNOW_CLIENT_ID'):
+            SNOW_CLIENT_ID = os.getenv('SNOW_CLIENT_ID')
+        else:
+            SNOW_CLIENT_ID = SET_SNOW_CLIENT_ID
+        if os.getenv('SNOW_USERNAME'):
+            SNOW_USERNAME = os.getenv('SNOW_USERNAME')
+        else:
+            SNOW_USERNAME = SET_SNOW_USERNAME
+    else:
+        SNOW_PASSWORD = SET_SNOW_PASSWORD
+        SNOW_CLIENT_SECRET = SET_SNOW_CLIENT_SECRET
+        SNOW_INSTANCE_NAME = SET_SNOW_INSTANCE_NAME
+        SNOW_CLIENT_ID = SET_SNOW_CLIENT_ID
+        SNOW_USERNAME = SET_SNOW_USERNAME
+else:
+    SNOW_PASSWORD = ""
+    SNOW_CLIENT_SECRET = ""
+    SNOW_INSTANCE_NAME = ""
+    SNOW_CLIENT_ID = ""
+    SNOW_USERNAME = ""
