@@ -326,7 +326,7 @@ pipeline {
                     // Condition for a Test-* branch
                     expression {
                         // Split the branch name by '/' and check if the last segment starts with 'Test-'
-                        env.BRANCH_NAME.split('/').last().startsWith('staging')
+                        env.BRANCH_NAME.split('/').last().startsWith('staging') || env.BRANCH_NAME.split('/').last().startsWith('Prod')
                     }
                 }
             }
@@ -342,6 +342,8 @@ pipeline {
                             'secretsSetStrings': stageConfig?.secretsSetStrings,
                             'serviceCredentials': stageConfig?.serviceCredentials,
                             'serviceSetStrings': stageConfig?.serviceSetStrings,
+                            'dockerReg': 'secunicontainerregistry.azurecr.io',
+                            'imgPullSecret': 'acrCreds'
                         ])
 
                     }

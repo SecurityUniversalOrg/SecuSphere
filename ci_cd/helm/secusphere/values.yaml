@@ -83,7 +83,7 @@ volumes:
     claimName: su-webapp-pv-claim
 
 ingress:
-  enabled: true
+  enabled: false
 
 serviceAccount:
   # Specifies whether a service account should be created

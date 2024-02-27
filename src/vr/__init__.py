@@ -2,7 +2,7 @@ import datetime
 import requests
 from config_engine import ENV, PROD_DB_URI, AUTH_TYPE, APP_EXT_URL, LDAP_HOST, LDAP_PORT, LDAP_BASE_DN, \
     LDAP_USER_DN, LDAP_GROUP_DN, LDAP_USER_RDN_ATTR, LDAP_USER_LOGIN_ATTR, LDAP_BIND_USER_DN, LDAP_BIND_USER_PASSWORD, \
-    AZAD_CLIENT_ID, AZAD_CLIENT_SECRET, AZAD_AUTHORITY, JENKINS_USER
+    AZAD_CLIENT_ID, AZAD_CLIENT_SECRET, AZAD_AUTHORITY, JENKINS_USER, JENKINS_ENABLED
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
@@ -448,4 +448,5 @@ def get_jenkins_data():
 
 # Call the Jobs Here #
 train_model_every_six_hours()
-get_jenkins_data_every_hour()
+if JENKINS_ENABLED == 'yes':
+    get_jenkins_data_every_hour()
