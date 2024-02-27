@@ -342,6 +342,8 @@ pipeline {
                             'secretsSetStrings': stageConfig?.secretsSetStrings,
                             'serviceCredentials': stageConfig?.serviceCredentials,
                             'serviceSetStrings': stageConfig?.serviceSetStrings,
+                            'dockerReg': 'secunicontainerregistry.azurecr.io',
+                            'imgPullSecret': 'acrCreds'
                         ])
 
                     }
