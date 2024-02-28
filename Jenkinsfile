@@ -75,7 +75,7 @@ pipeline {
         stage('Secret Scanning') {
             agent {
                 docker {
-                    image 'securityuniversal/jenkins-secret-agent:latest'
+                    image 'securityuniversal/jenkins-sectesting-agent:latest'
                 }
             }
             when {
@@ -99,7 +99,7 @@ pipeline {
         stage('Software Composition Analysis') {
             agent {
                 docker {
-                    image 'securityuniversal/jenkins:latest'
+                    image 'securityuniversal/jenkins-sectesting-agent:latest'
                 }
             }
             when {
@@ -127,7 +127,7 @@ pipeline {
         stage('Static Application Security Testing') {
             agent {
                 docker {
-                    image 'securityuniversal/jenkins:latest'
+                    image 'securityuniversal/jenkins-sectesting-agent:latest'
                 }
             }
             when {
@@ -155,7 +155,7 @@ pipeline {
         stage('Infrastructure-as-Code Security Testing') {
             agent {
                 docker {
-                    image 'securityuniversal/jenkins-iac-agent:latest'
+                    image 'securityuniversal/jenkins-sectesting-agent:latest'
                     args '--group-add 999'
                 }
             }
@@ -210,7 +210,7 @@ pipeline {
         stage('Docker Container Scanning') {
             agent {
                 docker {
-                    image 'securityuniversal/jenkins-iac-agent:latest'
+                    image 'securityuniversal/jenkins-sectesting-agent:latest'
                     args '--group-add 999'
                 }
             }
@@ -294,6 +294,12 @@ pipeline {
 
         ////////// Quality Gate //////////
         stage("Quality Gate - Security") {
+            agent {
+                docker {
+                    image 'securityuniversal/jenkins-sectesting-agent:latest'
+                    args '--group-add 999'
+                }
+            }
             when {
                  expression {
                     def config = jslReadYamlConfig('securityQualityGate')
