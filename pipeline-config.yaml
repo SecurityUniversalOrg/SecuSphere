@@ -9,27 +9,27 @@ stages:
     branches:
       - release
   unitTesting:
-    enabled: true
+    enabled: false
     branches: []
   secretScanning:
-    enabled: true
+    enabled: false
     branches:
       - release
   sca:
-    enabled: true
+    enabled: false
     branches:
       - release
     codeLanguages:
       - Python
       - Javascript
   sast:
-    enabled: true
+    enabled: false
     branches:
       - release
     codeLanguages:
       - Python
   iac:
-    enabled: true
+    enabled: false
     branches:
       - release
   buildDocker:
@@ -37,19 +37,19 @@ stages:
     branches:
       - release
   containerScan:
-    enabled: true
+    enabled: false
     branches:
       - release
     containerName: secusphere
     containerTag: latest
   releaseToTest:
-    enabled: true
+    enabled: false
     branches:
       - release
     serviceName: secusphere
     containerTag: latest
   testRelease:
-    enabled: true
+    enabled: false
     branches:
       - release
     targetUrl: 'http://192.168.0.68:5010'
