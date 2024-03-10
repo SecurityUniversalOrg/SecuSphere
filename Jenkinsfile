@@ -199,8 +199,7 @@ pipeline {
                 jslStageWrapper('Build Docker Service') {
                     script {
                         jslBuildDocker([
-                            'serviceName': env.appName,
-                            'dockerReg': 'secunicontainerregistry.azurecr.io'
+                            'serviceName': env.appName
                         ])
                     }
                 }
@@ -231,7 +230,7 @@ pipeline {
                         def stageConfig = jslReadYamlConfig('containerScan')
                         def containerName = stageConfig?.containerName
                         def containerTag = stageConfig?.containerTag
-                        jslContainerSecurityScanning(containerName, containerTag, 'secunicontainerregistry.azurecr.io')
+                        jslContainerSecurityScanning(containerName, containerTag)
                     }
                 }
             }
