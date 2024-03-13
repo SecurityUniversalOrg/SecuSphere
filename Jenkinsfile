@@ -21,7 +21,7 @@ pipeline {
                     env.GLOBAL_BRANCH_LIST = config.global.defaultBranches.join(',')
                     env.CURRENT_STAGE_BRANCH_LIST = ""
 
-                    jslStageWrapper.initReport()
+                    jslStageWrapper.initReport(config)
 
                 }
             }
