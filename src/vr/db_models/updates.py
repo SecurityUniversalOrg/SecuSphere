@@ -42,6 +42,7 @@ def createNewTables(app):
         else:
             fields.append(i[0])
     new_fields = [
+        {"name": "settings_initialized", "type": "BOOLEAN", "default": 0},
         {"name": "APP_EXT_URL", "type": "VARCHAR", "char_num": 200},
         {"name": "AUTH_TYPE", "type": "VARCHAR", "char_num": 200},
         {"name": "AZAD_AUTHORITY", "type": "VARCHAR", "char_num": 200},
@@ -85,10 +86,14 @@ def createNewTables(app):
             if app.config['RUNTIME_ENV'] == 'test':
                 if i['type'] == 'VARCHAR':
                     var_stmt = f"VARCHAR({i['char_num']})"
+                elif i['type'] == 'BOOLEAN':
+                    var_stmt = f"BOOLEAN DEFAULT {i['default']}"
                 sql = "ALTER TABLE AppConfig ADD COLUMN " + i['name'] + " " + var_stmt
             else:
                 if i['type'] == 'VARCHAR':
                     var_stmt = "TEXT"
+                elif i['type'] == 'BOOLEAN':
+                    var_stmt = f"BOOLEAN DEFAULT {i['default']}"
                 sql = "ALTER TABLE AppConfig ADD COLUMN " + i['name'] + " " + var_stmt
             cur.execute(sql)
             db.commit()
