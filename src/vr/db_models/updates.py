@@ -85,11 +85,11 @@ def createNewTables(app):
             if app.config['RUNTIME_ENV'] == 'test':
                 if i['type'] == 'VARCHAR':
                     var_stmt = f"VARCHAR({i['char_num']})"
-                sql = "ALTER TABLE AppConfig ADD COLUMN" + i['name'] + var_stmt
+                sql = "ALTER TABLE AppConfig ADD COLUMN " + i['name'] + " " + var_stmt
             else:
                 if i['type'] == 'VARCHAR':
                     var_stmt = "TEXT"
-                sql = "ALTER TABLE AppConfig ADD COLUMN" + i['name'] + var_stmt
+                sql = "ALTER TABLE AppConfig ADD COLUMN " + i['name'] + " " + var_stmt
             cur.execute(sql)
             db.commit()
 
