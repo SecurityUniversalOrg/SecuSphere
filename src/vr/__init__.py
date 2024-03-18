@@ -29,6 +29,7 @@ import json
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 from requests.auth import HTTPBasicAuth
+from vr.db_models.updates import createNewTables
 
 if AUTH_TYPE == 'azuread':
     from flask_session import Session
@@ -180,6 +181,10 @@ def base64encode(value):
         return None
 
 
+## Release-based updates ##
+cwd = os.getcwd()
+createNewTables(DB_URI)
+print()
 ## Cronjob-like tasks section ##
 def train_model_every_six_hours():
     scheduler = BackgroundScheduler()
