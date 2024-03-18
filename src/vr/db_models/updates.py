@@ -37,7 +37,10 @@ def createNewTables(app):
     rows = cur.fetchall()
     fields = []
     for i in rows:
-        fields.append(i[1])
+        if app.config['RUNTIME_ENV'] == 'test':
+            fields.append(i[1])
+        else:
+            fields.append(i[0])
     new_fields = [
         {"name": "APP_EXT_URL", "type": "VARCHAR", "char_num": 200},
         {"name": "AUTH_TYPE", "type": "VARCHAR", "char_num": 200},
