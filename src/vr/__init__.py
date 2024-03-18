@@ -182,9 +182,8 @@ def base64encode(value):
 
 
 ## Release-based updates ##
-cwd = os.getcwd()
-createNewTables(DB_URI)
-print()
+createNewTables(app)
+
 ## Cronjob-like tasks section ##
 def train_model_every_six_hours():
     scheduler = BackgroundScheduler()
