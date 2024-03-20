@@ -44,7 +44,7 @@ def settings():
                 AppConfig.AZAD_CLIENT_ID: all["AZAD_CLIENT_ID"],
                 AppConfig.AZAD_CLIENT_SECRET: all["AZAD_CLIENT_SECRET"],
                 AppConfig.AZURE_KEYVAULT_NAME: all["AZURE_KEYVAULT_NAME"],
-                AppConfig.ENV: all["ENV"],
+                AppConfig.ENV: ENV,
                 AppConfig.INSECURE_OAUTH: all["INSECURE_OAUTH"],
                 AppConfig.JENKINS_HOST: all["JENKINS_HOST"],
                 AppConfig.JENKINS_KEY: all["JENKINS_KEY"],
@@ -71,7 +71,7 @@ def settings():
                 AppConfig.SNOW_INSTANCE_NAME: all["SNOW_INSTANCE_NAME"],
                 AppConfig.SNOW_PASSWORD: all["SNOW_PASSWORD"],
                 AppConfig.SNOW_USERNAME: all["SNOW_USERNAME"],
-                AppConfig.VERSION: all["VERSION"],
+                AppConfig.VERSION: VERSION,
             }
         if not app_config.settings_initialized:
             update_json[AppConfig.settings_initialized] = True
@@ -88,7 +88,7 @@ def settings():
             "AZAD_CLIENT_ID": all["AZAD_CLIENT_ID"],
             "AZAD_CLIENT_SECRET": all["AZAD_CLIENT_SECRET"],
             "AZURE_KEYVAULT_NAME": all["AZURE_KEYVAULT_NAME"],
-            "ENV": all["ENV"],
+            "ENV": ENV,
             "INSECURE_OAUTH": all["INSECURE_OAUTH"],
             "JENKINS_HOST": all["JENKINS_HOST"],
             "JENKINS_KEY": all["JENKINS_KEY"],
@@ -115,7 +115,7 @@ def settings():
             "SNOW_INSTANCE_NAME": all["SNOW_INSTANCE_NAME"],
             "SNOW_PASSWORD": all["SNOW_PASSWORD"],
             "SNOW_USERNAME": all["SNOW_USERNAME"],
-            "VERSION": all["VERSION"],
+            "VERSION": VERSION,
         }
     else:
         app_config = AppConfig.query.first()
@@ -257,7 +257,7 @@ def set_env_variables(form):
     os.environ['AZAD_CLIENT_ID'] = form["AZAD_CLIENT_ID"]
     os.environ['AZAD_CLIENT_SECRET'] = form["AZAD_CLIENT_SECRET"]
     os.environ['AZURE_KEYVAULT_NAME'] = form["AZURE_KEYVAULT_NAME"]
-    os.environ['ENV'] = form["ENV"]
+    os.environ['ENV'] = ENV
     os.environ['INSECURE_OAUTH'] = form["INSECURE_OAUTH"]
     os.environ['JENKINS_ENABLED'] = form["JENKINS_ENABLED"]
     os.environ['JENKINS_HOST'] = form["JENKINS_HOST"]
@@ -286,7 +286,7 @@ def set_env_variables(form):
     os.environ['SNOW_INSTANCE_NAME'] = form["SNOW_INSTANCE_NAME"]
     os.environ['SNOW_PASSWORD'] = form["SNOW_PASSWORD"]
     os.environ['SNOW_USERNAME'] = form["SNOW_USERNAME"]
-    os.environ['VERSION'] = form["VERSION"]
+    os.environ['VERSION'] = VERSION
 
 
 @admin.route('/dangerous/delete_all', methods=['POST'])
