@@ -219,14 +219,14 @@ def add_new_scan(git_url, branch_name, report_id):
             "Content-Type": "application/x-www-form-urlencoded"
         }
         data = {
-            'token': JENKINS_TOKEN,
+            'token': app.config['JENKINS_TOKEN'],
             'GIT_URL': git_url,
             'TESTS': stage_str,
             'GIT_BRANCH': branch_name,
             'REPORT_ID': report_id
         }
-        url = f'{JENKINS_HOST}/job/{JENKINS_PROJECT}/buildWithParameters'
-        resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(JENKINS_USER, JENKINS_KEY))
+        url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_PROJECT']}/buildWithParameters"
+        resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
         response = jsonify({"Status": resp.status_code}), 200
     except requests.exceptions.Timeout:
         print('Processing Error')
