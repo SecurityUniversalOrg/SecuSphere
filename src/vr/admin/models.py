@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField
 from flask_login import UserMixin
 from vr import db, app
 from vr.functions.mysql_db import connect_to_db
-from datetime import datetime, timedelta
+from datetime import datetime
 import jwt
 from vr.admin.helper_functions import hash_password,verify_password
 from vr.admin.functions import db_connection_handler
@@ -17,8 +17,7 @@ from authlib.integrations.sqla_oauth2 import (
     OAuth2AuthorizationCodeMixin,
     OAuth2TokenMixin,
 )
-from config_engine import AUTH_TYPE
-if AUTH_TYPE == 'ldap':
+if app.config['AUTH_TYPE'] == 'ldap':
     from vr import ldap_manager
 
 if app.config['RUNTIME_ENV'] == 'test':
@@ -190,11 +189,11 @@ class User(UserMixin, db.Model):
         else:
             return
 
-if AUTH_TYPE == 'local' or AUTH_TYPE == 'azuread':
+if app.config['AUTH_TYPE'] == 'local' or app.config['AUTH_TYPE'] == 'azuread':
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
-elif AUTH_TYPE == 'ldap':
+elif app.config['AUTH_TYPE'] == 'ldap':
     # User Loader for LDAP
     @login_manager.user_loader
     def load_user(user_id):

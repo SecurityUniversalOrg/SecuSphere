@@ -134,7 +134,7 @@
                                     <option value="False" {% if value == 'False' %}selected="selected"{% endif %}>False</option>
                                 </select>
                             {% elif key == "PROD_DB_URI" %}
-                                <input type="password" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_db_pw_vis" class="fa-solid fa-eye" onclick="toggleDbPw(this)"></div><div id="mask_db_pw_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleDbPw(this)"></div>
+                                <input type="password" class="form-control" autocomplete="new-password" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_db_pw_vis" class="fa-solid fa-eye" onclick="toggleDbPw(this)"></div><div id="mask_db_pw_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleDbPw(this)"></div>
                             {% elif key == "ENV" or key == "VERSION" %}
                                 <input disabled="disabled" type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}">
                             {% else %}
@@ -176,7 +176,7 @@
                         <div class="form-group">
                             <label for="{{ key }}">{{ key }}</label>
                             {% if key == 'SMTP_PASSWORD' %}
-                                <input type="password" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_smtp_pw_vis" class="fa-solid fa-eye" onclick="toggleSmtpPw(this)"></div><div id="mask_smtp_pw_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleSmtpPw(this)"></div>
+                                <input type="password" class="form-control" autocomplete="new-password"  id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_smtp_pw_vis" class="fa-solid fa-eye" onclick="toggleSmtpPw(this)"></div><div id="mask_smtp_pw_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleSmtpPw(this)"></div>
                             {% else %}
                                 <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}">
                             {% endif %}
@@ -199,10 +199,10 @@
                                 </select>
                             {% elif key == 'JENKINS_KEY' %}
                                 <label id="{{ key }}_l" for="{{ key }}" style="display: {% if settings['JENKINS_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">{{ key }}</label>
-                                <div id="{{ key }}_i" {% if settings['JENKINS_ENABLED'] != 'yes' %}style="display:none;"{% else %}style="display:contents;"{% endif %}><input type="password" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_jenkins_key_vis" class="fa-solid fa-eye" onclick="toggleJenkinsKey(this)"></div><div id="mask_jenkins_key_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleJenkinsKey(this)"></div></div>
+                                <div id="{{ key }}_i" {% if settings['JENKINS_ENABLED'] != 'yes' %}style="display:none;"{% else %}style="display:contents;"{% endif %}><input type="password" autocomplete="new-password"  class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_jenkins_key_vis" class="fa-solid fa-eye" onclick="toggleJenkinsKey(this)"></div><div id="mask_jenkins_key_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleJenkinsKey(this)"></div></div>
                             {% elif key == 'JENKINS_TOKEN' %}
                                 <label id="{{ key }}_l" for="{{ key }}" style="display: {% if settings['JENKINS_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">{{ key }}</label>
-                                <div id="{{ key }}_i" {% if settings['JENKINS_ENABLED'] != 'yes' %}style="display:none;"{% else %}style="display:contents;"{% endif %}><input type="password" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_jenkins_token_vis" class="fa-solid fa-eye" onclick="toggleJenkinsToken(this)"></div><div id="mask_jenkins_token_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleJenkinsToken(this)"></div></div>
+                                <div id="{{ key }}_i" {% if settings['JENKINS_ENABLED'] != 'yes' %}style="display:none;"{% else %}style="display:contents;"{% endif %}><input type="password" autocomplete="new-password"  class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_jenkins_token_vis" class="fa-solid fa-eye" onclick="toggleJenkinsToken(this)"></div><div id="mask_jenkins_token_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleJenkinsToken(this)"></div></div>
                             {% else %}
                                 <label id="{{ key }}_l" for="{{ key }}" style="display: {% if settings['JENKINS_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">{{ key }}</label>
                                 <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}" style="display: {% if settings['JENKINS_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">
@@ -229,10 +229,10 @@
                                 </select>
                             {% elif key == 'SNOW_CLIENT_SECRET' %}
                                 <label id="{{ key }}_l" for="{{ key }}" style="display: {% if settings['SNOW_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">{{ key }}</label>
-                                <div id="{{ key }}_i" {% if settings['SNOW_ENABLED'] != 'yes' %}style="display:none;"{% else %}style="display:contents;"{% endif %}><input type="password" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_snow_secret_vis" class="fa-solid fa-eye" onclick="toggleSnowSecret(this)"></div><div id="mask_snow_secret_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleSnowSecret(this)"></div></div>
+                                <div id="{{ key }}_i" {% if settings['SNOW_ENABLED'] != 'yes' %}style="display:none;"{% else %}style="display:contents;"{% endif %}><input type="password" autocomplete="new-password"  class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_snow_secret_vis" class="fa-solid fa-eye" onclick="toggleSnowSecret(this)"></div><div id="mask_snow_secret_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleSnowSecret(this)"></div></div>
                             {% elif key == 'SNOW_PASSWORD' %}
                                 <label id="{{ key }}_l" for="{{ key }}" style="display: {% if settings['SNOW_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">{{ key }}</label>
-                                <div id="{{ key }}_i" {% if settings['SNOW_ENABLED'] != 'yes' %}style="display:none;"{% else %}style="display:contents;"{% endif %}><input type="password" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_snow_pw_vis" class="fa-solid fa-eye" onclick="toggleSnowPW(this)"></div><div id="mask_snow_pw_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleSnowPW(this)"></div></div>
+                                <div id="{{ key }}_i" {% if settings['SNOW_ENABLED'] != 'yes' %}style="display:none;"{% else %}style="display:contents;"{% endif %}><input type="password" autocomplete="new-password"  class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_snow_pw_vis" class="fa-solid fa-eye" onclick="toggleSnowPW(this)"></div><div id="mask_snow_pw_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleSnowPW(this)"></div></div>
                             {% else %}
                                 <label id="{{ key }}_l" for="{{ key }}" style="display: {% if settings['SNOW_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">{{ key }}</label>
                                 <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}" style="display: {% if settings['SNOW_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">

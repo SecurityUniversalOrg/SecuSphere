@@ -6,7 +6,6 @@ from vr.admin.models import User, LoginForm
 from vr.admin.email_alerts import send_email, generate_evnt_msg
 from vr.functions.timefunctions import return_datetime_now
 from vr.admin.helper_functions import hash_password
-from config_engine import SMTP_ADMIN_EMAIL
 from vr.admin.functions import db_connection_handler
 
 
@@ -32,7 +31,7 @@ def forgotpw():
                 action_list = [action]
                 st = 'n'
                 msg_body = generate_evnt_msg(msg_subject, now, evt_list, action_list, st)
-                msg_fromaddr = SMTP_ADMIN_EMAIL
+                msg_fromaddr = app.config['SMTP_ADMIN_EMAIL']
                 try:
                     send_email(msg_fromaddr, email, msg_subject, msg_body)
                     warnmsg = ('pwresetemail', 'success')

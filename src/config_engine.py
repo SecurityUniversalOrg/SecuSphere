@@ -14,98 +14,229 @@ from settings import SET_AZAD_CLIENT_ID, SET_AZAD_CLIENT_SECRET, SET_AZAD_AUTHOR
 from settings import SET_SNOW_INSTANCE_NAME, SET_SNOW_CLIENT_ID, SET_SNOW_CLIENT_SECRET, SET_SNOW_USERNAME, SET_SNOW_PASSWORD, SET_SNOW_CLIENT_SECRET_REF, SET_SNOW_PASSWORD_REF
 
 
-VERSION = '0.1.0-beta'
+def getConfigs(config):
+    config['TEST_SETTING'] = 'set'
 
-if os.getenv('AZURE_KEYVAULT_NAME'):
-    AZURE_KEYVAULT_NAME = os.getenv('AZURE_KEYVAULT_NAME')
-else:
-    AZURE_KEYVAULT_NAME = SET_AZURE_KEYVAULT_NAME
+    config['VERSION'] = '0.1.0-beta'
 
-if os.getenv('AUTH_TYPE'):
-    AUTH_TYPE = os.getenv('AUTH_TYPE')
-else:
-    AUTH_TYPE = SET_AUTH_TYPE
+    if os.getenv('AZURE_KEYVAULT_NAME'):
+        config['AZURE_KEYVAULT_NAME'] = os.getenv('AZURE_KEYVAULT_NAME')
+    else:
+        config['AZURE_KEYVAULT_NAME'] = SET_AZURE_KEYVAULT_NAME
 
-if os.getenv('INSECURE_OAUTH'):
-    INSECURE_OAUTH = os.getenv('INSECURE_OAUTH')
-else:
-    INSECURE_OAUTH = SET_INSECURE_OAUTH
+    if os.getenv('AUTH_TYPE'):
+        config['AUTH_TYPE'] = os.getenv('AUTH_TYPE')
+    else:
+        config['AUTH_TYPE'] = SET_AUTH_TYPE
 
-if INSECURE_OAUTH:
-    os.environ['AUTHLIB_INSECURE_TRANSPORT'] = '1'
+    if os.getenv('INSECURE_OAUTH'):
+        config['INSECURE_OAUTH'] = os.getenv('INSECURE_OAUTH')
+    else:
+        config['INSECURE_OAUTH'] = SET_INSECURE_OAUTH
 
-if os.getenv('APP_EXT_URL'):
-    APP_EXT_URL = os.getenv('APP_EXT_URL')
-else:
-    APP_EXT_URL = SET_APP_EXT_URL
+    if config['INSECURE_OAUTH']:
+        os.environ['AUTHLIB_INSECURE_TRANSPORT'] = '1'
 
-if os.getenv('SMTP_HOST'):
-    SMTP_HOST = os.getenv('SMTP_HOST')
-else:
-    SMTP_HOST = SET_SMTP_HOST
+    if os.getenv('APP_EXT_URL'):
+        config['APP_EXT_URL'] = os.getenv('APP_EXT_URL')
+    else:
+        config['APP_EXT_URL'] = SET_APP_EXT_URL
 
-if os.getenv('SMTP_USER'):
-    SMTP_USER = os.getenv('SMTP_USER')
-else:
-    SMTP_USER = SET_SMTP_USER
+    if os.getenv('SMTP_HOST'):
+        config['SMTP_HOST'] = os.getenv('SMTP_HOST')
+    else:
+        config['SMTP_HOST'] = SET_SMTP_HOST
 
-if os.getenv('SMTP_ADMIN_EMAIL'):
-    SMTP_ADMIN_EMAIL = os.getenv('SMTP_ADMIN_EMAIL')
-else:
-    SMTP_ADMIN_EMAIL = SET_SMTP_ADMIN_EMAIL
+    if os.getenv('SMTP_USER'):
+        config['SMTP_USER'] = os.getenv('SMTP_USER')
+    else:
+        config['SMTP_USER'] = SET_SMTP_USER
 
-if os.getenv('LDAP_HOST'):
-    LDAP_HOST = os.getenv('LDAP_HOST')
-else:
-    LDAP_HOST = SET_LDAP_HOST
+    if os.getenv('SMTP_ADMIN_EMAIL'):
+        config['SMTP_ADMIN_EMAIL'] = os.getenv('SMTP_ADMIN_EMAIL')
+    else:
+        config['SMTP_ADMIN_EMAIL'] = SET_SMTP_ADMIN_EMAIL
 
-if os.getenv('LDAP_PORT'):
-    LDAP_PORT = os.getenv('LDAP_PORT')
-else:
-    LDAP_PORT = SET_LDAP_PORT
+    if os.getenv('LDAP_HOST'):
+        config['LDAP_HOST'] = os.getenv('LDAP_HOST')
+    else:
+        config['LDAP_HOST'] = SET_LDAP_HOST
 
-if os.getenv('LDAP_BASE_DN'):
-    LDAP_BASE_DN = os.getenv('LDAP_BASE_DN')
-else:
-    LDAP_BASE_DN = SET_LDAP_BASE_DN
+    if os.getenv('LDAP_PORT'):
+        config['LDAP_PORT'] = os.getenv('LDAP_PORT')
+    else:
+        config['LDAP_PORT'] = SET_LDAP_PORT
 
-if os.getenv('LDAP_USER_DN'):
-    LDAP_USER_DN = os.getenv('LDAP_USER_DN')
-else:
-    LDAP_USER_DN = SET_LDAP_USER_DN
+    if os.getenv('LDAP_BASE_DN'):
+        config['LDAP_BASE_DN'] = os.getenv('LDAP_BASE_DN')
+    else:
+        config['LDAP_BASE_DN'] = SET_LDAP_BASE_DN
 
-if os.getenv('LDAP_GROUP_DN'):
-    LDAP_GROUP_DN = os.getenv('LDAP_GROUP_DN')
-else:
-    LDAP_GROUP_DN = SET_LDAP_GROUP_DN
+    if os.getenv('LDAP_USER_DN'):
+        config['LDAP_USER_DN'] = os.getenv('LDAP_USER_DN')
+    else:
+        config['LDAP_USER_DN'] = SET_LDAP_USER_DN
 
-if os.getenv('LDAP_USER_RDN_ATTR'):
-    LDAP_USER_RDN_ATTR = os.getenv('LDAP_USER_RDN_ATTR')
-else:
-    LDAP_USER_RDN_ATTR = SET_LDAP_USER_RDN_ATTR
+    if os.getenv('LDAP_GROUP_DN'):
+        config['LDAP_GROUP_DN'] = os.getenv('LDAP_GROUP_DN')
+    else:
+        config['LDAP_GROUP_DN'] = SET_LDAP_GROUP_DN
 
-if os.getenv('LDAP_USER_LOGIN_ATTR'):
-    LDAP_USER_LOGIN_ATTR = os.getenv('LDAP_USER_LOGIN_ATTR')
-else:
-    LDAP_USER_LOGIN_ATTR = SET_LDAP_USER_LOGIN_ATTR
+    if os.getenv('LDAP_USER_RDN_ATTR'):
+        config['LDAP_USER_RDN_ATTR'] = os.getenv('LDAP_USER_RDN_ATTR')
+    else:
+        config['LDAP_USER_RDN_ATTR'] = SET_LDAP_USER_RDN_ATTR
 
-if os.getenv('LDAP_BIND_USER_DN'):
-    LDAP_BIND_USER_DN = os.getenv('LDAP_BIND_USER_DN')
-else:
-    LDAP_BIND_USER_DN = SET_LDAP_BIND_USER_DN
+    if os.getenv('LDAP_USER_LOGIN_ATTR'):
+        config['LDAP_USER_LOGIN_ATTR'] = os.getenv('LDAP_USER_LOGIN_ATTR')
+    else:
+        config['LDAP_USER_LOGIN_ATTR'] = SET_LDAP_USER_LOGIN_ATTR
 
-if os.getenv('LDAP_BIND_USER_PASSWORD'):
-    LDAP_BIND_USER_PASSWORD = os.getenv('LDAP_BIND_USER_PASSWORD')
-else:
-    LDAP_BIND_USER_PASSWORD = SET_LDAP_BIND_USER_PASSWORD
+    if os.getenv('LDAP_BIND_USER_DN'):
+        config['LDAP_BIND_USER_DN'] = os.getenv('LDAP_BIND_USER_DN')
+    else:
+        config['LDAP_BIND_USER_DN'] = SET_LDAP_BIND_USER_DN
+
+    if os.getenv('LDAP_BIND_USER_PASSWORD'):
+        config['LDAP_BIND_USER_PASSWORD'] = os.getenv('LDAP_BIND_USER_PASSWORD')
+    else:
+        config['LDAP_BIND_USER_PASSWORD'] = SET_LDAP_BIND_USER_PASSWORD
+
+    ## CORE Config Variables ##
+    if os.getenv('ENV'):
+        config['ENV'] = os.getenv('ENV')
+    else:
+        config['ENV'] = SET_ENV
+
+    if config['ENV'] == 'prod':
+        if os.getenv('PROD_DB_URI_REF'):
+            config['PROD_DB_URI'] = KeyVaultManager(config).get_secret(os.getenv('PROD_DB_URI_REF'))
+        else:
+            config['PROD_DB_URI'] = KeyVaultManager(config).get_secret(SET_PROD_DB_URI_REF)
+    else:
+        config['PROD_DB_URI'] = SET_PROD_DB_URI
+
+    if config['AUTH_TYPE'] == 'azuread':
+        if os.getenv('AZAD_CLIENT_ID'):
+            config['AZAD_CLIENT_ID'] = os.getenv('AZAD_CLIENT_ID')
+        else:
+            config['AZAD_CLIENT_ID'] = SET_AZAD_CLIENT_ID
+        if os.getenv('AZAD_CLIENT_SECRET'):
+            config['AZAD_CLIENT_SECRET'] = KeyVaultManager(config).get_secret(os.getenv('AZAD_CLIENT_SECRET'))
+        else:
+            config['AZAD_CLIENT_SECRET'] = KeyVaultManager(config).get_secret(SET_AZAD_CLIENT_SECRET)
+        if os.getenv('AZAD_AUTHORITY'):
+            config['AZAD_AUTHORITY'] = os.getenv('AZAD_AUTHORITY')
+        else:
+            config['AZAD_AUTHORITY'] = SET_AZAD_AUTHORITY
+    else:
+        config['AZAD_CLIENT_ID'] = ""
+        config['AZAD_CLIENT_SECRET'] = ""
+        config['AZAD_AUTHORITY'] = ""
+
+    ## Email Variables ##
+    if config['ENV'] == 'prod':
+        if os.getenv('SMTP_PW_REF'):
+            config['SMTP_PASSWORD'] = KeyVaultManager(config).get_secret(os.getenv('SMTP_PW_REF'))
+        else:
+            config['SMTP_PASSWORD'] = KeyVaultManager(config).get_secret(SET_SMTP_PW_REF)
+    else:
+        config['SMTP_PASSWORD'] = SET_SMTP_PW
+
+    ##
+    ## GitHub to Jenkins Webhook ##
+    if os.getenv('JENKINS_ENABLED'):
+        config['JENKINS_ENABLED'] = os.getenv('JENKINS_ENABLED')
+    else:
+        config['JENKINS_ENABLED'] = SET_JENKINS_ENABLED
+    if config['JENKINS_ENABLED'] == 'yes':
+        if config['ENV'] == 'prod':
+            if os.getenv('JENKINS_USER'):
+                config['JENKINS_USER'] = KeyVaultManager(config).get_secret(os.getenv('JENKINS_USER'))
+            else:
+                config['JENKINS_USER'] = KeyVaultManager(config).get_secret(SET_JENKINS_USER_REF)
+            if os.getenv('JENKINS_KEY'):
+                config['JENKINS_KEY'] = KeyVaultManager(config).get_secret(os.getenv('JENKINS_KEY'))
+            else:
+                config['JENKINS_KEY'] = KeyVaultManager(config).get_secret(SET_JENKINS_KEY_REF)
+            if os.getenv('JENKINS_TOKEN'):
+                config['JENKINS_TOKEN'] = KeyVaultManager(config).get_secret(os.getenv('JENKINS_TOKEN'))
+            else:
+                config['JENKINS_TOKEN'] = KeyVaultManager(config).get_secret(SET_JENKINS_TOKEN_REF)
+        else:
+            config['JENKINS_USER'] = SET_JENKINS_USER
+            config['JENKINS_KEY'] = SET_JENKINS_KEY
+            config['JENKINS_TOKEN'] = SET_JENKINS_TOKEN
+
+        if os.getenv('JENKINS_PROJECT'):
+            config['JENKINS_PROJECT'] = os.getenv('JENKINS_PROJECT')
+        else:
+            config['JENKINS_PROJECT'] = SET_JENKINS_PROJECT
+
+        if os.getenv('JENKINS_HOST'):
+            config['JENKINS_HOST'] = os.getenv('JENKINS_HOST')
+        else:
+            config['JENKINS_HOST'] = SET_JENKINS_HOST
+
+        if os.getenv('JENKINS_STAGING_PROJECT'):
+            config['JENKINS_STAGING_PROJECT'] = os.getenv('JENKINS_STAGING_PROJECT')
+        else:
+            config['JENKINS_STAGING_PROJECT'] = SET_JENKINS_STAGING_PROJECT
+    else:
+        config['JENKINS_USER'] = ""
+        config['JENKINS_KEY'] = ""
+        config['JENKINS_TOKEN'] = ""
+        config['JENKINS_PROJECT'] = ""
+        config['JENKINS_HOST'] = ""
+        config['JENKINS_STAGING_PROJECT'] = ""
+
+    ## ServiceNOW Integration
+    if os.getenv('SNOW_ENABLED'):
+        config['SNOW_ENABLED'] = os.getenv('SNOW_ENABLED')
+    else:
+        config['SNOW_ENABLED'] = SET_SNOW_ENABLED
+    if config['SNOW_ENABLED'] == 'yes':
+        if config['ENV'] == 'prod':
+            if os.getenv('SNOW_PASSWORD'):
+                config['SNOW_PASSWORD'] = KeyVaultManager(config).get_secret(os.getenv('SNOW_PASSWORD'))
+            else:
+                config['SNOW_PASSWORD'] = KeyVaultManager(config).get_secret(SET_SNOW_PASSWORD_REF)
+            if os.getenv('SNOW_CLIENT_SECRET'):
+                config['SNOW_CLIENT_SECRET'] = KeyVaultManager(config).get_secret(os.getenv('SNOW_CLIENT_SECRET'))
+            else:
+                config['SNOW_CLIENT_SECRET'] = KeyVaultManager(config).get_secret(SET_SNOW_CLIENT_SECRET_REF)
+            if os.getenv('SNOW_INSTANCE_NAME'):
+                config['SNOW_INSTANCE_NAME'] = os.getenv('SNOW_INSTANCE_NAME')
+            else:
+                config['SNOW_INSTANCE_NAME'] = SET_SNOW_INSTANCE_NAME
+            if os.getenv('SNOW_CLIENT_ID'):
+                config['SNOW_CLIENT_ID'] = os.getenv('SNOW_CLIENT_ID')
+            else:
+                config['SNOW_CLIENT_ID'] = SET_SNOW_CLIENT_ID
+            if os.getenv('SNOW_USERNAME'):
+                config['SNOW_USERNAME'] = os.getenv('SNOW_USERNAME')
+            else:
+                config['SNOW_USERNAME'] = SET_SNOW_USERNAME
+        else:
+            config['SNOW_PASSWORD'] = SET_SNOW_PASSWORD
+            config['SNOW_CLIENT_SECRET'] = SET_SNOW_CLIENT_SECRET
+            config['SNOW_INSTANCE_NAME'] = SET_SNOW_INSTANCE_NAME
+            config['SNOW_CLIENT_ID'] = SET_SNOW_CLIENT_ID
+            config['SNOW_USERNAME'] = SET_SNOW_USERNAME
+    else:
+        config['SNOW_PASSWORD'] = ""
+        config['SNOW_CLIENT_SECRET'] = ""
+        config['SNOW_INSTANCE_NAME'] = ""
+        config['SNOW_CLIENT_ID'] = ""
+        config['SNOW_USERNAME'] = ""
 
 
 class KeyVaultManager(object):
-    def __init__(self):
+    def __init__(self, config=None):
         if os.getenv('AZURE_KEYVAULT_NAME'):
             key_vault_uri = f"https://{os.getenv('AZURE_KEYVAULT_NAME')}.vault.azure.net"
         else:
-            key_vault_uri = f"https://{AZURE_KEYVAULT_NAME}.vault.azure.net"
+            key_vault_uri = f"https://{config['AZURE_KEYVAULT_NAME']}.vault.azure.net"
         if os.getenv('AZURE_AUTH_METHOD'):
             if os.getenv('AZURE_AUTH_METHOD') == 'env':
                 self.credential = EnvironmentCredential(
@@ -162,130 +293,3 @@ class KeyVaultManager(object):
         return deleted_secret
 
 
-## CORE Config Variables ##
-if os.getenv('ENV'):
-    ENV = os.getenv('ENV')
-else:
-    ENV = SET_ENV
-
-if ENV == 'prod':
-    if os.getenv('PROD_DB_URI_REF'):
-        PROD_DB_URI = KeyVaultManager().get_secret(os.getenv('PROD_DB_URI_REF'))
-    else:
-        PROD_DB_URI = KeyVaultManager().get_secret(SET_PROD_DB_URI_REF)
-else:
-    PROD_DB_URI = SET_PROD_DB_URI
-
-if AUTH_TYPE == 'azuread':
-    if os.getenv('AZAD_CLIENT_ID'):
-        AZAD_CLIENT_ID = os.getenv('AZAD_CLIENT_ID')
-    else:
-        AZAD_CLIENT_ID = SET_AZAD_CLIENT_ID
-    if os.getenv('AZAD_CLIENT_SECRET'):
-        AZAD_CLIENT_SECRET = KeyVaultManager().get_secret(os.getenv('AZAD_CLIENT_SECRET'))
-    else:
-        AZAD_CLIENT_SECRET = KeyVaultManager().get_secret(SET_AZAD_CLIENT_SECRET)
-    if os.getenv('AZAD_AUTHORITY'):
-        AZAD_AUTHORITY = os.getenv('AZAD_AUTHORITY')
-    else:
-        AZAD_AUTHORITY = SET_AZAD_AUTHORITY
-else:
-    AZAD_CLIENT_ID = ""
-    AZAD_CLIENT_SECRET = ""
-    AZAD_AUTHORITY = ""
-
-## Email Variables ##
-if ENV == 'prod':
-    if os.getenv('SMTP_PW_REF'):
-        SMTP_PASSWORD = KeyVaultManager().get_secret(os.getenv('SMTP_PW_REF'))
-    else:
-        SMTP_PASSWORD = KeyVaultManager().get_secret(SET_SMTP_PW_REF)
-else:
-    SMTP_PASSWORD = SET_SMTP_PW
-
-##
-## GitHub to Jenkins Webhook ##
-if os.getenv('JENKINS_ENABLED'):
-    JENKINS_ENABLED = os.getenv('JENKINS_ENABLED')
-else:
-    JENKINS_ENABLED = SET_JENKINS_ENABLED
-if JENKINS_ENABLED == 'yes':
-    if ENV == 'prod':
-        if os.getenv('JENKINS_USER'):
-            JENKINS_USER = KeyVaultManager().get_secret(os.getenv('JENKINS_USER'))
-        else:
-            JENKINS_USER = KeyVaultManager().get_secret(SET_JENKINS_USER_REF)
-        if os.getenv('JENKINS_KEY'):
-            JENKINS_KEY = KeyVaultManager().get_secret(os.getenv('JENKINS_KEY'))
-        else:
-            JENKINS_KEY = KeyVaultManager().get_secret(SET_JENKINS_KEY_REF)
-        if os.getenv('JENKINS_TOKEN'):
-            JENKINS_TOKEN = KeyVaultManager().get_secret(os.getenv('JENKINS_TOKEN'))
-        else:
-            JENKINS_TOKEN = KeyVaultManager().get_secret(SET_JENKINS_TOKEN_REF)
-    else:
-        JENKINS_USER = SET_JENKINS_USER
-        JENKINS_KEY = SET_JENKINS_KEY
-        JENKINS_TOKEN = SET_JENKINS_TOKEN
-
-    if os.getenv('JENKINS_PROJECT'):
-        JENKINS_PROJECT = os.getenv('JENKINS_PROJECT')
-    else:
-        JENKINS_PROJECT = SET_JENKINS_PROJECT
-
-    if os.getenv('JENKINS_HOST'):
-        JENKINS_HOST = os.getenv('JENKINS_HOST')
-    else:
-        JENKINS_HOST = SET_JENKINS_HOST
-
-    if os.getenv('JENKINS_STAGING_PROJECT'):
-        JENKINS_STAGING_PROJECT = os.getenv('JENKINS_STAGING_PROJECT')
-    else:
-        JENKINS_STAGING_PROJECT = SET_JENKINS_STAGING_PROJECT
-else:
-    JENKINS_USER = ""
-    JENKINS_KEY = ""
-    JENKINS_TOKEN = ""
-    JENKINS_PROJECT = ""
-    JENKINS_HOST = ""
-    JENKINS_STAGING_PROJECT = ""
-
-## ServiceNOW Integration
-if os.getenv('SNOW_ENABLED'):
-    SNOW_ENABLED = os.getenv('SNOW_ENABLED')
-else:
-    SNOW_ENABLED = SET_SNOW_ENABLED
-if SNOW_ENABLED == 'yes':
-    if ENV == 'prod':
-        if os.getenv('SNOW_PASSWORD'):
-            SNOW_PASSWORD = KeyVaultManager().get_secret(os.getenv('SNOW_PASSWORD'))
-        else:
-            SNOW_PASSWORD = KeyVaultManager().get_secret(SET_SNOW_PASSWORD_REF)
-        if os.getenv('SNOW_CLIENT_SECRET'):
-            SNOW_CLIENT_SECRET = KeyVaultManager().get_secret(os.getenv('SNOW_CLIENT_SECRET'))
-        else:
-            SNOW_CLIENT_SECRET = KeyVaultManager().get_secret(SET_SNOW_CLIENT_SECRET_REF)
-        if os.getenv('SNOW_INSTANCE_NAME'):
-            SNOW_INSTANCE_NAME = os.getenv('SNOW_INSTANCE_NAME')
-        else:
-            SNOW_INSTANCE_NAME = SET_SNOW_INSTANCE_NAME
-        if os.getenv('SNOW_CLIENT_ID'):
-            SNOW_CLIENT_ID = os.getenv('SNOW_CLIENT_ID')
-        else:
-            SNOW_CLIENT_ID = SET_SNOW_CLIENT_ID
-        if os.getenv('SNOW_USERNAME'):
-            SNOW_USERNAME = os.getenv('SNOW_USERNAME')
-        else:
-            SNOW_USERNAME = SET_SNOW_USERNAME
-    else:
-        SNOW_PASSWORD = SET_SNOW_PASSWORD
-        SNOW_CLIENT_SECRET = SET_SNOW_CLIENT_SECRET
-        SNOW_INSTANCE_NAME = SET_SNOW_INSTANCE_NAME
-        SNOW_CLIENT_ID = SET_SNOW_CLIENT_ID
-        SNOW_USERNAME = SET_SNOW_USERNAME
-else:
-    SNOW_PASSWORD = ""
-    SNOW_CLIENT_SECRET = ""
-    SNOW_INSTANCE_NAME = ""
-    SNOW_CLIENT_ID = ""
-    SNOW_USERNAME = ""

@@ -8,10 +8,9 @@ from vr.admin import admin
 from vr.admin.models import User, LoginForm, AuthAttempts, AppConfig
 from vr.admin.functions import _auth_user, _entity_permissions_filter, _entity_page_permissions_filter, check_lockout, log_failed_attempt
 from vr.admin.functions import db_connection_handler
-from config_engine import AUTH_TYPE
-if AUTH_TYPE == 'ldap':
+if app.config['AUTH_TYPE'] == 'ldap':
     from flask_ldap3_login.forms import LDAPLoginForm
-elif AUTH_TYPE == 'azuread':
+elif app.config['AUTH_TYPE'] == 'azuread':
     import requests
     import msal
     from vr import _build_auth_code_flow, _load_cache, _save_cache, _build_msal_app, _get_token_from_cache
@@ -35,7 +34,7 @@ def login():
         return redirect(url_for('admin.register'))
     ad_auth_url = None
     warnmsg = ''
-    if AUTH_TYPE == 'local':
+    if app.config['AUTH_TYPE'] == 'local':
         if current_user.is_authenticated:
             flash('You are already logged in.', 'danger')
             return redirect(url_for('assets.all_applications'))
@@ -60,7 +59,7 @@ def login():
                 mfa_password = resp[2]
             # attempt to log the user in
             return _login_attempt(user, username, password, userid, form, mfa_password)
-    elif AUTH_TYPE == 'ldap':
+    elif app.config['AUTH_TYPE'] == 'ldap':
         form = LDAPLoginForm()
         if form.validate_on_submit():
             # Log the user in
@@ -71,15 +70,15 @@ def login():
             # Print the form errors
             print("Form validation failed with errors:", form.errors)
         return render_template(LDAP_LOGIN_TEMPLATE, form=form, errors=form.errors)
-    elif AUTH_TYPE == 'azuread':
+    elif app.config['AUTH_TYPE'] == 'azuread':
         form = LoginForm(request.form)
         session["flow"] = _build_auth_code_flow(scopes=app.config['SCOPE'])
         ad_auth_url = session["flow"]["auth_uri"]
     if form.errors:
         warnmsg = (form.errors, 'danger')
-    return render_template(LOGIN_TEMPLATE, form=form, warnmsg=warnmsg, auth_type=AUTH_TYPE, auth_url=ad_auth_url)
+    return render_template(LOGIN_TEMPLATE, form=form, warnmsg=warnmsg, auth_type=app.config['AUTH_TYPE'], auth_url=ad_auth_url)
 
-if AUTH_TYPE == 'azuread':
+if app.config['AUTH_TYPE'] == 'azuread':
     @app.route(app.config['REDIRECT_PATH'])  # Its absolute URL must match your app's redirect_uri set in AAD
     def authorized():
         try:

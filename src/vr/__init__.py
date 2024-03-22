@@ -1,8 +1,6 @@
 import datetime
 import requests
-from config_engine import ENV, PROD_DB_URI, AUTH_TYPE, APP_EXT_URL, LDAP_HOST, LDAP_PORT, LDAP_BASE_DN, \
-    LDAP_USER_DN, LDAP_GROUP_DN, LDAP_USER_RDN_ATTR, LDAP_USER_LOGIN_ATTR, LDAP_BIND_USER_DN, LDAP_BIND_USER_PASSWORD, \
-    AZAD_CLIENT_ID, AZAD_CLIENT_SECRET, AZAD_AUTHORITY, JENKINS_USER, JENKINS_ENABLED
+from config_engine import getConfigs
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
@@ -11,8 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from flaskext.markdown import Markdown
 from vr.db_models.setup import _init_db
-if AUTH_TYPE == 'ldap':
-    from flask_ldap3_login import LDAP3LoginManager
+
 import base64
 import logging
 import sys
@@ -31,48 +28,41 @@ from Crypto.Cipher import PKCS1_OAEP
 from requests.auth import HTTPBasicAuth
 from vr.db_models.updates import createNewTables
 
-if AUTH_TYPE == 'azuread':
+
+app = Flask(__name__)
+
+getConfigs(app.config)
+
+if app.config['AUTH_TYPE'] == 'azuread':
     from flask_session import Session
     import msal
     from flask import session, url_for
 
+if app.config['AUTH_TYPE'] == 'ldap':
+    from flask_ldap3_login import LDAP3LoginManager
 
-app = Flask(__name__)
 moment = Moment(app)
 Markdown(app)
 csrf = CSRFProtect(app)
 
-app.config['APP_EXT_URL'] = APP_EXT_URL
-
-app.config['RUNTIME_ENV'] = ENV
+app.config['RUNTIME_ENV'] = app.config['ENV']
 if app.config['RUNTIME_ENV'] == 'test':
     DB_URI = 'sqlite:///database.db'
     import sqlite3
 else:
-    DB_URI = PROD_DB_URI
+    DB_URI = app.config['PROD_DB_URI']
     import mysql.connector
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-if AUTH_TYPE == 'ldap':
-    # LDAP Configuration
-    app.config['LDAP_HOST'] = LDAP_HOST
-    app.config['LDAP_PORT'] = LDAP_PORT
-    app.config['LDAP_BASE_DN'] = LDAP_BASE_DN
-    app.config['LDAP_USER_DN'] = LDAP_USER_DN
-    app.config['LDAP_GROUP_DN'] = LDAP_GROUP_DN
-    app.config['LDAP_USER_RDN_ATTR'] = LDAP_USER_RDN_ATTR
-    app.config['LDAP_USER_LOGIN_ATTR'] = LDAP_USER_LOGIN_ATTR
-    app.config['LDAP_BIND_USER_DN'] = LDAP_BIND_USER_DN
-    app.config['LDAP_BIND_USER_PASSWORD'] = LDAP_BIND_USER_PASSWORD
-
+if app.config['AUTH_TYPE'] == 'ldap':
     # Flask-LDAP3-Login Manager
     ldap_manager = LDAP3LoginManager(app)
-elif AUTH_TYPE == 'azuread':
-    app.config['CLIENT_ID'] = AZAD_CLIENT_ID
-    app.config['CLIENT_SECRET'] = AZAD_CLIENT_SECRET
-    app.config['AUTHORITY'] = AZAD_AUTHORITY
+elif app.config['AUTH_TYPE'] == 'azuread':
+    app.config['CLIENT_ID'] = app.config['AZAD_CLIENT_ID']
+    app.config['CLIENT_SECRET'] = app.config['AZAD_CLIENT_SECRET']
+    app.config['AUTHORITY'] = app.config['AZAD_AUTHORITY']
     app.config['REDIRECT_PATH'] = "/getAToken"
     app.config['ENDPOINT'] = 'https://graph.microsoft.com/v1.0/me/memberOf'
     app.config['SCOPE'] = ["User.ReadBasic.All", "Group.Read.All", "Application.Read.All"]
@@ -151,7 +141,7 @@ csrf.exempt(api)
 app.register_blueprint(api)
 
 bootstrap = Bootstrap(app)
-if AUTH_TYPE == 'local' or AUTH_TYPE == 'azuread':
+if app.config['AUTH_TYPE'] == 'local' or app.config['AUTH_TYPE'] == 'azuread':
     login_manager.init_app(app)
     login_manager.login_view = 'admin.login'
 
@@ -162,9 +152,10 @@ stdout_handler.setFormatter(formatter)
 app.logger.addHandler(stdout_handler)
 
 
+
 @app.template_filter('format_datetime')
 def format_datetime(value):
-    if ENV == 'test':
+    if app.config['ENV'] == 'test':
         try:
             formatted = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
         except:
@@ -185,6 +176,8 @@ def base64encode(value):
 createNewTables(app)
 
 ## Cronjob-like tasks section ##
+
+
 def train_model_every_six_hours():
     scheduler = BackgroundScheduler()
     scheduler.add_job(train_model, 'interval', hours=6)
@@ -220,6 +213,53 @@ else:
         cur = db.cursor()
         return cur, db
 
+def getPersistentConfig():
+    try:
+        cur, db = connect_to_db()
+        sql = 'SELECT * FROM AppConfig WHERE 1=1'
+        cur.execute(sql)
+        row = cur.fetchone()
+        if row[2]:
+            app.config['APP_EXT_URL'] = row[3]
+            app.config['AUTH_TYPE'] = row[4]
+            app.config['AZAD_AUTHORITY'] = row[5]
+            app.config['AZAD_CLIENT_ID'] = row[6]
+            app.config['AZAD_CLIENT_SECRET'] = row[7]
+            app.config['AZURE_KEYVAULT_NAME'] = row[8]
+            app.config['ENV'] = row[9]
+            app.config['INSECURE_OAUTH'] = row[10]
+            app.config['JENKINS_ENABLED'] = row[37]
+            app.config['JENKINS_HOST'] = row[11]
+            app.config['JENKINS_KEY'] = row[12]
+            app.config['JENKINS_PROJECT'] = row[13]
+            app.config['JENKINS_STAGING_PROJECT'] = row[14]
+            app.config['JENKINS_TOKEN'] = row[15]
+            app.config['JENKINS_USER'] = row[16]
+            app.config['LDAP_BASE_DN'] = row[17]
+            app.config['LDAP_BIND_USER_DN'] = row[18]
+            app.config['LDAP_BIND_USER_PASSWORD'] = row[19]
+            app.config['LDAP_GROUP_DN'] = row[20]
+            app.config['LDAP_HOST'] = row[21]
+            app.config['LDAP_PORT'] = row[22]
+            app.config['LDAP_USER_DN'] = row[23]
+            app.config['LDAP_USER_LOGIN_ATTR'] = row[24]
+            app.config['LDAP_USER_RDN_ATTR'] = row[25]
+            app.config['PROD_DB_URI'] = row[26]
+            app.config['SMTP_ADMIN_EMAIL'] = row[27]
+            app.config['SMTP_HOST'] = row[28]
+            app.config['SMTP_PASSWORD'] = row[29]
+            app.config['SMTP_USER'] = row[30]
+            app.config['SNOW_ENABLED'] = row[38]
+            app.config['SNOW_CLIENT_ID'] = row[31]
+            app.config['SNOW_CLIENT_SECRET'] = row[32]
+            app.config['SNOW_INSTANCE_NAME'] = row[33]
+            app.config['SNOW_PASSWORD'] = row[34]
+            app.config['SNOW_USERNAME'] = row[35]
+            app.config['VERSION'] = row[36]
+    except:
+        print('AppConfig Database table is either unreachable or not setup.')
+
+getPersistentConfig()
 
 def train_model():
     try:
@@ -337,7 +377,7 @@ def rsa_long_decrypt(priv_obj, msg, length=256):
 
 
 def get_jenkins_data():
-    user_check = JENKINS_USER
+    user_check = app.config['JENKINS_USER']
     if user_check != 'changeme':
         app.logger.info('Getting Jenkins Data')
         cur, db = connect_to_db()
@@ -452,5 +492,5 @@ def get_jenkins_data():
 
 # Call the Jobs Here #
 train_model_every_six_hours()
-if JENKINS_ENABLED == 'yes':
+if app.config['JENKINS_ENABLED'] == 'yes':
     get_jenkins_data_every_hour()

@@ -1,13 +1,12 @@
 from flask import jsonify, request
 import requests
 import json
+from vr import app
 from vr.api import api
 from vr.admin.oauth2 import require_oauth
 from authlib.integrations.flask_oauth2 import current_token
 from vr.admin.auth_functions import verify_api_key, get_token_auth_header
 from vr.functions.routing_functions import check_entity_permissions
-from vr.assets.model.applicationprofiles import ApplicationProfiles, ApplicationProfilesSchema
-from config_engine import SNOW_PASSWORD, SNOW_CLIENT_SECRET, SNOW_INSTANCE_NAME, SNOW_CLIENT_ID, SNOW_USERNAME
 
 
 ERROR_RESP = "Error: Invalid API Request"
@@ -184,11 +183,11 @@ def create_new_collaboration_tools(snow_obj, app_name, app_desc):
     return sys_id_map
 
 # ServiceNow instance details
-INSTANCE_NAME = SNOW_INSTANCE_NAME
-CLIENT_ID  = SNOW_CLIENT_ID
-CLIENT_SECRET  = SNOW_CLIENT_SECRET
-USERNAME = SNOW_USERNAME
-PASSWORD = SNOW_PASSWORD
+INSTANCE_NAME = app.config['SNOW_INSTANCE_NAME']
+CLIENT_ID  = app.config['SNOW_CLIENT_ID']
+CLIENT_SECRET  = app.config['SNOW_CLIENT_SECRET']
+USERNAME = app.config['SNOW_USERNAME']
+PASSWORD = app.config['SNOW_PASSWORD']
 
 TOKEN_URL = f'https://{INSTANCE_NAME}.service-now.com/oauth_token.do'
 TOKEN_DATA = {
