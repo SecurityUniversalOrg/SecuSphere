@@ -9,7 +9,7 @@ stages:
     branches:
       - release
   unitTesting:
-    enabled: false
+    enabled: true
     branches: []
   secretScanning:
     enabled: false
