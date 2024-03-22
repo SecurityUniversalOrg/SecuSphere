@@ -21,6 +21,7 @@ from vr.orchestration.model.parallelsecuritypipelineruns import ParallelSecurity
 from vr.vulns.model.sgglobalthresholds import SgGlobalThresholds
 from vr.admin.functions import db_connection_handler
 import traceback
+import time
 
 
 @api.route('/api/jenkins_webhook', methods=['POST'])
@@ -46,13 +47,13 @@ def jenkins_webhook():
             "Content-Type": "application/x-www-form-urlencoded"
         }
         data = {
-            'token': JENKINS_TOKEN,
+            'token': app.config['JENKINS_TOKEN'],
             'GIT_URL': git_url,
             'TESTS': tests_to_run.upper(),
             'GIT_BRANCH': git_branch
         }
-        url = f'{JENKINS_HOST}/job/{JENKINS_PROJECT}/buildWithParameters'
-        resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(JENKINS_USER, JENKINS_KEY))
+        url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_PROJECT']}/buildWithParameters"
+        resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
         response = jsonify({"Status": resp.status_code}), 200
     else:
         response = jsonify({"Status": "Not Applicable"}), 200
@@ -227,6 +228,7 @@ def add_new_scan(git_url, branch_name, report_id):
         }
         url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_PROJECT']}/buildWithParameters"
         resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
+        time.sleep(10)  # sleep for 10 seconds to allow time for response
         # response = jsonify({"Status": resp.status_code}), 200
     except requests.exceptions.Timeout:
         print('Processing Error')
