@@ -212,9 +212,21 @@ def add_application_sla_policy(app_id):
 # Global dictionary to keep track of report statuses
 report_statuses = {}
 
+# Create a logger object for this module or function
+logger = logging.getLogger('add_new_scan')
+logger.setLevel(logging.INFO)  # Set the desired log level
+
+# Create a stream handler to output logs to stdout
+stream_handler = logging.StreamHandler()
+stream_handler.setLevel(logging.INFO)
+
+# Optionally, set a formatter for the handler
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+stream_handler.setFormatter(formatter)
+
+# Add the handler to the logger
+logger.addHandler(stream_handler)
 def add_new_scan(git_url, branch_name, report_id):
-    # Configure logging
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     try:
         stage_str = _determine_stages_for_app(git_url, branch_name)
@@ -232,13 +244,13 @@ def add_new_scan(git_url, branch_name, report_id):
         url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_PROJECT']}/buildWithParameters"
         resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
         # Log the response details
-        logging.info(f"Request URL: {url}")
-        logging.info(f"Response Status Code: {resp.status_code}")
-        logging.info(f"Response Text: {resp.text}")
+        logger.info(f"Request URL: {url}")
+        logger.info(f"Response Status Code: {resp.status_code}")
+        logger.info(f"Response Text: {resp.text}")
     except requests.exceptions.Timeout:
-        logging.error('Processing Error: Timeout')
+        logger.error('Processing Error: Timeout')
     except Exception as e:
-        logging.error(f'Unexpected error: {str(e)}')
+        logger.error(f'Unexpected error: {str(e)}')
 
 
 def _determine_stages_for_app(git_url, branch_name):
