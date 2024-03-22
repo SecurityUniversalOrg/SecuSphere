@@ -214,50 +214,47 @@ else:
         return cur, db
 
 def getPersistentConfig():
-    try:
-        cur, db = connect_to_db()
-        sql = 'SELECT * FROM AppConfig WHERE 1=1'
-        cur.execute(sql)
-        row = cur.fetchone()
-        if row[2]:
-            app.config['APP_EXT_URL'] = row[3]
-            app.config['AUTH_TYPE'] = row[4]
-            app.config['AZAD_AUTHORITY'] = row[5]
-            app.config['AZAD_CLIENT_ID'] = row[6]
-            app.config['AZAD_CLIENT_SECRET'] = row[7]
-            app.config['AZURE_KEYVAULT_NAME'] = row[8]
-            app.config['ENV'] = row[9]
-            app.config['INSECURE_OAUTH'] = row[10]
-            app.config['JENKINS_ENABLED'] = row[37]
-            app.config['JENKINS_HOST'] = row[11]
-            app.config['JENKINS_KEY'] = row[12]
-            app.config['JENKINS_PROJECT'] = row[13]
-            app.config['JENKINS_STAGING_PROJECT'] = row[14]
-            app.config['JENKINS_TOKEN'] = row[15]
-            app.config['JENKINS_USER'] = row[16]
-            app.config['LDAP_BASE_DN'] = row[17]
-            app.config['LDAP_BIND_USER_DN'] = row[18]
-            app.config['LDAP_BIND_USER_PASSWORD'] = row[19]
-            app.config['LDAP_GROUP_DN'] = row[20]
-            app.config['LDAP_HOST'] = row[21]
-            app.config['LDAP_PORT'] = row[22]
-            app.config['LDAP_USER_DN'] = row[23]
-            app.config['LDAP_USER_LOGIN_ATTR'] = row[24]
-            app.config['LDAP_USER_RDN_ATTR'] = row[25]
-            app.config['PROD_DB_URI'] = row[26]
-            app.config['SMTP_ADMIN_EMAIL'] = row[27]
-            app.config['SMTP_HOST'] = row[28]
-            app.config['SMTP_PASSWORD'] = row[29]
-            app.config['SMTP_USER'] = row[30]
-            app.config['SNOW_ENABLED'] = row[38]
-            app.config['SNOW_CLIENT_ID'] = row[31]
-            app.config['SNOW_CLIENT_SECRET'] = row[32]
-            app.config['SNOW_INSTANCE_NAME'] = row[33]
-            app.config['SNOW_PASSWORD'] = row[34]
-            app.config['SNOW_USERNAME'] = row[35]
-            app.config['VERSION'] = row[36]
-    except:
-        print('AppConfig Database table is either unreachable or not setup.')
+    cur, db = connect_to_db()
+    sql = 'SELECT * FROM AppConfig WHERE 1=1'
+    cur.execute(sql)
+    row = cur.fetchone()
+    if row[2]:
+        app.config['APP_EXT_URL'] = row[3]
+        app.config['AUTH_TYPE'] = row[4]
+        app.config['AZAD_AUTHORITY'] = row[5]
+        app.config['AZAD_CLIENT_ID'] = row[6]
+        app.config['AZAD_CLIENT_SECRET'] = row[7]
+        app.config['AZURE_KEYVAULT_NAME'] = row[8]
+        app.config['ENV'] = row[9]
+        app.config['INSECURE_OAUTH'] = row[10]
+        app.config['JENKINS_ENABLED'] = row[37]
+        app.config['JENKINS_HOST'] = row[11]
+        app.config['JENKINS_KEY'] = row[12]
+        app.config['JENKINS_PROJECT'] = row[13]
+        app.config['JENKINS_STAGING_PROJECT'] = row[14]
+        app.config['JENKINS_TOKEN'] = row[15]
+        app.config['JENKINS_USER'] = row[16]
+        app.config['LDAP_BASE_DN'] = row[17]
+        app.config['LDAP_BIND_USER_DN'] = row[18]
+        app.config['LDAP_BIND_USER_PASSWORD'] = row[19]
+        app.config['LDAP_GROUP_DN'] = row[20]
+        app.config['LDAP_HOST'] = row[21]
+        app.config['LDAP_PORT'] = row[22]
+        app.config['LDAP_USER_DN'] = row[23]
+        app.config['LDAP_USER_LOGIN_ATTR'] = row[24]
+        app.config['LDAP_USER_RDN_ATTR'] = row[25]
+        app.config['PROD_DB_URI'] = row[26]
+        app.config['SMTP_ADMIN_EMAIL'] = row[27]
+        app.config['SMTP_HOST'] = row[28]
+        app.config['SMTP_PASSWORD'] = row[29]
+        app.config['SMTP_USER'] = row[30]
+        app.config['SNOW_ENABLED'] = row[38]
+        app.config['SNOW_CLIENT_ID'] = row[31]
+        app.config['SNOW_CLIENT_SECRET'] = row[32]
+        app.config['SNOW_INSTANCE_NAME'] = row[33]
+        app.config['SNOW_PASSWORD'] = row[34]
+        app.config['SNOW_USERNAME'] = row[35]
+        app.config['VERSION'] = row[36]
 
 getPersistentConfig()
 
