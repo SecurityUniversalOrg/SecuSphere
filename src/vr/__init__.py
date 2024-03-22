@@ -218,7 +218,7 @@ def getPersistentConfig():
     sql = 'SELECT * FROM AppConfig WHERE 1=1'
     cur.execute(sql)
     row = cur.fetchone()
-    if row[2]:
+    if row and row[2]:
         app.config['APP_EXT_URL'] = row[3]
         app.config['AUTH_TYPE'] = row[4]
         app.config['AZAD_AUTHORITY'] = row[5]
