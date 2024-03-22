@@ -2,8 +2,8 @@ from datetime import datetime
 from sqlalchemy.types import TEXT, DECIMAL
 from sqlalchemy import MetaData
 from vr.admin.functions import db_connection_handler
-from config_engine import ENV
-if ENV == 'test':
+from vr import app
+if app.config['ENV'] == 'test':
     from sqlalchemy.dialects.sqlite import TEXT as LONGTEXT
 else:
     from sqlalchemy.dialects.mysql import LONGTEXT

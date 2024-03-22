@@ -16,7 +16,6 @@ from vr.functions.routing_functions import check_entity_permissions
 from vr.admin.oauth2 import require_oauth
 from vr.admin.functions import db_connection_handler
 from authlib.integrations.flask_oauth2 import current_token
-from config_engine import ENV
 import re
 
 
@@ -295,7 +294,7 @@ def _add_new_vulns(new_vulns, engine):
 def _setup_duplicate_vulns(source_type, dup_vulns):
     sourced_dup_vulns = []
     for vuln in dup_vulns:
-        if ENV == 'test':
+        if app.config['ENV'] == 'test':
             vuln['LastModifiedDate'] = datetime.datetime.utcnow().replace(microsecond=0)
             if vuln['ReleaseDate']:
                 vuln['ReleaseDate'] = datetime.datetime.strptime(vuln['ReleaseDate'], '%Y-%m-%d %H:%M:%S')

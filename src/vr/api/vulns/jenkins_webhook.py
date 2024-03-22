@@ -2,10 +2,11 @@ import requests
 import datetime
 from threading import Thread
 from flask import jsonify, request, json
-from vr import db
+from vr import db, app
 from vr.api import api
 from requests.auth import HTTPBasicAuth
-from config_engine import JENKINS_USER, JENKINS_KEY, JENKINS_PROJECT, JENKINS_HOST, JENKINS_TOKEN
+# from config_engine import JENKINS_USER, JENKINS_KEY, JENKINS_PROJECT, JENKINS_HOST, JENKINS_TOKEN
+from config_engine import getConfigs
 from vr.admin.oauth2 import require_oauth
 from sqlalchemy import text
 from vr.assets.model.cicdpipelinebuilds import CICDPipelineBuilds
@@ -25,6 +26,7 @@ import traceback
 @api.route('/api/jenkins_webhook', methods=['POST'])
 @require_oauth('write:vulnerabilities')
 def jenkins_webhook():
+    getConfigs(app.config)
     all = request.form
     payload_dict = json.loads(all['payload'])
     ref = payload_dict['ref']

@@ -1,11 +1,6 @@
 from datetime import datetime
 from sqlalchemy.types import TEXT, DECIMAL
 from flask import jsonify
-from config_engine import ENV
-if ENV == 'test':
-    from sqlalchemy.dialects.sqlite import TEXT as LONGTEXT
-else:
-    from sqlalchemy.dialects.mysql import LONGTEXT
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects import mysql
 from flask_login import UserMixin
@@ -176,9 +171,9 @@ def _init_db(db=None, app=None):
         __tablename__ = 'TmControls'
         ID = db.Column(db.Integer, primary_key=True)
         AddDate = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
-        Control = db.Column(LONGTEXT)
+        Control = db.Column(db.String(20000))
         Type = db.Column(db.String(8))
-        Description = db.Column(LONGTEXT)
+        Description = db.Column(db.String(20000))
         Lambda = db.Column(db.String(1))
         Process = db.Column(db.String(1))
         Server = db.Column(db.String(1))

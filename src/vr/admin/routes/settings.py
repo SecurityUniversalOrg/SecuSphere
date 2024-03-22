@@ -5,16 +5,8 @@ import os
 # Start of Entity-specific Imports
 from vr.admin import admin
 from vr.admin.functions import _auth_user, check_menu_tour_init
-from config_engine import ENV, PROD_DB_URI, AUTH_TYPE, APP_EXT_URL, LDAP_HOST, LDAP_PORT, LDAP_BASE_DN, \
-    LDAP_USER_DN, LDAP_GROUP_DN, LDAP_USER_RDN_ATTR, LDAP_USER_LOGIN_ATTR, LDAP_BIND_USER_DN, LDAP_BIND_USER_PASSWORD, \
-    AZAD_CLIENT_ID, AZAD_CLIENT_SECRET, AZAD_AUTHORITY, JENKINS_USER, AZURE_KEYVAULT_NAME, INSECURE_OAUTH, \
-    JENKINS_HOST, JENKINS_KEY, JENKINS_PROJECT, JENKINS_STAGING_PROJECT, JENKINS_TOKEN, SMTP_ADMIN_EMAIL, \
-    SMTP_HOST, SMTP_PASSWORD, SMTP_USER, SNOW_CLIENT_ID, SNOW_CLIENT_SECRET, SNOW_INSTANCE_NAME, SNOW_PASSWORD, \
-    SNOW_USERNAME, VERSION, JENKINS_ENABLED, SNOW_ENABLED
-from flask_sqlalchemy import SQLAlchemy
 from vr.admin.models import AppConfig
 from vr.admin.functions import db_connection_handler
-from sqlalchemy import text
 
 
 NAV = {
@@ -44,7 +36,7 @@ def settings():
                 AppConfig.AZAD_CLIENT_ID: all["AZAD_CLIENT_ID"],
                 AppConfig.AZAD_CLIENT_SECRET: all["AZAD_CLIENT_SECRET"],
                 AppConfig.AZURE_KEYVAULT_NAME: all["AZURE_KEYVAULT_NAME"],
-                AppConfig.ENV: ENV,
+                AppConfig.ENV: app.config['ENV'],
                 AppConfig.INSECURE_OAUTH: all["INSECURE_OAUTH"],
                 AppConfig.JENKINS_HOST: all["JENKINS_HOST"],
                 AppConfig.JENKINS_KEY: all["JENKINS_KEY"],
@@ -71,7 +63,7 @@ def settings():
                 AppConfig.SNOW_INSTANCE_NAME: all["SNOW_INSTANCE_NAME"],
                 AppConfig.SNOW_PASSWORD: all["SNOW_PASSWORD"],
                 AppConfig.SNOW_USERNAME: all["SNOW_USERNAME"],
-                AppConfig.VERSION: VERSION,
+                AppConfig.VERSION: app.config['VERSION'],
             }
         if not app_config.settings_initialized:
             update_json[AppConfig.settings_initialized] = True
@@ -88,7 +80,7 @@ def settings():
             "AZAD_CLIENT_ID": all["AZAD_CLIENT_ID"],
             "AZAD_CLIENT_SECRET": all["AZAD_CLIENT_SECRET"],
             "AZURE_KEYVAULT_NAME": all["AZURE_KEYVAULT_NAME"],
-            "ENV": ENV,
+            "ENV": app.config['ENV'],
             "INSECURE_OAUTH": all["INSECURE_OAUTH"],
             "JENKINS_HOST": all["JENKINS_HOST"],
             "JENKINS_KEY": all["JENKINS_KEY"],
@@ -115,7 +107,7 @@ def settings():
             "SNOW_INSTANCE_NAME": all["SNOW_INSTANCE_NAME"],
             "SNOW_PASSWORD": all["SNOW_PASSWORD"],
             "SNOW_USERNAME": all["SNOW_USERNAME"],
-            "VERSION": VERSION,
+            "VERSION": app.config['VERSION'],
         }
     else:
         app_config = AppConfig.query.first()
@@ -160,42 +152,42 @@ def settings():
             }
         else:
             current_settings = {
-                "JENKINS_ENABLED": JENKINS_ENABLED,
-                "SNOW_ENABLED": SNOW_ENABLED,
-                "APP_EXT_URL": APP_EXT_URL,
-                "AUTH_TYPE": AUTH_TYPE,
-                "AZAD_AUTHORITY":AZAD_AUTHORITY,
-                "AZAD_CLIENT_ID": AZAD_CLIENT_ID,
-                "AZAD_CLIENT_SECRET": AZAD_CLIENT_SECRET,
-                "AZURE_KEYVAULT_NAME": AZURE_KEYVAULT_NAME,
-                "ENV": ENV,
-                "INSECURE_OAUTH": INSECURE_OAUTH,
-                "JENKINS_HOST": JENKINS_HOST,
-                "JENKINS_KEY": JENKINS_KEY,
-                "JENKINS_PROJECT": JENKINS_PROJECT,
-                "JENKINS_STAGING_PROJECT": JENKINS_STAGING_PROJECT,
-                "JENKINS_USER": JENKINS_USER,
-                "JENKINS_TOKEN": JENKINS_TOKEN,
-                "LDAP_BASE_DN": LDAP_BASE_DN,
-                "LDAP_BIND_USER_DN": LDAP_BIND_USER_DN,
-                "LDAP_BIND_USER_PASSWORD": LDAP_BIND_USER_PASSWORD,
-                "LDAP_GROUP_DN": LDAP_GROUP_DN,
-                "LDAP_HOST": LDAP_HOST,
-                "LDAP_PORT": LDAP_PORT,
-                "LDAP_USER_DN": LDAP_USER_DN,
-                "LDAP_USER_LOGIN_ATTR": LDAP_USER_LOGIN_ATTR,
-                "LDAP_USER_RDN_ATTR": LDAP_USER_RDN_ATTR,
-                "PROD_DB_URI": PROD_DB_URI,
-                "SMTP_ADMIN_EMAIL": SMTP_ADMIN_EMAIL,
-                "SMTP_HOST": SMTP_HOST,
-                "SMTP_USER": SMTP_USER,
-                "SMTP_PASSWORD": SMTP_PASSWORD,
-                "SNOW_CLIENT_ID": SNOW_CLIENT_ID,
-                "SNOW_CLIENT_SECRET": SNOW_CLIENT_SECRET,
-                "SNOW_INSTANCE_NAME": SNOW_INSTANCE_NAME,
-                "SNOW_USERNAME": SNOW_USERNAME,
-                "SNOW_PASSWORD": SNOW_PASSWORD,
-                "VERSION": VERSION,
+                "JENKINS_ENABLED": app.config['JENKINS_ENABLED'],
+                "SNOW_ENABLED": app.config['SNOW_ENABLED'],
+                "APP_EXT_URL": app.config['APP_EXT_URL'],
+                "AUTH_TYPE": app.config['AUTH_TYPE'],
+                "AZAD_AUTHORITY": app.config['AZAD_AUTHORITY'],
+                "AZAD_CLIENT_ID": app.config['AZAD_CLIENT_ID'],
+                "AZAD_CLIENT_SECRET": app.config['AZAD_CLIENT_SECRET'],
+                "AZURE_KEYVAULT_NAME": app.config['AZURE_KEYVAULT_NAME'],
+                "ENV": app.config['ENV'],
+                "INSECURE_OAUTH": app.config['INSECURE_OAUTH'],
+                "JENKINS_HOST": app.config['JENKINS_HOST'],
+                "JENKINS_KEY": app.config['JENKINS_KEY'],
+                "JENKINS_PROJECT": app.config['JENKINS_PROJECT'],
+                "JENKINS_STAGING_PROJECT": app.config['JENKINS_STAGING_PROJECT'],
+                "JENKINS_USER": app.config['JENKINS_USER'],
+                "JENKINS_TOKEN": app.config['JENKINS_TOKEN'],
+                "LDAP_BASE_DN": app.config['LDAP_BASE_DN'],
+                "LDAP_BIND_USER_DN": app.config['LDAP_BIND_USER_DN'],
+                "LDAP_BIND_USER_PASSWORD": app.config['LDAP_BIND_USER_PASSWORD'],
+                "LDAP_GROUP_DN": app.config['LDAP_GROUP_DN'],
+                "LDAP_HOST": app.config['LDAP_HOST'],
+                "LDAP_PORT": app.config['LDAP_PORT'],
+                "LDAP_USER_DN": app.config['LDAP_USER_DN'],
+                "LDAP_USER_LOGIN_ATTR": app.config['LDAP_USER_LOGIN_ATTR'],
+                "LDAP_USER_RDN_ATTR": app.config['LDAP_USER_RDN_ATTR'],
+                "PROD_DB_URI": app.config['PROD_DB_URI'],
+                "SMTP_ADMIN_EMAIL": app.config['SMTP_ADMIN_EMAIL'],
+                "SMTP_HOST": app.config['SMTP_HOST'],
+                "SMTP_USER": app.config['SMTP_USER'],
+                "SMTP_PASSWORD": app.config['SMTP_PASSWORD'],
+                "SNOW_CLIENT_ID": app.config['SNOW_CLIENT_ID'],
+                "SNOW_CLIENT_SECRET": app.config['SNOW_CLIENT_SECRET'],
+                "SNOW_INSTANCE_NAME": app.config['SNOW_INSTANCE_NAME'],
+                "SNOW_USERNAME": app.config['SNOW_USERNAME'],
+                "SNOW_PASSWORD": app.config['SNOW_PASSWORD'],
+                "VERSION": app.config['VERSION'],
             }
     cat_general = [
         'APP_EXT_URL',
@@ -257,7 +249,7 @@ def set_env_variables(form):
     os.environ['AZAD_CLIENT_ID'] = form["AZAD_CLIENT_ID"]
     os.environ['AZAD_CLIENT_SECRET'] = form["AZAD_CLIENT_SECRET"]
     os.environ['AZURE_KEYVAULT_NAME'] = form["AZURE_KEYVAULT_NAME"]
-    os.environ['ENV'] = ENV
+    os.environ['ENV'] = app.config['ENV']
     os.environ['INSECURE_OAUTH'] = form["INSECURE_OAUTH"]
     os.environ['JENKINS_ENABLED'] = form["JENKINS_ENABLED"]
     os.environ['JENKINS_HOST'] = form["JENKINS_HOST"]
@@ -286,7 +278,43 @@ def set_env_variables(form):
     os.environ['SNOW_INSTANCE_NAME'] = form["SNOW_INSTANCE_NAME"]
     os.environ['SNOW_PASSWORD'] = form["SNOW_PASSWORD"]
     os.environ['SNOW_USERNAME'] = form["SNOW_USERNAME"]
-    os.environ['VERSION'] = VERSION
+    os.environ['VERSION'] = app.config['VERSION']
+    app.config['APP_EXT_URL'] = form["APP_EXT_URL"]
+    app.config['AUTH_TYPE'] = form["AUTH_TYPE"]
+    app.config['AZAD_AUTHORITY'] = form["AZAD_AUTHORITY"]
+    app.config['AZAD_CLIENT_ID'] = form["AZAD_CLIENT_ID"]
+    app.config['AZAD_CLIENT_SECRET'] = form["AZAD_CLIENT_SECRET"]
+    app.config['AZURE_KEYVAULT_NAME'] = form["AZURE_KEYVAULT_NAME"]
+    app.config['ENV'] = app.config['ENV']
+    app.config['INSECURE_OAUTH'] = form["INSECURE_OAUTH"]
+    app.config['JENKINS_ENABLED'] = form["JENKINS_ENABLED"]
+    app.config['JENKINS_HOST'] = form["JENKINS_HOST"]
+    app.config['JENKINS_KEY'] = form["JENKINS_KEY"]
+    app.config['JENKINS_PROJECT'] = form["JENKINS_PROJECT"]
+    app.config['JENKINS_STAGING_PROJECT'] = form["JENKINS_STAGING_PROJECT"]
+    app.config['JENKINS_TOKEN'] = form["JENKINS_TOKEN"]
+    app.config['JENKINS_USER'] = form["JENKINS_USER"]
+    app.config['LDAP_BASE_DN'] = form["LDAP_BASE_DN"]
+    app.config['LDAP_BIND_USER_DN'] = form["LDAP_BIND_USER_DN"]
+    app.config['LDAP_BIND_USER_PASSWORD'] = form["LDAP_BIND_USER_PASSWORD"]
+    app.config['LDAP_GROUP_DN'] = form["LDAP_GROUP_DN"]
+    app.config['LDAP_HOST'] = form["LDAP_HOST"]
+    app.config['LDAP_PORT'] = form["LDAP_PORT"]
+    app.config['LDAP_USER_DN'] = form["LDAP_USER_DN"]
+    app.config['LDAP_USER_LOGIN_ATTR'] = form["LDAP_USER_LOGIN_ATTR"]
+    app.config['LDAP_USER_RDN_ATTR'] = form["LDAP_USER_RDN_ATTR"]
+    app.config['PROD_DB_URI'] = form["PROD_DB_URI"]
+    app.config['SMTP_ADMIN_EMAIL'] = form["SMTP_ADMIN_EMAIL"]
+    app.config['SMTP_HOST'] = form["SMTP_HOST"]
+    app.config['SMTP_PASSWORD'] = form["SMTP_PASSWORD"]
+    app.config['SMTP_USER'] = form["SMTP_USER"]
+    app.config['SNOW_ENABLED'] = form["SNOW_ENABLED"]
+    app.config['SNOW_CLIENT_ID'] = form["SNOW_CLIENT_ID"]
+    app.config['SNOW_CLIENT_SECRET'] = form["SNOW_CLIENT_SECRET"]
+    app.config['SNOW_INSTANCE_NAME'] = form["SNOW_INSTANCE_NAME"]
+    app.config['SNOW_PASSWORD'] = form["SNOW_PASSWORD"]
+    app.config['SNOW_USERNAME'] = form["SNOW_USERNAME"]
+    app.config['VERSION'] = app.config['VERSION']
 
 
 @admin.route('/dangerous/delete_all', methods=['POST'])
@@ -300,7 +328,7 @@ def delete_all_data():
                                nav_subsubcat='', nav_curpage={"name": "Unauthorized"})
 
     try:
-        if ENV == 'test':
+        if app.config['ENV'] == 'test':
             # Ensure all connections to the database are closed
             db.session.close()
             db.engine.dispose()

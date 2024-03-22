@@ -25,7 +25,6 @@ import csv
 import base64
 from io import StringIO
 from flask import Response
-from config_engine import ENV
 from vr.functions.ml_functions import predict_vuln_validity
 from vr.vulns.model.cvssbasescoresv3 import CVSSBaseScoresV3
 from vr.vulns.model.cvssbasescoresv3extensions import CVSSBaseScoresV3Extensions
@@ -42,7 +41,7 @@ ADMIN_LOGIN = "admin.login"
 UNAUTH_STATUS = "403.html"
 SERVER_ERR_STATUS = "500.html"
 VULN_STATUS_IS_NOT_CLOSED = "Vulnerabilities.Status NOT LIKE 'Closed-%' AND Vulnerabilities.Status NOT LIKE 'Open-RiskAccepted-%'"
-test = ENV
+test = app.config['ENV']
 if test == 'test':
     ISO_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 else:

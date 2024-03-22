@@ -13,7 +13,6 @@ from vr.admin.functions import db_connection_handler
 from vr.admin.helper_functions import hash_password
 from vr.admin.email_alerts import send_registration_email
 from vr.functions.initial_setup import setup_core_db_tables, generate_key_pair
-from config_engine import ENV
 from vr.db_models.setup_2 import _init_db
 
 
@@ -115,7 +114,7 @@ def register_submit():
             _init_db(db=db)
 
             generate_key_pair()
-            setup_core_db_tables(ENV)
+            setup_core_db_tables(app.config['ENV'])
             admin_role = UserRoles.query.filter_by(name='Admin').first()
             ura = UserRoleAssignments(user_id=user.id, role_id=admin_role.id)
             db.session.add(ura)

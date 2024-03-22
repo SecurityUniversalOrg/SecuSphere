@@ -11,8 +11,8 @@ from vr.vulns.model.vulnerabilities import Vulnerabilities, VulnerabilitiesSchem
 from vr.vulns.model.vulnerabilityscans import VulnerabilityScans, VulnerabilityScansSchema
 from vr.functions.table_functions import load_table, update_table
 from requests.auth import HTTPBasicAuth
-from config_engine import JENKINS_USER, JENKINS_KEY, JENKINS_PROJECT, JENKINS_HOST, JENKINS_TOKEN
 from vr.assets.model.applicationprofiles import ApplicationProfiles, ApplicationProfilesSchema
+from vr import app
 
 
 NAV = {
@@ -115,14 +115,14 @@ def on_demand_testing():
         "Content-Type": "application/x-www-form-urlencoded"
     }
     data = {
-        'token': JENKINS_TOKEN,
+        'token': app.config['JENKINS_TOKEN'],
         'GIT_URL': git_url,
         'TESTS': tests_to_run.upper(),
         'GIT_BRANCH': git_branch,
         'APP_NAME': app_name
     }
-    url = f'{JENKINS_HOST}/job/{JENKINS_PROJECT}/buildWithParameters'
-    resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(JENKINS_USER, JENKINS_KEY))
+    url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_PROJECT']}/buildWithParameters"
+    resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
 
     return redirect(request.referrer)
 
