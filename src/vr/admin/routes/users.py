@@ -8,7 +8,6 @@ from vr.admin.models import User, UserRoles, UserRoleAssignments, UsersSchema, E
 from sqlalchemy import text
 from flask import request, render_template, session, redirect, url_for, json
 from flask_login import login_required
-from config_engine import AUTH_TYPE
 from vr.functions.table_functions import load_table, update_table
 from vr.admin.email_alerts import send_registration_email
 from vr.assets.model.businessapplications import BusinessApplications
@@ -296,7 +295,7 @@ def add_new_user():
             first_name=firstname,
             last_name=lastname,
             is_active=False,
-            auth_type=AUTH_TYPE,
+            auth_type=app.config['AUTH_TYPE'],
             otp_secret=otp_secret,
             user_type='system',
             avatar_path='/static/images/default_profile_avatar.jpg'

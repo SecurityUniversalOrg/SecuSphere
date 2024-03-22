@@ -4,10 +4,9 @@ import string
 import datetime
 import os
 from vr.admin.oauth2 import config_oauth
-from config_engine import ENV, INSECURE_OAUTH
 
 
-if ENV == 'test' or INSECURE_OAUTH:
+if app.config['ENV'] == 'test' or app.config['INSECURE_OAUTH']:
     os.environ['AUTHLIB_INSECURE_TRANSPORT'] = '1'
 else:
     os.environ['AUTHLIB_INSECURE_TRANSPORT'] = '0'

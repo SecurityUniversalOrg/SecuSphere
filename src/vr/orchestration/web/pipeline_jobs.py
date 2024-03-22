@@ -11,7 +11,6 @@ from vr.assets.model.businessapplications import BusinessApplications
 from vr.orchestration.model.cicdpipelines import CICDPipelines, CICDPipelinesSchema
 from vr.orchestration.model.pipelinejobs import PipelineJobs, PipelineJobsSchema
 from vr.orchestration.web.pipeline_stage_data import OPTS
-from config_engine import JENKINS_USER, JENKINS_KEY, JENKINS_STAGING_PROJECT, JENKINS_HOST, JENKINS_TOKEN
 
 
 NAV = {
@@ -248,7 +247,7 @@ def validate_cicd_pipeline_stage(appid):
         "Content-Type": "application/x-www-form-urlencoded"
     }
     data = {
-        'token': JENKINS_TOKEN,
+        'token': app.config['JENKINS_TOKEN'],
         'GIT_URL': git_url,
         'GIT_BRANCH': git_branch,
         'APP_NAME': app_name,
@@ -261,8 +260,8 @@ def validate_cicd_pipeline_stage(appid):
         'TARGET_URL': target_url
 
     }
-    url = f'{JENKINS_HOST}/job/{JENKINS_STAGING_PROJECT}/buildWithParameters'
-    resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(JENKINS_USER, JENKINS_KEY))
+    url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_STAGING_PROJECT']}/buildWithParameters"
+    resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
 
     return str(200)
 

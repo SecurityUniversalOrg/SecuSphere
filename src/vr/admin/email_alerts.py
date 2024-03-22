@@ -1,7 +1,7 @@
 import smtplib
 from email.mime import multipart
 from email.mime import text as mimetext
-from config_engine import SMTP_HOST, SMTP_USER, SMTP_PASSWORD, SMTP_ADMIN_EMAIL
+from vr import app
 
 
 def send_email(msg_fromaddr, msg_toaddr, msg_subject, msg_body):
@@ -11,9 +11,9 @@ def send_email(msg_fromaddr, msg_toaddr, msg_subject, msg_body):
     msg['To'] = msg_toaddr
     msg['Subject'] = msg_subject
     msg.attach(mimetext.MIMEText(message, 'html'))
-    server = smtplib.SMTP(SMTP_HOST)
+    server = smtplib.SMTP(app.config['SMTP_HOST'])
     server.starttls()
-    server.login(SMTP_USER, SMTP_PASSWORD)
+    server.login(app.config['SMTP_USER'], app.config['SMTP_PASSWORD'])
     server.ehlo()
     text = msg.as_string()
     server.sendmail(msg_fromaddr, msg_toaddr, text)
@@ -24,7 +24,7 @@ def send_registration_email(ext_url, username, first_name, last_name, token, ema
     msg_subject = "SecuSphere User Registration"
     msg_body = generate_registration_msg(ext_url, username, first_name, last_name, token)
     try:
-        send_email(SMTP_ADMIN_EMAIL, email_to, msg_subject, msg_body)
+        send_email(app.config['SMTP_ADMIN_EMAIL'], email_to, msg_subject, msg_body)
     except:
         return 'error'
 
