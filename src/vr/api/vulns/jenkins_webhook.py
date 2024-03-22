@@ -21,7 +21,7 @@ from vr.orchestration.model.parallelsecuritypipelineruns import ParallelSecurity
 from vr.vulns.model.sgglobalthresholds import SgGlobalThresholds
 from vr.admin.functions import db_connection_handler
 import traceback
-import time
+import logging
 
 
 @api.route('/api/jenkins_webhook', methods=['POST'])
@@ -213,6 +213,9 @@ def add_application_sla_policy(app_id):
 report_statuses = {}
 
 def add_new_scan(git_url, branch_name, report_id):
+    # Configure logging
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
     try:
         stage_str = _determine_stages_for_app(git_url, branch_name)
         headers = {
@@ -228,10 +231,14 @@ def add_new_scan(git_url, branch_name, report_id):
         }
         url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_PROJECT']}/buildWithParameters"
         resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
-        time.sleep(10)  # sleep for 10 seconds to allow time for response
-        # response = jsonify({"Status": resp.status_code}), 200
+        # Log the response details
+        logging.info(f"Request URL: {url}")
+        logging.info(f"Response Status Code: {resp.status_code}")
+        logging.info(f"Response Text: {resp.text}")
     except requests.exceptions.Timeout:
-        print('Processing Error')
+        logging.error('Processing Error: Timeout')
+    except Exception as e:
+        logging.error(f'Unexpected error: {str(e)}')
 
 
 def _determine_stages_for_app(git_url, branch_name):
