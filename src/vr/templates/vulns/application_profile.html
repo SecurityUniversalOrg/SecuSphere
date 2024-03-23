@@ -38,10 +38,6 @@
                                         Application Profile
                                     </h3>
 
-
-
-
-
                                 </div>
                             </div>
 
@@ -57,7 +53,18 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                    <div class="modal-body">
+                                    <form action="/update_application_profile" method="post">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        <input type="hidden" name="app_name" value="{{ app_data.ApplicationName }}"/>
+                                    <div class="form-group">
+                                        <label for="gitUrl" style="margin-right: 64px;">Git URL:</label>
+                                        <input type="text" class="form-control" id="gitUrl" name="gitUrl" value="{{ app_data.RepoURL }}">
+                                    </div>
+                                        <div class="form-group">
+                                        <label for="gitBranch" style="margin-right: 42px;">Git Branch:</label>
+                                        <input type="text" class="form-control" id="gitBranch" name="gitBranch" value="main">
+                                    </div>
+                                        <div class="modal-body">
                                         <div class="form-group">
                                             <label for="emailDistributionUpdate">Email Distribution List (optional):</label>
                                             <input type="text" class="form-control" id="emailDistributionUpdate" placeholder="Enter email distribution list">
@@ -66,8 +73,9 @@
                                     <p>NOTE: This will perform an Application Profile Assessment on the OnDemand Security Pipeline.  This process can take up to 1 hour to complete and the results will be emailed to your registered email in addition to the optional Email distribution list entered above.</p>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary">Submit</button>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
                                     </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>

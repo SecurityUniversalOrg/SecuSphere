@@ -127,6 +127,45 @@ def on_demand_testing():
     return redirect(request.referrer)
 
 
+@vulns.route("/update_application_profile", methods=['POST'])
+@login_required
+def update_application_profile():
+    NAV['curpage'] = {"name": "Vulnerability Scans"}
+    admin_role = 'Application Admin'
+    role_req = ['Application Admin', 'Application Viewer']
+    perm_entity = 'Application'
+    user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
+                                          permissions_entity=perm_entity)
+    status = _entity_page_permissions_filter(id, user_roles, session, admin_role)
+
+    if status == 401:
+        return redirect(url_for('admin.login'))
+    elif status == 403:
+        return render_template('403.html', user=user, NAV=NAV)
+
+    git_url = request.form.get('gitUrl')
+    git_branch = request.form.get('gitBranch')
+    app_name = request.form.get('app_name')
+    tests_to_run = 'NONE,'
+
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    data = {
+        'token': app.config['JENKINS_TOKEN'],
+        'GIT_URL': git_url,
+        'TESTS': tests_to_run.upper(),
+        'GIT_BRANCH': git_branch,
+        'APP_NAME': app_name,
+        'PROFILE_APPLICATION': 'Y'
+    }
+    url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_PROJECT']}/buildWithParameters"
+    resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
+
+    return redirect(request.referrer)
+
+
 @vulns.route("/application_profile/<app_id>")
 @login_required
 def application_profile(app_id):
@@ -145,7 +184,7 @@ def application_profile(app_id):
             filter(lambda t: t.ID != '', assets_all)
         )
         app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
-        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
+        app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym, 'RepoURL': app.RepoURL}
         NAV['appbar'] = 'settings'
         return render_template('vulns/application_profile.html', entities=assets, user=user,
                                NAV=NAV, app_data=app_data)
