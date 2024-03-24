@@ -374,43 +374,42 @@ def rsa_long_decrypt(priv_obj, msg, length=256):
 
 
 def get_jenkins_data():
-    user_check = app.config['JENKINS_USER']
-    if user_check != 'changeme':
-        app.logger.info('Getting Jenkins Data')
-        cur, db = connect_to_db()
-        if app.config['RUNTIME_ENV'] == 'test':
-            sub_key = "?"
-        else:
-            sub_key = "%s"
-        sql = f"SELECT b.ID, b.ApplicationName, b.ApplicationAcronym, a.Type, a.AppEntity, i.Url, i.Username, i.Password, c.ID FROM BusinessApplications b JOIN AppIntegrations a ON b.ID=a.AppID JOIN Integrations i ON a.IntegrationID=i.ID JOIN CICDPipelines c ON i.ID=c.IntegrationID WHERE a.Type={sub_key}"
-        args = ('Jenkins',)
-        cur.execute(sql, args)
-        apps_all = cur.fetchall()
+    app.logger.info('Getting Jenkins Data')
+    cur, db = connect_to_db()
+    if app.config['RUNTIME_ENV'] == 'test':
+        sub_key = "?"
+    else:
+        sub_key = "%s"
+    sql = f"SELECT b.ID, b.ApplicationName, b.ApplicationAcronym, a.Type, a.AppEntity, i.Url, i.Username, i.Password, c.ID FROM BusinessApplications b JOIN AppIntegrations a ON b.ID=a.AppID JOIN Integrations i ON a.IntegrationID=i.ID JOIN CICDPipelines c ON i.ID=c.IntegrationID WHERE a.Type={sub_key}"
+    args = ('Jenkins',)
+    cur.execute(sql, args)
+    apps_all = cur.fetchall()
 
-        # Make a request to the Jenkins API
-        unique_jenkins_url = []
-        for a in apps_all:
-            instance_dict = {
-                'url': a[5],
-                'username': decrypt_with_priv_key(a[6]),
-                'token': decrypt_with_priv_key(a[7])
-            }
-            if instance_dict not in unique_jenkins_url:
-                unique_jenkins_url.append(instance_dict)
+    # Make a request to the Jenkins API
+    unique_jenkins_url = []
+    for a in apps_all:
+        instance_dict = {
+            'url': app.config['JENKINS_HOST'],
+            'username': app.config['JENKINS_USER'],
+            'token': app.config['JENKINS_KEY']
+        }
+        if instance_dict not in unique_jenkins_url:
+            unique_jenkins_url.append(instance_dict)
 
-        jenkins_instance_data = {}
-        for i in unique_jenkins_url:
-            response = requests.get(f"{i['url']}/api/json?tree=jobs[name,_class]", auth=(i['username'], i['token']))
-            # Parse the response
-            jobs = json.loads(response.text)['jobs']
-            jenkins_instance_data[i['url']] = {'jobs': jobs}
+    jenkins_instance_data = {}
+    for i in unique_jenkins_url:
+        response = requests.get(f"{i['url']}/api/json?tree=jobs[name,_class]", auth=(i['username'], i['token']))
+        # Parse the response
+        jobs = json.loads(response.text)['jobs']
+        jenkins_instance_data[i['url']] = {'jobs': jobs}
 
-        for a in apps_all:
+    for a in apps_all:
+        if a[4]:
             cicd_pipeline_id = a[8]
             jenkins_url = a[5]
             project_name = a[4].lstrip().rstrip()
-            username = decrypt_with_priv_key(a[6])
-            token = decrypt_with_priv_key(a[7])
+            username = app.config['JENKINS_USER']
+            token = app.config['JENKINS_KEY']
             # r = requests.get(f'{jenkins_url}/job/{project_name}/job/release%2F0.1.0-beta%2FTest-1/api/json', auth=HTTPBasicAuth(username, token))
             for job in jenkins_instance_data[jenkins_url]['jobs']:
                 run = False
@@ -484,7 +483,7 @@ def get_jenkins_data():
                     else:
                         print('Placeholder for pipeline type handler')
 
-        db.close()
+    db.close()
 
 
 # Call the Jobs Here #
