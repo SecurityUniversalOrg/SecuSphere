@@ -226,7 +226,7 @@ stream_handler.setFormatter(formatter)
 
 # Add the handler to the logger
 logger.addHandler(stream_handler)
-def add_new_scan(git_url, branch_name, report_id):
+def add_new_scan(app_name, git_url, branch_name, report_id):
 
     try:
         stage_str = _determine_stages_for_app(git_url, branch_name)
@@ -240,7 +240,8 @@ def add_new_scan(git_url, branch_name, report_id):
             'TESTS': stage_str,
             'GIT_BRANCH': branch_name,
             'REPORT_ID': report_id,
-            'PIPELINE_TYPE': "PARALLEL_SCAN"
+            'PIPELINE_TYPE': "PARALLEL_SCAN",
+            'APP_NAME': app_name
         }
         url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_PROJECT']}/buildWithParameters"
         resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
@@ -276,7 +277,7 @@ def parallel_security_scan():
         report_id = _add_vulnerability_scan(app_id, branch_name)
 
         # Start processing in a new thread
-        processing_thread = Thread(target=add_new_scan, args=(git_url, branch_name, report_id))
+        processing_thread = Thread(target=add_new_scan, args=(app_name, git_url, branch_name, report_id))
         processing_thread.start()
 
         return jsonify({"report_id": report_id, "status": "processing started"}), 200
