@@ -3,15 +3,16 @@
 
 pipeline {
 
-    agent {
-        docker {
-            image 'securityuniversal/jenkins-pipeline-agent:latest'
-            args '--group-add 999'
-        }
-    }
+    agent none
 
     stages {
         stage('Initialize Config') {
+            agent {
+                kubernetes {
+                    cloud 'kubernetes-cloud'
+                    label 'jenkins-pipeline-agent'
+                }
+            }
             steps {
                 script {
                     def config = jslReadYamlConfig()
@@ -28,6 +29,12 @@ pipeline {
         }
 
         stage('Prep Job') {
+            agent {
+                kubernetes {
+                    cloud 'kubernetes-cloud'
+                    label 'jenkins-pipeline-agent'
+                }
+            }
             when {
                 expression {
                     def config = jslReadYamlConfig('prepJob')
@@ -50,8 +57,9 @@ pipeline {
 
         stage('Unit Testing') {
             agent {
-                docker {
-                    image 'securityuniversal/jenkins-python-agent:latest'
+                kubernetes {
+                    cloud 'kubernetes-cloud'
+                    label 'jenkins-python-agent'
                 }
             }
             when {
@@ -74,8 +82,9 @@ pipeline {
 
         stage('Secret Scanning') {
             agent {
-                docker {
-                    image 'securityuniversal/jenkins-sectesting-agent:latest'
+                kubernetes {
+                    cloud 'kubernetes-cloud'
+                    label 'jenkins-secret-agent'
                 }
             }
             when {
@@ -98,8 +107,9 @@ pipeline {
 
         stage('Software Composition Analysis') {
             agent {
-                docker {
-                    image 'securityuniversal/jenkins-sectesting-agent:latest'
+                kubernetes {
+                    cloud 'kubernetes-cloud'
+                    label 'jenkins-sca-agent'
                 }
             }
             when {
@@ -126,8 +136,9 @@ pipeline {
 
         stage('Static Application Security Testing') {
             agent {
-                docker {
-                    image 'securityuniversal/jenkins-sectesting-agent:latest'
+                kubernetes {
+                    cloud 'kubernetes-cloud'
+                    label 'jenkins-sast-agent'
                 }
             }
             when {
@@ -154,9 +165,9 @@ pipeline {
 
         stage('Infrastructure-as-Code Security Testing') {
             agent {
-                docker {
-                    image 'securityuniversal/jenkins-sectesting-agent:latest'
-                    args '--group-add 999'
+                kubernetes {
+                    cloud 'kubernetes-cloud'
+                    label 'jenkins-iac-agent'
                 }
             }
             when {
@@ -179,10 +190,7 @@ pipeline {
 
         stage('Build Docker Service') {
             agent {
-                docker {
-                    image 'securityuniversal/jenkins-iac-agent:latest'
-                    args '--group-add 999'
-                }
+                label 'DockerVM'
             }
             when {
                 expression {
@@ -208,9 +216,9 @@ pipeline {
 
         stage('Docker Container Scanning') {
             agent {
-                docker {
-                    image 'securityuniversal/jenkins-sectesting-agent:latest'
-                    args '--group-add 999'
+                kubernetes {
+                    cloud 'kubernetes-cloud'
+                    label 'jenkins-dockersec-agent'
                 }
             }
             when {
@@ -238,8 +246,9 @@ pipeline {
 
         stage('Release to Test') {
             agent {
-                docker {
-                    image 'securityuniversal/jenkins-deploy-agent:latest'
+                kubernetes {
+                    cloud 'kubernetes-cloud'
+                    label 'jenkins-deploy-agent'
                 }
             }
             when {
@@ -266,6 +275,12 @@ pipeline {
         }
 
         stage('Test Release') {
+            agent {
+                kubernetes {
+                    cloud 'kubernetes-cloud'
+                    label 'jenkins-dast-agent'
+                }
+            }
             when {
                  expression {
                     def config = jslReadYamlConfig('testRelease')
@@ -294,9 +309,9 @@ pipeline {
         ////////// Quality Gate //////////
         stage("Quality Gate - Security") {
             agent {
-                docker {
-                    image 'securityuniversal/jenkins-sectesting-agent:latest'
-                    args '--group-add 999'
+                kubernetes {
+                    cloud 'kubernetes-cloud'
+                    label 'jenkins-pipeline-agent'
                 }
             }
             when {
@@ -320,9 +335,9 @@ pipeline {
         ////////// Deploy to Production //////////
         stage('Deploy') {
             agent {
-                docker {
-                    image 'securityuniversal/jenkins-deploy-agent:latest'
-                    args '--group-add 999'
+                kubernetes {
+                    cloud 'kubernetes-cloud'
+                    label 'jenkins-deploy-agent'
                 }
             }
             when {
@@ -357,8 +372,10 @@ pipeline {
     }
     post {
         always {
-            script {
-                jslPipelineReporter()
+            node('jenkins-pipeline-agent') {
+                script {
+                    jslPipelineReporter()
+                }
             }
         }
     }
