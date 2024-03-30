@@ -133,7 +133,7 @@ pipeline {
                         script {
                             def stageConfig = jslReadYamlConfig('sca')
                             def codeLanguages = stageConfig?.codeLanguages.join(',')
-                            jslSecuritySCA(codeLanguages)
+                            jslSoftwareCompositionAnalysis(codeLanguages, env.appName)
                         }
                     }
                 }
