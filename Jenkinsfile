@@ -74,8 +74,10 @@ pipeline {
                  }
             }
             steps {
-                jslStageWrapper('Unit Testing') {
-                    jslPythonUnitTesting()
+                container('jenkins-python-agent') {
+                    jslStageWrapper('Unit Testing') {
+                        jslPythonUnitTesting()
+                    }
                 }
             }
         }
@@ -99,8 +101,10 @@ pipeline {
                  }
             }
             steps {
-                jslStageWrapper('Secret Scanning') {
-                    jslSecretScanning()
+                container('jenkins-secret-agent') {
+                    jslStageWrapper('Secret Scanning') {
+                        jslSecretScanning()
+                    }
                 }
             }
         }
@@ -124,11 +128,13 @@ pipeline {
                  }
             }
             steps {
-                jslStageWrapper('Software Composition Analysis') {
-                    script {
-                        def stageConfig = jslReadYamlConfig('sca')
-                        def codeLanguages = stageConfig?.codeLanguages.join(',')
-                        jslSecuritySCA(codeLanguages)
+                container('jenkins-sca-agent') {
+                    jslStageWrapper('Software Composition Analysis') {
+                        script {
+                            def stageConfig = jslReadYamlConfig('sca')
+                            def codeLanguages = stageConfig?.codeLanguages.join(',')
+                            jslSecuritySCA(codeLanguages)
+                        }
                     }
                 }
             }
@@ -153,11 +159,13 @@ pipeline {
                  }
             }
             steps {
-                jslStageWrapper('Static Application Security Testing') {
-                    script {
-                        def stageConfig = jslReadYamlConfig('sast')
-                        def codeLanguages = stageConfig?.codeLanguages
-                        jslStaticApplicationSecurityTesting(codeLanguages)
+                container('jenkins-sast-agent') {
+                    jslStageWrapper('Static Application Security Testing') {
+                        script {
+                            def stageConfig = jslReadYamlConfig('sast')
+                            def codeLanguages = stageConfig?.codeLanguages
+                            jslStaticApplicationSecurityTesting(codeLanguages)
+                        }
                     }
                 }
             }
@@ -182,8 +190,10 @@ pipeline {
                  }
             }
             steps {
-                jslStageWrapper('Infrastructure-as-Code Security Testing') {
-                    jslInfrastructureAsCodeAnalysis()
+                container('jenkins-iac-agent') {
+                    jslStageWrapper('Infrastructure-as-Code Security Testing') {
+                        jslInfrastructureAsCodeAnalysis()
+                    }
                 }
             }
         }
@@ -233,12 +243,14 @@ pipeline {
                  }
             }
             steps {
-                jslStageWrapper('Docker Container Scanning') {
-                    script {
-                        def stageConfig = jslReadYamlConfig('containerScan')
-                        def containerName = stageConfig?.containerName
-                        def containerTag = stageConfig?.containerTag
-                        jslContainerSecurityScanning(containerName, containerTag)
+                container('jenkins-dockersec-agent') {
+                    jslStageWrapper('Docker Container Scanning') {
+                        script {
+                            def stageConfig = jslReadYamlConfig('containerScan')
+                            def containerName = stageConfig?.containerName
+                            def containerTag = stageConfig?.containerTag
+                            jslContainerSecurityScanning(containerName, containerTag)
+                        }
                     }
                 }
             }
@@ -263,12 +275,14 @@ pipeline {
                  }
             }
             steps {
-                jslStageWrapper('Release to Test') {
-                    script {
-                        def stageConfig = jslReadYamlConfig('releaseToTest')
-                        def serviceName = stageConfig?.serviceName
-                        def containerTag = stageConfig?.containerTag
-                        jslRunDockerCompose(serviceName, containerTag)
+                container('jenkins-deploy-agent') {
+                    jslStageWrapper('Release to Test') {
+                        script {
+                            def stageConfig = jslReadYamlConfig('releaseToTest')
+                            def serviceName = stageConfig?.serviceName
+                            def containerTag = stageConfig?.containerTag
+                            jslRunDockerCompose(serviceName, containerTag)
+                        }
                     }
                 }
             }
@@ -293,14 +307,16 @@ pipeline {
                  }
             }
             steps {
-                jslStageWrapper('Test Release') {
-                    script {
-                        def stageConfig = jslReadYamlConfig('testRelease')
-                        def targetUrl = stageConfig?.targetUrl
-                        def dastTestType = stageConfig?.dastTestType
-                        def apiTargetUrl = stageConfig?.apiTargetUrl
-                        jslDastOWASP(dastTestType, targetUrl)
-                        jslDastAPIOWASP(apiTargetUrl, targetUrl)
+                container('jenkins-dast-agent') {
+                    jslStageWrapper('Test Release') {
+                        script {
+                            def stageConfig = jslReadYamlConfig('testRelease')
+                            def targetUrl = stageConfig?.targetUrl
+                            def dastTestType = stageConfig?.dastTestType
+                            def apiTargetUrl = stageConfig?.apiTargetUrl
+                            jslDastOWASP(dastTestType, targetUrl)
+                            jslDastAPIOWASP(apiTargetUrl, targetUrl)
+                        }
                     }
                 }
             }
@@ -326,8 +342,10 @@ pipeline {
                  }
             }
             steps {
-                jslStageWrapper('Quality Gate - Security') {
-                    jslSecurityQualityGate()
+                container('jenkins-pipeline-agent') {
+                    jslStageWrapper('Quality Gate - Security') {
+                        jslSecurityQualityGate()
+                    }
                 }
             }
         }
@@ -352,19 +370,21 @@ pipeline {
                 }
             }
             steps {
-                jslStageWrapper('Deploy') {
-                    script {
-                        def stageConfig = jslReadYamlConfig('deploy')
+                container('jenkins-deploy-agent') {
+                    jslStageWrapper('Deploy') {
+                        script {
+                            def stageConfig = jslReadYamlConfig('deploy')
 
-                        jslKubernetesDeploy([
-                            'serviceName': env.appName,
-                            'tlsCredId': stageConfig?.tlsCredId,
-                            'secretsCredentials': stageConfig?.secretsCredentials,
-                            'secretsSetStrings': stageConfig?.secretsSetStrings,
-                            'serviceCredentials': stageConfig?.serviceCredentials,
-                            'serviceSetStrings': stageConfig?.serviceSetStrings
-                        ])
+                            jslKubernetesDeploy([
+                                'serviceName': env.appName,
+                                'tlsCredId': stageConfig?.tlsCredId,
+                                'secretsCredentials': stageConfig?.secretsCredentials,
+                                'secretsSetStrings': stageConfig?.secretsSetStrings,
+                                'serviceCredentials': stageConfig?.serviceCredentials,
+                                'serviceSetStrings': stageConfig?.serviceSetStrings
+                            ])
 
+                        }
                     }
                 }
             }
