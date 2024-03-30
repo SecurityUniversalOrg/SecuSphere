@@ -5,6 +5,10 @@ pipeline {
 
     agent none
 
+    environment {
+        SNYK_API_KEY = credentials('snyk-api-key')
+    }
+
     stages {
         stage('Initialize Config') {
             agent {
