@@ -230,10 +230,7 @@ pipeline {
 
         stage('Docker Container Scanning') {
             agent {
-                kubernetes {
-                    cloud 'kubernetes-cloud'
-                    label 'jenkins-dockersec-agent'
-                }
+                label 'DockerVM'
             }
             when {
                  expression {
