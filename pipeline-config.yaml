@@ -49,14 +49,14 @@ stages:
     serviceName: secusphere
     containerTag: latest
   testRelease:
-    enabled: false
+    enabled: true
     branches:
       - release
-    targetUrl: 'http://192.168.0.68:5010'
+    targetUrl: 'https://secusphere.securityuniversal.com'
     dastTestType: full
-    apiTargetUrl: 'http://192.168.0.68:5010/api/openapi.yaml'
+    apiTargetUrl: 'https://secusphere.securityuniversal.com/api/openapi.yaml'
   securityQualityGate:
-    enabled: false
+    enabled: true
     branches:
       - release
   deploy:
