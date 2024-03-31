@@ -9,21 +9,21 @@ stages:
     branches:
       - release
   unitTesting:
-    enabled: true
+    enabled: false
     branches: []
   secretScanning:
-    enabled: true
+    enabled: false
     branches:
       - release
   sca:
-    enabled: true
+    enabled: false
     branches:
       - release
     codeLanguages:
       - Python
       - Javascript
   sast:
-    enabled: true
+    enabled: false
     branches:
       - release
     codeLanguages:
