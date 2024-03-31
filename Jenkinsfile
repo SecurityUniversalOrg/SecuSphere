@@ -244,16 +244,15 @@ pipeline {
                  }
             }
             steps {
-                container('jenkins-dockersec-agent') {
-                    jslStageWrapper('Docker Container Scanning') {
-                        script {
-                            def stageConfig = jslReadYamlConfig('containerScan')
-                            def containerName = stageConfig?.containerName
-                            def containerTag = stageConfig?.containerTag
-                            jslContainerSecurityScanning(containerName, containerTag)
-                        }
+                jslStageWrapper('Docker Container Scanning') {
+                    script {
+                        def stageConfig = jslReadYamlConfig('containerScan')
+                        def containerName = stageConfig?.containerName
+                        def containerTag = stageConfig?.containerTag
+                        jslContainerSecurityScanning(containerName, containerTag)
                     }
                 }
+
             }
         }
 
