@@ -353,10 +353,7 @@ pipeline {
         ////////// Deploy to Production //////////
         stage('Deploy') {
             agent {
-                kubernetes {
-                    cloud 'kubernetes-cloud'
-                    label 'jenkins-deploy-agent'
-                }
+                label 'DockerVM'
             }
             when {
                 anyOf {
@@ -370,23 +367,23 @@ pipeline {
                 }
             }
             steps {
-                container('jenkins-deploy-agent') {
-                    jslStageWrapper('Deploy') {
-                        script {
-                            def stageConfig = jslReadYamlConfig('deploy')
 
-                            jslKubernetesDeploy([
-                                'serviceName': env.appName,
-                                'tlsCredId': stageConfig?.tlsCredId,
-                                'secretsCredentials': stageConfig?.secretsCredentials,
-                                'secretsSetStrings': stageConfig?.secretsSetStrings,
-                                'serviceCredentials': stageConfig?.serviceCredentials,
-                                'serviceSetStrings': stageConfig?.serviceSetStrings
-                            ])
+                jslStageWrapper('Deploy') {
+                    script {
+                        def stageConfig = jslReadYamlConfig('deploy')
 
-                        }
+                        jslKubernetesDeploy([
+                            'serviceName': env.appName,
+                            'tlsCredId': stageConfig?.tlsCredId,
+                            'secretsCredentials': stageConfig?.secretsCredentials,
+                            'secretsSetStrings': stageConfig?.secretsSetStrings,
+                            'serviceCredentials': stageConfig?.serviceCredentials,
+                            'serviceSetStrings': stageConfig?.serviceSetStrings
+                        ])
+
                     }
                 }
+
             }
         }
     }
