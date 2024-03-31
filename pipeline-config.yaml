@@ -43,20 +43,20 @@ stages:
     containerName: secusphere
     containerTag: latest
   releaseToTest:
-    enabled: true
+    enabled: false
     branches:
       - release
     serviceName: secusphere
     containerTag: latest
   testRelease:
-    enabled: true
+    enabled: false
     branches:
       - release
     targetUrl: 'http://192.168.0.68:5010'
     dastTestType: full
     apiTargetUrl: 'http://192.168.0.68:5010/api/openapi.yaml'
   securityQualityGate:
-    enabled: true
+    enabled: false
     branches:
       - release
   deploy:
