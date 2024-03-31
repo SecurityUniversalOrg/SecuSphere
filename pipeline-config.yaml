@@ -49,7 +49,7 @@ stages:
     serviceName: secusphere
     containerTag: latest
   testRelease:
-    enabled: false
+    enabled: true
     branches:
       - release
     targetUrl: 'https://secusphere.securityuniversal.com'
