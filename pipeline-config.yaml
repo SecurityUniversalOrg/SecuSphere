@@ -43,7 +43,7 @@ stages:
     containerName: secusphere
     containerTag: latest
   releaseToTest:
-    enabled: false
+    enabled: true
     branches:
       - release
     serviceName: secusphere
