@@ -56,7 +56,7 @@ stages:
     dastTestType: full
     apiTargetUrl: 'https://secusphere.securityuniversal.com/api/openapi.yaml'
   securityQualityGate:
-    enabled: false
+    enabled: true
     branches:
       - release
   deploy:
