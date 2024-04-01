@@ -22,6 +22,7 @@ from vr.vulns.model.sgglobalthresholds import SgGlobalThresholds
 from vr.admin.functions import db_connection_handler
 import traceback
 import logging
+from vr.assets.model.applicationprofiles import ApplicationProfiles
 
 
 @api.route('/api/jenkins_webhook', methods=['POST'])
@@ -229,7 +230,7 @@ logger.addHandler(stream_handler)
 def add_new_scan(app_name, git_url, branch_name, report_id):
 
     try:
-        stage_str = _determine_stages_for_app(git_url, branch_name)
+        stage_str = _determine_stages_for_app(app_name)
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/x-www-form-urlencoded"
@@ -256,11 +257,31 @@ def add_new_scan(app_name, git_url, branch_name, report_id):
         logger.error(f'Unexpected error: {str(e)}')
 
 
-def _determine_stages_for_app(git_url, branch_name):
+def _determine_stages_for_app(app_name):
     stage_str = ""
+    app_str = app_name.split('--')[0]
+    component_str = app_name.split('--')[1]
+    app_obj = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{app_str}' AND BusinessApplications.ApplicationAcronym='{component_str}'")).first()
+    profile = ApplicationProfiles.query.filter_by(AppID=app_obj.ID).first()
+    if profile.SecretScanReq == 1:
+        stage_str += "SECRET,"
+    if profile.SCAReq == 1:
+        stage_str += "SCA,"
+    if profile.SASTReq == 1:
+        stage_str += "SAST,"
+    if profile.IACReq == 1:
+        stage_str += "IAC,"
+    if profile.ContainerReq == 1:
+        stage_str += "DOCKER,"
+    if profile.InfrastructureScanReq == 1:
+        stage_str += "INFRA,"
+    if profile.DASTReq == 1:
+        stage_str += "DAST,"
+    if profile.DASTApiReq == 1:
+        stage_str += "DAPIST,"
+    if stage_str.endswith(","):
+        stage_str = stage_str[:-1]
 
-    #temp
-    stage_str = "SECRET"
     return stage_str
 
 @api.route('/api/parallel_security_scan', methods=['POST'])
