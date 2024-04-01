@@ -242,7 +242,7 @@ def add_new_scan(app_name, git_url, branch_name, report_id):
             'REPORT_ID': report_id,
             'PIPELINE_TYPE': "PARALLEL_SCAN",
             'APP_NAME': app_name,
-            
+            'PROFILE_APPLICATION': 'Y'
         }
         url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_PROJECT']}/buildWithParameters"
         resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
