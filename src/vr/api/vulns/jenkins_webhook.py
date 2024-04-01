@@ -301,8 +301,9 @@ def parallel_security_scan():
         report_id = _add_vulnerability_scan(app_id, branch_name)
 
         # Start processing in a new thread
-        processing_thread = Thread(target=add_new_scan, args=(app_name, git_url, branch_name, report_id))
-        processing_thread.start()
+        with app.app_context():
+            processing_thread = Thread(target=add_new_scan, args=(app_name, git_url, branch_name, report_id))
+            processing_thread.start()
 
         return jsonify({"report_id": report_id, "status": "processing started"}), 200
 
