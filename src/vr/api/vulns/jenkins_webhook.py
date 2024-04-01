@@ -230,7 +230,8 @@ logger.addHandler(stream_handler)
 def add_new_scan(app_name, git_url, branch_name, report_id):
 
     try:
-        stage_str = _determine_stages_for_app(app_name)
+        with app.app_context():
+            stage_str = _determine_stages_for_app(app_name)
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/x-www-form-urlencoded"
