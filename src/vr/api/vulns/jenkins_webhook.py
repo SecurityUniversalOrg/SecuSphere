@@ -230,7 +230,8 @@ logger.addHandler(stream_handler)
 def add_new_scan(app_name, git_url, branch_name, report_id):
 
     try:
-        stage_str = _determine_stages_for_app(app_name)
+        with app.app_context():
+            stage_str = _determine_stages_for_app(app_name)
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/x-www-form-urlencoded"
@@ -300,9 +301,8 @@ def parallel_security_scan():
         report_id = _add_vulnerability_scan(app_id, branch_name)
 
         # Start processing in a new thread
-        with app.app_context():
-            processing_thread = Thread(target=add_new_scan, args=(app_name, git_url, branch_name, report_id))
-            processing_thread.start()
+        processing_thread = Thread(target=add_new_scan, args=(app_name, git_url, branch_name, report_id))
+        processing_thread.start()
 
         return jsonify({"report_id": report_id, "status": "processing started"}), 200
 
