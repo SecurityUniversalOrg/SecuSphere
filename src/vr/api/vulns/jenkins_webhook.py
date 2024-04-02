@@ -263,7 +263,7 @@ def _determine_stages_for_app(app_name):
     stage_str = ""
     app_str = app_name.split('--')[0]
     component_str = app_name.split('--')[1]
-    app_obj = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{app_str}' AND BusinessApplications.ApplicationAcronym='{component_str}'")).first()
+    app_obj = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{app_str}' AND BusinessApplications.ApplicationAcronym='{component_str.lower()}'")).first()
     profile = ApplicationProfiles.query.filter_by(AppID=app_obj.ID).first()
     if profile.SecretScanReq == 1:
         stage_str += "SECRET,"
