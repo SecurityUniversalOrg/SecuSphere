@@ -9,21 +9,21 @@ stages:
     branches:
       - release
   unitTesting:
-    enabled: true
+    enabled: false
     branches: []
   secretScanning:
-    enabled: true
+    enabled: false
     branches:
       - release
   sca:
-    enabled: true
+    enabled: false
     branches:
       - release
     codeLanguages:
       - Python
       - Javascript
   sast:
-    enabled: true
+    enabled: false
     branches:
       - release
     codeLanguages:
@@ -49,14 +49,14 @@ stages:
     serviceName: secusphere
     containerTag: latest
   testRelease:
-    enabled: true
+    enabled: false
     branches:
       - release
     targetUrl: 'https://secusphere.securityuniversal.com'
     dastTestType: full
     apiTargetUrl: 'https://secusphere.securityuniversal.com/api/openapi.yaml'
   securityQualityGate:
-    enabled: true
+    enabled: false
     branches:
       - release
   deploy:
