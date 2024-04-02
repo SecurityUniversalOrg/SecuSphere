@@ -263,23 +263,23 @@ def _determine_stages_for_app(app_name):
     stage_str = ""
     app_str = app_name.split('--')[0]
     component_str = app_name.split('--')[1]
-    app_obj = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{app_str}' AND BusinessApplications.ApplicationAcronym='{component_str.lower()}'")).first()
+    app_obj = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{app_str.upper()}' AND BusinessApplications.ApplicationAcronym='{component_str.lower()}'")).first()
     profile = ApplicationProfiles.query.filter_by(AppID=app_obj.ID).first()
-    if profile.SecretScanReq == 1:
+    if str(profile.SecretScanReq) == "1":
         stage_str += "SECRET,"
-    if profile.SCAReq == 1:
+    if str(profile.SCAReq) == "1":
         stage_str += "SCA,"
-    if profile.SASTReq == 1:
+    if str(profile.SASTReq) == "1":
         stage_str += "SAST,"
-    if profile.IACReq == 1:
+    if str(profile.IACReq) == "1":
         stage_str += "IAC,"
-    if profile.ContainerReq == 1:
+    if str(profile.ContainerReq) == "1":
         stage_str += "DOCKER,"
-    if profile.InfrastructureScanReq == 1:
+    if str(profile.InfrastructureScanReq) == "1":
         stage_str += "INFRA,"
-    if profile.DASTReq == 1:
+    if str(profile.DASTReq) == "1":
         stage_str += "DAST,"
-    if profile.DASTApiReq == 1:
+    if str(profile.DASTApiReq) == "1":
         stage_str += "DAPIST,"
     if stage_str.endswith(","):
         stage_str = stage_str[:-1]
