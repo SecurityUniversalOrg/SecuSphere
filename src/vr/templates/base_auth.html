@@ -237,6 +237,7 @@
         <a href="{{ url_for('vulns.global_KPIs') }}" class="menu_child_btn reg">Application KPIs</a>
         {% if user.is_admin %}
           <a href="{{ url_for('assets.add_application') }}" class="menu_child_btn reg">Add Application</a>
+          <a href="{{ url_for('vulns.opensource_testing') }}" class="menu_child_btn reg">Add Open Source</a>
         {% endif %}
         <a href="{{ url_for('sourcecode.cheatsheets', sheet_name='Index') }}" class="menu_child_btn reg">Cheat Sheets</a>
       </div>
