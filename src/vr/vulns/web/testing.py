@@ -16,7 +16,7 @@ from vr import app
 
 
 NAV = {
-    'CAT': { "name": "Vulnerabilities", "url": "sourcecode.dashboard"}
+    'CAT': { "name": "Testing", "url": "sourcecode.dashboard"}
 }
 
 @vulns.route("/vulnerability_scans/<id>", methods=['GET', 'POST'])
@@ -125,6 +125,59 @@ def on_demand_testing():
     resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
 
     return redirect(request.referrer)
+
+@vulns.route("/opensource_testing")
+@login_required
+def opensource_testing():
+    try:
+        NAV['curpage'] = {"name": "Open Source Testing"}
+        user, status, user_roles = _auth_user(session, 'No Role')
+        if status == 401:
+            return redirect(url_for('admin.login'))
+        elif status == 403:
+            return render_template('403.html', user=user, NAV=NAV)
+
+        return render_template('testing/opensource_testing.html', user=user, NAV=NAV)
+    except RuntimeError:
+        return render_template('500.html'), 500
+
+
+
+@vulns.route("/start_opensource_testing", methods=['POST'])
+@login_required
+def start_opensource_testing():
+    NAV['curpage'] = {"name": "Vulnerability Scans"}
+    admin_role = 'Application Admin'
+    role_req = ['Application Admin', 'Application Viewer']
+    perm_entity = 'Application'
+    user, status, user_roles = _auth_user(session, NAV['CAT']['name'], role_requirements=role_req,
+                                          permissions_entity=perm_entity)
+    status = _entity_page_permissions_filter(id, user_roles, session, admin_role)
+
+    if status == 401:
+        return redirect(url_for('admin.login'))
+    elif status == 403:
+        return render_template('403.html', user=user, NAV=NAV)
+
+    git_url = request.form.get('gitUrl')
+    git_branch = request.form.get('gitBranch')
+    app_name = request.form.get('app_name')
+
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    data = {
+        'token': app.config['JENKINS_TOKEN'],
+        'GIT_URL': git_url,
+        'GIT_BRANCH': git_branch,
+        'APP_NAME': app_name,
+        'PROFILE_APPLICATION': 'Y'
+    }
+    url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_PROJECT']}/buildWithParameters"
+    resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
+
+    return redirect(url_for('assets.all_applications'))
 
 
 @vulns.route("/update_application_profile", methods=['POST'])
