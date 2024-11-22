@@ -3,7 +3,7 @@
 
 pipeline {
 
-    agent none
+    agent any
 
     environment {
         SNYK_API_KEY = credentials('snyk-api-key')
@@ -11,12 +11,7 @@ pipeline {
 
     stages {
         stage('Initialize Config') {
-            agent {
-                kubernetes {
-                    cloud 'kubernetes-cloud'
-                    label 'jenkins-pipeline-agent'
-                }
-            }
+            agent any
             steps {
                 script {
                     def config = jslReadYamlConfig()
@@ -33,12 +28,7 @@ pipeline {
         }
 
         stage('Prep Job') {
-            agent {
-                kubernetes {
-                    cloud 'kubernetes-cloud'
-                    label 'jenkins-pipeline-agent'
-                }
-            }
+            agent any
             when {
                 expression {
                     def config = jslReadYamlConfig('prepJob')
@@ -60,12 +50,7 @@ pipeline {
         }
 
         stage('Unit Testing') {
-            agent {
-                kubernetes {
-                    cloud 'kubernetes-cloud'
-                    label 'jenkins-python-agent'
-                }
-            }
+            agent any
             when {
                  expression {
                     def config = jslReadYamlConfig('unitTesting')
@@ -87,12 +72,7 @@ pipeline {
         }
 
         stage('Secret Scanning') {
-            agent {
-                kubernetes {
-                    cloud 'kubernetes-cloud'
-                    label 'jenkins-secret-agent'
-                }
-            }
+            agent any
             when {
                  expression {
                     def config = jslReadYamlConfig('secretScanning')
@@ -114,12 +94,7 @@ pipeline {
         }
 
         stage('Software Composition Analysis') {
-            agent {
-                kubernetes {
-                    cloud 'kubernetes-cloud'
-                    label 'jenkins-sca-agent'
-                }
-            }
+            agent any
             when {
                  expression {
                     def config = jslReadYamlConfig('sca')
@@ -145,12 +120,7 @@ pipeline {
         }
 
         stage('Static Application Security Testing') {
-            agent {
-                kubernetes {
-                    cloud 'kubernetes-cloud'
-                    label 'jenkins-sast-agent'
-                }
-            }
+            agent any
             when {
                  expression {
                     def config = jslReadYamlConfig('sast')
@@ -176,12 +146,7 @@ pipeline {
         }
 
         stage('Infrastructure-as-Code Security Testing') {
-            agent {
-                kubernetes {
-                    cloud 'kubernetes-cloud'
-                    label 'jenkins-iac-agent'
-                }
-            }
+            agent any
             when {
                  expression {
                     def config = jslReadYamlConfig('iac')
@@ -203,9 +168,7 @@ pipeline {
         }
 
         stage('Build Docker Service') {
-            agent {
-                label 'DockerVM'
-            }
+            agent any
             when {
                 expression {
                     def config = jslReadYamlConfig('buildDocker')
@@ -229,9 +192,7 @@ pipeline {
         }
 
         stage('Docker Container Scanning') {
-            agent {
-                label 'DockerVM'
-            }
+            agent any
             when {
                  expression {
                     def config = jslReadYamlConfig('containerScan')
@@ -257,12 +218,7 @@ pipeline {
         }
 
         stage('Release to Test') {
-            agent {
-                kubernetes {
-                    cloud 'kubernetes-cloud'
-                    label 'jenkins-deploy-agent'
-                }
-            }
+            agent any
             when {
                  expression {
                     def config = jslReadYamlConfig('releaseToTest')
@@ -289,12 +245,7 @@ pipeline {
         }
 
         stage('Test Release') {
-            agent {
-                kubernetes {
-                    cloud 'kubernetes-cloud'
-                    label 'jenkins-dast-agent'
-                }
-            }
+            agent any
             when {
                  expression {
                     def config = jslReadYamlConfig('testRelease')
@@ -324,12 +275,7 @@ pipeline {
 
         ////////// Quality Gate //////////
         stage("Quality Gate - Security") {
-            agent {
-                kubernetes {
-                    cloud 'kubernetes-cloud'
-                    label 'jenkins-pipeline-agent'
-                }
-            }
+            agent any
             when {
                  expression {
                     def config = jslReadYamlConfig('securityQualityGate')
@@ -352,9 +298,7 @@ pipeline {
 
         ////////// Deploy to Production //////////
         stage('Deploy') {
-            agent {
-                label 'DockerVM'
-            }
+            agent any
             when {
                 anyOf {
                     // Condition for the PROD branch

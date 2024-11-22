@@ -38,37 +38,60 @@ def get_dora_grade(app_id):
             time_dict = {'timeStart': time_start, 'timeEnd':time_end}
             total_score = 0
             applicable_metrics = 0
-            # calculate vulnerability resolution time
-            vr_score, total_score, applicable_metrics = calculate_vulnerability_resolution_time(time_dict, app_id, total_score, applicable_metrics)
-            # calculate frequency of security scans
-            scan_score, total_score, applicable_metrics = calculate_frequency_of_security_scans(time_dict, app_id, total_score, applicable_metrics)
-            # calculate mean time to detect (MTTD) security issues
-            all_vulns, detection_score, total_score, applicable_metrics = calculate_mean_time_to_detect(time_dict, app_id, total_score, applicable_metrics)
-            # calculate percentage of critical/high risk issues addressed
-            high_severity_score, total_score, applicable_metrics = calculate_percentage_of_high_risk_issues_addressed(all_vulns, total_score, applicable_metrics)
-            # calculate compliance with security standards
-            compliance_score, total_score, applicable_metrics = calculate_compliance_with_security_standards(time_dict, app_id, total_score, applicable_metrics)
-            # calculate risk profile adherence
-            risk_score, total_score, applicable_metrics = calculate_risk_profile_adherence(app_id, total_score, applicable_metrics)
+            if verify_app_id(app_id):
+                # calculate vulnerability resolution time
+                vr_score, total_score, applicable_metrics = calculate_vulnerability_resolution_time(time_dict, app_id, total_score, applicable_metrics)
+                # calculate frequency of security scans
+                scan_score, total_score, applicable_metrics = calculate_frequency_of_security_scans(time_dict, app_id, total_score, applicable_metrics)
+                # calculate mean time to detect (MTTD) security issues
+                all_vulns, detection_score, total_score, applicable_metrics = calculate_mean_time_to_detect(time_dict, app_id, total_score, applicable_metrics)
+                # calculate percentage of critical/high risk issues addressed
+                high_severity_score, total_score, applicable_metrics = calculate_percentage_of_high_risk_issues_addressed(all_vulns, total_score, applicable_metrics)
+                # calculate compliance with security standards
+                compliance_score, total_score, applicable_metrics = calculate_compliance_with_security_standards(time_dict, app_id, total_score, applicable_metrics)
+                # calculate risk profile adherence
+                risk_score, total_score, applicable_metrics = calculate_risk_profile_adherence(app_id, total_score, applicable_metrics)
 
-            # calculate grade and final score
-            max_score, percent_score, grade = _calculate_grade(applicable_metrics, total_score)
+                # calculate grade and final score
+                max_score, percent_score, grade = _calculate_grade(applicable_metrics, total_score)
+                score = {
+                    'grade': grade,
+                    'total_score': total_score,
+                    'percent_score': (percent_score * 100),
+                    'max_score': max_score,
+                    'vulnerability_remediation_score': vr_score,
+                    'scan_frequency_score': scan_score,
+                    'time_to_detect_issues_score': detection_score,
+                    'critical_and_high_risk_mitigation_score': high_severity_score,
+                    'compliance_with_security_standards_score': compliance_score,
+                    'risk_profile_adherence_score': risk_score
+                }
+            else:
+                score = {
+                    'grade': "I",
+                    'total_score': 0,
+                    'percent_score': 0,
+                    'max_score': 0,
+                    'vulnerability_remediation_score': 0,
+                    'scan_frequency_score': 0,
+                    'time_to_detect_issues_score': 0,
+                    'critical_and_high_risk_mitigation_score': 0,
+                    'compliance_with_security_standards_score': 0,
+                    'risk_profile_adherence_score': 0
+                }
 
-            score = {
-                'grade': grade,
-                'total_score': total_score,
-                'percent_score': (percent_score * 100),
-                'max_score': max_score,
-                'vulnerability_remediation_score': vr_score,
-                'scan_frequency_score': scan_score,
-                'time_to_detect_issues_score': detection_score,
-                'critical_and_high_risk_mitigation_score': high_severity_score,
-                'compliance_with_security_standards_score': compliance_score,
-                'risk_profile_adherence_score': risk_score
-            }
+
             response = jsonify(score), 200
     return response
 
+def verify_app_id(app_id):
+    if '--' in app_id:
+        app_name = app_id.split('--')[0]
+        app_component = app_id.split('--')[1]
+        valid = BusinessApplications.query.filter(BusinessApplications.ApplicationName == app_name).filter(BusinessApplications.ApplicationAcronym == app_component).first()
+    else:
+        valid = BusinessApplications.query.filter(BusinessApplications.ApplicationName == app_id).first()
+    return valid
 
 def calculate_vulnerability_resolution_time(time_dict, app_id, total_score, applicable_metrics):
     if '--' in app_id:
