@@ -131,8 +131,8 @@ def update_vulnerabilities_status(app_cmdb_id, scan_id, req_raw):
 def add_vulns_background_process(req_raw):
     now = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     app_name = req_raw['appName']
-    git_url = req_raw['gitUrl']
-    git_branch = req_raw['branch']
+    git_url = req_raw['gitUrl'] if 'gitUrl' in req_raw else None
+    git_branch = req_raw['branch'] if 'branch' in req_raw else None
     findings = req_raw['findings']
     scan_type = req_raw['scanType']
 
