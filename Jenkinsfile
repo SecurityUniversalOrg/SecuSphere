@@ -333,11 +333,11 @@ pipeline {
     }
     post {
         always {
-            node('jenkins-pipeline-agent') {
-                script {
-                    jslPipelineReporter()
-                }
+
+            script {
+                jslPipelineReporter()
             }
+
         }
     }
 
