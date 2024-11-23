@@ -113,13 +113,135 @@
             </nav>
             <!-- Settings Form -->
             <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <!-- Dynamically generate form fields based on settings -->
+
+                <div id="general_container">
+                <h3 style="margin-bottom: 1em;">General Settings</h3>
                 {% for key, value in settings.items() %}
-                <div class="form-group">
-                    <label for="{{ key }}">{{ key }}</label>
-                    <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}">
-                </div>
+                    {% if key in cat_general %}
+                        <div class="form-group">
+                            <label for="{{ key }}">{{ key }}</label>
+                            {% if key == "AUTH_TYPE" %}
+                                <select class="form-control" id="{{ key }}" name="{{ key }}" onchange="changeAuth(this)">
+                                    <option value="local" {% if value == 'local' %}selected="selected"{% endif %}>Local</option>
+                                    <option value="azuread" {% if value == 'azuread' %}selected="selected"{% endif %}>Azure AD</option>
+                                    <option value="ldap" {% if value == 'ldap' %}selected="selected"{% endif %}>LDAP</option>
+                                </select>
+                            {% elif key == "INSECURE_OAUTH" %}
+                                <select class="form-control" id="{{ key }}" name="{{ key }}">
+                                    <option value="True" {% if value == 'True' %}selected="selected"{% endif %}>True</option>
+                                    <option value="False" {% if value == 'False' %}selected="selected"{% endif %}>False</option>
+                                </select>
+                            {% elif key == "PROD_DB_URI" %}
+                                <input type="password" class="form-control" autocomplete="new-password" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_db_pw_vis" class="fa-solid fa-eye" onclick="toggleDbPw(this)"></div><div id="mask_db_pw_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleDbPw(this)"></div>
+                            {% elif key == "ENV" or key == "VERSION" %}
+                                <input disabled="disabled" type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}">
+                            {% else %}
+                                <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}">
+                            {% endif %}
+                        </div>
+                    {% endif %}
                 {% endfor %}
+                </div>
+
+                <div id="ldap_container" style="display:{% if settings['AUTH_TYPE'] == "ldap" %}block{% else %}none{% endif %};">
+                <h3 style="margin-bottom: 1em;">LDAP Settings</h3>
+                {% for key, value in settings.items() %}
+                    {% if key in cat_ldap %}
+                        <div class="form-group">
+                            <label for="{{ key }}">{{ key }}</label>
+                            <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}">
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                </div>
+
+                <div id="azad_container" style="display:{% if settings['AUTH_TYPE'] == "azad" %}block{% else %}none{% endif %};">
+                <h3 style="margin-bottom: 1em;">Azure Active Directory Settings</h3>
+                {% for key, value in settings.items() %}
+                    {% if key in cat_azad %}
+                        <div class="form-group">
+                            <label for="{{ key }}">{{ key }}</label>
+                            <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}">
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                </div>
+
+                <div id="smtp_container">
+                <h3 style="margin-bottom: 1em;">SMTP Settings</h3>
+                {% for key, value in settings.items() %}
+                    {% if key in smtp_settings %}
+                        <div class="form-group">
+                            <label for="{{ key }}">{{ key }}</label>
+                            {% if key == 'SMTP_PASSWORD' %}
+                                <input type="password" class="form-control" autocomplete="new-password"  id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_smtp_pw_vis" class="fa-solid fa-eye" onclick="toggleSmtpPw(this)"></div><div id="mask_smtp_pw_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleSmtpPw(this)"></div>
+                            {% else %}
+                                <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}">
+                            {% endif %}
+
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                </div>
+
+                <div id="jenkins_container">
+                <h3 style="margin-bottom: 1em;">Jenkins Settings</h3>
+                {% for key, value in settings.items() %}
+                    {% if key in cat_jenkins %}
+                        <div class="form-group">
+                            {% if key == 'JENKINS_ENABLED' %}
+                                <label for="{{ key }}">{{ key }}</label>
+                                <select class="form-control" id="{{ key }}" name="{{ key }}" onchange="changeJenkins(this)">
+                                    <option value="no" {% if value == 'no' %}selected="selected"{% endif %}>No</option>
+                                    <option value="yes" {% if value == 'yes' %}selected="selected"{% endif %}>Yes</option>
+                                </select>
+                            {% elif key == 'JENKINS_KEY' %}
+                                <label id="{{ key }}_l" for="{{ key }}" style="display: {% if settings['JENKINS_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">{{ key }}</label>
+                                <div id="{{ key }}_i" {% if settings['JENKINS_ENABLED'] != 'yes' %}style="display:none;"{% else %}style="display:contents;"{% endif %}><input type="password" autocomplete="new-password"  class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_jenkins_key_vis" class="fa-solid fa-eye" onclick="toggleJenkinsKey(this)"></div><div id="mask_jenkins_key_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleJenkinsKey(this)"></div></div>
+                            {% elif key == 'JENKINS_TOKEN' %}
+                                <label id="{{ key }}_l" for="{{ key }}" style="display: {% if settings['JENKINS_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">{{ key }}</label>
+                                <div id="{{ key }}_i" {% if settings['JENKINS_ENABLED'] != 'yes' %}style="display:none;"{% else %}style="display:contents;"{% endif %}><input type="password" autocomplete="new-password"  class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_jenkins_token_vis" class="fa-solid fa-eye" onclick="toggleJenkinsToken(this)"></div><div id="mask_jenkins_token_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleJenkinsToken(this)"></div></div>
+                            {% else %}
+                                <label id="{{ key }}_l" for="{{ key }}" style="display: {% if settings['JENKINS_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">{{ key }}</label>
+                                <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}" style="display: {% if settings['JENKINS_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                </div>
+
+
+
+
+
+                <div id="snow_container">
+                <h3 style="margin-bottom: 1em;">ServiceNOW Settings</h3>
+                {% for key, value in settings.items() %}
+                    {% if key in snow_settings %}
+                        <div class="form-group">
+                            {% if key == 'SNOW_ENABLED' %}
+                                <label for="{{ key }}">{{ key }}</label>
+                                <select class="form-control" id="{{ key }}" name="{{ key }}" onchange="changeSnow(this)">
+                                    <option value="no" {% if value == 'no' %}selected="selected"{% endif %}>No</option>
+                                    <option value="yes" {% if value == 'yes' %}selected="selected"{% endif %}>Yes</option>
+                                </select>
+                            {% elif key == 'SNOW_CLIENT_SECRET' %}
+                                <label id="{{ key }}_l" for="{{ key }}" style="display: {% if settings['SNOW_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">{{ key }}</label>
+                                <div id="{{ key }}_i" {% if settings['SNOW_ENABLED'] != 'yes' %}style="display:none;"{% else %}style="display:contents;"{% endif %}><input type="password" autocomplete="new-password"  class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_snow_secret_vis" class="fa-solid fa-eye" onclick="toggleSnowSecret(this)"></div><div id="mask_snow_secret_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleSnowSecret(this)"></div></div>
+                            {% elif key == 'SNOW_PASSWORD' %}
+                                <label id="{{ key }}_l" for="{{ key }}" style="display: {% if settings['SNOW_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">{{ key }}</label>
+                                <div id="{{ key }}_i" {% if settings['SNOW_ENABLED'] != 'yes' %}style="display:none;"{% else %}style="display:contents;"{% endif %}><input type="password" autocomplete="new-password"  class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}"><div id="mask_snow_pw_vis" class="fa-solid fa-eye" onclick="toggleSnowPW(this)"></div><div id="mask_snow_pw_novis" class="fa-solid fa-eye-slash" style="display: none;" onclick="toggleSnowPW(this)"></div></div>
+                            {% else %}
+                                <label id="{{ key }}_l" for="{{ key }}" style="display: {% if settings['SNOW_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">{{ key }}</label>
+                                <input type="text" class="form-control" id="{{ key }}" name="{{ key }}" value="{{ value }}" style="display: {% if settings['SNOW_ENABLED'] == 'yes' %}block{% else %}none{% endif %};">
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                </div>
+
                 <button type="submit" class="btn btn-primary">Update Settings</button>
             </form>
         </div>
@@ -127,5 +249,158 @@
     </div>
   </div>
     <!-- Optional: Include JavaScript for dynamic form handling -->
+
+<script>
+function toggleSmtpPw(obj) {
+    var answer = obj.id;
+    if (answer == "mask_smtp_pw_vis") {
+        obj.style.display = 'none';
+        document.getElementById('mask_smtp_pw_novis').style.display = 'block';
+        document.getElementById('SMTP_PASSWORD').type = 'text';
+    } else if (answer == "mask_smtp_pw_novis") {
+        obj.style.display = 'none';
+        document.getElementById('mask_smtp_pw_vis').style.display = 'block';
+        document.getElementById('SMTP_PASSWORD').type = 'password';
+    }
+}
+
+function toggleDbPw(obj) {
+    var answer = obj.id;
+    if (answer == "mask_db_pw_vis") {
+        obj.style.display = 'none';
+        document.getElementById('mask_db_pw_novis').style.display = 'block';
+        document.getElementById('PROD_DB_URI').type = 'text';
+    } else if (answer == "mask_db_pw_novis") {
+        obj.style.display = 'none';
+        document.getElementById('mask_db_pw_vis').style.display = 'block';
+        document.getElementById('PROD_DB_URI').type = 'password';
+    }
+}
+
+function toggleJenkinsKey(obj) {
+    var answer = obj.id;
+    if (answer == "mask_jenkins_key_vis") {
+        obj.style.display = 'none';
+        document.getElementById('mask_jenkins_key_novis').style.display = 'block';
+        document.getElementById('JENKINS_KEY').type = 'text';
+    } else if (answer == "mask_jenkins_key_novis") {
+        obj.style.display = 'none';
+        document.getElementById('mask_jenkins_key_vis').style.display = 'block';
+        document.getElementById('JENKINS_KEY').type = 'password';
+    }
+}
+
+function toggleJenkinsToken(obj) {
+    var answer = obj.id;
+    if (answer == "mask_jenkins_token_vis") {
+        obj.style.display = 'none';
+        document.getElementById('mask_jenkins_token_novis').style.display = 'block';
+        document.getElementById('JENKINS_TOKEN').type = 'text';
+    } else if (answer == "mask_jenkins_token_novis") {
+        obj.style.display = 'none';
+        document.getElementById('mask_jenkins_token_vis').style.display = 'block';
+        document.getElementById('JENKINS_TOKEN').type = 'password';
+    }
+}
+
+function toggleSnowSecret(obj) {
+    var answer = obj.id;
+    if (answer == "mask_snow_secret_vis") {
+        obj.style.display = 'none';
+        document.getElementById('mask_snow_secret_novis').style.display = 'block';
+        document.getElementById('SNOW_CLIENT_SECRET').type = 'text';
+    } else if (answer == "mask_snow_secret_novis") {
+        obj.style.display = 'none';
+        document.getElementById('mask_snow_secret_vis').style.display = 'block';
+        document.getElementById('SNOW_CLIENT_SECRET').type = 'password';
+    }
+}
+
+function toggleSnowPW(obj) {
+    var answer = obj.id;
+    if (answer == "mask_snow_pw_vis") {
+        obj.style.display = 'none';
+        document.getElementById('mask_snow_pw_novis').style.display = 'block';
+        document.getElementById('SNOW_PASSWORD').type = 'text';
+    } else if (answer == "mask_snow_pw_novis") {
+        obj.style.display = 'none';
+        document.getElementById('mask_snow_pw_vis').style.display = 'block';
+        document.getElementById('SNOW_PASSWORD').type = 'password';
+    }
+}
+
+function changeAuth(obj) {
+    var value = obj.value;
+    if (value == "azuread") {
+        document.getElementById("azad_container").style.display = "block";
+        document.getElementById("ldap_container").style.display = "none";
+    } else if (value == "ldap") {
+        document.getElementById("azad_container").style.display = "none";
+        document.getElementById("ldap_container").style.display = "block";
+    } else if (value == "local") {
+        document.getElementById("azad_container").style.display = "none";
+        document.getElementById("ldap_container").style.display = "none";
+    }
+
+}
+
+function changeJenkins(obj) {
+    var value = obj.value;
+    if (value == "no") {
+        document.getElementById("JENKINS_HOST").style.display = "none";
+        document.getElementById("JENKINS_KEY_i").style.display = "none";
+        document.getElementById("JENKINS_PROJECT").style.display = "none";
+        document.getElementById("JENKINS_STAGING_PROJECT").style.display = "none";
+        document.getElementById("JENKINS_TOKEN_i").style.display = "none";
+        document.getElementById("JENKINS_USER").style.display = "none";
+        document.getElementById("JENKINS_HOST_l").style.display = "none";
+        document.getElementById("JENKINS_KEY_l").style.display = "none";
+        document.getElementById("JENKINS_PROJECT_l").style.display = "none";
+        document.getElementById("JENKINS_STAGING_PROJECT_l").style.display = "none";
+        document.getElementById("JENKINS_TOKEN_l").style.display = "none";
+        document.getElementById("JENKINS_USER_l").style.display = "none";
+    } else {
+        document.getElementById("JENKINS_HOST").style.display = "block";
+        document.getElementById("JENKINS_KEY_i").style.display = "contents";
+        document.getElementById("JENKINS_PROJECT").style.display = "block";
+        document.getElementById("JENKINS_STAGING_PROJECT").style.display = "block";
+        document.getElementById("JENKINS_TOKEN_i").style.display = "contents";
+        document.getElementById("JENKINS_USER").style.display = "block";
+        document.getElementById("JENKINS_HOST_l").style.display = "block";
+        document.getElementById("JENKINS_KEY_l").style.display = "block";
+        document.getElementById("JENKINS_PROJECT_l").style.display = "block";
+        document.getElementById("JENKINS_STAGING_PROJECT_l").style.display = "block";
+        document.getElementById("JENKINS_TOKEN_l").style.display = "block";
+        document.getElementById("JENKINS_USER_l").style.display = "block";
+    }
+}
+
+function changeSnow(obj) {
+    var value = obj.value;
+    if (value == "no") {
+        document.getElementById("SNOW_CLIENT_ID").style.display = "none";
+        document.getElementById("SNOW_CLIENT_SECRET_i").style.display = "none";
+        document.getElementById("SNOW_INSTANCE_NAME").style.display = "none";
+        document.getElementById("SNOW_PASSWORD_i").style.display = "contents";
+        document.getElementById("SNOW_USERNAME").style.display = "none";
+        document.getElementById("SNOW_CLIENT_ID_l").style.display = "none";
+        document.getElementById("SNOW_CLIENT_SECRET_l").style.display = "none";
+        document.getElementById("SNOW_INSTANCE_NAME_l").style.display = "none";
+        document.getElementById("SNOW_PASSWORD_l").style.display = "none";
+        document.getElementById("SNOW_USERNAME_l").style.display = "none";
+    } else {
+        document.getElementById("SNOW_CLIENT_ID").style.display = "block";
+        document.getElementById("SNOW_CLIENT_SECRET_i").style.display = "contents";
+        document.getElementById("SNOW_INSTANCE_NAME").style.display = "block";
+        document.getElementById("SNOW_PASSWORD_i").style.display = "contents";
+        document.getElementById("SNOW_USERNAME").style.display = "block";
+        document.getElementById("SNOW_CLIENT_ID_l").style.display = "block";
+        document.getElementById("SNOW_CLIENT_SECRET_l").style.display = "block";
+        document.getElementById("SNOW_INSTANCE_NAME_l").style.display = "block";
+        document.getElementById("SNOW_PASSWORD_l").style.display = "block";
+        document.getElementById("SNOW_USERNAME_l").style.display = "block";
+    }
+}
+</script>
 
 {% endblock %}

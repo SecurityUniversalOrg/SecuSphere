@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField
 from flask_login import UserMixin
 from vr import db, app
 from vr.functions.mysql_db import connect_to_db
-from datetime import datetime, timedelta
+from datetime import datetime
 import jwt
 from vr.admin.helper_functions import hash_password,verify_password
 from vr.admin.functions import db_connection_handler
@@ -17,8 +17,7 @@ from authlib.integrations.sqla_oauth2 import (
     OAuth2AuthorizationCodeMixin,
     OAuth2TokenMixin,
 )
-from config_engine import AUTH_TYPE
-if AUTH_TYPE == 'ldap':
+if app.config['AUTH_TYPE'] == 'ldap':
     from vr import ldap_manager
 
 if app.config['RUNTIME_ENV'] == 'test':
@@ -190,11 +189,11 @@ class User(UserMixin, db.Model):
         else:
             return
 
-if AUTH_TYPE == 'local' or AUTH_TYPE == 'azuread':
+if app.config['AUTH_TYPE'] == 'local' or app.config['AUTH_TYPE'] == 'azuread':
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
-elif AUTH_TYPE == 'ldap':
+elif app.config['AUTH_TYPE'] == 'ldap':
     # User Loader for LDAP
     @login_manager.user_loader
     def load_user(user_id):
@@ -416,6 +415,43 @@ class AppConfig(db.Model):
     __tablename__ = 'AppConfig'
     id = db.Column(db.Integer, primary_key=True)
     first_access = db.Column(db.Boolean, nullable=False, default=True)
+    settings_initialized = db.Column(db.Boolean, nullable=False, default=False)
+    APP_EXT_URL = db.Column(db.String(200))
+    AUTH_TYPE = db.Column(db.String(200))
+    AZAD_AUTHORITY = db.Column(db.String(200))
+    AZAD_CLIENT_ID = db.Column(db.String(200))
+    AZAD_CLIENT_SECRET = db.Column(db.String(200))
+    AZURE_KEYVAULT_NAME = db.Column(db.String(200))
+    ENV = db.Column(db.String(200))
+    INSECURE_OAUTH = db.Column(db.String(200))
+    JENKINS_HOST = db.Column(db.String(200))
+    JENKINS_KEY = db.Column(db.String(200))
+    JENKINS_PROJECT = db.Column(db.String(200))
+    JENKINS_STAGING_PROJECT = db.Column(db.String(200))
+    JENKINS_TOKEN = db.Column(db.String(200))
+    JENKINS_USER = db.Column(db.String(200))
+    LDAP_BASE_DN = db.Column(db.String(200))
+    LDAP_BIND_USER_DN = db.Column(db.String(200))
+    LDAP_BIND_USER_PASSWORD = db.Column(db.String(200))
+    LDAP_GROUP_DN = db.Column(db.String(200))
+    LDAP_HOST = db.Column(db.String(200))
+    LDAP_PORT = db.Column(db.String(200))
+    LDAP_USER_DN = db.Column(db.String(200))
+    LDAP_USER_LOGIN_ATTR = db.Column(db.String(200))
+    LDAP_USER_RDN_ATTR = db.Column(db.String(200))
+    PROD_DB_URI = db.Column(db.String(200))
+    SMTP_ADMIN_EMAIL = db.Column(db.String(200))
+    SMTP_HOST = db.Column(db.String(200))
+    SMTP_PASSWORD = db.Column(db.String(200))
+    SMTP_USER = db.Column(db.String(200))
+    SNOW_CLIENT_ID = db.Column(db.String(200))
+    SNOW_CLIENT_SECRET = db.Column(db.String(200))
+    SNOW_INSTANCE_NAME = db.Column(db.String(200))
+    SNOW_PASSWORD = db.Column(db.String(200))
+    SNOW_USERNAME = db.Column(db.String(200))
+    VERSION = db.Column(db.String(200))
+    JENKINS_ENABLED = db.Column(db.String(200))
+    SNOW_ENABLED = db.Column(db.String(200))
 
 
 class SuSiteConfiguration(db.Model):

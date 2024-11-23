@@ -124,3 +124,41 @@ def delete_contact():
         db.session.delete(contact)
     db_connection_handler(db)
     return '200', 200
+
+from vr import app
+from geopy.geocoders import Nominatim
+import pandas as pd
+from datetime import datetime
+from werkzeug.utils import secure_filename
+import os
+
+geolocator = Nominatim(user_agent="geoapiSecusphere")
+app.config['UPLOAD_FOLDER'] = '.'
+
+
+@assets.route('/location', methods=['GET', 'POST'])
+def show_location():
+    map_data = []
+    if request.method == 'POST' and 'csvfile' in request.files:
+        file = request.files['csvfile']
+        if file:
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            df = pd.read_csv(filepath)
+
+            for _, row in df.iterrows():
+                location = geolocator.geocode(row['Address'])
+                if location:
+                    last_contact_date = datetime.strptime(row['Last Contact'], '%m/%d/%Y')
+                    color = 'green' if (datetime.now() - last_contact_date).days <= 30 else 'red'
+                    map_data.append({
+                        'name': row['Business Name'],
+                        'address': row['Address'],
+                        'phone': row['Phone'],
+                        'last_contact': row['Last Contact'],
+                        'latitude': location.latitude,
+                        'longitude': location.longitude,
+                        'color': color
+                    })
+    return render_template('map.html', map_data=map_data)

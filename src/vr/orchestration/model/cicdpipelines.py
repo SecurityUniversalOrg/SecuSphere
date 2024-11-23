@@ -14,7 +14,7 @@ class CICDPipelines(db.Model):
     ID = db.Column(db.Integer, primary_key=True)
     AddDate = db.Column(db.DateTime, index=True, default=dt.datetime.utcnow, nullable=False)
     ApplicationID = db.Column(db.Integer, db.ForeignKey('BusinessApplications.ID', ondelete='CASCADE'))
-    IntegrationID = db.Column(db.Integer, db.ForeignKey('Integrations.ID', ondelete='CASCADE'))
+    IntegrationID = db.Column(db.Integer, db.ForeignKey('AppIntegrations.ID', ondelete='CASCADE'))
     Name = db.Column(db.String(500))
     Description = db.Column(LONGTEXT)
     Url = db.Column(db.String(500))

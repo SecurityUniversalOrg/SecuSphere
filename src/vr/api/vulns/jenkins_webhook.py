@@ -2,10 +2,11 @@ import requests
 import datetime
 from threading import Thread
 from flask import jsonify, request, json
-from vr import db
+from vr import db, app
 from vr.api import api
 from requests.auth import HTTPBasicAuth
-from config_engine import JENKINS_USER, JENKINS_KEY, JENKINS_PROJECT, JENKINS_HOST, JENKINS_TOKEN
+# from config_engine import JENKINS_USER, JENKINS_KEY, JENKINS_PROJECT, JENKINS_HOST, JENKINS_TOKEN
+from config_engine import getConfigs
 from vr.admin.oauth2 import require_oauth
 from sqlalchemy import text
 from vr.assets.model.cicdpipelinebuilds import CICDPipelineBuilds
@@ -20,11 +21,14 @@ from vr.orchestration.model.parallelsecuritypipelineruns import ParallelSecurity
 from vr.vulns.model.sgglobalthresholds import SgGlobalThresholds
 from vr.admin.functions import db_connection_handler
 import traceback
+import logging
+from vr.assets.model.applicationprofiles import ApplicationProfiles
 
 
 @api.route('/api/jenkins_webhook', methods=['POST'])
 @require_oauth('write:vulnerabilities')
 def jenkins_webhook():
+    getConfigs(app.config)
     all = request.form
     payload_dict = json.loads(all['payload'])
     ref = payload_dict['ref']
@@ -44,13 +48,13 @@ def jenkins_webhook():
             "Content-Type": "application/x-www-form-urlencoded"
         }
         data = {
-            'token': JENKINS_TOKEN,
+            'token': app.config['JENKINS_TOKEN'],
             'GIT_URL': git_url,
             'TESTS': tests_to_run.upper(),
             'GIT_BRANCH': git_branch
         }
-        url = f'{JENKINS_HOST}/job/{JENKINS_PROJECT}/buildWithParameters'
-        resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(JENKINS_USER, JENKINS_KEY))
+        url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_PROJECT']}/buildWithParameters"
+        resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
         response = jsonify({"Status": resp.status_code}), 200
     else:
         response = jsonify({"Status": "Not Applicable"}), 200
@@ -209,32 +213,77 @@ def add_application_sla_policy(app_id):
 # Global dictionary to keep track of report statuses
 report_statuses = {}
 
-def add_new_scan(git_url, branch_name, report_id):
+# Create a logger object for this module or function
+logger = logging.getLogger('add_new_scan')
+logger.setLevel(logging.INFO)  # Set the desired log level
+
+# Create a stream handler to output logs to stdout
+stream_handler = logging.StreamHandler()
+stream_handler.setLevel(logging.INFO)
+
+# Optionally, set a formatter for the handler
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+stream_handler.setFormatter(formatter)
+
+# Add the handler to the logger
+logger.addHandler(stream_handler)
+def add_new_scan(app_name, git_url, branch_name, report_id):
+
     try:
-        stage_str = _determine_stages_for_app(git_url, branch_name)
+        with app.app_context():
+            stage_str = _determine_stages_for_app(app_name)
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/x-www-form-urlencoded"
         }
         data = {
-            'token': JENKINS_TOKEN,
+            'token': app.config['JENKINS_TOKEN'],
             'GIT_URL': git_url,
             'TESTS': stage_str,
             'GIT_BRANCH': branch_name,
-            'REPORT_ID': report_id
+            'REPORT_ID': report_id,
+            'PIPELINE_TYPE': "PARALLEL_SCAN",
+            'APP_NAME': app_name,
+            'PROFILE_APPLICATION': 'Y'
         }
-        url = f'{JENKINS_HOST}/job/{JENKINS_PROJECT}/buildWithParameters'
-        resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(JENKINS_USER, JENKINS_KEY))
-        response = jsonify({"Status": resp.status_code}), 200
+        url = f"{app.config['JENKINS_HOST']}/job/{app.config['JENKINS_PROJECT']}/buildWithParameters"
+
+        resp = requests.post(url, headers=headers, data=data, auth=HTTPBasicAuth(app.config['JENKINS_USER'], app.config['JENKINS_KEY']))
+        # Log the response details
+        logger.info(f"Request URL: {url}")
+        logger.info(f"Response Status Code: {resp.status_code}")
+        logger.info(f"Response Text: {resp.text}")
     except requests.exceptions.Timeout:
-        print('Processing Error')
+        logger.error('Processing Error: Timeout')
+    except Exception as e:
+        logger.error(f'Unexpected error: {str(e)}')
 
 
-def _determine_stages_for_app(git_url, branch_name):
+def _determine_stages_for_app(app_name):
     stage_str = ""
+    app_str = app_name.split('--')[0]
+    component_str = app_name.split('--')[1]
+    app_obj = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{app_str.upper()}' AND BusinessApplications.ApplicationAcronym='{component_str.lower()}'")).first()
+    profile = ApplicationProfiles.query.filter_by(AppID=app_obj.ID).first()
+    if str(profile.SecretScanReq) == "1":
+        stage_str += "SECRET,"
+    if str(profile.SCAReq) == "1":
+        stage_str += "SCA,"
+    if str(profile.SASTReq) == "1":
+        stage_str += "SAST,"
+    if str(profile.IACReq) == "1":
+        stage_str += "IAC,"
+    if str(profile.ContainerReq) == "1":
+        stage_str += "DOCKER,"
+    if str(profile.InfrastructureScanReq) == "1":
+        stage_str += "INFRA,"
+    if str(profile.DASTReq) == "1":
+        stage_str += "DAST,"
+    if str(profile.DASTApiReq) == "1":
+        stage_str += "DAPIST,"
+    if stage_str.endswith(","):
+        stage_str = stage_str[:-1]
 
-    #temp
-    stage_str = "SECRET"
     return stage_str
 
 @api.route('/api/parallel_security_scan', methods=['POST'])
@@ -252,8 +301,9 @@ def parallel_security_scan():
         report_id = _add_vulnerability_scan(app_id, branch_name)
 
         # Start processing in a new thread
-        processing_thread = Thread(target=add_new_scan, args=(git_url, branch_name, report_id))
-        processing_thread.start()
+        with app.app_context():
+            processing_thread = Thread(target=add_new_scan, args=(app_name, git_url, branch_name, report_id))
+            processing_thread.start()
 
         return jsonify({"report_id": report_id, "status": "processing started"}), 200
 

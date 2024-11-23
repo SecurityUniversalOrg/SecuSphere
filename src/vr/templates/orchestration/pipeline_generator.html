@@ -24,6 +24,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            font-size: medium;
         }
 
         .generator_container h2 {
@@ -33,10 +34,12 @@
         }
 
         .generator_container #pipeline-stages, #pipeline-container {
+            flex: 1; /* Allows each item to grow as needed */
+            min-width: 300px; /* Minimum width before wrapping */
             list-style-type: none;
             margin: 0;
             padding: 0;
-            width: 80%;
+            width: 100%;
             max-width: 600px;
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -46,7 +49,7 @@
 
         .generator_container #pipeline-stages li, #pipeline-container li {
             margin: 0;
-            padding: 15px;
+            padding: 8px;
             font-size: 1.1em;
             text-align: center;
             background-color: #e9ecef;
@@ -57,7 +60,7 @@
 
         .generator_container #pipeline-container {
             min-height: 150px;
-            margin-top: 20px;
+
             border: 2px dashed #0d6efd;
             padding: 10px;
             display: flex;
@@ -88,6 +91,7 @@
             border-radius: 5px;
             border: 1px solid #ddd;
             box-sizing: border-box;
+            color: black;
         }
 
         .generator_container button {
@@ -165,16 +169,32 @@
         .generator_container select:hover {
             border-color: #0b5ed7;
         }
+        {#.generator_container {#}
+        {#    display: flex;#}
+        {#    flex-direction: column;#}
+        {#    align-items: center;#}
+        {#    justify-content: center;#}
+        {#    width: 100%; /* Adjust the width as necessary */#}
+        {#    max-width: 600px; /* Adjust maximum width as necessary */#}
+        {#    margin: 0 auto; /* This centers the container horizontally */#}
+        {#    padding: 20px;#}
+        {#    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional for adding shadow */#}
         .generator_container {
+            display: flex; /* Use flex layout */
+            flex-direction: row; /* Align children horizontally */
+            justify-content: space-around; /* Space out the flex items */
+            align-items: flex-start; /* Align items at the start of the flex container */
+            flex-wrap: wrap; /* Allow items to wrap as needed */
+            gap: 14px; /* Optional: adds some space between the flex items */
+            margin-top: 6px; /* Space from the top */
+            font-size: small;
+        }
+
+        .column {
+            flex: 1; /* Allows each item to grow as needed */
+            min-width: 230px; /* Minimum width before wrapping */
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%; /* Adjust the width as necessary */
-            max-width: 600px; /* Adjust maximum width as necessary */
-            margin: 0 auto; /* This centers the container horizontally */
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional for adding shadow */
+            flex-direction: column; /* Aligns the title and content vertically */
         }
 
         /* Ensure child elements take full width */
@@ -187,6 +207,19 @@
             text-align: center;
         }
 
+        #buttons {
+            display: flex; /* Activates flexbox layout */
+            flex-direction: column; /* Stacks children vertically */
+            align-items: center; /* Optionally, center-aligns items horizontally */
+            gap: 10px; /* Adds some space between the buttons */
+        }
+
+        #buttons button {
+            width: auto; /* Adjust the width as needed */
+            padding: 10px 20px; /* Adds some padding inside the buttons for better appearance */
+            margin: 5px; /* Adds some margin around the buttons */
+        }
+
     </style>
 </head>
 <body>
@@ -194,31 +227,56 @@
 
 
     <h2>Configure Your CI/CD Pipeline</h2>
-    <select id="pipeline-config-selector">
-        <option value="">Select a Pipeline Configuration</option>
-        <option value="basic">Basic (Build -> Test -> Deploy)</option>
-        <option value="advanced">Advanced (Deploy -> Test -> Build)</option>
-        <!-- Add more configurations as needed -->
-    </select>
 
+    <div class="column">
+        <h5 style="color: white;">Template</h5>
+        <select id="pipeline-config-selector" style="width: 100%;">
+            <option value="">[Select a Pipeline Configuration]</option>
+            <option value="basic">Containerized Web App</option>
+            <option value="advanced">Parallel Security Assessment</option>
+            <!-- Add more configurations as needed -->
+        </select>
+    </div>
 
-    <ul id="pipeline-stages">
-        <li draggable="true" data-stage="Build">Build</li>
-        <li draggable="true" data-stage="Test">Test</li>
-        <li draggable="true" data-stage="Deploy">Deploy</li>
-        <!-- Add more stages as needed -->
-    </ul>
+    <div class="column">
+        <h5 style="color: white;">Available Stages</h5>
+            <ul id="pipeline-stages">
+                <li draggable="true" data-stage="Initialize Config">Initialize Config</li>
+                <li draggable="true" data-stage="Prep Job">Prep Job</li>
+                <li draggable="true" data-stage="Unit Testing">Unit Testing</li>
+                <li draggable="true" data-stage="Secret Scanning">Secret Scanning</li>
+                <li draggable="true" data-stage="Software Composition Analysis">Software Composition Analysis</li>
+                <li draggable="true" data-stage="Static Application Security Testing">Static Application Security Testing</li>
+                <li draggable="true" data-stage="Infrastructure-as-Code Security Testing">Infrastructure-as-Code Security Testing</li>
+                <li draggable="true" data-stage="Build Docker Service">Build Docker Service</li>
+                <li draggable="true" data-stage="Docker Container Scanning">Docker Container Scanning</li>
+                <li draggable="true" data-stage="Release to Test">Release to Test</li>
+                <li draggable="true" data-stage="Test Release">Test Release</li>
+                <li draggable="true" data-stage="Quality Gate - Security">Quality Gate - Security</li>
+                <li draggable="true" data-stage="Deploy">Deploy</li>
+                <li draggable="true" data-stage="Post">Post</li>
+                <li draggable="true" data-stage="Parallel Security Assessment">Parallel Security Assessment</li>
+                <li draggable="true" data-stage="Parallel Security Gate">Parallel Security Gate</li>
+                <!-- Add more stages as needed -->
+            </ul>
+    </div>
 
-    <div id="pipeline-container" ondrop="drop(event)" ondragover="allowDrop(event)">
-        <p>Drag and drop stages here</p>
+    <div class="column">
+        <h5 style="color: white;">Selected Stages (Click to Remove)</h5>
+        <div id="pipeline-container" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <p>Drag and drop stages here</p>
+        </div>
     </div>
 
     <div class="pipeline-inputs" id="additional-inputs">
         <!-- Additional input fields will be populated here -->
     </div>
 
-    <button id="analyze-btn">Analyze Stages</button>
-    <button id="submit-btn" style="display:none;">Submit Pipeline</button>
+    <div id="buttons" class="column">
+        <button id="analyze-btn">Analyze Stages</button>
+        <button id="reset-btn" onclick="resetStages();resetTemplate();" style="background-color: red;">Reset Stages</button>
+        <button id="submit-btn" style="display:none;background-color: green;">Submit Pipeline</button>
+    </div>
 
 </div>
 <script>
@@ -236,9 +294,9 @@
 
         let stagesToAdd = [];
         if (config === "basic") {
-            stagesToAdd = ["Build", "Test", "Deploy"];
+            stagesToAdd = ["Initialize Config", "Prep Job", "Unit Testing", "Secret Scanning", "Software Composition Analysis", "Static Application Security Testing", "Infrastructure-as-Code Security Testing", "Build Docker Service", "Docker Container Scanning", "Release to Test", "Test Release", "Quality Gate - Security", "Deploy", "Post"];
         } else if (config === "advanced") {
-            stagesToAdd = ["Deploy", "Test", "Build"];
+            stagesToAdd = ["Parallel Security Assessment", "Unit Testing", "Parallel Security Gate"];
         }
 
         stagesToAdd.forEach(stageName => {
@@ -271,7 +329,7 @@
     }
 
     function resetStages() {
-        const allStages = ["Build", "Test", "Deploy"]; // Add all the stage names here
+        const allStages = ["Initialize Config", "Prep Job", "Unit Testing", "Secret Scanning", "Software Composition Analysis", "Static Application Security Testing", "Infrastructure-as-Code Security Testing", "Build Docker Service", "Docker Container Scanning", "Release to Test", "Test Release", "Quality Gate - Security", "Deploy", "Post", "Parallel Security Assessment", "Parallel Security Gate"];
         const stagesList = document.getElementById('pipeline-stages');
         stagesList.innerHTML = ''; // Clear current stages
 
@@ -288,33 +346,18 @@
             // Append stage to the list
             stagesList.appendChild(stageElement);
         });
-    }
-
-    function setupPipelineContainer(config) {
-        // Clear the pipeline container first
-        pipelineContainer.innerHTML = '';
-
-        // Reset the original list of stages
-        resetStages();
-
-        let stagesToAdd = [];
-        if (config === "basic") {
-            stagesToAdd = ["Build", "Test", "Deploy"];
-        } else if (config === "advanced") {
-            stagesToAdd = ["Deploy", "Test", "Build"];
+        document.getElementById("pipeline-container").innerHTML = "<p>Drag and drop stages here</p>"
+        document.getElementById("additional-inputs").innerHTML = "";
+        document.getElementById("submit-btn").style.display = "none";
+        var dlLinkdocument = document.getElementById("pipeline-dl-link");
+        if (dlLinkdocument) {
+            dlLinkdocument.remove();
         }
-        // Add more configurations if needed
-
-        stagesToAdd.forEach(stageName => {
-            let stageElement = document.querySelector(`#pipeline-stages [data-stage="${stageName}"]`);
-            if (stageElement) {
-                stageElement.remove(); // Remove the stage from the original list
-                let newStageElement = stageElement.cloneNode(true);
-                setupStage(newStageElement);
-                pipelineContainer.appendChild(newStageElement);
-            }
-        });
     }
+
+    function resetTemplate() {
+        document.getElementById('pipeline-config-selector').value = '';
+    };
 
 
     // Existing JavaScript code...
@@ -393,10 +436,45 @@
     document.getElementById('submit-btn').addEventListener('click', () => {
         let pipelineStages = pipelineContainer.querySelectorAll('li');
         let stageData = Array.from(pipelineStages).map(stage => stage.dataset.stage);
-        let stageInputs = Array.from(document.querySelectorAll('.pipeline-inputs input')).map(input => ({ name: input.name, value: input.value }));
+
+        // Collecting values from both input and select elements, only including checked checkboxes
+        let allInputs = document.querySelectorAll('.pipeline-inputs input, .pipeline-inputs select');
+        console.log(allInputs)
+        let dynMap = {}
+        Array.from(allInputs).map(element => {
+            if (element.customVal === 'flagged' && !(element.name in dynMap)) {
+                dynMap[element.name] = "";
+            }
+            if (element.customVal === 'flagged') {
+                if (dynMap[element.name] === "" || dynMap[element.name].endsWith(",")) {
+                    dynMap[element.name] += `${element.value}::`;
+                } else if (dynMap[element.name].endsWith("::")) {
+                    dynMap[element.name] += `${element.value},`;
+                }
+            }
+
+        });
+        console.log(dynMap)
+        let stageInputs = Array.from(allInputs).map(element => {
+            // Check if dynMap has a value for this element's name
+            if (element.name in dynMap) {
+                // Prevent duplicates if dynMap value matches current element value
+                if (!dynMap[element.name].includes(element.value)) {
+                    return { name: element.name, value: dynMap[element.name] + element.value };
+                } else {
+                    return { name: element.name, value: dynMap[element.name] };
+                }
+            } else {
+                // Handle other elements normally
+                if (element.type === 'checkbox' && !element.checked) {
+                    return null; // Ignore unchecked checkboxes
+                }
+                return { name: element.name, value: element.value };
+            }
+        }).filter(input => input !== null); // Filter out null entries
 
         // Collect data from stages and inputs
-        let requestData = { stages: stageData, inputs: stageInputs };
+        let requestData = { stages: stageData, inputs: stageInputs, appId: {{ app_data.ID }} };
 
         // Get CSRF token from meta tag
         let csrfToken = "{{ csrf_token() }}";
@@ -406,24 +484,22 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken,  // Include CSRF token in the request header
+                'X-CSRFToken': csrfToken,
             },
-            body: JSON.stringify(requestData)  // Send both stages and input values
+            body: JSON.stringify(requestData)
         })
         .then(response => response.blob())
         .then(blob => {
-            // Instead of automatically downloading, create a link for download
             let url = window.URL.createObjectURL(blob);
             let downloadLink = document.createElement('a');
             downloadLink.href = url;
             downloadLink.innerText = 'Download Pipeline Configuration';
-            downloadLink.download = 'pipeline.yaml'; // Optional, if you want to suggest a filename
+            downloadLink.download = 'pipeline.zip';
             downloadLink.style.display = "block";
             downloadLink.style.textAlign = "center";
             downloadLink.style.marginTop = "10px";
-
-            // Append the link to the body or any specific element
-            document.body.appendChild(downloadLink);
+            downloadLink.id = 'pipeline-dl-link';
+            document.getElementById('buttons').appendChild(downloadLink);
         });
     });
 
@@ -439,7 +515,7 @@
                 'Content-Type': 'application/json',
                 'X-CSRFToken': csrfToken,
             },
-            body: JSON.stringify({ stages: stageData })
+            body: JSON.stringify({ stages: stageData, appId: {{ app_data.ID }} })
         })
         .then(response => response.json())
         .then(data => {
@@ -450,28 +526,177 @@
 
     function populateAdditionalInputs(data) {
         let inputsContainer = document.getElementById('additional-inputs');
-        inputsContainer.innerHTML = ''; // Clear existing inputs
+        inputsContainer.innerHTML = '';
 
         data.fields.forEach(field => {
-            // Create a label for the input
             let label = document.createElement('label');
             label.textContent = field.label;
             label.htmlFor = field.name;
 
-            // Create an input field
-            let input = document.createElement('input');
-            input.type = 'text';
-            input.id = field.name;
-            input.name = field.name;
-            input.placeholder = field.placeholder;
+            let inputContainer = document.createElement('div');
+            inputContainer.className = 'input-container';
+            inputContainer.style.marginBottom = '10px';
 
-            // Append the label and input to the container
+            if (field.type === 'select') {
+                let select = document.createElement('select');
+                select.id = field.name;
+                select.name = field.name;
+                field.options.forEach(option => {
+                    let optionElement = document.createElement('option');
+                    optionElement.value = option;
+                    optionElement.textContent = option;
+                    if (field.default === option) {
+                        optionElement.selected = true;
+                    }
+                    select.appendChild(optionElement);
+                });
+                inputContainer.appendChild(select);
+            } else if (field.type === 'checkbox-group') {
+                let gridContainer = document.createElement('div');
+                gridContainer.style.display = 'flex';
+                gridContainer.style.flexWrap = 'wrap';
+                gridContainer.style.columnGap = '30px';
+
+                field.options.forEach(option => {
+                    let optionContainer = document.createElement('div');
+                    optionContainer.style.display = 'flex';
+                    optionContainer.style.alignItems = 'center';
+
+                    let checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `${field.name}_${option}`;
+                    checkbox.name = field.name;
+                    checkbox.value = option;
+                    checkbox.style.width = "unset";
+                    if (field.default && field.default.includes(option)) {
+                        checkbox.checked = true;
+                    }
+
+                    let checkboxLabel = document.createElement('label');
+                    checkboxLabel.htmlFor = `${field.name}_${option}`;
+                    checkboxLabel.textContent = option;
+                    checkboxLabel.style.marginLeft = '5px';
+
+                    optionContainer.appendChild(checkbox);
+                    optionContainer.appendChild(checkboxLabel);
+                    gridContainer.appendChild(optionContainer);
+                });
+                inputContainer.appendChild(gridContainer);
+            } else if (field.type === 'multi-text') {
+                let inputGroup = document.createElement('div');
+
+                // Function to add a new text input
+                function addTextInput(value = '') {
+                    let input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = field.name;
+                    input.placeholder = field.placeholder;
+                    input.value = value;
+                    inputGroup.appendChild(input);
+                }
+
+                // Add default text inputs
+                if (field.defaults && field.defaults.length) {
+                    field.defaults.forEach(defaultValue => {
+                        addTextInput(defaultValue);
+                    });
+                } else {
+                    addTextInput(); // Add at least one input if no defaults are provided
+                }
+
+                // Optionally, add a button to add more inputs
+                let addButton = document.createElement('button');
+                addButton.textContent = 'More';
+                addButton.type = 'button';
+                addButton.style.marginTop = "unset";
+                addButton.onclick = () => addTextInput();
+                inputGroup.appendChild(addButton);
+
+                inputContainer.appendChild(inputGroup);
+            } else if (field.type === 'key-value') {
+                let inputGroup = document.createElement('div');
+                inputGroup.className = 'keyvalue-container';
+
+                // Function to add new key-value inputs
+                function addKeyValueInput(key = '', value = '') {
+                    let keyValueContainer = document.createElement('div');
+                    keyValueContainer.style.display = 'flex';
+                    keyValueContainer.style.marginBottom = '5px';
+
+                    let keyInput = document.createElement('input');
+                    keyInput.type = 'text';
+                    keyInput.placeholder = field.placeholder.key;
+                    keyInput.value = key;
+                    keyInput.style.marginRight = '5px';
+                    keyInput.name = field.name;
+                    keyInput.className = 'keyvalue-' + field.name;
+                    keyInput.customVal = 'flagged'
+
+                    let valueInput = document.createElement('input');
+                    valueInput.type = 'text';
+                    valueInput.placeholder = field.placeholder.value;
+                    valueInput.value = value;
+                    valueInput.name = field.name;
+                    valueInput.className = 'keyvalue-' + field.name;
+                    valueInput.customVal = 'flagged'
+
+                    keyValueContainer.appendChild(keyInput);
+                    keyValueContainer.appendChild(valueInput);
+                    inputGroup.appendChild(keyValueContainer);
+                }
+
+                // Add default key-value inputs
+                if (field.defaults && field.defaults.length) {
+                    field.defaults.forEach(([key, value]) => {
+                        addKeyValueInput(key, value);
+                    });
+                } else {
+                    addKeyValueInput(); // Add at least one pair if no defaults are provided
+                }
+
+                // Add button to add more key-value inputs
+                let addButton = document.createElement('button');
+                addButton.textContent = 'More';
+                addButton.type = 'button';
+                addButton.style.marginTop = "unset";
+                addButton.onclick = () => addKeyValueInput();
+                inputGroup.appendChild(addButton);
+
+                inputContainer.appendChild(inputGroup);
+            } else {
+                let inputGroup = document.createElement('div');
+                let input = document.createElement('input');
+                input.type = 'text';
+                input.id = field.name;
+                input.name = field.name;
+                if (field.placeholder) input.placeholder = field.placeholder;
+                if (field.default) input.value = field.default;
+                inputGroup.appendChild(input);
+
+                // Add 'More' button if it's the 'details_GitBranches' field
+                if (field.name === 'details_DefaultBranches') {
+                    let addButton = document.createElement('button');
+                    addButton.textContent = 'More';
+                    addButton.type = 'button';
+                    addButton.style.marginTop = "unset";
+                    addButton.onclick = function() {
+                        let newInput = input.cloneNode(true);  // Clone the input
+                        newInput.value = '';  // Clear the value
+                        inputGroup.appendChild(newInput);
+                    };
+                    inputGroup.appendChild(addButton);
+                }
+
+                inputContainer.appendChild(inputGroup);
+            }
+
             inputsContainer.appendChild(label);
-            inputsContainer.appendChild(input);
+            inputsContainer.appendChild(inputContainer);
         });
 
         inputsContainer.style.display = data.fields.length ? 'block' : 'none';
     }
+
 </script>
 
 

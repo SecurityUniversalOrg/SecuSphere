@@ -1,11 +1,6 @@
 from datetime import datetime
 from sqlalchemy.types import TEXT, DECIMAL
 from flask import jsonify
-from config_engine import ENV
-if ENV == 'test':
-    from sqlalchemy.dialects.sqlite import TEXT as LONGTEXT
-else:
-    from sqlalchemy.dialects.mysql import LONGTEXT
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects import mysql
 from flask_login import UserMixin
@@ -117,6 +112,43 @@ def _init_db(db=None, app=None):
         __table_args__ = {'extend_existing': True}
         id = db.Column(db.Integer, primary_key=True)
         first_access = db.Column(db.Boolean, nullable=False, default=True)
+        settings_initialized = db.Column(db.Boolean, nullable=False, default=False)
+        APP_EXT_URL = db.Column(db.String(200))
+        AUTH_TYPE = db.Column(db.String(200))
+        AZAD_AUTHORITY = db.Column(db.String(200))
+        AZAD_CLIENT_ID = db.Column(db.String(200))
+        AZAD_CLIENT_SECRET = db.Column(db.String(200))
+        AZURE_KEYVAULT_NAME = db.Column(db.String(200))
+        ENV = db.Column(db.String(200))
+        INSECURE_OAUTH = db.Column(db.String(200))
+        JENKINS_HOST = db.Column(db.String(200))
+        JENKINS_KEY = db.Column(db.String(200))
+        JENKINS_PROJECT = db.Column(db.String(200))
+        JENKINS_STAGING_PROJECT = db.Column(db.String(200))
+        JENKINS_TOKEN = db.Column(db.String(200))
+        JENKINS_USER = db.Column(db.String(200))
+        LDAP_BASE_DN = db.Column(db.String(200))
+        LDAP_BIND_USER_DN = db.Column(db.String(200))
+        LDAP_BIND_USER_PASSWORD = db.Column(db.String(200))
+        LDAP_GROUP_DN = db.Column(db.String(200))
+        LDAP_HOST = db.Column(db.String(200))
+        LDAP_PORT = db.Column(db.String(200))
+        LDAP_USER_DN = db.Column(db.String(200))
+        LDAP_USER_LOGIN_ATTR = db.Column(db.String(200))
+        LDAP_USER_RDN_ATTR = db.Column(db.String(200))
+        PROD_DB_URI = db.Column(db.String(200))
+        SMTP_ADMIN_EMAIL = db.Column(db.String(200))
+        SMTP_HOST = db.Column(db.String(200))
+        SMTP_PASSWORD = db.Column(db.String(200))
+        SMTP_USER = db.Column(db.String(200))
+        SNOW_CLIENT_ID = db.Column(db.String(200))
+        SNOW_CLIENT_SECRET = db.Column(db.String(200))
+        SNOW_INSTANCE_NAME = db.Column(db.String(200))
+        SNOW_PASSWORD = db.Column(db.String(200))
+        SNOW_USERNAME = db.Column(db.String(200))
+        VERSION = db.Column(db.String(200))
+        JENKINS_ENABLED = db.Column(db.String(200))
+        SNOW_ENABLED = db.Column(db.String(200))
 
     AppConfig()
 
@@ -139,9 +171,9 @@ def _init_db(db=None, app=None):
         __tablename__ = 'TmControls'
         ID = db.Column(db.Integer, primary_key=True)
         AddDate = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
-        Control = db.Column(LONGTEXT)
+        Control = db.Column(db.String(20000))
         Type = db.Column(db.String(8))
-        Description = db.Column(LONGTEXT)
+        Description = db.Column(db.String(20000))
         Lambda = db.Column(db.String(1))
         Process = db.Column(db.String(1))
         Server = db.Column(db.String(1))

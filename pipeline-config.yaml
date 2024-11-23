@@ -9,21 +9,21 @@ stages:
     branches:
       - release
   unitTesting:
-    enabled: false
+    enabled: true
     branches: []
   secretScanning:
     enabled: true
     branches:
       - release
   sca:
-    enabled: false
+    enabled: true
     branches:
       - release
     codeLanguages:
       - Python
       - Javascript
   sast:
-    enabled: false
+    enabled: true
     branches:
       - release
     codeLanguages:
@@ -37,7 +37,7 @@ stages:
     branches:
       - release
   containerScan:
-    enabled: false
+    enabled: true
     branches:
       - release
     containerName: secusphere
@@ -49,14 +49,14 @@ stages:
     serviceName: secusphere
     containerTag: latest
   testRelease:
-    enabled: false
+    enabled: true
     branches:
       - release
-    targetUrl: 'http://192.168.0.68:5010'
+    targetUrl: 'https://secusphere.securityuniversal.com'
     dastTestType: full
-    apiTargetUrl: 'http://192.168.0.68:5010/api/openapi.yaml'
+    apiTargetUrl: 'https://secusphere.securityuniversal.com/api/openapi.yaml'
   securityQualityGate:
-    enabled: false
+    enabled: true
     branches:
       - release
   deploy:
@@ -75,13 +75,14 @@ stages:
       azure.azTenantId: 'azTenantId'
     serviceCredentials: {}
     serviceSetStrings:
-      app.extUrl: "192.168.0.150"
+      app.env: prod
+      app.extUrl: "secusphere.securityuniversal.com"
       app.db.prodDbUriRef: "PROD-DB-URI"
       app.smtp.host: "smtp.sendgrid.net:587"
       app.smtp.user: apikey
       app.smtp.adminEmail: "admin@securityuniversal.com"
-      app.smtp.passwordRef: "SENDGRID-SMTP-PW"
-      app.az.keyVaultName: "BkDevSecOpsKeyVault"
+      app.smtp.passwordRef: "SMTP-PW"
+      app.az.keyVaultName: "ss-keyvault"
   post:
     enabled: true
     branches:

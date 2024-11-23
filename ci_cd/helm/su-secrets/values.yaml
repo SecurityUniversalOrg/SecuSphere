@@ -8,6 +8,6 @@ azure:
 
 tls:
   enabled: true
-  name: "dynamic"
+  name: "su-wildcard-tls"
   crt: "dynamic"
   key: "dynamic"

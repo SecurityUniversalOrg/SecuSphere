@@ -16,7 +16,6 @@ from vr.functions.routing_functions import check_entity_permissions
 from vr.admin.oauth2 import require_oauth
 from vr.admin.functions import db_connection_handler
 from authlib.integrations.flask_oauth2 import current_token
-from config_engine import ENV
 import re
 
 
@@ -101,7 +100,7 @@ def update_vulnerabilities_status(app_cmdb_id, scan_id, req_raw):
                 .join(VulnerabilityScans, VulnerabilityScans.ID == Vulnerabilities.ScanId) \
                 .join(DockerImages, DockerImages.ID == Vulnerabilities.DockerImageId) \
                 .filter(text(
-                f"(Vulnerabilities.Status NOT LIKE 'Closed-%' OR Vulnerabilities.Status='Closed-Mitigated') AND (Vulnerabilities.ApplicationId='{app_cmdb_id}') AND (Vulnerabilities.SourceType='{scan_type.split('CI/CD-')[1]}') AND (Vulnerabilities.InitialScanId!='{scan_id}') AND (DockerImages.ImageName=='{req_raw['dockerImg']}')")) \
+                f"(Vulnerabilities.Status NOT LIKE 'Closed-%' OR Vulnerabilities.Status='Closed-Mitigated') AND (Vulnerabilities.ApplicationId='{app_cmdb_id}') AND (Vulnerabilities.SourceType='{scan_type.split('CI/CD-')[1]}') AND (Vulnerabilities.InitialScanId!='{scan_id}') AND (DockerImages.ImageName='{req_raw['dockerImg']}')")) \
                 .all()
     else:
         previous_vulns = Vulnerabilities\
@@ -132,7 +131,7 @@ def update_vulnerabilities_status(app_cmdb_id, scan_id, req_raw):
 def add_vulns_background_process(req_raw):
     now = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     app_name = req_raw['appName']
-    git_url = req_raw['giturl']
+    git_url = req_raw['gitUrl']
     git_branch = req_raw['branch']
     findings = req_raw['findings']
     scan_type = req_raw['scanType']
@@ -295,7 +294,7 @@ def _add_new_vulns(new_vulns, engine):
 def _setup_duplicate_vulns(source_type, dup_vulns):
     sourced_dup_vulns = []
     for vuln in dup_vulns:
-        if ENV == 'test':
+        if app.config['ENV'] == 'test':
             vuln['LastModifiedDate'] = datetime.datetime.utcnow().replace(microsecond=0)
             if vuln['ReleaseDate']:
                 vuln['ReleaseDate'] = datetime.datetime.strptime(vuln['ReleaseDate'], '%Y-%m-%d %H:%M:%S')
