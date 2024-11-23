@@ -63,10 +63,8 @@ pipeline {
                  }
             }
             steps {
-                container('jenkins-python-agent') {
-                    jslStageWrapper('Unit Testing') {
-                        jslPythonUnitTesting()
-                    }
+                jslStageWrapper('Unit Testing') {
+                    jslPythonUnitTesting()
                 }
             }
         }
@@ -85,10 +83,8 @@ pipeline {
                  }
             }
             steps {
-                container('jenkins-secret-agent') {
-                    jslStageWrapper('Secret Scanning') {
-                        jslSecretScanning()
-                    }
+                jslStageWrapper('Secret Scanning') {
+                    jslSecretScanning()
                 }
             }
         }
@@ -131,13 +127,11 @@ pipeline {
                  }
             }
             steps {
-                container('jenkins-sast-agent') {
-                    jslStageWrapper('Static Application Security Testing') {
-                        script {
-                            def stageConfig = jslReadYamlConfig('sast')
-                            def codeLanguages = stageConfig?.codeLanguages
-                            jslStaticApplicationSecurityTesting(codeLanguages)
-                        }
+                jslStageWrapper('Static Application Security Testing') {
+                    script {
+                        def stageConfig = jslReadYamlConfig('sast')
+                        def codeLanguages = stageConfig?.codeLanguages
+                        jslStaticApplicationSecurityTesting(codeLanguages)
                     }
                 }
             }
@@ -157,10 +151,8 @@ pipeline {
                  }
             }
             steps {
-                container('jenkins-iac-agent') {
-                    jslStageWrapper('Infrastructure-as-Code Security Testing') {
-                        jslInfrastructureAsCodeAnalysis()
-                    }
+                jslStageWrapper('Infrastructure-as-Code Security Testing') {
+                    jslInfrastructureAsCodeAnalysis()
                 }
             }
         }
@@ -229,14 +221,12 @@ pipeline {
                  }
             }
             steps {
-                container('jenkins-deploy-agent') {
-                    jslStageWrapper('Release to Test') {
-                        script {
-                            def stageConfig = jslReadYamlConfig('releaseToTest')
-                            def serviceName = stageConfig?.serviceName
-                            def containerTag = stageConfig?.containerTag
-                            jslRunDockerCompose(serviceName, containerTag)
-                        }
+                jslStageWrapper('Release to Test') {
+                    script {
+                        def stageConfig = jslReadYamlConfig('releaseToTest')
+                        def serviceName = stageConfig?.serviceName
+                        def containerTag = stageConfig?.containerTag
+                        jslRunDockerCompose(serviceName, containerTag)
                     }
                 }
             }
@@ -256,16 +246,14 @@ pipeline {
                  }
             }
             steps {
-                container('jenkins-dast-agent') {
-                    jslStageWrapper('Test Release') {
-                        script {
-                            def stageConfig = jslReadYamlConfig('testRelease')
-                            def targetUrl = stageConfig?.targetUrl
-                            def dastTestType = stageConfig?.dastTestType
-                            def apiTargetUrl = stageConfig?.apiTargetUrl
-                            jslDastOWASP(dastTestType, targetUrl)
-                            jslDastAPIOWASP(apiTargetUrl, targetUrl)
-                        }
+                jslStageWrapper('Test Release') {
+                    script {
+                        def stageConfig = jslReadYamlConfig('testRelease')
+                        def targetUrl = stageConfig?.targetUrl
+                        def dastTestType = stageConfig?.dastTestType
+                        def apiTargetUrl = stageConfig?.apiTargetUrl
+                        jslDastOWASP(dastTestType, targetUrl)
+                        jslDastAPIOWASP(apiTargetUrl, targetUrl)
                     }
                 }
             }
@@ -286,10 +274,8 @@ pipeline {
                  }
             }
             steps {
-                container('jenkins-pipeline-agent') {
-                    jslStageWrapper('Quality Gate - Security') {
-                        jslSecurityQualityGate()
-                    }
+                jslStageWrapper('Quality Gate - Security') {
+                    jslSecurityQualityGate()
                 }
             }
         }
