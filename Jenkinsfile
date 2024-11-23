@@ -107,13 +107,11 @@ pipeline {
                  }
             }
             steps {
-                container('jenkins-sca-agent') {
-                    jslStageWrapper('Software Composition Analysis') {
-                        script {
-                            def stageConfig = jslReadYamlConfig('sca')
-                            def codeLanguages = stageConfig?.codeLanguages.join(',')
-                            jslSoftwareCompositionAnalysis(codeLanguages, env.appName)
-                        }
+                jslStageWrapper('Software Composition Analysis') {
+                    script {
+                        def stageConfig = jslReadYamlConfig('sca')
+                        def codeLanguages = stageConfig?.codeLanguages.join(',')
+                        jslSoftwareCompositionAnalysis(codeLanguages, env.appName)
                     }
                 }
             }
