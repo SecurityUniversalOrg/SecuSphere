@@ -93,7 +93,7 @@ def _set_application_config(request, app_id):
     origin = request.form.get('origin')
     user_records = request.form.get('user_records')
     revenue = request.form.get('revenue')
-    db.session.query(BusinessApplications).filter(text(f"BusinessApplications.ID={app_id}")).update(
+    db.session.query(BusinessApplications).filter(BusinessApplications.ID == app_id).update(
         {
             BusinessApplications.ApplicationName: app_name,
             BusinessApplications.Description: description,
