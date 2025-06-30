@@ -777,7 +777,7 @@ def all_app_vulns_filtered_csv(app_name, type, val):
             val = image.ID
         elif type == 'Application Name':
             key = 'ApplicationId'
-            app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName={val}")).first()
+            app = BusinessApplications.query.filter(text("BusinessApplications.ApplicationName=:val").params(val=val)).first()
             val = app.ID
         else:
             key = type.capitalize()
