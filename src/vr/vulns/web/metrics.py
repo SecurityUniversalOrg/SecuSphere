@@ -30,10 +30,7 @@ def component_metrics(id):
             return redirect(url_for('admin.login'))
         elif status == 403:
             return render_template('403.html', user=user, NAV=NAV)
-        key = 'ApplicationId'
-        val = id
-        filter_list = [f"{key} = '{val}'"]
-        vuln_all = Vulnerabilities.query.filter(text("".join(filter_list))).all()
+        vuln_all = Vulnerabilities.query.filter(text("ApplicationId = :id")).params(id=id).all()
         schema = VulnerabilitiesSchema(many=True)
         assets = schema.dump(vuln_all)
         NAV['appbar'] = 'metrics'
