@@ -186,7 +186,7 @@ def add_vulns_background_process(req_raw):
 
 def _update_reopened_vulns(reopened_vulns):
     for i in reopened_vulns:
-        db.session.query(Vulnerabilities).filter(text(f"Vulnerabilities.VulnerabilityID={i['VulnerabilityID']}")).update(
+        db.session.query(Vulnerabilities).filter(text("Vulnerabilities.VulnerabilityID = :vuln_id").bindparams(vuln_id=i['VulnerabilityID'])).update(
             values={"Status": "Open-Rediscovered"},
             synchronize_session=False)
         db_connection_handler(db)
