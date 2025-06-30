@@ -231,7 +231,7 @@ def validate_cicd_pipeline_stage(appid):
     image_registry = request.form.get('image_registry')
     target_url = request.form.get('target_url')
 
-    app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
+    app = BusinessApplications.query.filter_by(ID=appid).first()
     git_url = app.RepoURL
 
     app_name = app.ApplicationName
