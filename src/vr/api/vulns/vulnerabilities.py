@@ -51,10 +51,12 @@ def search_vulnerabilities():
         if permitted:
             src_filter = request.get_json()
             filter_list = []
-            for key in src_filter:
-                val = src_filter[key].replace("'", "")
-                filter_list.append(f"{key} = '{val}'")
-            vulns_all = Vulnerabilities.query.filter(text(" AND ".join(filter_list))).all()
+            valid_columns = {column.name for column in Vulnerabilities.__table__.columns}
+            filters = {}
+            for key, val in src_filter.items():
+                if key in valid_columns:
+                    filters[key] = val
+            vulns_all = Vulnerabilities.query.filter_by(**filters).all()
             schema = VulnerabilitiesSchema(many=True)
             vulns = schema.dump(vulns_all)
             response = jsonify(vulns), 200
