@@ -62,7 +62,7 @@ def sourcecode_files(id):
         assets = schema.dump(components.items)
 
         NAV['appbar'] = 'components'
-        app = BusinessApplications.query.filter(text(f'ID={id}')).first()
+        app = BusinessApplications.query.filter(text('ID = :id').params(id=id)).first()
         app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         table_details = {
