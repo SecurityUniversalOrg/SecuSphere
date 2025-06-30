@@ -37,8 +37,7 @@ def vulnerability_scans(id):
             return render_template('403.html', user=user, NAV=NAV)
 
         key = 'VulnerabilityScans.ApplicationId'
-        val = id
-        filter_list = [f"{key} = '{val}'"]
+        filter_list = f"{key} = :application_id"
         new_dict = {
             'db_name': 'VulnerabilityScans',
             "sort_field": "ID"
@@ -67,7 +66,7 @@ def vulnerability_scans(id):
                            ) \
             .join(Vulnerabilities, Vulnerabilities.InitialScanId == VulnerabilityScans.ID, isouter=True) \
             .group_by(VulnerabilityScans.ID) \
-            .filter(text("".join(filter_list))) \
+            .filter(text(filter_list).params(application_id=id)) \
             .order_by(orderby) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
