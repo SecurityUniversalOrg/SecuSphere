@@ -111,6 +111,17 @@ def all_vulnerabilities_export():
         if request.method == 'POST':
             # sort
             page, per_page, orderby_dict, orderby = update_table(request, new_dict)
+            # Validate orderby against a whitelist of allowed columns
+            allowed_columns = [
+                "VulnerabilityID", "VulnerabilityName", "CVEID", "CWEID", "Description", "ReleaseDate",
+                "Severity", "Classification", "Source", "LastModifiedDate", "ReferenceName", "ReferenceUrl",
+                "ReferenceTags", "AddDate", "SourceCodeFileId", "SourceCodeFileStartLine", "SourceCodeFileStartCol",
+                "SourceCodeFileEndLine", "SourceCodeFileEndCol", "DockerImageId", "ApplicationId", "HostId",
+                "Uri", "HtmlMethod", "Param", "Attack", "Evidence", "Solution", "VulnerablePackage",
+                "VulnerableFileName", "VulnerableFilePath", "Status", "MitigationDate", "ApplicationName"
+            ]
+            if orderby not in allowed_columns:
+                orderby = "VulnerabilityID"  # Default to a safe column
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict)
 
@@ -127,7 +138,7 @@ def all_vulnerabilities_export():
         ).join(BusinessApplications, BusinessApplications.ID==Vulnerabilities.ApplicationId) \
             .filter(text(sql_filter)) \
             .filter(text(VULN_STATUS_IS_NOT_CLOSED)) \
-            .order_by(text(orderby)) \
+            .order_by(orderby) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
