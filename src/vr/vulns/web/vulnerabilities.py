@@ -785,13 +785,16 @@ def all_app_vulns_filtered_csv(app_name, type, val):
             app = BusinessApplications.query.filter(text("BusinessApplications.ApplicationName=:val").params(val=val)).first()
             val = app.ID
         else:
+            allowed_types = ["Docker Image Name", "Application Name", "OtherType1", "OtherType2"]  # Add all valid types
+            if type not in allowed_types:
+                raise ValueError(f"Invalid type: {type}")
             key = type.capitalize()
         if val.endswith("-"):
-            filter_list = [f"{key} LIKE '{val}%'"]
+            filter_list = [text(f"{key} LIKE :val").params(val=f"{val}%")]
         elif val == 'ALL':
-            filter_list = [f"{key} LIKE '%-%'"]
+            filter_list = [text(f"{key} LIKE :val").params(val="%-%")]
         else:
-            filter_list = [f"{key} = '{val}'"]
+            filter_list = [text(f"{key} = :val").params(val=val)]
 
         new_dict = {
             'db_name': 'Vulnerabilities',
@@ -868,7 +871,8 @@ def _get_appname_assets(app_name, orderby, per_page, page, filter_list, sql_filt
         raise ValueError(f"Invalid orderby column: {orderby}")
 
     full_filter = text(f' AND ({sql_filter}) AND (BusinessApplications.ApplicationName = :app_name) AND ({VULN_STATUS_IS_NOT_CLOSED})')
-    full_filter = text(" AND ").join(filter_list) + full_filter
+    full_filter = text(" AND ").join(filter_list)
+    full_filter = text(f"{full_filter} AND (BusinessApplications.ApplicationName = :app_name) AND ({VULN_STATUS_IS_NOT_CLOSED})").params(app_name=app_name)
     vuln_all = Vulnerabilities. \
             query.with_entities(
                 Vulnerabilities.VulnerabilityID, Vulnerabilities.VulnerabilityName, Vulnerabilities.CVEID,
