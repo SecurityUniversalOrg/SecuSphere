@@ -295,11 +295,11 @@ def applevel_metrics(app_name):
         filter_list = [f"{key} = '{val}'"]
         vuln_all = Vulnerabilities.query\
             .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId)\
-            .filter(text("".join(filter_list))).all()
+            .filter(BusinessApplications.ApplicationName == app_name).all()
         schema = VulnerabilitiesSchema(many=True)
         assets = schema.dump(vuln_all)
         NAV['appbar'] = 'metrics'
-        app = BusinessApplications.query.filter(text(f'ApplicationName="{app_name}"')).first()
+        app = BusinessApplications.query.filter(BusinessApplications.ApplicationName == app_name).first()
         app_data = {'ID': app.ID, 'ApplicationName': app.ApplicationName}
         findings_map = {}
         reviewed_findings = parse_vuln_findings(vuln_all, 'reviewed')
