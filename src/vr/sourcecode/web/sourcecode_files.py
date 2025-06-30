@@ -46,6 +46,11 @@ def sourcecode_files(id):
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict)
 
+        # Validate orderby against a whitelist of allowed values
+        allowed_orderby_fields = ["VulnerableFileName", "findings_cnt"]
+        if orderby not in allowed_orderby_fields:
+            raise ValueError(f"Invalid orderby value: {orderby}")
+
         components = Vulnerabilities.query.with_entities(
             Vulnerabilities.VulnerableFileName,
             func.count(Vulnerabilities.VulnerabilityID).label('findings_cnt')
