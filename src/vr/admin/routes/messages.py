@@ -40,6 +40,12 @@ def messages():
         if request.method == 'POST':
             # sort
             page, per_page, orderby_dict, orderby = update_table(request, new_dict, direction="desc")
+            allowed_columns = ["ID", "AddDate", "MessageType"]  # Example whitelist
+            allowed_directions = ["asc", "desc"]
+            column, direction = orderby.split() if " " in orderby else (orderby, "asc")
+            if column not in allowed_columns or direction.lower() not in allowed_directions:
+                raise ValueError("Invalid orderby value")
+            safe_orderby = f"{column} {direction.lower()}"
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict, direction="desc")
 
@@ -58,7 +64,7 @@ def messages():
             .join(Vulnerabilities, Vulnerabilities.VulnerabilityID == Messages.EntityID, isouter=True) \
             .join(User, User.id == Messages.SenderUserId) \
             .filter(text(msg_filter)) \
-            .order_by(text(orderby)) \
+            .order_by(text(safe_orderby)) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
