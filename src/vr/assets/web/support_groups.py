@@ -32,7 +32,7 @@ def contacts(id):
 
         key = 'BusinessApplications.ID'
         val = id
-        filter_list = [f"{key} = '{val}'"]
+        filter_list = f"{key} = :val"
 
         new_dict = {
             'db_name': 'SupportContacts',
@@ -75,7 +75,7 @@ def contacts(id):
         ) \
             .join(AppToSupportContactAssociations, AppToSupportContactAssociations.SupportContactID==SupportContacts.ID) \
             .join(BusinessApplications, AppToSupportContactAssociations.ApplicationID == BusinessApplications.ID, isouter=True) \
-            .filter(text("".join(filter_list))) \
+            .filter(text(filter_list).params(val=val)) \
             .order_by(sanitized_orderby) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
