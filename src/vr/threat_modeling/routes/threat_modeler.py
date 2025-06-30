@@ -72,7 +72,7 @@ def threat_modeler(id):
                 db.session.add(new_solution)
                 db_connection_handler(db)
                 NAV['appbar'] = 'threat_models'
-                app = BusinessApplications.query.filter(text(f'ID={id}')).first()
+                app = BusinessApplications.query.filter(text('ID=:id').params(id=id)).first()
                 app_data = {'ID': id, 'ApplicationName': app.ApplicationName}
             return render_template('threat_modeling/threat_report.html', user=user, NAV=NAV, threats=threats,
                                    controls=controls, num_threats_mitigated=len(threats_mitigated), app_data=app_data)
@@ -87,7 +87,7 @@ def threat_modeler(id):
                 }
             }
             NAV['appbar'] = 'threat_models'
-            app = BusinessApplications.query.filter(text(f'ID={id}')).first()
+            app = BusinessApplications.query.filter(text('ID=:id').params(id=id)).first()
             app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
             return render_template('threat_modeling/threat_modeler.html', app_data=app_data, user=user, NAV=NAV, questions=questions, application_questions=application_questions)
     except RuntimeError:
