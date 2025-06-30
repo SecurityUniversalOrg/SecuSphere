@@ -48,6 +48,13 @@ def all_service_tickets():
         if request.method == 'POST':
             # sort
             page, per_page, orderby_dict, orderby = update_table(request, new_dict, direction="desc")
+            allowed_columns = ["ID", "TicketName", "AddDate", "Source", "Status", "ApplicationName", "AppID"]
+            allowed_directions = ["asc", "desc"]
+            orderby_parts = orderby.split()
+            if len(orderby_parts) == 2 and orderby_parts[0] in allowed_columns and orderby_parts[1].lower() in allowed_directions:
+                orderby = f"{orderby_parts[0]} {orderby_parts[1].lower()}"
+            else:
+                raise ValueError("Invalid orderby value")
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict, direction="desc")
 
@@ -57,7 +64,7 @@ def all_service_tickets():
                            ServiceTickets.AppID) \
             .join(BusinessApplications, BusinessApplications.ID == ServiceTickets.AppID, isouter=True) \
             .filter(text(sql_filter)) \
-            .order_by(text(orderby)) \
+            .order_by(orderby) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
