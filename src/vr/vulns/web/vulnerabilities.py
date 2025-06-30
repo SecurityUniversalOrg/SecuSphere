@@ -602,22 +602,28 @@ def all_app_vulns_filtered(app_name, type, val):
         elif type == 'docker':
             key = 'DockerImageId'
         # Filter Modal section
-        elif type == 'Docker Image Name':
-            key = 'DockerImageId'
-            image = DockerImages.query.filter(text(f"DockerImages.ImageName={val}")).first()
-            val = image.ID
-        elif type == 'Application Name':
-            key = 'ApplicationId'
-            app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName={val}")).first()
-            val = app.ID
+        allowed_types = {
+            'Docker Image Name': 'DockerImageId',
+            'Application Name': 'ApplicationId'
+        }
+        if type in allowed_types:
+            key = allowed_types[type]
+            if type == 'Docker Image Name':
+                image = DockerImages.query.filter(DockerImages.ImageName == val).first()
+                val = image.ID
+            elif type == 'Application Name':
+                app = BusinessApplications.query.filter(BusinessApplications.ApplicationName == val).first()
+                val = app.ID
         else:
             key = type.capitalize()
         if val.endswith("-"):
-            filter_list = [f"{key} LIKE '{val}%'"]
+            filter_list = [f"{key} LIKE :val"]
+            val = f"{val}%"
         elif val == 'ALL':
-            filter_list = [f"{key} LIKE '%-%'"]
+            filter_list = [f"{key} LIKE :val"]
+            val = "%-%"
         else:
-            filter_list = [f"{key} = '{val}'"]
+            filter_list = [f"{key} = :val"]
 
         new_dict = {
             'db_name': 'Vulnerabilities',
@@ -851,7 +857,7 @@ def _get_appname_assets(app_name, orderby, per_page, page, filter_list, sql_filt
     if orderby not in allowed_orderby_columns:
         raise ValueError(f"Invalid orderby column: {orderby}")
 
-    full_filter = f'({"".join(filter_list)}) AND ({sql_filter}) AND (BusinessApplications.ApplicationName = :app_name) AND ({VULN_STATUS_IS_NOT_CLOSED})'
+    full_filter = f'({" AND ".join(filter_list)}) AND ({sql_filter}) AND (BusinessApplications.ApplicationName = :app_name) AND ({VULN_STATUS_IS_NOT_CLOSED})'
     vuln_all = Vulnerabilities. \
             query.with_entities(
                 Vulnerabilities.VulnerabilityID, Vulnerabilities.VulnerabilityName, Vulnerabilities.CVEID,
@@ -872,7 +878,7 @@ def _get_appname_assets(app_name, orderby, per_page, page, filter_list, sql_filt
                 Vulnerabilities.Status, Vulnerabilities.MitigationDate, BusinessApplications.ApplicationName,
                 BusinessApplications.ApplicationAcronym
             ).join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId) \
-        .filter(text(full_filter).params(app_name=app_name)) \
+        .filter(text(full_filter).params(app_name=app_name, val=val)) \
         .order_by(getattr(Vulnerabilities, orderby)) \
         .yield_per(per_page) \
         .paginate(page=page, per_page=per_page, error_out=False)
