@@ -111,7 +111,7 @@ def issue(appid, id):
             .first()
         NAV['appbar'] = 'workflows'
         app = BusinessApplications.query\
-            .filter(text(f'ID={appid}')).first()
+            .filter(text('ID = :appid')).params(appid=appid).first()
         app_data = {'ID': appid, 'ApplicationName': app.ApplicationName}
         return render_template('sourcecode/view_service_ticket.html', details=assets_all, app_data=app_data, user=user, NAV=NAV)
     except RuntimeError:
