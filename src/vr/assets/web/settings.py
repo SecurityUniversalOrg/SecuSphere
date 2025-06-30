@@ -382,7 +382,7 @@ def add_cicd_pipeline(app_id):
 
             return redirect(url_for('vulns.all_cicd_pipelines', app_id=app_id))
 
-        app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
+        app = BusinessApplications.query.filter(text('ID=:app_id')).params(app_id=app_id).first()
         app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         return render_template('assets/add_cicd_pipeline.html', app_data=app_data, user=user, NAV=NAV, all_sources=sources)
