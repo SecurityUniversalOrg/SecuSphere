@@ -191,6 +191,14 @@ def all_vulnerabilities_csv():
         if request.method == 'POST':
             # sort
             page, per_page, orderby_dict, orderby = update_table(request, new_dict)
+            # Validate orderby against a whitelist
+            allowed_columns = ["VulnerabilityID", "VulnerabilityName", "Severity", "Classification", "ReleaseDate"]
+            allowed_directions = ["ASC", "DESC"]
+            orderby_parts = orderby.split()
+            if len(orderby_parts) == 2 and orderby_parts[0] in allowed_columns and orderby_parts[1] in allowed_directions:
+                validated_orderby = f"{orderby_parts[0]} {orderby_parts[1]}"
+            else:
+                validated_orderby = "VulnerabilityID ASC"  # Default fallback
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict)
 
@@ -207,7 +215,7 @@ def all_vulnerabilities_csv():
         ).join(BusinessApplications, BusinessApplications.ID==Vulnerabilities.ApplicationId) \
             .filter(text(sql_filter)) \
             .filter(text(VULN_STATUS_IS_NOT_CLOSED)) \
-            .order_by(text(orderby)) \
+            .order_by(text(validated_orderby)) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
