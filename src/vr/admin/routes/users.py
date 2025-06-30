@@ -228,7 +228,8 @@ def remove_user_appview_role():
         user_id = request.form.get('user_id')
         app_id = request.form.get('app_id')
         del_pair = EntityPermissions.query\
-            .filter(text(f"EntityPermissions.UserID={user_id} AND EntityPermissions.EntityID='{app_id}' AND EntityPermissions.EntityType='Application'")).first()
+            .filter(text("EntityPermissions.UserID=:user_id AND EntityPermissions.EntityID=:app_id AND EntityPermissions.EntityType='Application'"))\
+            .params(user_id=user_id, app_id=app_id).first()
         if del_pair:
             db.session.delete(del_pair)
             db_connection_handler(db)
