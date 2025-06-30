@@ -17,7 +17,7 @@ azure-keyvault-certificates==4.6.0
 azure-keyvault-keys==4.7.0
 marshmallow==3.19.0
 Authlib==1.2.0
-mysql-connector-python==8.0.32
+mysql-connector-python==9.1.0
 mysqlclient==2.1.1
 PyYAML==6.0.0
 Flask-LDAP3-Login==0.9.18
