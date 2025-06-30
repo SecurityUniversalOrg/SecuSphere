@@ -239,7 +239,10 @@ def get_app_id(app_name, git_url):
     else:
         a_name = app_name
         app_component = app_name.lower()
-    app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName='{a_name}' AND BusinessApplications.ApplicationAcronym='{app_component.lower()}'")).first()
+    app = BusinessApplications.query.filter(
+        BusinessApplications.ApplicationName == a_name,
+        BusinessApplications.ApplicationAcronym == app_component.lower()
+    ).first()
     if app:
         app_id = app.ID
         if git_url and not app.RepoURL:
