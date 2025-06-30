@@ -306,12 +306,12 @@ def all_vulnerabilities_filtered(type, val):
         # Filter Modal section
         elif type == 'Docker Image Name':
             key = 'DockerImageId'
-            image = DockerImages.query.filter(text(f"DockerImages.ImageName={val}")).first()
-            val = image.ID
+            image = DockerImages.query.filter(DockerImages.ImageName == val).first()
+            val = image.ID if image else None
         elif type == 'Application Name':
             key = 'ApplicationId'
-            app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName={val}")).first()
-            val = app.ID
+            app = BusinessApplications.query.filter(BusinessApplications.ApplicationName == val).first()
+            val = app.ID if app else None
         else:
             key = type.capitalize()
         if val.endswith("-"):
