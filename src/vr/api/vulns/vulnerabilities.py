@@ -100,7 +100,8 @@ def update_vulnerabilities_status(app_cmdb_id, scan_id, req_raw):
                 .join(VulnerabilityScans, VulnerabilityScans.ID == Vulnerabilities.ScanId) \
                 .join(DockerImages, DockerImages.ID == Vulnerabilities.DockerImageId) \
                 .filter(text(
-                f"(Vulnerabilities.Status NOT LIKE 'Closed-%' OR Vulnerabilities.Status='Closed-Mitigated') AND (Vulnerabilities.ApplicationId='{app_cmdb_id}') AND (Vulnerabilities.SourceType='{scan_type.split('CI/CD-')[1]}') AND (Vulnerabilities.InitialScanId!='{scan_id}') AND (DockerImages.ImageName='{req_raw['dockerImg']}')")) \
+                "(Vulnerabilities.Status NOT LIKE 'Closed-%' OR Vulnerabilities.Status='Closed-Mitigated') AND (Vulnerabilities.ApplicationId=:app_cmdb_id) AND (Vulnerabilities.SourceType=:source_type) AND (Vulnerabilities.InitialScanId!=:scan_id) AND (DockerImages.ImageName=:docker_img)")
+                ).params(app_cmdb_id=app_cmdb_id, source_type=scan_type.split('CI/CD-')[1], scan_id=scan_id, docker_img=req_raw['dockerImg']) \
                 .all()
     else:
         previous_vulns = Vulnerabilities\
