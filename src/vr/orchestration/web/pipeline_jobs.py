@@ -157,7 +157,7 @@ def add_cicd_pipeline_stage(appid):
         return render_template('403.html', user=user, NAV=NAV)
 
     NAV['appbar'] = 'ci_cd'
-    app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
+    app = BusinessApplications.query.filter(text('ID=:appid').params(appid=appid)).first()
     app_data = {'ID': appid, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
     return render_template('orchestration/add_cicd_pipeline_stage.html', user=user, NAV=NAV, app_data=app_data)
