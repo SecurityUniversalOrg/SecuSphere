@@ -215,7 +215,9 @@ def all_vulnerabilities_csv():
         ).join(BusinessApplications, BusinessApplications.ID==Vulnerabilities.ApplicationId) \
             .filter(text(sql_filter)) \
             .filter(text(VULN_STATUS_IS_NOT_CLOSED)) \
-            .order_by(text(validated_orderby)) \
+            .order_by(
+                getattr(Vulnerabilities, orderby_parts[0]).asc() if orderby_parts[1] == "ASC" else getattr(Vulnerabilities, orderby_parts[0]).desc()
+            ) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
