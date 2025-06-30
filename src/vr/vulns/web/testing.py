@@ -49,9 +49,11 @@ def vulnerability_scans(id):
             allowed_columns = ["ID", "ScanName", "ScanType", "ScanTargets", "ScanStartDate", "issue_cnt", "open_issue_cnt", "closed_issue_cnt", "ra_issue_cnt"]
             allowed_directions = ["asc", "desc"]
             if orderby_dict.get("column") in allowed_columns and orderby_dict.get("direction") in allowed_directions:
-                orderby = f"{orderby_dict['column']} {orderby_dict['direction']}"
+                column = getattr(VulnerabilityScans, orderby_dict['column'], None)
+                direction = orderby_dict['direction']
+                orderby = column.asc() if direction == "asc" else column.desc()
             else:
-                orderby = "ID asc"  # Default order
+                orderby = VulnerabilityScans.ID.asc()  # Default order
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict)
 
@@ -66,7 +68,7 @@ def vulnerability_scans(id):
             .join(Vulnerabilities, Vulnerabilities.InitialScanId == VulnerabilityScans.ID, isouter=True) \
             .group_by(VulnerabilityScans.ID) \
             .filter(text("".join(filter_list))) \
-            .order_by(text(orderby)) \
+            .order_by(orderby) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
         pg_cnt = ceil((vuln_all.total / per_page))
