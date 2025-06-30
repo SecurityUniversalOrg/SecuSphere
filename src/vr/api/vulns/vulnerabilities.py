@@ -84,7 +84,8 @@ def update_vulnerabilities_status(app_cmdb_id, scan_id, req_raw):
     if req_raw['findings']:
         scans = VulnerabilityScans\
             .query\
-            .filter(text(f"VulnerabilityScans.ApplicationId={app_cmdb_id} AND VulnerabilityScans.ScanType='{scan_type}'"))\
+            .filter(text("VulnerabilityScans.ApplicationId=:app_cmdb_id AND VulnerabilityScans.ScanType=:scan_type")\
+            .params(app_cmdb_id=app_cmdb_id, scan_type=scan_type))\
             .order_by(VulnerabilityScans.ID.desc())\
             .limit(2)\
             .all()
