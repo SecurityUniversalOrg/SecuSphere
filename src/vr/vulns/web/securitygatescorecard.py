@@ -28,9 +28,10 @@ def securitygatescorecard(id):
             return redirect(url_for('admin.login'))
         elif status == 403:
             return render_template('403.html', user=user, NAV=NAV)
-        key = 'PipelineJobs.ID'
-        val = id
-        filter_list = [f"{key} = '{val}'"]
+        try:
+            id = int(id)  # Ensure `id` is a valid integer
+        except ValueError:
+            return render_template('400.html'), 400  # Return a 400 Bad Request if `id` is invalid
         assets_all = PipelineJobs.query \
             .with_entities(PipelineJobs.ID, PipelineJobs.StartDate,
                            PipelineJobs.BuildNum, BusinessApplications.ApplicationName, BusinessApplications.ID,
@@ -81,7 +82,7 @@ def securitygatescorecard(id):
             .join(BusinessApplications, BusinessApplications.ID == PipelineJobs.ApplicationId, isouter=True) \
             .join(SgConfigSettingsPerJob, PipelineJobs.ID == SgConfigSettingsPerJob.PipelineJobID, isouter=True) \
             .join(SgResultsPerJob, PipelineJobs.ID == SgResultsPerJob.PipelineJobID, isouter=True) \
-            .filter(text("".join(filter_list))).all()
+            .filter(PipelineJobs.ID == id).all()
         schema = BusinessApplicationsSchema(many=True)
         assets = schema.dump(assets_all)
         NAV['appbar'] = 'scorecard'
