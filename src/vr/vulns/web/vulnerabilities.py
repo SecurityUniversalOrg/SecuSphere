@@ -414,7 +414,7 @@ def all_vulnerabilities_filtered_export(type, val):
             val = image.ID
         elif type == 'Application Name':
             key = 'ApplicationId'
-            app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName={val}")).first()
+            app = BusinessApplications.query.filter(text("BusinessApplications.ApplicationName = :app_name").params(app_name=val)).first()
             val = app.ID
         else:
             key = type.capitalize()
