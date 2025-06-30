@@ -328,6 +328,17 @@ def all_vulnerabilities_filtered(type, val):
         if request.method == 'POST':
             # sort
             page, per_page, orderby_dict, orderby = update_table(request, new_dict)
+            allowed_columns = [
+                "VulnerabilityID", "VulnerabilityName", "CVEID", "CWEID", "Description", "ReleaseDate",
+                "Severity", "Classification", "Source", "LastModifiedDate", "ReferenceName", "ReferenceUrl",
+                "ReferenceTags", "AddDate", "SourceCodeFileId", "SourceCodeFileStartLine",
+                "SourceCodeFileStartCol", "SourceCodeFileEndLine", "SourceCodeFileEndCol", "DockerImageId",
+                "ApplicationId", "HostId", "Uri", "HtmlMethod", "Param", "Attack", "Evidence", "Solution",
+                "VulnerablePackage", "VulnerableFileName", "VulnerableFilePath", "Status", "MitigationDate",
+                "ApplicationName"
+            ]
+            if orderby not in allowed_columns:
+                orderby = "VulnerabilityID"  # Default safe column
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict)
 
