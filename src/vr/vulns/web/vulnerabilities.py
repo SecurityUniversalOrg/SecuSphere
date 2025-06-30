@@ -606,8 +606,13 @@ def all_app_vulns_filtered(app_name, type, val):
             'Docker Image Name': 'DockerImageId',
             'Application Name': 'ApplicationId'
         }
-        if type in allowed_types:
-            key = allowed_types[type]
+        allowed_columns = {
+            'Docker Image Name': 'DockerImageId',
+            'Application Name': 'ApplicationId',
+            # Add other allowed mappings here
+        }
+        if type in allowed_columns:
+            key = allowed_columns[type]
             if type == 'Docker Image Name':
                 image = DockerImages.query.filter(DockerImages.ImageName == val).first()
                 val = image.ID
@@ -615,7 +620,7 @@ def all_app_vulns_filtered(app_name, type, val):
                 app = BusinessApplications.query.filter(BusinessApplications.ApplicationName == val).first()
                 val = app.ID
         else:
-            key = type.capitalize()
+            raise ValueError(f"Invalid filter type: {type}")
         if val.endswith("-"):
             filter_list = [f"{key} LIKE :val"]
             val = f"{val}%"
@@ -857,7 +862,7 @@ def _get_appname_assets(app_name, orderby, per_page, page, filter_list, sql_filt
     if orderby not in allowed_orderby_columns:
         raise ValueError(f"Invalid orderby column: {orderby}")
 
-    full_filter = f'({" AND ".join(filter_list)}) AND ({sql_filter}) AND (BusinessApplications.ApplicationName = :app_name) AND ({VULN_STATUS_IS_NOT_CLOSED})'
+    full_filter = text(f'({" AND ".join(filter_list)}) AND ({sql_filter}) AND (BusinessApplications.ApplicationName = :app_name) AND ({VULN_STATUS_IS_NOT_CLOSED})')
     vuln_all = Vulnerabilities. \
             query.with_entities(
                 Vulnerabilities.VulnerabilityID, Vulnerabilities.VulnerabilityName, Vulnerabilities.CVEID,
