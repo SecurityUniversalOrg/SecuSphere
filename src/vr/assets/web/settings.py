@@ -190,7 +190,7 @@ def add_application_environment(app_id):
 
             return redirect(url_for('assets.all_application_environments', app_id=app_id))
 
-        app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
+        app = BusinessApplications.query.filter(text('ID=:app_id')).params(app_id=app_id).first()
         app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         return render_template('assets/add_application_environment.html', app_data=app_data, user=user, NAV=NAV)
