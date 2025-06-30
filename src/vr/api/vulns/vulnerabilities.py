@@ -195,7 +195,10 @@ def _update_reopened_vulns(reopened_vulns):
 def get_docker_img_id(docker_img_and_tag, app_cmdb_id):
     img_name = docker_img_and_tag.split(':')[0]
     img_tag = docker_img_and_tag.split(':')[1]
-    img = DockerImages.query.filter(text(f"DockerImages.ImageName='{img_name}' AND DockerImages.ImageTag='{img_tag}'")).first()
+    img = DockerImages.query.filter(
+        text("DockerImages.ImageName = :img_name AND DockerImages.ImageTag = :img_tag")
+        .bindparams(img_name=img_name, img_tag=img_tag)
+    ).first()
     if img:
         docker_img_id = img.ID
         img_obj = img
