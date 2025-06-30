@@ -838,6 +838,19 @@ def all_app_vulns_filtered_csv(app_name, type, val):
 
 
 def _get_appname_assets(app_name, orderby, per_page, page, filter_list, sql_filter):
+    # Define a whitelist of allowed columns for ordering
+    allowed_orderby_columns = [
+        "VulnerabilityID", "VulnerabilityName", "CVEID", "CWEID", "Description", "ReleaseDate", "Severity",
+        "Classification", "Source", "LastModifiedDate", "ReferenceName", "ReferenceUrl", "ReferenceTags",
+        "AddDate", "SourceCodeFileId", "SourceCodeFileStartLine", "SourceCodeFileStartCol", "SourceCodeFileEndLine",
+        "SourceCodeFileEndCol", "DockerImageId", "ApplicationId", "HostId", "Uri", "HtmlMethod", "Param",
+        "Attack", "Evidence", "Solution", "VulnerablePackage", "VulnerableFileName", "VulnerableFilePath",
+        "Status", "MitigationDate", "ApplicationName", "ApplicationAcronym"
+    ]
+    # Validate orderby against the whitelist
+    if orderby not in allowed_orderby_columns:
+        raise ValueError(f"Invalid orderby column: {orderby}")
+
     full_filter = f'({"".join(filter_list)}) AND ({sql_filter}) AND (BusinessApplications.ApplicationName = "{app_name}") AND ({VULN_STATUS_IS_NOT_CLOSED})'
     vuln_all = Vulnerabilities. \
             query.with_entities(
