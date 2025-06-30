@@ -402,7 +402,7 @@ def application_KPIs(app_name):
         schema = VulnerabilitiesSchema(many=True)
         assets = schema.dump(vuln_all)
         NAV['appbar'] = 'metrics'
-        app = BusinessApplications.query.filter(text(f'ApplicationName="{app_name}"')).first()
+        app = BusinessApplications.query.filter(text('ApplicationName = :app_name')).params(app_name=app_name).first()
         app_data = {'ID': app.ID, 'ApplicationName': app.ApplicationName}
 
         kpi_tree = get_kpi_tree(app.ApplicationName, scope='Application', start_date=start_date, end_date=end_date)
