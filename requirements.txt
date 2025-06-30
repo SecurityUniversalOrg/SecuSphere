@@ -23,7 +23,7 @@ PyYAML==6.0.0
 Flask-LDAP3-Login==0.9.18
 xhtml2pdf==0.2.11
 SQLAlchemy~=1.4.36
-Werkzeug~=2.3.6
+Werkzeug>=3.0.6
 WTForms~=3.0.1
 pandas~=2.0.2
 joblib~=1.2.0
