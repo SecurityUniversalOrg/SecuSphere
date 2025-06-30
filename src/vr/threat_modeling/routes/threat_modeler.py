@@ -233,7 +233,7 @@ def threat_assessment(appid, id):
         details['vulns_all'] = threats
         details['threats_all'] = threats_dict
         NAV['appbar'] = 'threat_models'
-        app = BusinessApplications.query.filter(text(f'ID={appid}')).first()
+        app = BusinessApplications.query.filter(text('ID = :appid')).params(appid=appid).first()
         app_data = {'ID': appid, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         return render_template('threat_modeling/threat_assessment.html', details=details, app_data=app_data, user=user, NAV=NAV)
