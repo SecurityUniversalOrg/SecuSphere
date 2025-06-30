@@ -707,16 +707,24 @@ def all_app_vulns_filtered_export(app_name, type, val):
         else:
             key = type.capitalize()
         # Whitelist of allowed column names
-        allowed_columns = {'Severity', 'Status', 'VulnerablePackage', 'Uri', 'VulnerableFileName', 
-                           'DockerImageId', 'ApplicationId'}
+        allowed_columns = {
+            'Severity': Vulnerabilities.Severity,
+            'Status': Vulnerabilities.Status,
+            'VulnerablePackage': Vulnerabilities.VulnerablePackage,
+            'Uri': Vulnerabilities.Uri,
+            'VulnerableFileName': Vulnerabilities.VulnerableFileName,
+            'DockerImageId': Vulnerabilities.DockerImageId,
+            'ApplicationId': Vulnerabilities.ApplicationId
+        }
         if key not in allowed_columns:
             return render_template('400.html', message="Invalid filter type"), 400
+        column = allowed_columns[key]
         if val.endswith("-"):
-            filter_list = [text(f"{key} LIKE :val").bindparams(val=f"{val}%")]
+            filter_list = [column.like(f"{val}%")]
         elif val == 'ALL':
-            filter_list = [text(f"{key} LIKE :val").bindparams(val="%-%%")]
+            filter_list = [column.like("%-%%")]
         else:
-            filter_list = [text(f"{key} = :val").bindparams(val=val)]
+            filter_list = [column == val]
 
         new_dict = {
             'db_name': 'Vulnerabilities',
