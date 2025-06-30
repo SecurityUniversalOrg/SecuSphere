@@ -99,15 +99,13 @@ def issue(appid, id):
         elif status == 403:
             return render_template('403.html', user=user, NAV=NAV)
         key = 'ServiceTickets.ID'
-        val = id
-        filter_list = f"{key} = '{val}'"
         assets_all = ServiceTickets.query \
             .with_entities(ServiceTickets.ID, ServiceTickets.TicketName, ServiceTickets.AddDate,
                            ServiceTickets.Source, ServiceTickets.Status, BusinessApplications.ApplicationName,
                            ServiceTickets.Description, ServiceTickets.Reporter, ServiceTickets.Assignee) \
             .join(ReleaseVersions, ServiceTickets.ReleaseID == ReleaseVersions.ID, isouter=True) \
             .join(BusinessApplications, BusinessApplications.ID == ReleaseVersions.ApplicationID, isouter=True) \
-            .filter(text(filter_list)) \
+            .filter(text(f"{key} = :id").params(id=id)) \
             .first()
         NAV['appbar'] = 'workflows'
         app = BusinessApplications.query\
