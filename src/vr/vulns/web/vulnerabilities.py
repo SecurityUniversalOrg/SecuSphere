@@ -696,6 +696,11 @@ def all_app_vulns_filtered_export(app_name, type, val):
             val = app.ID
         else:
             key = type.capitalize()
+        # Whitelist of allowed column names
+        allowed_columns = {'Severity', 'Status', 'VulnerablePackage', 'Uri', 'VulnerableFileName', 
+                           'DockerImageId', 'ApplicationId'}
+        if key not in allowed_columns:
+            return render_template('400.html', message="Invalid filter type"), 400
         if val.endswith("-"):
             filter_list = [text(f"{key} LIKE :val").bindparams(val=f"{val}%")]
         elif val == 'ALL':
