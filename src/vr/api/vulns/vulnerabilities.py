@@ -544,9 +544,8 @@ def delete_vulnerabilities():
         permitted = check_entity_permissions(is_admin)
         if permitted:
             req_raw = request.get_json()
-            for key in req_raw:
-                val = req_raw[key].replace("'", "")
-                vulns = Vulnerabilities.query.filter(text(f"{key}='{val}'")).all()
+            for key, val in req_raw.items():
+                vulns = Vulnerabilities.query.filter(getattr(Vulnerabilities, key) == val).all()
                 for vuln in vulns:
                     db.session.delete(vuln)
                 db_connection_handler(db)
