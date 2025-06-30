@@ -186,16 +186,13 @@ def threat_assessment(appid, id):
         elif status == 403:
             return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
         details = {}
-        key = 'TmThreatAssessments.ID'
-        val = id
-        filter_list = [f"{key} = '{val}'"]
         endpoints_all = TmThreatAssessments.query.with_entities(
             TmThreatAssessments.ID, TmThreatAssessments.AddDate, TmThreatAssessments.ApplicationID,
             TmThreatAssessments.SubmitUserID, TmThreatAssessments.Status,
             User.username
         ) \
             .join(User, User.id == TmThreatAssessments.SubmitUserID) \
-            .filter(text("".join(filter_list))).all()
+            .filter(TmThreatAssessments.ID == id).all()
         details['details'] = endpoints_all[0]
         vulns_all = TmIdentifiedThreats.query \
             .with_entities(TmIdentifiedThreats.ID, TmIdentifiedThreats.AddDate,
@@ -233,7 +230,7 @@ def threat_assessment(appid, id):
         details['vulns_all'] = threats
         details['threats_all'] = threats_dict
         NAV['appbar'] = 'threat_models'
-        app = BusinessApplications.query.filter(text('ID = :appid')).params(appid=appid).first()
+        app = BusinessApplications.query.filter(BusinessApplications.ID == appid).first()
         app_data = {'ID': appid, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         return render_template('threat_modeling/threat_assessment.html', details=details, app_data=app_data, user=user, NAV=NAV)
