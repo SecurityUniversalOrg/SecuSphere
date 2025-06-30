@@ -69,7 +69,7 @@ def contacts(id):
         assets = schema.dump(versions.items)
 
         NAV['appbar'] = 'contacts'
-        app = BusinessApplications.query.filter(text(f'ID={id}')).first()
+        app = BusinessApplications.query.filter(text('ID = :id').params(id=id)).first()
         app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         table_details = {
