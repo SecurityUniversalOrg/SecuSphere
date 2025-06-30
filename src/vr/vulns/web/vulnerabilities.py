@@ -375,7 +375,7 @@ def _get_assets(orderby, per_page, page, filter_list, sql_filter):
                 .filter(text(VULN_STATUS_IS_NOT_CLOSED)) \
         .filter(text("".join(filter_list))) \
         .filter(text(sql_filter)) \
-        .order_by(text(orderby)) \
+        .order_by(getattr(Vulnerabilities, orderby)) \
         .yield_per(per_page) \
         .paginate(page=page, per_page=per_page, error_out=False)
     pg_cnt = ceil((vuln_all.total / per_page))
