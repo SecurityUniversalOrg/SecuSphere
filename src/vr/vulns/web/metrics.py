@@ -732,12 +732,12 @@ def global_KPIs():
         if request.method == 'POST':
             start_date = request.form.get('start_date').replace('T', ' ')
             end_date = request.form.get('end_date').replace('T', ' ')
-            filter_list = f'((AddDate BETWEEN "{start_date}" AND "{end_date}") OR ' \
-                          f'(MitigationDate BETWEEN "{start_date}" AND "{end_date}") OR ' \
-                          f'((LastModifiedDate BETWEEN "{start_date}" AND "{end_date}") AND (Status LIKE "Open-RiskAccepted-*" OR Status="Closed-Manual-Superseded or Deprecated Component" OR Status="Closed-Manual-Compensating Control")))'
+            filter_list = text('((AddDate BETWEEN :start_date AND :end_date) OR '
+                               '(MitigationDate BETWEEN :start_date AND :end_date) OR '
+                               '((LastModifiedDate BETWEEN :start_date AND :end_date) AND (Status LIKE "Open-RiskAccepted-*" OR Status="Closed-Manual-Superseded or Deprecated Component" OR Status="Closed-Manual-Compensating Control")))')
             vuln_all = Vulnerabilities.query\
                 .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId)\
-                .filter(text(filter_list)).all()
+                .filter(filter_list.params(start_date=start_date, end_date=end_date)).all()
         else:
             vuln_all = Vulnerabilities.query \
                 .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId) \
