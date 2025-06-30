@@ -122,6 +122,11 @@ def threat_assessments(id):
         if request.method == 'POST':
             # sort
             page, per_page, orderby_dict, orderby = update_table(request, new_dict, direction="desc")
+
+            # Validate orderby against allowed columns
+            allowed_columns = ["ID", "AddDate", "username", "Status", "findings_cnt", "ApplicationName"]
+            if orderby not in allowed_columns:
+                orderby = "ID"  # Default to a safe column if validation fails
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict, direction="desc")
 
@@ -139,7 +144,7 @@ def threat_assessments(id):
             .join(User, User.id == TmThreatAssessments.SubmitUserID, isouter=True) \
             .group_by(TmThreatAssessments.ID) \
             .filter(text("".join(filter_list))) \
-            .order_by(text(orderby)) \
+            .order_by(orderby) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
