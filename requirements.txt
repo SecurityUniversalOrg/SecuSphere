@@ -10,7 +10,7 @@ PyJWT==2.7.0
 pycryptodome==3.19.1
 PyQRCode==1.2.1
 python-dateutil==2.8.2
-requests==2.31.0
+requests==2.32.4
 azure-identity==1.12.0
 azure-keyvault-secrets==4.6.0
 azure-keyvault-certificates==4.6.0
