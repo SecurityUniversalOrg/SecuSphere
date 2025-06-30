@@ -688,20 +688,20 @@ def all_app_vulns_filtered_export(app_name, type, val):
         # Filter Modal section
         elif type == 'Docker Image Name':
             key = 'DockerImageId'
-            image = DockerImages.query.filter(text(f"DockerImages.ImageName={val}")).first()
+            image = DockerImages.query.filter(DockerImages.ImageName == val).first()
             val = image.ID
         elif type == 'Application Name':
             key = 'ApplicationId'
-            app = BusinessApplications.query.filter(text(f"BusinessApplications.ApplicationName={val}")).first()
+            app = BusinessApplications.query.filter(BusinessApplications.ApplicationName == val).first()
             val = app.ID
         else:
             key = type.capitalize()
         if val.endswith("-"):
-            filter_list = [f"{key} LIKE '{val}%'"]
+            filter_list = [text(f"{key} LIKE :val").bindparams(val=f"{val}%")]
         elif val == 'ALL':
-            filter_list = [f"{key} LIKE '%-%'"]
+            filter_list = [text(f"{key} LIKE :val").bindparams(val="%-%%")]
         else:
-            filter_list = [f"{key} = '{val}'"]
+            filter_list = [text(f"{key} = :val").bindparams(val=val)]
 
         new_dict = {
             'db_name': 'Vulnerabilities',
@@ -862,7 +862,8 @@ def _get_appname_assets(app_name, orderby, per_page, page, filter_list, sql_filt
     if orderby not in allowed_orderby_columns:
         raise ValueError(f"Invalid orderby column: {orderby}")
 
-    full_filter = text(f'({" AND ".join(filter_list)}) AND ({sql_filter}) AND (BusinessApplications.ApplicationName = :app_name) AND ({VULN_STATUS_IS_NOT_CLOSED})')
+    full_filter = text(f' AND ({sql_filter}) AND (BusinessApplications.ApplicationName = :app_name) AND ({VULN_STATUS_IS_NOT_CLOSED})')
+    full_filter = text(" AND ").join(filter_list) + full_filter
     vuln_all = Vulnerabilities. \
             query.with_entities(
                 Vulnerabilities.VulnerabilityID, Vulnerabilities.VulnerabilityName, Vulnerabilities.CVEID,
