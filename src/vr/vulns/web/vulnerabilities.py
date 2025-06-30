@@ -761,34 +761,33 @@ def all_app_vulns_filtered_csv(app_name, type, val):
 
         sql_filter = _entity_permissions_filter(user_roles, session, admin_role, filter_key='BusinessApplications.ID')
         # Static (linked) section
-        if type == 'severity':
-            key = 'Severity'
-        elif type == 'status':
-            key = 'Status'
-        elif type == 'import':
-            key = 'VulnerablePackage'
-        elif type == 'endpoint':
-            key = 'Uri'
+        # Define a mapping of valid types to safe column names
+        type_to_column = {
+            'severity': 'Severity',
+            'status': 'Status',
+            'import': 'VulnerablePackage',
+            'endpoint': 'Uri',
+            'file': 'VulnerableFileName',
+            'docker': 'DockerImageId',
+            'Docker Image Name': 'DockerImageId',
+            'Application Name': 'ApplicationId',
+        }
+
+        # Validate and map the type to a column name
+        if type in type_to_column:
+            key = type_to_column[type]
+        else:
+            raise ValueError(f"Invalid type: {type}")
+
+        # Decode `val` for specific types
+        if type in ['endpoint', 'file']:
             val = base64.b64decode(val.encode()).decode()
-        elif type == 'file':
-            key = 'VulnerableFileName'
-            val = base64.b64decode(val.encode()).decode()
-        elif type == 'docker':
-            key = 'DockerImageId'
-        # Filter Modal section
         elif type == 'Docker Image Name':
-            key = 'DockerImageId'
-            image = DockerImages.query.filter(text(f"DockerImages.ImageName={val}")).first()
+            image = DockerImages.query.filter(text("DockerImages.ImageName=:val").params(val=val)).first()
             val = image.ID
         elif type == 'Application Name':
-            key = 'ApplicationId'
             app = BusinessApplications.query.filter(text("BusinessApplications.ApplicationName=:val").params(val=val)).first()
             val = app.ID
-        else:
-            allowed_types = ["Docker Image Name", "Application Name", "OtherType1", "OtherType2"]  # Add all valid types
-            if type not in allowed_types:
-                raise ValueError(f"Invalid type: {type}")
-            key = type.capitalize()
         if val.endswith("-"):
             filter_list = [text(f"{key} LIKE :val").params(val=f"{val}%")]
         elif val == 'ALL':
