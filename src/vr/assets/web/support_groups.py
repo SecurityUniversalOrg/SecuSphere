@@ -119,7 +119,7 @@ def add_contact(appid):
 def delete_contact():
     all = request.form
     contact_id = all['contact_id']
-    contacts = SupportContacts.query.filter(text(f"ID='{contact_id}'")).all()
+    contacts = SupportContacts.query.filter(text("ID=:contact_id")).params(contact_id=contact_id).all()
     for contact in contacts:
         db.session.delete(contact)
     db_connection_handler(db)
