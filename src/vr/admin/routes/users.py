@@ -257,7 +257,7 @@ def remove_user():
 
         user_id = request.form.get('user_id')
         del_pair = User.query\
-            .filter(text(f"User.id={user_id}")).first()
+            .filter(User.id == user_id).first()
         if del_pair:
             db.session.delete(del_pair)
             db_connection_handler(db)
