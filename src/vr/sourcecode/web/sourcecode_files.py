@@ -32,8 +32,7 @@ def sourcecode_files(id):
             return render_template('403.html', user=user, NAV=NAV)
 
         key = 'Vulnerabilities.ApplicationId'
-        val = id
-        filter = f"{key} = '{val}'"
+        filter = text(f"{key} = :val").params(val=id)
 
         new_dict = {
             'db_name': 'Vulnerabilities',
@@ -55,7 +54,7 @@ def sourcecode_files(id):
             Vulnerabilities.VulnerableFileName,
             func.count(Vulnerabilities.VulnerabilityID).label('findings_cnt')
         ).join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId) \
-            .filter(text(filter)) \
+            .filter(filter) \
             .filter(text("Vulnerabilities.Classification LIKE 'IaC%' OR Vulnerabilities.Classification LIKE 'SAST%' OR Vulnerabilities.Classification LIKE 'Secret%'")) \
             .group_by(Vulnerabilities.VulnerableFileName) \
             .order_by(text(orderby)) \
