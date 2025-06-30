@@ -103,7 +103,14 @@ def pipeline_jobs(id):
 
         if request.method == 'POST':
             # sort
-            page, per_page, orderby_dict, orderby = update_table(request, new_dict, direction="desc")
+            page, per_page, orderby_dict, raw_orderby = update_table(request, new_dict, direction="desc")
+            allowed_columns = ["ID", "StartDate", "BuildNum", "ApplicationName", "PipelineSource", "BranchName", "JobName", "Project", "GitBranch"]
+            allowed_directions = ["asc", "desc"]
+            orderby_parts = raw_orderby.split()
+            if len(orderby_parts) == 2 and orderby_parts[0] in allowed_columns and orderby_parts[1].lower() in allowed_directions:
+                orderby = f"{orderby_parts[0]} {orderby_parts[1].upper()}"
+            else:
+                raise ValueError("Invalid orderby value")
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict, direction="desc")
 
