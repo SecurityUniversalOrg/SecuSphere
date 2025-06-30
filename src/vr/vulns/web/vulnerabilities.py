@@ -315,11 +315,14 @@ def all_vulnerabilities_filtered(type, val):
         else:
             key = type.capitalize()
         if val.endswith("-"):
-            filter_list = [f"{key} LIKE '{val}%'"]
+            filter_list = [f"{key} LIKE :val"]
+            filter_params = {"val": f"{val}%"}
         elif val == 'ALL':
-            filter_list = [f"{key} LIKE '%-%'"]
+            filter_list = [f"{key} LIKE :val"]
+            filter_params = {"val": "%-%"}
         else:
-            filter_list = [f"{key} = '{val}'"]
+            filter_list = [f"{key} = :val"]
+            filter_params = {"val": val}
 
         new_dict = {
             'db_name': 'Vulnerabilities',
@@ -373,7 +376,7 @@ def _get_assets(orderby, per_page, page, filter_list, sql_filter):
                 Vulnerabilities.Status, Vulnerabilities.MitigationDate, BusinessApplications.ApplicationName
             ).join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId) \
                 .filter(text(VULN_STATUS_IS_NOT_CLOSED)) \
-        .filter(text("".join(filter_list))) \
+        .filter(text(" AND ".join(filter_list)).params(**filter_params)) \
         .filter(text(sql_filter)) \
         .order_by(getattr(Vulnerabilities, orderby)) \
         .yield_per(per_page) \
