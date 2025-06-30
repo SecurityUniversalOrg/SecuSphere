@@ -851,7 +851,7 @@ def _get_appname_assets(app_name, orderby, per_page, page, filter_list, sql_filt
     if orderby not in allowed_orderby_columns:
         raise ValueError(f"Invalid orderby column: {orderby}")
 
-    full_filter = f'({"".join(filter_list)}) AND ({sql_filter}) AND (BusinessApplications.ApplicationName = "{app_name}") AND ({VULN_STATUS_IS_NOT_CLOSED})'
+    full_filter = f'({"".join(filter_list)}) AND ({sql_filter}) AND (BusinessApplications.ApplicationName = :app_name) AND ({VULN_STATUS_IS_NOT_CLOSED})'
     vuln_all = Vulnerabilities. \
             query.with_entities(
                 Vulnerabilities.VulnerabilityID, Vulnerabilities.VulnerabilityName, Vulnerabilities.CVEID,
@@ -872,7 +872,7 @@ def _get_appname_assets(app_name, orderby, per_page, page, filter_list, sql_filt
                 Vulnerabilities.Status, Vulnerabilities.MitigationDate, BusinessApplications.ApplicationName,
                 BusinessApplications.ApplicationAcronym
             ).join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId) \
-        .filter(text(full_filter)) \
+        .filter(text(full_filter).params(app_name=app_name)) \
         .order_by(getattr(Vulnerabilities, orderby)) \
         .yield_per(per_page) \
         .paginate(page=page, per_page=per_page, error_out=False)
