@@ -122,7 +122,7 @@ def pipeline_jobs(id):
             .join(BusinessApplications, BusinessApplications.ID == PipelineJobs.ApplicationId, isouter=True) \
             .join(CICDPipelines, PipelineJobs.Source == CICDPipelines.ID, isouter=True) \
             .filter(text("".join(filter_list))) \
-            .order_by(text(orderby)) \
+            .order_by(*[getattr(PipelineJobs, orderby_parts[0]).desc() if orderby_parts[1].lower() == "desc" else getattr(PipelineJobs, orderby_parts[0]).asc()]) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
