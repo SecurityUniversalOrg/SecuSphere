@@ -7,7 +7,7 @@ Flask-Markdown==0.3
 Flask-Bootstrap==3.3.7.1
 pyotp==2.8.0
 PyJWT==2.7.0
-pycryptodome==3.17
+pycryptodome==3.19.1
 PyQRCode==1.2.1
 python-dateutil==2.8.2
 requests==2.31.0
