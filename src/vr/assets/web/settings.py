@@ -238,7 +238,7 @@ def remove_application_environment():
 
         env_id = request.form.get('env_id')
         del_pair = AppEnvironmentData.query\
-            .filter(text(f"AppEnvironmentData.ID={env_id}")).first()
+            .filter(AppEnvironmentData.ID == env_id).first()
         if del_pair:
             db.session.delete(del_pair)
             db_connection_handler(db)
