@@ -663,7 +663,7 @@ def component_KPIs(app_id):
         schema = VulnerabilitiesSchema(many=True)
         assets = schema.dump(vuln_all)
         NAV['appbar'] = 'metrics'
-        app = BusinessApplications.query.filter(text(f'ID="{app_id}"')).first()
+        app = BusinessApplications.query.filter(text('ID = :app_id').params(app_id=app_id)).first()
         app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
 
         kpi_tree = get_kpi_tree(app.ID, start_date=start_date, end_date=end_date)
