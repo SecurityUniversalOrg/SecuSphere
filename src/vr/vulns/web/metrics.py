@@ -451,9 +451,9 @@ def application_KPIs(app_name):
 
 def get_kpi_tree(entity_id, scope='Component', start_date=None, end_date=None):
     stages_all = []
-    time_filter = f' AND CICDPipelineBuilds.StartTime BETWEEN "{start_date}" AND "{end_date}"'
+    time_filter = ' AND CICDPipelineBuilds.StartTime BETWEEN :start_date AND :end_date'
     if scope == 'Component':
-        filter_str = f'CICDPipelines.ApplicationID={entity_id}'
+        filter_str = 'CICDPipelines.ApplicationID = :entity_id'
         if start_date:
             filter_str = filter_str + time_filter
         stages_all = CICDPipelineStageData.query \
@@ -465,9 +465,9 @@ def get_kpi_tree(entity_id, scope='Component', start_date=None, end_date=None):
             )\
             .join(CICDPipelineBuilds, CICDPipelineBuilds.ID == CICDPipelineStageData.BuildID) \
             .join(CICDPipelines, CICDPipelines.ID == CICDPipelineBuilds.PipelineID)\
-            .filter(text(filter_str)).all()
+            .filter(text(filter_str)).params(entity_id=entity_id, start_date=start_date, end_date=end_date).all()
     elif scope == 'Application':
-        filter_str = f'BusinessApplications.ApplicationName="{entity_id}"'
+        filter_str = 'BusinessApplications.ApplicationName = :entity_id'
         if start_date:
             filter_str = filter_str + time_filter
         stages_all = CICDPipelineStageData.query \
@@ -481,7 +481,7 @@ def get_kpi_tree(entity_id, scope='Component', start_date=None, end_date=None):
             .join(CICDPipelineBuilds, CICDPipelineBuilds.ID == CICDPipelineStageData.BuildID) \
             .join(CICDPipelines, CICDPipelines.ID == CICDPipelineBuilds.PipelineID) \
             .join(BusinessApplications, BusinessApplications.ID == CICDPipelines.ApplicationID) \
-            .filter(text(filter_str)).all()
+            .filter(text(filter_str)).params(entity_id=entity_id, start_date=start_date, end_date=end_date).all()
     elif scope == 'Global':
         if start_date:
             filter_str = 'CICDPipelineBuilds.StartTime BETWEEN :start_date AND :end_date'
