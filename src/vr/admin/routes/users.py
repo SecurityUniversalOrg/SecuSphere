@@ -188,7 +188,8 @@ def remove_user_role():
         role = request.form.get('role')
         del_pair = UserRoleAssignments.query\
             .join(UserRoles, UserRoles.id == UserRoleAssignments.role_id) \
-            .filter(text(f"UserRoleAssignments.user_id={user_id} AND UserRoles.name='{role}'")).first()
+            .filter(text("UserRoleAssignments.user_id=:user_id AND UserRoles.name=:role"))\
+            .params(user_id=user_id, role=role).first()
         if del_pair:
             db.session.delete(del_pair)
             db_connection_handler(db)
