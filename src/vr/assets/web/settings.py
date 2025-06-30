@@ -55,7 +55,7 @@ def edit_application(id):
             BusinessApplications.Revenue, VulnerabilitySLAAppPair.SlaID, BusinessApplications.ApplicationAcronym
         )\
             .join(VulnerabilitySLAAppPair, VulnerabilitySLAAppPair.ApplicationID==BusinessApplications.ID)\
-            .filter(text(f'BusinessApplications.ID={id}')).first()
+            .filter(text('BusinessApplications.ID = :id')).params(id=id).first()
         app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Description': app.Description, 'AppValue': app.AppValue,
                     'Version': app.Version, 'InHouseDev': app.InHouseDev, 'VendorDev': app.VendorDev, 'PHI': app.PHI,
                     'PII': app.PII, 'PCI': app.PCI, 'MiscCustomerData': app.MiscCustomerData, 'Type': app.Type,
