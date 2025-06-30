@@ -429,8 +429,10 @@ def remove_cicd_pipeline():
             return render_template('403.html', user=user, NAV=NAV)
 
         pipeline_id = request.form.get('pipeline_id')
+        if not pipeline_id.isdigit():
+            return render_template('400.html'), 400
         del_pair = CICDPipelines.query\
-            .filter(text(f"CICDPipelines.ID={pipeline_id}")).first()
+            .filter(CICDPipelines.ID == pipeline_id).first()
         if del_pair:
             db.session.delete(del_pair)
             db_connection_handler(db)
