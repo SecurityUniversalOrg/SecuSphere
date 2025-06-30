@@ -484,7 +484,7 @@ def get_kpi_tree(entity_id, scope='Component', start_date=None, end_date=None):
             .filter(text(filter_str)).all()
     elif scope == 'Global':
         if start_date:
-            filter_str = f'CICDPipelineBuilds.StartTime BETWEEN "{start_date}" AND "{end_date}"'
+            filter_str = 'CICDPipelineBuilds.StartTime BETWEEN :start_date AND :end_date'
             stages_all = CICDPipelineStageData.query \
                 .with_entities(
                 CICDPipelineStageData.ID, CICDPipelineStageData.AddDate, CICDPipelineStageData.BuildNode,
@@ -495,7 +495,7 @@ def get_kpi_tree(entity_id, scope='Component', start_date=None, end_date=None):
             ) \
                 .join(CICDPipelineBuilds, CICDPipelineBuilds.ID == CICDPipelineStageData.BuildID) \
                 .join(CICDPipelines, CICDPipelines.ID == CICDPipelineBuilds.PipelineID) \
-                .filter(text(filter_str)).all()
+                .filter(text(filter_str)).params(start_date=start_date, end_date=end_date).all()
         else:
             stages_all = CICDPipelineStageData.query \
                 .with_entities(
