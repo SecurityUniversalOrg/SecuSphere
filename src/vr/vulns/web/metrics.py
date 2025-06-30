@@ -37,7 +37,7 @@ def component_metrics(id):
         schema = VulnerabilitiesSchema(many=True)
         assets = schema.dump(vuln_all)
         NAV['appbar'] = 'metrics'
-        app = BusinessApplications.query.filter(text(f'ID={id}')).first()
+        app = BusinessApplications.query.filter(text('ID = :id').params(id=id)).first()
         app_data = {'ID': id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym}
         findings_map = {}
         reviewed_findings = parse_vuln_findings(vuln_all, 'reviewed')
