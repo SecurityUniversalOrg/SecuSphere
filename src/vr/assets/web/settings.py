@@ -360,7 +360,7 @@ def add_cicd_pipeline(app_id):
             AppIntegrations.query
                 .with_entities(Integrations.ID, Integrations.Name, AppIntegrations.ID, AppIntegrations.AppEntity)
                 .join(Integrations, Integrations.ID == AppIntegrations.IntegrationID)  # Explicit join condition
-                .filter(text(f"Integrations.ToolType='Jenkins' AND AppIntegrations.AppID={app_id}"))
+                .filter(text("Integrations.ToolType='Jenkins' AND AppIntegrations.AppID=:app_id").params(app_id=app_id))
                 .first()
         )
         if request.method == 'POST':
