@@ -45,6 +45,15 @@ def contacts(id):
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict)
 
+        # Validate and sanitize the orderby value
+        allowed_columns = ["ID", "AddDate", "Assignment", "CUID", "Name", "Email", "Role", "ApplicationName"]
+        allowed_directions = ["asc", "desc"]
+        orderby_parts = orderby.split()
+        if len(orderby_parts) == 2 and orderby_parts[0] in allowed_columns and orderby_parts[1].lower() in allowed_directions:
+            sanitized_orderby = f"{orderby_parts[0]} {orderby_parts[1].lower()}"
+        else:
+            sanitized_orderby = "ID asc"  # Default order
+
         versions = SupportContacts.query\
             .with_entities(
             SupportContacts.ID,
@@ -60,7 +69,7 @@ def contacts(id):
             .join(AppToSupportContactAssociations, AppToSupportContactAssociations.SupportContactID==SupportContacts.ID) \
             .join(BusinessApplications, AppToSupportContactAssociations.ApplicationID == BusinessApplications.ID, isouter=True) \
             .filter(text("".join(filter_list))) \
-            .order_by(text(orderby)) \
+            .order_by(text(sanitized_orderby)) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
