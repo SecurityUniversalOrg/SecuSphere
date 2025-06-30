@@ -48,6 +48,17 @@ def all_vulnerabilities():
         if request.method == 'POST':
             # sort
             page, per_page, orderby_dict, orderby = update_table(request, new_dict)
+            allowed_columns = [
+                "VulnerabilityID", "VulnerabilityName", "CVEID", "CWEID", "Description", "ReleaseDate", "Severity",
+                "Classification", "Source", "LastModifiedDate", "ReferenceName", "ReferenceUrl", "ReferenceTags",
+                "AddDate", "SourceCodeFileId", "SourceCodeFileStartLine", "SourceCodeFileStartCol",
+                "SourceCodeFileEndLine", "SourceCodeFileEndCol", "DockerImageId", "ApplicationId", "HostId", "Uri",
+                "HtmlMethod", "Param", "Attack", "Evidence", "Solution", "VulnerablePackage", "VulnerableFileName",
+                "VulnerableFilePath", "Status", "MitigationDate", "ApplicationName"
+            ]
+            allowed_directions = ["ASC", "DESC"]
+            if not any(orderby.startswith(col) and orderby.endswith(dir) for col in allowed_columns for dir in allowed_directions):
+                orderby = "VulnerabilityID ASC"  # Default to a safe value
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict)
 
@@ -64,7 +75,7 @@ def all_vulnerabilities():
         ).join(BusinessApplications, BusinessApplications.ID==Vulnerabilities.ApplicationId) \
             .filter(text(sql_filter)) \
             .filter(text(VULN_STATUS_IS_NOT_CLOSED)) \
-            .order_by(text(orderby)) \
+            .order_by(orderby) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
