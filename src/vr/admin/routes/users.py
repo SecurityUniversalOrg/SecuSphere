@@ -40,12 +40,15 @@ def users():
         if request.method == 'POST':
             # sort
             page, per_page, orderby_dict, orderby = update_table(request, new_dict)
+            allowed_columns = ["id", "name", "email", "created_at"]  # Example whitelist
+            if orderby not in allowed_columns:
+                orderby = "id"  # Default to a safe column
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict)
         sql_filter = _entity_permissions_filter(user_roles, session, admin_role, filter_key='User.id')
         assets_all = User.query\
             .filter(text(sql_filter)) \
-            .order_by(text(orderby)) \
+            .order_by(orderby) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
         users_all = _get_all_users(assets_all)
