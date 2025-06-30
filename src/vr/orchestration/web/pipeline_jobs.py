@@ -93,8 +93,7 @@ def pipeline_jobs(id):
             return render_template('403.html', user=user, NAV=NAV)
 
         key = 'PipelineJobs.ApplicationId'
-        val = id
-        filter_list = [f"{key} = '{val}'"]
+        filter_list = f"{key} = :id"
 
         new_dict = {
             'db_name': 'PipelineJobs',
@@ -121,7 +120,7 @@ def pipeline_jobs(id):
                            PipelineJobs.GitBranch)\
             .join(BusinessApplications, BusinessApplications.ID == PipelineJobs.ApplicationId, isouter=True) \
             .join(CICDPipelines, PipelineJobs.Source == CICDPipelines.ID, isouter=True) \
-            .filter(text("".join(filter_list))) \
+            .filter(text(filter_list).params(id=id)) \
             .order_by(*[getattr(PipelineJobs, orderby_parts[0]).desc() if orderby_parts[1].lower() == "desc" else getattr(PipelineJobs, orderby_parts[0]).asc()]) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
