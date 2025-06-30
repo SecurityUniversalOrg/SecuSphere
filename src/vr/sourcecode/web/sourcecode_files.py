@@ -46,7 +46,10 @@ def sourcecode_files(id):
             page, per_page, orderby_dict, orderby = load_table(new_dict)
 
         # Validate orderby against a whitelist of allowed values
-        allowed_orderby_fields = ["VulnerableFileName", "findings_cnt"]
+        allowed_orderby_fields = {
+            "VulnerableFileName": Vulnerabilities.VulnerableFileName,
+            "findings_cnt": func.count(Vulnerabilities.VulnerabilityID).label('findings_cnt')
+        }
         if orderby not in allowed_orderby_fields:
             raise ValueError(f"Invalid orderby value: {orderby}")
 
@@ -57,7 +60,7 @@ def sourcecode_files(id):
             .filter(filter) \
             .filter(text("Vulnerabilities.Classification LIKE 'IaC%' OR Vulnerabilities.Classification LIKE 'SAST%' OR Vulnerabilities.Classification LIKE 'Secret%'")) \
             .group_by(Vulnerabilities.VulnerableFileName) \
-            .order_by(text(orderby)) \
+            .order_by(allowed_orderby_fields[orderby]) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
