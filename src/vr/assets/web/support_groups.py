@@ -50,9 +50,16 @@ def contacts(id):
         allowed_directions = ["asc", "desc"]
         orderby_parts = orderby.split()
         if len(orderby_parts) == 2 and orderby_parts[0] in allowed_columns and orderby_parts[1].lower() in allowed_directions:
-            sanitized_orderby = f"{orderby_parts[0]} {orderby_parts[1].lower()}"
+            order_column = getattr(SupportContacts, orderby_parts[0], None)
+            order_direction = orderby_parts[1].lower()
+            if order_column and order_direction == "asc":
+                sanitized_orderby = order_column.asc()
+            elif order_column and order_direction == "desc":
+                sanitized_orderby = order_column.desc()
+            else:
+                sanitized_orderby = SupportContacts.ID.asc()  # Default order
         else:
-            sanitized_orderby = "ID asc"  # Default order
+            sanitized_orderby = SupportContacts.ID.asc()  # Default order
 
         versions = SupportContacts.query\
             .with_entities(
@@ -69,7 +76,7 @@ def contacts(id):
             .join(AppToSupportContactAssociations, AppToSupportContactAssociations.SupportContactID==SupportContacts.ID) \
             .join(BusinessApplications, AppToSupportContactAssociations.ApplicationID == BusinessApplications.ID, isouter=True) \
             .filter(text("".join(filter_list))) \
-            .order_by(text(sanitized_orderby)) \
+            .order_by(sanitized_orderby) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
