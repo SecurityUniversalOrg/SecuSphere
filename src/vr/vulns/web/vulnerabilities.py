@@ -873,7 +873,7 @@ def _get_appname_assets(app_name, orderby, per_page, page, filter_list, sql_filt
                 BusinessApplications.ApplicationAcronym
             ).join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId) \
         .filter(text(full_filter)) \
-        .order_by(text(orderby)) \
+        .order_by(getattr(Vulnerabilities, orderby)) \
         .yield_per(per_page) \
         .paginate(page=page, per_page=per_page, error_out=False)
     pg_cnt = ceil((vuln_all.total / per_page))
