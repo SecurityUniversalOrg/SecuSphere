@@ -46,6 +46,12 @@ def vulnerability_scans(id):
         if request.method == 'POST':
             # sort
             page, per_page, orderby_dict, orderby = update_table(request, new_dict)
+            allowed_columns = ["ID", "ScanName", "ScanType", "ScanTargets", "ScanStartDate", "issue_cnt", "open_issue_cnt", "closed_issue_cnt", "ra_issue_cnt"]
+            allowed_directions = ["asc", "desc"]
+            if orderby_dict.get("column") in allowed_columns and orderby_dict.get("direction") in allowed_directions:
+                orderby = f"{orderby_dict['column']} {orderby_dict['direction']}"
+            else:
+                orderby = "ID asc"  # Default order
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict)
 
