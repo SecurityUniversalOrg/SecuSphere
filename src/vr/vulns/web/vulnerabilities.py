@@ -325,15 +325,18 @@ def all_vulnerabilities_filtered(type, val):
             val = app.ID if app else None
         else:
             key = type.capitalize()
+            allowed_keys = [
+                "DockerImageId", "ApplicationId", "VulnerabilityID", "VulnerabilityName", "CVEID", "CWEID",
+                "Severity", "Classification", "Source", "Status", "MitigationDate", "ApplicationName"
+            ]
+            if key not in allowed_keys:
+                raise ValueError(f"Invalid filter key: {key}")
         if val.endswith("-"):
-            filter_list = [f"{key} LIKE :val"]
-            filter_params = {"val": f"{val}%"}
+            filter_list = [Vulnerabilities.__table__.c[key].like(f"{val}%")]
         elif val == 'ALL':
-            filter_list = [f"{key} LIKE :val"]
-            filter_params = {"val": "%-%"}
+            filter_list = [Vulnerabilities.__table__.c[key].like("%-%")]
         else:
-            filter_list = [f"{key} = :val"]
-            filter_params = {"val": val}
+            filter_list = [Vulnerabilities.__table__.c[key] == val]
 
         new_dict = {
             'db_name': 'Vulnerabilities',
@@ -387,7 +390,7 @@ def _get_assets(orderby, per_page, page, filter_list, sql_filter):
                 Vulnerabilities.Status, Vulnerabilities.MitigationDate, BusinessApplications.ApplicationName
             ).join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId) \
                 .filter(text(VULN_STATUS_IS_NOT_CLOSED)) \
-        .filter(text(" AND ".join(filter_list)).params(**filter_params)) \
+        .filter(*filter_list) \
         .filter(text(sql_filter)) \
         .order_by(getattr(Vulnerabilities, orderby)) \
         .yield_per(per_page) \
