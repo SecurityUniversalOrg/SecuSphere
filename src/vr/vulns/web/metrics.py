@@ -647,19 +647,24 @@ def component_KPIs(app_id):
         elif status == 403:
             return render_template('403.html', user=user, NAV=NAV)
         key = 'BusinessApplications.ID'
-        val = app_id
-        filter_list = f"{key} = '{val}'"
         start_date = None
         end_date = None
+        filter_conditions = [f"{key} = :app_id"]
+        filter_params = {"app_id": app_id}
         if request.method == 'POST':
             start_date = request.form.get('start_date').replace('T', ' ')
             end_date = request.form.get('end_date').replace('T', ' ')
-            filter_list = f'{filter_list} AND ((AddDate BETWEEN "{start_date}" AND "{end_date}") OR ' \
-                          f'(MitigationDate BETWEEN "{start_date}" AND "{end_date}") OR ' \
-                          f'((LastModifiedDate BETWEEN "{start_date}" AND "{end_date}") AND (Status LIKE "Open-RiskAccepted-*" OR Status="Closed-Manual-Superseded or Deprecated Component" OR Status="Closed-Manual-Compensating Control")))'
+            filter_conditions.append("((AddDate BETWEEN :start_date AND :end_date) OR "
+                                      "(MitigationDate BETWEEN :start_date AND :end_date) OR "
+                                      "((LastModifiedDate BETWEEN :start_date AND :end_date) AND "
+                                      "(Status LIKE 'Open-RiskAccepted-*' OR "
+                                      "Status = 'Closed-Manual-Superseded or Deprecated Component' OR "
+                                      "Status = 'Closed-Manual-Compensating Control')))")
+            filter_params.update({"start_date": start_date, "end_date": end_date})
+        filter_list = " AND ".join(filter_conditions)
         vuln_all = Vulnerabilities.query\
             .join(BusinessApplications, BusinessApplications.ID == Vulnerabilities.ApplicationId)\
-            .filter(text(filter_list)).all()
+            .filter(text(filter_list).params(**filter_params)).all()
         schema = VulnerabilitiesSchema(many=True)
         assets = schema.dump(vuln_all)
         NAV['appbar'] = 'metrics'
