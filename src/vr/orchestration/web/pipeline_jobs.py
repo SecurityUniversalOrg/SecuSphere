@@ -40,11 +40,19 @@ def all_pipeline_jobs():
             "sort_field": "ID"
         }
 
+        # Define a whitelist of allowed column names for sorting
+        allowed_sort_fields = {"ID", "PipelineName", "StartDate", "BuildNum", "ApplicationName", 
+                               "PipelineSource", "BranchName", "JobName", "Project", "GitBranch"}
+
         if request.method == 'POST':
             # sort
             page, per_page, orderby_dict, orderby = update_table(request, new_dict, direction="desc")
         else:
             page, per_page, orderby_dict, orderby = load_table(new_dict, direction="desc")
+
+        # Validate the orderby field against the whitelist
+        if orderby not in allowed_sort_fields:
+            orderby = "ID"  # Default to a safe value if validation fails
 
         assets_all = PipelineJobs.query\
             .with_entities(PipelineJobs.ID, CICDPipelines.Name.label('PipelineName'), PipelineJobs.StartDate,
