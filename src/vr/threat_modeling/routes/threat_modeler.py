@@ -110,9 +110,7 @@ def threat_assessments(id):
         elif status == 403:
             return render_template(UNAUTH_STATUS, user=user, NAV=NAV)
 
-        key = 'BusinessApplications.ID'
-        val = id
-        filter_list = [f"{key} = '{val}'"]
+        filter_condition = (BusinessApplications.ID == id)
 
         new_dict = {
             'db_name': 'TmThreatAssessments',
@@ -143,7 +141,7 @@ def threat_assessments(id):
             .join(TmIdentifiedThreats, TmIdentifiedThreats.ThreatAssessmentID == TmThreatAssessments.ID, isouter=True) \
             .join(User, User.id == TmThreatAssessments.SubmitUserID, isouter=True) \
             .group_by(TmThreatAssessments.ID) \
-            .filter(text("".join(filter_list))) \
+            .filter(filter_condition) \
             .order_by(orderby) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
