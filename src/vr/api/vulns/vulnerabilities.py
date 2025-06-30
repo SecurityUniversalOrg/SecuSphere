@@ -522,13 +522,10 @@ def edit_vulnerabilities():
         entity_id = req[list(req.keys())[0]]
         permitted = check_entity_permissions(is_admin)
         if permitted:
-            filter_db_keys = []
-            for key in src_filter:
-                val = src_filter[key].replace("'", "")
-                filter_db_keys.append(f"{key}='{val}'")
-            filter_db = " AND ".join(filter_db_keys)
-            db.session.query(Vulnerabilities).filter(text(filter_db)).update(values=req_dict,
-                                                                             synchronize_session=False)
+            query = db.session.query(Vulnerabilities)
+            for key, val in src_filter.items():
+                query = query.filter(getattr(Vulnerabilities, key) == val)
+            query.update(values=req_dict, synchronize_session=False)
             db_connection_handler(db)
             response = jsonify({"Status": "Success"}), 200
     return response
