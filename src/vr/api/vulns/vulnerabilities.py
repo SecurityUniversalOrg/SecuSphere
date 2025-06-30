@@ -391,7 +391,7 @@ def _get_vulns_for_src_and_app(source_type, app_id, source, req_raw, scan_id):
     dup_vulns = []
     reopened_vuln = []
     vulns_all = Vulnerabilities.query \
-        .filter(text(f"ApplicationId='{app_id}' AND Source='{source}'")) \
+        .filter(text("ApplicationId = :app_id AND Source = :source").params(app_id=app_id, source=source)) \
         .all()
 
     # Determine unique
