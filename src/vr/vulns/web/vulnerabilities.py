@@ -519,7 +519,7 @@ def all_vulnerabilities_filtered_csv(type, val):
         # Filter Modal section
         elif type == 'Docker Image Name':
             key = 'DockerImageId'
-            image = DockerImages.query.filter(text(f"DockerImages.ImageName={val}")).first()
+            image = DockerImages.query.filter(text("DockerImages.ImageName = :image_name").params(image_name=val)).first()
             val = image.ID
         elif type == 'Application Name':
             key = 'ApplicationId'
