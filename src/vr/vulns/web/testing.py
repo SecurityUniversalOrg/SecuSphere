@@ -237,7 +237,7 @@ def application_profile(app_id):
         assets = schema.dump(
             filter(lambda t: t.ID != '', assets_all)
         )
-        app = BusinessApplications.query.filter(text(f'ID={app_id}')).first()
+        app = BusinessApplications.query.filter(text('ID=:app_id').params(app_id=app_id)).first()
         app_data = {'ID': app_id, 'ApplicationName': app.ApplicationName, 'Component': app.ApplicationAcronym, 'RepoURL': app.RepoURL}
         NAV['appbar'] = 'settings'
         return render_template('vulns/application_profile.html', entities=assets, user=user,
