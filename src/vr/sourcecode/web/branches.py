@@ -32,9 +32,8 @@ def branches(id):
         elif status == 403:
             return render_template('403.html', user=user, NAV=NAV)
 
-        key = 'VulnerabilityScans.ApplicationId'
-        val = id
-        filter_list = [f"{key} = '{val}'"]
+        # Use parameterized query to prevent SQL injection
+        filter_condition = (VulnerabilityScans.ApplicationId == id)
 
         new_dict = {
             'db_name': 'VulnerabilityScans',
@@ -57,7 +56,7 @@ def branches(id):
         ) \
             .join(Vulnerabilities, Vulnerabilities.ScanId == VulnerabilityScans.ID, isouter=True) \
             .group_by(VulnerabilityScans.Branch) \
-            .filter(text("".join(filter_list))) \
+            .filter(filter_condition) \
             .order_by(text(orderby)) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
