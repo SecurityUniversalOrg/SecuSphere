@@ -54,6 +54,20 @@ def all_pipeline_jobs():
         if orderby not in allowed_sort_fields:
             orderby = "ID"  # Default to a safe value if validation fails
 
+        # Map orderby to a valid column object
+        orderby_column = {
+            "ID": PipelineJobs.ID,
+            "PipelineName": CICDPipelines.Name,
+            "StartDate": PipelineJobs.StartDate,
+            "BuildNum": PipelineJobs.BuildNum,
+            "ApplicationName": BusinessApplications.ApplicationName,
+            "PipelineSource": CICDPipelines.Source,
+            "BranchName": PipelineJobs.BranchName,
+            "JobName": PipelineJobs.JobName,
+            "Project": PipelineJobs.Project,
+            "GitBranch": PipelineJobs.GitBranch
+        }.get(orderby, PipelineJobs.ID)  # Default to PipelineJobs.ID if orderby is invalid
+
         assets_all = PipelineJobs.query\
             .with_entities(PipelineJobs.ID, CICDPipelines.Name.label('PipelineName'), PipelineJobs.StartDate,
                            PipelineJobs.BuildNum, BusinessApplications.ApplicationName, CICDPipelines.Source.label('PipelineSource'),
@@ -62,7 +76,7 @@ def all_pipeline_jobs():
             .join(BusinessApplications, BusinessApplications.ID == PipelineJobs.ApplicationId, isouter=True) \
             .join(CICDPipelines, PipelineJobs.Source == CICDPipelines.ID, isouter=True) \
             .filter(text(sql_filter)) \
-            .order_by(text(orderby)) \
+            .order_by(orderby_column) \
             .yield_per(per_page) \
             .paginate(page=page, per_page=per_page, error_out=False)
 
