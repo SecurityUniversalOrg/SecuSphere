@@ -321,7 +321,7 @@ def _set_application_env_config(request, app_id, env_id):
     AuthType = request.form.get('AuthType')
     TestUsername = request.form.get('TestUsername')
     TestPasswordReference = request.form.get('TestPasswordReference')
-    db.session.query(AppEnvironmentData).filter(text(f"AppEnvironmentData.ID={env_id}")).update(
+    db.session.query(AppEnvironmentData).filter(AppEnvironmentData.ID == env_id).update(
         {
             AppEnvironmentData.AppID: app_id,
             AppEnvironmentData.EnvironmentName: EnvironmentName,
