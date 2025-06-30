@@ -137,7 +137,7 @@ def add_user_role():
         user_role_a = UserRoleAssignments.query \
             .with_entities(UserRoleAssignments.id) \
             .join(UserRoles, UserRoles.id==UserRoleAssignments.role_id)\
-            .filter(text(f"UserRoleAssignments.user_id={new_user_id} AND UserRoles.name='{new_grp}'")).first()
+            .filter(text("UserRoleAssignments.user_id=:user_id AND UserRoles.name=:group_name").params(user_id=new_user_id, group_name=new_grp)).first()
         if user_role_a:
             add_new_assignment = False
         new_app_ids = request.form.get('values').split(',')
@@ -152,7 +152,7 @@ def add_user_role():
     if add_new_assignment:
         user_role_q = UserRoles.query \
             .with_entities(UserRoles.id) \
-            .filter(text(f"UserRoles.name='{new_grp}'")).first()
+            .filter(text("UserRoles.name=:group_name").params(group_name=new_grp)).first()
         new_app = UserRoleAssignments(
             user_id=new_user_id,
             role_id=user_role_q[0]
